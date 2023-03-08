@@ -2,10 +2,10 @@ import { Box, Card, CardHeader} from '@mui/material'
 import React from 'react'
 
 
-import useSWR from "swr";
-import { DataGrid } from '@mui/x-data-grid';
 
-const fetcher = (...args:[key:string] ) => fetch(...args).then(res => res.json());
+import { DataGrid } from '@mui/x-data-grid';
+import { usePresupuesto } from 'src/hooks/usePresupuesto';
+
 const columns = [
   {
 
@@ -54,20 +54,30 @@ const columns = [
 ]
 const PresupuestoList = () => {
 
-  const { data, error } = useSWR("http://localhost:46196/api/PrePresupuesto/GetAll", fetcher);
+  const {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+
 
   return (
     <Card>
       <CardHeader title='Maestro de Presupuesto' />
-      <Box sx={{ height: 500 }}>
-        <DataGrid
-          getRowId={(row) => row.codigoPresupuesto}
-          columns={columns}
-          rows={data.data} />
-      </Box>
+      {
+        isError ?
+        <h1>Error al cargar</h1>
+        : ''
+      }
+      {
+        isLoading && !isError
+        ? <h1>Cargando....</h1>
+        :
+         <Box sx={{ height: 500 }}>
+          <DataGrid
+           getRowId={(row) => row.codigoPresupuesto}
+           columns={columns}
+           rows={presupuestos} />
+        </Box>
+      }
+
     </Card>
   )
 }
