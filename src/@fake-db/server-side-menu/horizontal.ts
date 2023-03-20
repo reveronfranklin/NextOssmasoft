@@ -10,6 +10,11 @@ const navigation: HorizontalNavItemsType = [
     title: 'Dashboards',
     children: [
       {
+        title: 'presupuesto',
+        icon: 'mdi:chart-donut',
+        path: '/dashboards/presupuesto'
+      },
+      {
         title: 'CRM',
         icon: 'mdi:chart-donut',
         path: '/dashboards/crm'

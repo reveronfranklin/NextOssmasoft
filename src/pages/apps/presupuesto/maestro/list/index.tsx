@@ -1,4 +1,4 @@
-import { Box, Card, CardHeader} from '@mui/material'
+import { Box, Card, CardHeader, Grid} from '@mui/material'
 import React from 'react'
 
 
@@ -59,7 +59,8 @@ const PresupuestoList = () => {
 
 
   return (
-    <Card>
+    <Grid item xs={12}>
+       <Card>
       <CardHeader title='Maestro de Presupuesto' />
       {
         isError ?
@@ -79,6 +80,9 @@ const PresupuestoList = () => {
       }
 
     </Card>
+    </Grid>
+
+
   )
 }
 

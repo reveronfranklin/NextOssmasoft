@@ -64,6 +64,7 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -100,6 +101,8 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
     return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
   }
 }
+
+//AxiosInterceptor();
 
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
