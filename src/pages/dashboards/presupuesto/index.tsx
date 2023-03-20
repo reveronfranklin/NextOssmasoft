@@ -27,29 +27,165 @@ import { useEffect, useState } from 'react';
 
 import { fetchData } from '../../../store/apps/presupuesto/thunks';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardHeader, InputLabel, MenuItem, Select } from '@mui/material';
+import { Box, Card, CardHeader, InputLabel, MenuItem, Select } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { RootState } from 'src/store'
 
-import { setPresupuesto, setPreDenominacionPuc } from 'src/store/apps/presupuesto';
+import { setPresupuesto, setPreDenominacionPuc, setPreDenominacionPucResumen } from 'src/store/apps/presupuesto';
 
 //import PresupuestoTransactions from 'src/views/dashboards/presupuesto/PresupuestoTransactions'
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto'
+import { DataGrid } from '@mui/x-data-grid'
 
 //import { IPreDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-denominacion-puc'
+import { IPreDenominacionPucResumen } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
+
+
+const columns = [
+  {
+
+    field: 'codigoPresupuesto'
+    , headerName: 'Codigo', width: 130
+
+  },
+  {
+
+    field: 'denominacion',
+    width: 330
+
+  },
+  {
+
+    field: 'descripcion',
+    width: 100
+  },
+  {
+
+    field: 'ano',
+    width: 100
+  },
+
+
+  {
+
+    field: 'fechaDesde',
+    headerName:'Desde',
+    width: 130
+  },
+  {
+
+    field: 'fechaHasta',
+    headerName:'Hasta',
+    width: 130
+  },
+  {
+
+    field: 'montoPresupuesto',
+    headerName:'Monto'
+
+  },
+
+
+]
+
+const columnsDenominacion = [
+
+  {
+
+    field: 'codigoPUC',
+    headerName:'PUC',
+    width: 180
+
+  },
+
+  /* {
+
+    field: 'codigoPartida',
+    width: 100
+  },
+  {
+
+    field: 'codigoGenerica',
+    width: 100
+  },
+
+
+  {
+
+    field: 'codigoEspecifica',
+    headerName:'Especifica',
+    width: 130
+  },
+  {
+
+    field: 'codigoSubEspecifica',
+    headerName:'SubEspecifica',
+    width: 130
+  },
+  {
+
+    field: 'codigoNivel5',
+    headerName:'Nivel5'
+
+  }, */
+  {
+
+    field: 'denominacionPuc',
+    headerName:'Denominacion',
+    width: 380
+
+  },
+
+
+
+  {
+
+    field: 'totalPresupuestado',
+    headerName:'TotalPresupuestado',
+    width: 180
+
+  },
+  {
+
+    field: 'presupuestadoString',
+    headerName:'PresupuestadoString',
+
+    width: 180
+
+  },
+  {
+
+    field: 'disponibilidadString',
+    headerName:'Disponibilidad',
+
+    width: 180
+
+  },
+  {
+
+    field: 'disponibilidadFinanString',
+    headerName:'Disponibilidad Finan',
+
+    width: 180
+
+  },
+
+
+
+
+]
 
 const EcommerceDashboard = () => {
 
 
   const dispatch = useDispatch();
 
-  const {presupuestos=[],presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const {presupuestos=[],presupuestoSeleccionado,preDenominacionPucResumen=[]} = useSelector((state: RootState) => state.presupuesto)
 
   const [status, setStatus] = useState<IPresupuesto>(presupuestos[0]);
 
-  //const [denominacionPuc, setDenominacionPuc] = useState<IPreDenominacionPuc[]>(preDenominacionPuc);
 
 //e: SelectChangeEvent
 
@@ -58,12 +194,15 @@ const EcommerceDashboard = () => {
     const seleccionado = presupuestos.filter( pre => pre.codigoPresupuesto==e.target.value);
     setStatus(seleccionado[0]);
 
+
     console.log('payload enviado al seleccionar',seleccionado[0])
     if(seleccionado.length>0){
      dispatch(setPresupuesto(seleccionado[0]));
      if(seleccionado[0].preDenominacionPuc!= null && seleccionado[0].preDenominacionPuc.length>0){
       //setDenominacionPuc(seleccionado[0].preDenominacionPuc);
       dispatch(setPreDenominacionPuc(seleccionado[0].preDenominacionPuc));
+      dispatch(setPreDenominacionPucResumen(seleccionado[0].preDenominacionPucResumen));
+
      }else{
       dispatch(setPreDenominacionPuc([]));
      }
@@ -147,25 +286,25 @@ useEffect(() => {
               icon={<Icon icon='mdi:currency-usd' />}
             />
           </Grid>
-{/*           {
 
-             <Grid item xs={12} md={12} sx={{ order: 0, alignSelf: 'flex-end' }}>
+          <Grid item xs={12}>
+            <Card>
+              <CardHeader title='Maestro de Presupuesto' />
 
-             {
-                   denominacionPuc?.map(pre=>(
+              {
+                preDenominacionPucResumen.length<=0
+                ? <h1>Cargando....</h1>
+                :
+                <Box sx={{ height: 500 }}>
+                  <DataGrid
+                  getRowId={(row) => row.denominacionPuc}
+                  columns={columnsDenominacion}
+                  rows={preDenominacionPucResumen} />
+                </Box>
+              }
 
-
-                       <PresupuestoTransactions key={pre.denominacionPuc+ pre.anoSaldo + pre.mesSaldo} {...pre}/>
-
-
-
-
-                   ))
-             }
-
-
-            </Grid>
-          } */}
+            </Card>
+        </Grid>
 
           <Grid item xs={12} md={8} sx={{ order: 0 }}>
             <EcommerceTotalProfit />

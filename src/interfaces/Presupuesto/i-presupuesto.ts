@@ -1,4 +1,4 @@
-import { IPreDenominacionPuc } from "./i-pre-denominacion-puc";
+import { IPreDenominacionPuc ,IPreDenominacionPucResumen} from "./i-pre-denominacion-puc";
 
 export interface IPresupuesto{
     codigoPresupuesto:string;
@@ -9,6 +9,7 @@ export interface IPresupuesto{
     fechaDesde:Date;
     fechaHasta:Date;
     preDenominacionPuc:IPreDenominacionPuc[];
+    preDenominacionPucResumen:IPreDenominacionPucResumen[];
     totalPresupuesto:number;
     totalDisponible:number;
     totalPresupuestoString:string;

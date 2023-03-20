@@ -7,7 +7,7 @@ import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 //import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
-import { setPreDenominacionPuc, setPresupuesto, setPresupuestos } from 'src/store/apps/presupuesto';
+import { setPreDenominacionPuc, setPresupuesto, setPresupuestos ,setPreDenominacionPucResumen} from 'src/store/apps/presupuesto';
 
 //import { getValidationError } from 'src/utlities/get-validation-error';
 import { IFilterPreVDenominacionPuc } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
@@ -44,6 +44,8 @@ export const fetchData = async(dispatch:any) => {
     dispatch(setPresupuesto({presupuestoSeleccionado:data[0]}));
 
     dispatch(setPreDenominacionPuc({preDenominacionPuc:data[0].preDenominacionPuc}))
+    dispatch(setPreDenominacionPucResumen({preDenominacionPuc:data[0].preDenominacionPucResumen}))
+
   }
 
   return {data,status}

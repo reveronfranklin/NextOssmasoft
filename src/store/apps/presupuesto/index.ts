@@ -1,7 +1,7 @@
 // ** Redux Imports
 import { createSlice } from '@reduxjs/toolkit'
 import { IPresupuesto } from '../../../interfaces/Presupuesto/i-presupuesto';
-import { IPreDenominacionPuc } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
+import { IPreDenominacionPuc, IPreDenominacionPucResumen } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
 
 
 
@@ -14,6 +14,7 @@ export const presupuestoSlice = createSlice({
     presupuestoSeleccionado: {} as IPresupuesto,
     presupuestos: [] as IPresupuesto[],
     preDenominacionPuc:[] as IPreDenominacionPuc[],
+    preDenominacionPucResumen:[] as IPreDenominacionPucResumen[],
     isLoading:false
   },
   reducers: {
@@ -32,6 +33,11 @@ export const presupuestoSlice = createSlice({
       console.log('payload recibido en setPreDenominacionPuc action',action.payload)
       state.preDenominacionPuc=action.payload;
     },
+    setPreDenominacionPucResumen:(state,action)=>{
+      state.isLoading=false;
+      console.log('payload recibido en setPreDenominacionPucResumen action',action.payload)
+      state.preDenominacionPucResumen=action.payload;
+    },
     setPresupuesto:(state,action)=>{
       console.log('payload recibido en setPresuesto action',action.payload)
       state.presupuestoSeleccionado=action.payload;
@@ -42,4 +48,4 @@ export const presupuestoSlice = createSlice({
 
 });
 
-export const {startLoadingPresupuesto,setPresupuestos,setPresupuesto,setPreDenominacionPuc} = presupuestoSlice.actions;
+export const {startLoadingPresupuesto,setPresupuestos,setPresupuesto,setPreDenominacionPuc,setPreDenominacionPucResumen} = presupuestoSlice.actions;
