@@ -39,56 +39,6 @@ import { setPresupuesto, setPreDenominacionPuc, setPreDenominacionPucResumen } f
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto'
 import { DataGrid } from '@mui/x-data-grid'
 
-//import { IPreDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-denominacion-puc'
-import { IPreDenominacionPucResumen } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
-
-
-const columns = [
-  {
-
-    field: 'codigoPresupuesto'
-    , headerName: 'Codigo', width: 130
-
-  },
-  {
-
-    field: 'denominacion',
-    width: 330
-
-  },
-  {
-
-    field: 'descripcion',
-    width: 100
-  },
-  {
-
-    field: 'ano',
-    width: 100
-  },
-
-
-  {
-
-    field: 'fechaDesde',
-    headerName:'Desde',
-    width: 130
-  },
-  {
-
-    field: 'fechaHasta',
-    headerName:'Hasta',
-    width: 130
-  },
-  {
-
-    field: 'montoPresupuesto',
-    headerName:'Monto'
-
-  },
-
-
-]
 
 const columnsDenominacion = [
 
@@ -100,36 +50,6 @@ const columnsDenominacion = [
 
   },
 
-  /* {
-
-    field: 'codigoPartida',
-    width: 100
-  },
-  {
-
-    field: 'codigoGenerica',
-    width: 100
-  },
-
-
-  {
-
-    field: 'codigoEspecifica',
-    headerName:'Especifica',
-    width: 130
-  },
-  {
-
-    field: 'codigoSubEspecifica',
-    headerName:'SubEspecifica',
-    width: 130
-  },
-  {
-
-    field: 'codigoNivel5',
-    headerName:'Nivel5'
-
-  }, */
   {
 
     field: 'denominacionPuc',
@@ -138,19 +58,10 @@ const columnsDenominacion = [
 
   },
 
-
-
-  {
-
-    field: 'totalPresupuestado',
-    headerName:'TotalPresupuestado',
-    width: 180
-
-  },
   {
 
     field: 'presupuestadoString',
-    headerName:'PresupuestadoString',
+    headerName:'Presupuestado',
 
     width: 180
 
@@ -194,8 +105,6 @@ const EcommerceDashboard = () => {
     const seleccionado = presupuestos.filter( pre => pre.codigoPresupuesto==e.target.value);
     setStatus(seleccionado[0]);
 
-
-    console.log('payload enviado al seleccionar',seleccionado[0])
     if(seleccionado.length>0){
      dispatch(setPresupuesto(seleccionado[0]));
      if(seleccionado[0].preDenominacionPuc!= null && seleccionado[0].preDenominacionPuc.length>0){
@@ -205,9 +114,12 @@ const EcommerceDashboard = () => {
 
      }else{
       dispatch(setPreDenominacionPuc([]));
+      dispatch(setPreDenominacionPucResumen([]));
      }
 
     }
+
+
 
   }
 
@@ -268,7 +180,7 @@ useEffect(() => {
 
           <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
             <CardStatisticsVerticalComponent
-              stats={presupuestoSeleccionado?.totalPresupuestoString?.toString() + 'K'}
+              stats={presupuestoSeleccionado?.totalPresupuestoString + 'K'}
               color='info'
               trendNumber='+38%'
               title='Presupuestado'
@@ -278,7 +190,7 @@ useEffect(() => {
           </Grid>
           <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
             <CardStatisticsVerticalComponent
-              stats={presupuestoSeleccionado?.totalDisponibleString?.toString() + 'K'}
+              stats={presupuestoSeleccionado?.totalDisponibleString + 'K'}
               color='success'
               title='Disponible'
               trendNumber='+16%'
@@ -289,11 +201,11 @@ useEffect(() => {
 
           <Grid item xs={12}>
             <Card>
-              <CardHeader title='Maestro de Presupuesto' />
+              <CardHeader title='Resumen Denominacion PUC' />
 
               {
                 preDenominacionPucResumen.length<=0
-                ? <h1>Cargando....</h1>
+                ? <h1>No data</h1>
                 :
                 <Box sx={{ height: 500 }}>
                   <DataGrid

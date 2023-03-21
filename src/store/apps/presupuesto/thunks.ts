@@ -38,13 +38,15 @@ export const fetchData = async(dispatch:any) => {
 
   if(data){
 
-    console.log('Data en fetchData',data);
+    console.log('Data en fetchData primer presupuesto',data[0]);
     dispatch(setPresupuestos({presupuestos:data}));
 
-    dispatch(setPresupuesto({presupuestoSeleccionado:data[0]}));
+    dispatch(setPresupuesto(data[0]));
 
-    dispatch(setPreDenominacionPuc({preDenominacionPuc:data[0].preDenominacionPuc}))
-    dispatch(setPreDenominacionPucResumen({preDenominacionPuc:data[0].preDenominacionPucResumen}))
+    dispatch(setPreDenominacionPuc(data[0].preDenominacionPuc))
+    dispatch(setPreDenominacionPucResumen(data[0].preDenominacionPucResumen))
+
+
 
   }
 
