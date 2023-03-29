@@ -4,7 +4,11 @@ import React from 'react'
 
 
 import { DataGrid } from '@mui/x-data-grid';
-import { usePresupuesto } from 'src/hooks/usePresupuesto';
+
+//import { usePresupuesto } from 'src/hooks/usePresupuesto';
+
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store'
 
 const columns = [
   {
@@ -54,7 +58,8 @@ const columns = [
 ]
 const PresupuestoList = () => {
 
-  const {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
+  // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
+  const {presupuestos=[]} = useSelector((state: RootState) => state.presupuesto)
 
 
 
@@ -62,13 +67,10 @@ const PresupuestoList = () => {
     <Grid item xs={12}>
        <Card>
       <CardHeader title='Maestro de Presupuesto' />
+
+
       {
-        isError ?
-        <h1>Error al cargar</h1>
-        : ''
-      }
-      {
-        isLoading && !isError
+        presupuestos.length<=0
         ? <h1>Cargando....</h1>
         :
          <Box sx={{ height: 500 }}>

@@ -180,7 +180,7 @@ useEffect(() => {
 
           <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
             <CardStatisticsVerticalComponent
-              stats={presupuestoSeleccionado?.totalPresupuestoString + 'K'}
+              stats={presupuestoSeleccionado?.totalPresupuestoString }
               color='info'
               trendNumber='+38%'
               title='Presupuestado'
@@ -190,7 +190,7 @@ useEffect(() => {
           </Grid>
           <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
             <CardStatisticsVerticalComponent
-              stats={presupuestoSeleccionado?.totalDisponibleString + 'K'}
+              stats={presupuestoSeleccionado?.totalDisponibleString}
               color='success'
               title='Disponible'
               trendNumber='+16%'

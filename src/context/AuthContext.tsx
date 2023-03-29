@@ -12,6 +12,7 @@ import authConfig from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+import { IRefreshTokenDto } from 'src/interfaces/SIS/resultRefreshTokenDto'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -41,25 +42,31 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
+      const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
+
       if (storedToken) {
+        console.log('endpoint de refresh',{AccessToken:storedToken,RefreshToken:refreshToken})
+        const refreshToke:IRefreshTokenDto={refreshToken:refreshToken,accessToken:storedToken};
         setLoading(true)
         await axios
-          .get(authConfig.meEndpoint, {
+          .post(authConfig.meEndpoint,refreshToke, {
             headers: {
-              Authorization: storedToken
+              Authorization: 'Bearer ' + storedToken
             }
           })
           .then(async response => {
             setLoading(false)
+            console.log('response.data.userData en useEffect',response.data.userData )
             setUser({ ...response.data.userData })
           })
           .catch(() => {
+            console.log('deslogueando')
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')
             setUser(null)
             setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
+            if (!router.pathname.includes('login')) {
               router.replace('/login')
             }
           })
@@ -79,17 +86,23 @@ const AuthProvider = ({ children }: Props) => {
         params.rememberMe
           ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
           : null
+        params.rememberMe
+          ? window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
+          : null
         const returnUrl = router.query.returnUrl
-
+        console.log('response.data.userData en handler login',response.data )
         setUser({ ...response.data.userData })
         params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
 
+
+        //if(response.data.accessToken.length<= 0) handleLogout();
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
         router.replace(redirectURL as string)
       })
 
       .catch(err => {
+
         if (errorCallback) errorCallback(err)
       })
   }
@@ -103,7 +116,7 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
     axios
-      .post(authConfig.registerEndpoint, params)
+      .post(authConfig.registerEndpoint, params,)
       .then(res => {
         if (res.data.error) {
           if (errorCallback) errorCallback(res.data.error)

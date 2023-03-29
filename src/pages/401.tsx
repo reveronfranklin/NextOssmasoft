@@ -16,12 +16,17 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrations from 'src/views/pages/misc/FooterIllustrations'
 
+
 // ** Styled Components
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     width: '90vw'
   }
 }))
+
+ // ** Hooks
+ //const auth = useAuth();
+
 
 const Img = styled('img')(({ theme }) => ({
   marginBottom: theme.spacing(10),
@@ -36,6 +41,10 @@ const Img = styled('img')(({ theme }) => ({
     marginTop: theme.spacing(13)
   }
 }))
+
+
+
+//href='/login' component={Link}
 
 const Error401 = () => {
   return (

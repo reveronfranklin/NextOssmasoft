@@ -12,45 +12,45 @@ import { setPreDenominacionPuc, setPresupuesto, setPresupuestos ,setPreDenominac
 //import { getValidationError } from 'src/utlities/get-validation-error';
 import { IFilterPreVDenominacionPuc } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
 
+// ** Config
+//import authConfig from 'src/configs/auth'
+
 // ** Fetch Presupuesto
 export const fetchData = async(dispatch:any) => {
 
+    try {
+      //const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)
 
 
-  /* const response = await ossmmasofApi.get('/PrePresupuesto/GetAll')
-  .then((response: AxiosResponse<IPresupuesto[]>) => {
-      console.log('AxiosResponse+++',response)
-  })
-  .catch((reason: AxiosError<{additionalInfo:string}>) => {
+    //const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll',{headers: {Authorization: 'Bearer ' + storedToken}});
 
-    console.log(reason)
-    console.log(reason.message)
-    console.log('error desde el thunks', getValidationError(reason.code));
-  }) */
+    const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll');
 
 
-  const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll');
-
-
-  const {data,status} = responseAll;
-
-  console.log('Status',status)
-
-  if(data){
-
-    console.log('Data en fetchData primer presupuesto',data[0]);
-    dispatch(setPresupuestos({presupuestos:data}));
-
-    dispatch(setPresupuesto(data[0]));
-
-    dispatch(setPreDenominacionPuc(data[0].preDenominacionPuc))
-    dispatch(setPreDenominacionPucResumen(data[0].preDenominacionPucResumen))
+      const {data,status} = responseAll;
 
 
 
-  }
+      if(data){
 
-  return {data,status}
+        console.log('Data en fetchData primer presupuesto',data[0]);
+        dispatch(setPresupuestos({presupuestos:data}));
+
+        dispatch(setPresupuesto(data[0]));
+
+        dispatch(setPreDenominacionPuc(data[0].preDenominacionPuc))
+        dispatch(setPreDenominacionPucResumen(data[0].preDenominacionPucResumen))
+
+
+
+      }
+
+      return {data,status}
+    } catch (error) {
+      console.log(error)
+    }
+
+
 
 
 };
