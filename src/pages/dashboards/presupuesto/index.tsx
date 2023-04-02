@@ -27,7 +27,7 @@ import { useEffect, useState } from 'react';
 
 import { fetchData } from '../../../store/apps/presupuesto/thunks';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Card, CardHeader, InputLabel, MenuItem, Select } from '@mui/material';
+import { Box, Card, CardHeader, CircularProgress, InputLabel, MenuItem, Select } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import FormControl from '@mui/material/FormControl';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -278,8 +278,10 @@ useEffect(() => {
       </ApexChartWrapper>
     )
   }else{
+
     <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
-    <PresupuestoCongratulations />
+        <CircularProgress color='inherit' size={20}/>
+       <PresupuestoCongratulations />
   </Grid>
   }
 
