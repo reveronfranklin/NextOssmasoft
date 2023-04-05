@@ -56,8 +56,19 @@ const navigation = (): VerticalNavItemsType => {
 
       ]
     },
+    {
+      title: 'RH',
+      icon: 'mdi:file-document-outline',
+      children: [
+        {
+          title: 'Historico',
+          path: '/apps/rh/historico'
+        },
 
-    /* {
+      ]
+    },
+
+    {
       title: 'Invoice',
       icon: 'mdi:file-document-outline',
       children: [
@@ -78,7 +89,7 @@ const navigation = (): VerticalNavItemsType => {
           path: '/apps/invoice/add'
         }
       ]
-    }, */
+    },
     {
       title: 'User',
       icon: 'mdi:account-outline',
@@ -129,7 +140,7 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
 
-/*     {
+    {
       title: 'Pages',
       icon: 'mdi:file-document-outline',
       children: [
@@ -223,9 +234,9 @@ const navigation = (): VerticalNavItemsType => {
           ]
         }
       ]
-    }, */
+    },
 
-   /*  {
+    {
       title: 'Auth Pages',
       icon: 'mdi:lock-outline',
       children: [
@@ -330,8 +341,8 @@ const navigation = (): VerticalNavItemsType => {
           ]
         }
       ]
-    }, */
-   /*  {
+    },
+    {
       title: 'Wizard Examples',
       icon: 'mdi:transit-connection-horizontal',
       children: [
@@ -635,7 +646,7 @@ const navigation = (): VerticalNavItemsType => {
           path: 'https://demos.themeselection.com/marketplace/materio-mui-react-nextjs-admin-template/documentation'
         }
       ]
-    } */
+    }
   ]
 }
 

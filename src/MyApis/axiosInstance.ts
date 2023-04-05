@@ -21,6 +21,7 @@ axiosClient.defaults.baseURL = 'https://api.example.org/';
 axiosClient.interceptors.request.use(
   config => {
     const token = localStorage.getItem('access-token');
+
     if (token) {
       // Configure this as per your backend requirements
       config.headers!['Authorization'] = token;
