@@ -27,6 +27,9 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { Button } from '@mui/material'
+
+
 
 /*interface StatusObj {
   [key: number]: {
@@ -160,6 +163,7 @@ const columns: GridColumns = [
 const TableServerSide = () => {
   // ** State
   const [page, setPage] = useState(0)
+  const [linkData, setLinkData] = useState('')
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
@@ -173,38 +177,41 @@ const TableServerSide = () => {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
   const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
+
+
   const fetchTableData = useCallback(
     async (sort: SortType, q: string, column: string) => {
-      const responseAll= await ossmmasofApi.post<IHistoricoMovimiento[]>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
-      setTotal(responseAll.data.length);
+      const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
+      console.log(responseAll)
 
-      //setPageSize(responseAll.data.length)
-
-      //setPageSize(responseAll.data.length);
-      setRows(loadServerRows(page, responseAll.data))
-      console.log(responseAll.data )
-
-      /*await axios
-        .get('/api/table/data', {
-          params: {
-            q,
-            sort,
-            column
-          }
-        })
-        .then(res => {
-          //setTotal(res.data.total)
-          console.log('total en el then',total)
-          setRows(loadServerRows(page, res.data.data))
-        })*/
+      setTotal(responseAll.data.data.length);
+      setRows(loadServerRows(page, responseAll.data.data))
+      setLinkData(responseAll.data.linkData)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [page, pageSize]
   )
 
+  const fetchTableExcel = useCallback(
+    async () => {
+      const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GenerateExcel',filterHistorico);
+
+      const pdfBlob = new Blob([responseAll.data], { type: "application/xlsx" });
+      console.log('Respuesta buscando el excel',pdfBlob)
+
+      return pdfBlob;
+
+       // return responseAll.data;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterHistorico]
+  )
+
   useEffect(() => {
-    fetchTableData(sort, searchValue, sortColumn)
-  }, [fetchTableData, searchValue, sort, sortColumn])
+    fetchTableData(sort, searchValue, sortColumn);
+
+    //fetchTableExcel();
+  }, [fetchTableData,searchValue, sort, sortColumn])
 
   const handleSortModel = (newModel: GridSortModel) => {
     if (newModel.length) {
@@ -224,8 +231,19 @@ const TableServerSide = () => {
 
   return (
     <Card>
-      <CardHeader title='Server Side' />
+      {
+        linkData.length>0 ?
+          <Box  m={2} pt={3}>
+          <Button variant='contained' href={linkData} size='large' >
+            Descargar Todo {linkData}
+          </Button>
+        </Box>
+        : <Typography  m={2} pt={3}>..Cargando</Typography>
+      }
+
+
       <DataGrid
+
         autoHeight
         pagination
         getRowId={(row) => row.codigoHistoricoNomina}
@@ -246,6 +264,7 @@ const TableServerSide = () => {
             variant: 'outlined'
           },
           toolbar: {
+            printOptions: { disableToolbarButton: true },
             value: searchValue,
             clearSearch: () => handleSearch(''),
             onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
