@@ -9,6 +9,9 @@ import invoice from 'src/store/apps/invoice'
 import calendar from 'src/store/apps/calendar'
 import permissions from 'src/store/apps/permissions'
 import { presupuestoSlice } from './apps/presupuesto'
+import { nominaSlice } from './apps/rh'
+
+//import { nominaSlice } from './apps/rh'
 
 
 export const store = configureStore({
@@ -20,6 +23,9 @@ export const store = configureStore({
     calendar,
     permissions,
     presupuesto:presupuestoSlice.reducer,
+    nomina:nominaSlice.reducer,
+
+    //nominas:nominaSlice.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

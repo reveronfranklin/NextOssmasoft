@@ -44,4 +44,6 @@ export interface IHistoricoMovimiento{
   codigo:string;
   denominacion:string;
   avatar:string;
+  unidadEjecutora:string;
+  estadoCivil:string;
 }

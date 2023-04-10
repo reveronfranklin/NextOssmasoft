@@ -1,11 +1,16 @@
 {
   "cSpell.words": [
+    "apellido",
     "Cargando",
     "cargar",
     "causado",
     "codigo",
+    "Completo",
     "comprometido",
+    "Concepto",
+    "Conceptos",
     "denominacion",
+    "dercripcion",
     "descripcion",
     "Desde",
     "deuda",
@@ -15,10 +20,15 @@
     "fecha",
     "Finan",
     "Generica",
+    "Historico",
     "Mantenimiento",
     "modificado",
     "monto",
+    "Movimiento",
     "Nivel",
+    "nombre",
+    "Nomina",
+    "nominas",
     "ossmmasof",
     "pagado",
     "Partida",
@@ -29,6 +39,8 @@
     "Resumen",
     "Saldo",
     "Saldos",
-    "seleccionado"
+    "seleccionado",
+    "Tipo",
+    "tipos"
   ]
 }

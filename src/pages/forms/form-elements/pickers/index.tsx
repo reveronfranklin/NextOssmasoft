@@ -30,12 +30,17 @@ import PickersMonthYearDropdowns from 'src/views/forms/form-elements/pickers/Pic
 
 // ** Source code imports
 import * as source from 'src/views/forms/form-elements/pickers/PickersSourceCode'
+import PickersDesdeHasta from 'src/views/forms/form-elements/rh/PickersDesdeHasta'
+import { CardContent } from '@mui/material'
+
 
 const ReactDatePicker = () => {
   // ** Hook
   const theme = useTheme()
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
+
 
   return (
     <DatePickerWrapper>
@@ -50,6 +55,13 @@ const ReactDatePicker = () => {
             </Typography>
           }
         />
+
+        <Grid item xs={12}>
+
+          <CardContent title='Desde-Hasta Nomina' >
+            <PickersDesdeHasta popperPlacement={popperPlacement} />
+          </CardContent>
+        </Grid>
         <Grid item xs={12}>
           <CardSnippet title='Date Pickers' code={{ tsx: source.PickersBasicTSXCode, jsx: source.PickersBasicJSXCode }}>
             <PickersBasic popperPlacement={popperPlacement} />

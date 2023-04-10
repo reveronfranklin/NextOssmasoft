@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
 import { DataGrid, GridColumns, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
@@ -30,6 +29,16 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Button } from '@mui/material'
 
 
+// ** Types
+
+import { RootState } from 'src/store'
+import { useSelector } from 'react-redux'
+import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
+import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
+import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+
+
+
 
 /*interface StatusObj {
   [key: number]: {
@@ -41,6 +50,9 @@ interface FilterHistorico {
 
     desde: Date
     hasta: Date
+    codigoTipoNomina:number
+    codigoPersona:number
+    codigoConcepto:string
 
 }
 
@@ -114,13 +126,35 @@ const columns: GridColumns = [
     }
   },
   {
-    flex: 0.175,
-    minWidth: 120,
+    flex: 0.125,
+    minWidth: 15,
+    headerName: 'Estado Civil',
+    field: 'estadoCivil',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.EstadoCivil}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.125,
+    minWidth: 15,
     headerName: 'Fecha',
     field: 'fechaNominaMov',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
         {params.row.fechaNominaMov}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.175,
+    minWidth: 15,
+    headerName: 'Dpto',
+    field: 'unidadEjecutora',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.unidadEjecutora}
       </Typography>
     )
   },
@@ -132,6 +166,17 @@ const columns: GridColumns = [
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
         {params.row.sueldo}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.125,
+    field: 'codigo',
+    minWidth: 15,
+    headerName: 'Cod Concepto',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.codigo}
       </Typography>
     )
   },
@@ -173,16 +218,23 @@ const TableServerSide = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('full_name')
 
+  const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado={} as IListConceptosDto,personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
+
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
-  const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
 
   const fetchTableData = useCallback(
-    async (sort: SortType, q: string, column: string) => {
+    async (sort: SortType, q: string, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:string,codigoPersona:number) => {
+
+      //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
+
+      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona}
+
+
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
-      console.log(responseAll)
+
 
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
@@ -192,32 +244,19 @@ const TableServerSide = () => {
     [page, pageSize]
   )
 
-  const fetchTableExcel = useCallback(
-    async () => {
-      const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GenerateExcel',filterHistorico);
 
-      const pdfBlob = new Blob([responseAll.data], { type: "application/xlsx" });
-      console.log('Respuesta buscando el excel',pdfBlob)
-
-      return pdfBlob;
-
-       // return responseAll.data;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filterHistorico]
-  )
 
   useEffect(() => {
-    fetchTableData(sort, searchValue, sortColumn);
+    fetchTableData(sort, searchValue, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona);
 
     //fetchTableExcel();
-  }, [fetchTableData,searchValue, sort, sortColumn])
+  }, [fetchTableData,searchValue, sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
     if (newModel.length) {
       setSort(newModel[0].sort)
       setSortColumn(newModel[0].field)
-      fetchTableData(newModel[0].sort, searchValue, newModel[0].field)
+      fetchTableData(newModel[0].sort, searchValue, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
     } else {
       setSort('asc')
       setSortColumn('full_name')
@@ -226,7 +265,7 @@ const TableServerSide = () => {
 
   const handleSearch = (value: string) => {
     setSearchValue(value)
-    fetchTableData(sort, value, sortColumn)
+    fetchTableData(sort, value, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
   }
 
   return (
@@ -238,7 +277,7 @@ const TableServerSide = () => {
             Descargar Todo {linkData}
           </Button>
         </Box>
-        : <Typography  m={2} pt={3}>..Cargando</Typography>
+        : <Typography  m={2} pt={3}>..no data</Typography>
       }
 
 

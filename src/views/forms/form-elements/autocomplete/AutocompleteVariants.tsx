@@ -14,6 +14,7 @@ const AutocompleteVariants = () => {
         options={top100Films}
         id='autocomplete-outlined'
         getOptionLabel={option => option.title}
+
         renderInput={params => <TextField {...params} label='Combo box' />}
       />
       <Autocomplete
