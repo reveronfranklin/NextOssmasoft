@@ -7,10 +7,13 @@ import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 //import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
-import { setPreDenominacionPuc, setPresupuesto, setPresupuestos ,setPreDenominacionPucResumen} from 'src/store/apps/presupuesto';
+import { setPreDenominacionPuc, setPresupuesto, setPresupuestos ,setPreDenominacionPucResumen, setPreMtrDenominacionPuc, setPreMtrUnidadEjecutora, setListPresupuestoDto} from 'src/store/apps/presupuesto';
 
 //import { getValidationError } from 'src/utlities/get-validation-error';
 import { IFilterPreVDenominacionPuc } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
+import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora';
+import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc';
+import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto';
 
 // ** Config
 //import authConfig from 'src/configs/auth'
@@ -33,7 +36,7 @@ export const fetchData = async(dispatch:any) => {
 
       if(data){
 
-        console.log('Data en fetchData primer presupuesto',data[0]);
+
         dispatch(setPresupuestos({presupuestos:data}));
 
         dispatch(setPresupuesto(data[0]));
@@ -69,3 +72,44 @@ export const fetchDataPreDenominacionPuc = async(dispatch:any,filter:IFilterPreV
 
 
 };
+
+export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any) => {
+
+
+  const {data} = await ossmmasofApi.get<IListPreMtrUnidadEjecutora[]>('/PreMtrUnidadEjecutora/GetAll');
+
+  dispatch(setPreMtrUnidadEjecutora(data));
+
+  return data;
+
+};
+
+
+export const fetchDataPreMtrDenominacionPuc= async(dispatch:any) => {
+
+
+
+  const responseAll= await ossmmasofApi.get<IListPreMtrDenominacionPuc[]>('/PreMtrDenominacionPuc/GetAll');
+  console.log('responseAll fetchDataPreMtrDenominacionPuc',responseAll)
+  const {data} = responseAll;
+  dispatch(setPreMtrDenominacionPuc(data));
+
+  return data;
+
+};
+
+
+export const fetchDataListPresupuestoDto= async(dispatch:any) => {
+
+
+
+  const responseAll= await ossmmasofApi.get<IListPresupuestoDto[]>('/PrePresupuesto/GetListPresupuesto');
+  console.log('responseAll fetchDataListPresupuestoDto',responseAll)
+  const {data} = responseAll;
+  dispatch(setListPresupuestoDto(data));
+
+  return data;
+
+};
+
+

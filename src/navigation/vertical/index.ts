@@ -53,9 +53,14 @@ const navigation = (): VerticalNavItemsType => {
           title: 'List',
           path: '/apps/presupuesto/maestro/list'
         },
+        {
+          title: 'Saldo Presupuesto',
+          path: '/apps/presupuesto/prevsaldo'
+        },
 
       ]
     },
+
     {
       title: 'RH',
       icon: 'mdi:file-document-outline',

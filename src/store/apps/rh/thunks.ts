@@ -103,7 +103,7 @@ export const fetchDataHistorico = async(dispatch:any,filter:IFilterHistoricoNomi
 
   const {data} = await ossmmasofApi.post<IHistoricoMovimiento[]>('/HistoricoMovimiento/GetHistoricoFecha',filter);
 
-
+ console.log('data historico nomina++++++++',data)
 
   //dispatch(setHisto(data))
 

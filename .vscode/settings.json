@@ -16,12 +16,14 @@
     "deuda",
     "disponibilidad",
     "Disponible",
+    "Ejecutora",
     "Especifica",
     "fecha",
     "Finan",
     "Generica",
     "Historico",
     "Mantenimiento",
+    "Mensaje",
     "modificado",
     "monto",
     "Movimiento",
@@ -36,11 +38,13 @@
     "presupuestado",
     "Presupuesto",
     "presupuestos",
+    "recibido",
     "Resumen",
     "Saldo",
     "Saldos",
     "seleccionado",
     "Tipo",
-    "tipos"
+    "tipos",
+    "Unidad"
   ]
 }

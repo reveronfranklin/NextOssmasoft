@@ -1,5 +1,5 @@
 import { Box, Card, CardHeader, Grid} from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 
 
@@ -9,6 +9,8 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store'
+import { useDispatch } from 'react-redux';
+import { fetchData } from 'src/store/apps/presupuesto/thunks';
 
 const columns = [
   {
@@ -58,8 +60,22 @@ const columns = [
 ]
 const PresupuestoList = () => {
 
+  const dispatch = useDispatch();
+
   // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
   const {presupuestos=[]} = useSelector((state: RootState) => state.presupuesto)
+
+  useEffect(() => {
+
+    const getPresupuestos = async () => {
+      await fetchData(dispatch);
+    };
+     getPresupuestos();
+
+
+
+  }, [dispatch]);
+
 
 
 

@@ -132,7 +132,7 @@ const columns: GridColumns = [
     field: 'estadoCivil',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.EstadoCivil}
+        {params.row.estadoCivil}
       </Typography>
     )
   },
@@ -213,6 +213,7 @@ const TableServerSide = () => {
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
   const [rows, setRows] = useState<IHistoricoMovimiento[]>([])
+  const [mensaje, setMensaje] = useState<string>('')
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
@@ -230,15 +231,24 @@ const TableServerSide = () => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
+      setMensaje('...cargando')
+
       const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona}
 
 
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
 
-
+      console.log('Respuesta llamando al historico+++++++++======>',responseAll)
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
       setLinkData(responseAll.data.linkData)
+      
+      if( responseAll.data.data.length>0){
+        setMensaje('')
+      }else{
+        setMensaje('No Data')
+      }
+
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [page, pageSize]
@@ -271,13 +281,13 @@ const TableServerSide = () => {
   return (
     <Card>
       {
-        linkData.length>0 ?
+        mensaje.length===0 ?
           <Box  m={2} pt={3}>
           <Button variant='contained' href={linkData} size='large' >
             Descargar Todo {linkData}
           </Button>
         </Box>
-        : <Typography  m={2} pt={3}>..no data</Typography>
+        : <Typography  m={2} pt={3}>{mensaje}</Typography>
       }
 
 

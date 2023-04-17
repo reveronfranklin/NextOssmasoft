@@ -2,6 +2,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { IPresupuesto } from '../../../interfaces/Presupuesto/i-presupuesto';
 import { IPreDenominacionPuc, IPreDenominacionPucResumen } from '../../../interfaces/Presupuesto/i-pre-denominacion-puc';
+import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora';
+import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc';
+import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-presupuesto-ipc-puc';
+import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto';
 
 
 
@@ -13,8 +17,12 @@ export const presupuestoSlice = createSlice({
   initialState: {
     presupuestoSeleccionado: {} as IPresupuesto,
     presupuestos: [] as IPresupuesto[],
+    listpresupuestoDto: [] as IListPresupuestoDto[],
     preDenominacionPuc:[] as IPreDenominacionPuc[],
     preDenominacionPucResumen:[] as IPreDenominacionPucResumen[],
+    preMtrUnidadEjecutora: [] as IListPreMtrUnidadEjecutora[],
+    preMtrDenominacionPuc: [] as IListPreMtrDenominacionPuc[],
+    filterPresupuestoIpcPuc: {} as IFilterPresupuestoIpcPuc,
     isLoading:false
   },
   reducers: {
@@ -30,22 +38,43 @@ export const presupuestoSlice = createSlice({
     },
     setPreDenominacionPuc:(state,action)=>{
       state.isLoading=false;
-      console.log('payload recibido en setPreDenominacionPuc action',action.payload)
+
       state.preDenominacionPuc=action.payload;
     },
     setPreDenominacionPucResumen:(state,action)=>{
       state.isLoading=false;
-      console.log('payload recibido en setPreDenominacionPucResumen action',action.payload)
+
       state.preDenominacionPucResumen=action.payload;
     },
     setPresupuesto:(state,action)=>{
-      console.log('payload recibido en setPresuesto action',action.payload)
-      state.presupuestoSeleccionado=action.payload;
 
-      //state.preDenominacionPuc=action.payload.presupuestoSeleccionado.preDenominacionPuc;
+      state.presupuestoSeleccionado=action.payload;
+    },
+    setPreMtrUnidadEjecutora:(state,action)=>{
+
+      state.preMtrUnidadEjecutora=action.payload;
+    },
+    setPreMtrDenominacionPuc:(state,action)=>{
+
+      state.preMtrDenominacionPuc=action.payload;
+    },
+    setListPresupuestoDto:(state,action)=>{
+
+      state.listpresupuestoDto=action.payload;
+    },
+    setFilterPresupuestoIpcPuc:(state,action)=>{
+      console.log('payload recibido en setFilterPresupuestoIpcPuc action',action.payload)
+      state.filterPresupuestoIpcPuc=action.payload;
     },
   },
 
 });
 
-export const {startLoadingPresupuesto,setPresupuestos,setPresupuesto,setPreDenominacionPuc,setPreDenominacionPucResumen} = presupuestoSlice.actions;
+export const {startLoadingPresupuesto,
+              setPresupuestos,
+              setPresupuesto,
+              setPreDenominacionPuc,
+              setPreDenominacionPucResumen,
+              setPreMtrDenominacionPuc,
+              setPreMtrUnidadEjecutora,
+              setFilterPresupuestoIpcPuc,setListPresupuestoDto} = presupuestoSlice.actions;
