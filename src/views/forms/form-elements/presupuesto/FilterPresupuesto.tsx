@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,15 +20,19 @@ import { RootState } from 'src/store'
 import { fetchDataListPresupuestoDto, fetchDataPreMtrDenominacionPuc, fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
 
 
-import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-presupuesto-ipc-puc'
-import { setFilterPresupuestoIpcPuc } from 'src/store/apps/presupuesto'
+
+import { setListpresupuestoDtoSeleccionado, setPreMtrDenominacionPucSeleccionado, setPreMtrUnidadEjecutoraSeleccionado } from 'src/store/apps/presupuesto'
+import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
+import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc'
+import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
+import { FilterByPresupuestoDto } from '../../../../interfaces/Presupuesto/i-filter-by-presupuesto-dto';
 
 const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
 
   const dispatch = useDispatch();
 
-  const {listpresupuestoDto,preMtrUnidadEjecutora,preMtrDenominacionPuc,filterPresupuestoIpcPuc} = useSelector((state: RootState) => state.presupuesto)
+  const {listpresupuestoDto,preMtrUnidadEjecutora,preMtrDenominacionPuc,listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
 
@@ -39,36 +43,57 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
   //const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
 
 
-  const handlePresupuestos= (e: any,value:any)=>{
+  const handlePresupuestos= async (e: any,value:any)=>{
 
     console.log(value)
 
     if(value){
 
-      const filter:IFilterPresupuestoIpcPuc ={
-        codigoPresupuesto:value.codigoPresupuesto,
-        codigoIPC:filterPresupuestoIpcPuc.codigoIPC,
-        codigoPuc:filterPresupuestoIpcPuc.codigoPuc,
+
+
+      dispatch(setListpresupuestoDtoSeleccionado(value));
+
+      const filter:FilterByPresupuestoDto ={
+        codigoPresupuesto:value.codigoPresupuesto
+      }
+      console.log('Filter presupuesto seleccionado',filter)
+      await fetchDataPreMtrDenominacionPuc(dispatch,filter);
+      await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
+
+    }else{
+
+      const presupuesto:IListPresupuestoDto ={
+        codigoPresupuesto:0,
+        descripcion:'',
+
       };
 
 
-      dispatch(setFilterPresupuestoIpcPuc(filter));
+      dispatch(setListpresupuestoDtoSeleccionado(presupuesto));
     }
+
 
   }
   const handlerDenominacionPuc= (e: any,value:any)=>{
 
-    console.log(value)
+    console.log('handlerDenominacionPuc',value)
     if(value){
 
-      const filter:IFilterPresupuestoIpcPuc ={
-        codigoPresupuesto:filterPresupuestoIpcPuc.codigoPresupuesto,
-        codigoIPC:filterPresupuestoIpcPuc.codigoIPC,
-        codigoPuc:value.codigoPuc,
+      dispatch(setPreMtrDenominacionPucSeleccionado(value));
+    }else{
+
+      const denominacionPuc:IListPreMtrDenominacionPuc ={
+          id:0,
+          codigoPuc:0,
+          codigoPucConcat:'',
+          denominacionPuc:'',
+          dercripcion:''
+
+
       };
 
 
-      dispatch(setFilterPresupuestoIpcPuc(filter));
+      dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc));
     }
 
 
@@ -80,14 +105,26 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
     console.log('handlerUnidadEjecutora en: ',value)
     if(value){
 
-      const filter:IFilterPresupuestoIpcPuc ={
-        codigoPresupuesto:filterPresupuestoIpcPuc.codigoPresupuesto,
-        codigoIPC:value.codigoIcp,
-        codigoPuc:filterPresupuestoIpcPuc.codigoPuc,
+      dispatch(setPreMtrUnidadEjecutoraSeleccionado(value));
+
+    }else{
+
+      const unidadEjecutora:IListPreMtrUnidadEjecutora ={
+        id:0,
+
+        codigoIcp:0,
+
+        codigoIcpConcat:'',
+
+        unidadEjecutora:'',
+
+        dercripcion:''
+
+
       };
 
 
-      dispatch(setFilterPresupuestoIpcPuc(filter));
+      dispatch(setPreMtrUnidadEjecutoraSeleccionado(unidadEjecutora));
     }
 
 
@@ -96,9 +133,12 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
   useEffect(() => {
 
     const getData = async () => {
+      const filter:FilterByPresupuestoDto ={
+        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto
+      }
       await fetchDataListPresupuestoDto(dispatch);
-      await fetchDataPreMtrDenominacionPuc(dispatch);
-      await fetchDataPreMtrUnidadEjecutora(dispatch);
+      await fetchDataPreMtrDenominacionPuc(dispatch,filter);
+      await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
 
     };
     getData();
@@ -122,7 +162,7 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
                     sx={{ width: 350 }}
                     options={listpresupuestoDto}
                     id='autocomplete-tipo-nomina'
-                    getOptionLabel={option => option.descripcion}
+                    getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
                     onChange={handlePresupuestos}
                     renderInput={params => <TextField {...params} label='Presupuesto' />}
                   />
@@ -144,7 +184,7 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
 
                       options={preMtrDenominacionPuc  }
                       id='autocomplete-preMtrDenominacionPuc'
-                      getOptionLabel={option => option.dercripcion + '-' + option.id }
+                      getOptionLabel={option => option.dercripcion + '-' + option.id + '' + option.codigoPuc}
                       onChange={handlerDenominacionPuc}
                       renderInput={params => <TextField {...params} label='Puc' />}
                       />

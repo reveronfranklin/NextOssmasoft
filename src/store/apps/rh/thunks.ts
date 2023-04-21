@@ -28,7 +28,6 @@ export const fetchDataConceptos = async(dispatch:any) => {
 
       if(data){
 
-        console.log('Data en fetchData primer presupuesto',data[0]);
 
         dispatch(setConceptos(data));
 
@@ -56,7 +55,6 @@ export const fetchDataTipoNomina = async(dispatch:any) => {
 
     if(data){
 
-      console.log('Data en fetchData primer tipo nomina',data[0]);
 
       dispatch(setTiposNomina(data));
 
@@ -103,7 +101,7 @@ export const fetchDataHistorico = async(dispatch:any,filter:IFilterHistoricoNomi
 
   const {data} = await ossmmasofApi.post<IHistoricoMovimiento[]>('/HistoricoMovimiento/GetHistoricoFecha',filter);
 
- console.log('data historico nomina++++++++',data)
+
 
   //dispatch(setHisto(data))
 

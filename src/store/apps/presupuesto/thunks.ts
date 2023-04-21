@@ -14,6 +14,7 @@ import { IFilterPreVDenominacionPuc } from '../../../interfaces/Presupuesto/i-pr
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora';
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc';
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto';
+import { FilterByPresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-presupuesto-dto';
 
 // ** Config
 //import authConfig from 'src/configs/auth'
@@ -73,10 +74,10 @@ export const fetchDataPreDenominacionPuc = async(dispatch:any,filter:IFilterPreV
 
 };
 
-export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any) => {
+export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any,filter:FilterByPresupuestoDto) => {
 
 
-  const {data} = await ossmmasofApi.get<IListPreMtrUnidadEjecutora[]>('/PreMtrUnidadEjecutora/GetAll');
+  const {data} = await ossmmasofApi.post<IListPreMtrUnidadEjecutora[]>('/PreMtrUnidadEjecutora/GetByPresupuesto',filter);
 
   dispatch(setPreMtrUnidadEjecutora(data));
 
@@ -85,11 +86,11 @@ export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any) => {
 };
 
 
-export const fetchDataPreMtrDenominacionPuc= async(dispatch:any) => {
+export const fetchDataPreMtrDenominacionPuc= async(dispatch:any,filter:FilterByPresupuestoDto) => {
 
 
 
-  const responseAll= await ossmmasofApi.get<IListPreMtrDenominacionPuc[]>('/PreMtrDenominacionPuc/GetAll');
+  const responseAll= await ossmmasofApi.post<IListPreMtrDenominacionPuc[]>('/PreMtrDenominacionPuc/GetByPresupuesto',filter);
   console.log('responseAll fetchDataPreMtrDenominacionPuc',responseAll)
   const {data} = responseAll;
   dispatch(setPreMtrDenominacionPuc(data));

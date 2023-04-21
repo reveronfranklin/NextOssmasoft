@@ -18,10 +18,13 @@ export const presupuestoSlice = createSlice({
     presupuestoSeleccionado: {} as IPresupuesto,
     presupuestos: [] as IPresupuesto[],
     listpresupuestoDto: [] as IListPresupuestoDto[],
+    listpresupuestoDtoSeleccionado: {} as IListPresupuestoDto,
     preDenominacionPuc:[] as IPreDenominacionPuc[],
     preDenominacionPucResumen:[] as IPreDenominacionPucResumen[],
     preMtrUnidadEjecutora: [] as IListPreMtrUnidadEjecutora[],
     preMtrDenominacionPuc: [] as IListPreMtrDenominacionPuc[],
+    preMtrUnidadEjecutoraSeleccionado: {} as IListPreMtrUnidadEjecutora,
+    preMtrDenominacionPucSeleccionado: {} as IListPreMtrDenominacionPuc,
     filterPresupuestoIpcPuc: {} as IFilterPresupuestoIpcPuc,
     isLoading:false
   },
@@ -54,13 +57,25 @@ export const presupuestoSlice = createSlice({
 
       state.preMtrUnidadEjecutora=action.payload;
     },
+    setPreMtrUnidadEjecutoraSeleccionado:(state,action)=>{
+
+      state.preMtrUnidadEjecutoraSeleccionado=action.payload;
+    },
     setPreMtrDenominacionPuc:(state,action)=>{
 
       state.preMtrDenominacionPuc=action.payload;
     },
+    setPreMtrDenominacionPucSeleccionado:(state,action)=>{
+
+      state.preMtrDenominacionPucSeleccionado=action.payload;
+    },
     setListPresupuestoDto:(state,action)=>{
 
       state.listpresupuestoDto=action.payload;
+    },
+    setListpresupuestoDtoSeleccionado:(state,action)=>{
+
+      state.listpresupuestoDtoSeleccionado=action.payload;
     },
     setFilterPresupuestoIpcPuc:(state,action)=>{
       console.log('payload recibido en setFilterPresupuestoIpcPuc action',action.payload)
@@ -77,4 +92,8 @@ export const {startLoadingPresupuesto,
               setPreDenominacionPucResumen,
               setPreMtrDenominacionPuc,
               setPreMtrUnidadEjecutora,
-              setFilterPresupuestoIpcPuc,setListPresupuestoDto} = presupuestoSlice.actions;
+              setFilterPresupuestoIpcPuc,
+              setListPresupuestoDto,
+              setListpresupuestoDtoSeleccionado,
+              setPreMtrUnidadEjecutoraSeleccionado,
+              setPreMtrDenominacionPucSeleccionado} = presupuestoSlice.actions;

@@ -8,15 +8,14 @@ import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Components Imports
 import PageHeader from 'src/@core/components/page-header'
-import FilterHistoricoNomina from 'src/views/forms/form-elements/rh/FilterHistoricoNomina'
 
 // ** Demo Components Imports
 
-import TableServerSide from 'src/views/table/rh/historico/TableServerSide'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import FilterPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterPresupuesto'
+import TableServerSidePreVSaldo from 'src/views/table/presupuesto/prevsaldo/TableServerSidePreVSaldo'
 
 const DataGrid = () => {
   const theme = useTheme()
@@ -30,13 +29,13 @@ const DataGrid = () => {
         title={
           <Typography variant='h5'>
             <Link href='https://mui.com/x/react-data-grid/' target='_blank'>
-              Movimiento Historico de Nomina
+              Presupuesto
             </Link>
           </Typography>
         }
         subtitle={
           <Typography variant='body2'>
-            Data Grid is a fast and extendable react data table and react data grid.
+            Saldos
           </Typography>
         }
       />
@@ -48,6 +47,9 @@ const DataGrid = () => {
         </DatePickerWrapper>
 
         </CardContent>
+      </Grid>
+      <Grid item xs={12}>
+        <TableServerSidePreVSaldo />
       </Grid>
 
     </Grid>
