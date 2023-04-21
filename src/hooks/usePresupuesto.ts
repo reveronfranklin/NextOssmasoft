@@ -23,8 +23,8 @@ export const usePresupuesto=(url: string,config:SWRConfiguration={})=>{
     }),
     []
   );
-
-  const { data, error } = useSWR<IPresupuesto[]>([`http://localhost:46196/api${url}`,configuration], fetcher,config);
+  const baseUrl = process.env.BASE_URL_API
+  const { data, error } = useSWR<IPresupuesto[]>([`${baseUrl}{url}`,configuration], fetcher,config);
 
 
   return {

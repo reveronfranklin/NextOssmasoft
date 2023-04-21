@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridColumns, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridColTypeDef, GridColumns, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
@@ -106,9 +106,19 @@ const columns: GridColumns = [
       </Typography>
     )
   },*/
-
   {
-    flex: 0.075,
+    flex: 0.125,
+    minWidth: 15,
+    headerName: 'Dpto',
+    field: 'unidadEjecutora',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.unidadEjecutora}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.065,
     minWidth: 15,
     headerName: 'IcpConcat',
     field: 'codigoIcpConcat',
@@ -129,18 +139,9 @@ const columns: GridColumns = [
       </Typography>
     )
   },
-  {
-    flex: 0.125,
-    minWidth: 15,
-    headerName: 'Dpto',
-    field: 'unidadEjecutora',
-    renderCell: (params: GridRenderCellParams) => (
-      <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.unidadEjecutora}
-      </Typography>
-    )
-  },
-  {
+
+
+  /*{
     flex: 0.035,
     minWidth: 90,
     field: 'codigoPuc',
@@ -150,9 +151,9 @@ const columns: GridColumns = [
         {params.row.codigoPuc}
       </Typography>
     )
-  },
+  },*/
   {
-    flex: 0.075,
+    flex: 0.055,
     minWidth: 110,
     field: 'codigoPucConcat',
     headerName: 'PucConcat',
@@ -174,17 +175,30 @@ const columns: GridColumns = [
     )
   },
 
-  /*{
-    flex: 0.125,
+  {
+    flex: 0.055,
     minWidth: 110,
-    field: 'descripcionFinanciado',
-    headerName: 'DescripcionFinanciado',
+    field: 'presupuestadoFormat',
+    headerName: 'Presupuestado',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.descripcionFinanciado}
+        {params.row.presupuestadoFormat}
       </Typography>
     )
-  },*/
+  },
+  ,
+
+  {
+    flex: 0.055,
+    minWidth: 110,
+    field: 'disponibleFormat',
+    headerName: 'Disponible',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.disponibleFormat}
+      </Typography>
+    )
+  },
 
 ]
 
@@ -275,7 +289,7 @@ const TableServerSidePreVSaldo = () => {
 
 
       <DataGrid
-
+        getRowHeight={() => 'auto'}
         autoHeight
         rowHeight={38}
         pagination
