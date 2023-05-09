@@ -5,7 +5,10 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridColTypeDef, GridColumns, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
@@ -24,22 +27,29 @@ import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
-import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
+
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button } from '@mui/material'
+import { Button, IconButton, Tooltip} from '@mui/material'
 
 
 // ** Types
 
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
-import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
-import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+
+
+
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc'
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
 import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-presupuesto-ipc-puc'
+import OptionsMenu from 'src/@core/components/option-menu'
+import { IPreVSaldo } from 'src/interfaces/Presupuesto/i-pre-vsaldo'
+import { useDispatch } from 'react-redux'
+import { setPreVSAldoSeleccionado } from 'src/store/apps/presupuesto'
+import { setVerDetallePreVSaldoActive } from 'src/store/apps/presupuesto'
+import DialogPreVSaldoInfo from 'src/views/pages/presupuesto/DialogPreVSaldoInfo'
+import { IFilterDocumentosPreVSaldo } from 'src/interfaces/Presupuesto/i-filter-documentos-pre-VSaldo'
 
 
 
@@ -50,15 +60,7 @@ import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-pr
     color: ThemeColor
   }
 }*/
-interface FilterHistorico {
 
-    desde: Date
-    hasta: Date
-    codigoTipoNomina:number
-    codigoPersona:number
-    codigoConcepto:string
-
-}
 
 type SortType = 'asc' | 'desc' | undefined | null
 
@@ -84,28 +86,15 @@ const renderClient = (params: GridRenderCellParams) => {
   }
 }
 
-/*const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}*/
+interface CellType {
+  row: IPreVSaldo
+}
 
-const columns: GridColumns = [
+const handleTotal= ()=>{
+  //console.log("Total")
+}
 
-
-  /*{
-    flex: 0.035,
-    minWidth: 15,
-    headerName: 'Icp',
-    field: 'codigoIcp',
-    renderCell: (params: GridRenderCellParams) => (
-      <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.codigoIcp}
-      </Typography>
-    )
-  },*/
+const defaultColumns = [
   {
     flex: 0.125,
     minWidth: 15,
@@ -139,19 +128,6 @@ const columns: GridColumns = [
       </Typography>
     )
   },
-
-
-  /*{
-    flex: 0.035,
-    minWidth: 90,
-    field: 'codigoPuc',
-    headerName: 'Puc',
-    renderCell: (params: GridRenderCellParams) => (
-      <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.codigoPuc}
-      </Typography>
-    )
-  },*/
   {
     flex: 0.055,
     minWidth: 110,
@@ -174,7 +150,6 @@ const columns: GridColumns = [
       </Typography>
     )
   },
-
   {
     flex: 0.055,
     minWidth: 110,
@@ -186,8 +161,6 @@ const columns: GridColumns = [
       </Typography>
     )
   },
-  ,
-
   {
     flex: 0.055,
     minWidth: 110,
@@ -199,18 +172,26 @@ const columns: GridColumns = [
       </Typography>
     )
   },
-
 ]
 
+
+
 const TableServerSidePreVSaldo = () => {
+
+
+
   // ** State
   const [page, setPage] = useState(0)
   const [linkData, setLinkData] = useState('')
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
-  const [rows, setRows] = useState<IHistoricoMovimiento[]>([])
+  const [rows, setRows] = useState<IPreVSaldo[]>([])
   const [mensaje, setMensaje] = useState<string>('')
+
+  const dispatch = useDispatch();
+
+
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
@@ -218,10 +199,58 @@ const TableServerSidePreVSaldo = () => {
 
   const {preMtrDenominacionPucSeleccionado={} as IListPreMtrDenominacionPuc,preMtrUnidadEjecutoraSeleccionado={} as IListPreMtrUnidadEjecutora,listpresupuestoDtoSeleccionado={} as IListPresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
 
-  function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
+
+  const columns = [
+    ...defaultColumns,
+    {
+      flex: 0.1,
+      minWidth: 130,
+      sortable: false,
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='View'>
+            <IconButton size='small' onClick={() => handleView(row)}>
+            <Icon icon='mdi:eye-outline' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+          <OptionsMenu
+            iconProps={{ fontSize: 20 }}
+            iconButtonProps={{ size: 'small' }}
+            menuProps={{ sx: { '& .MuiMenuItem-root svg': { mr: 2 } } }}
+            options={[
+              {
+                text: 'Download',
+                icon: <Icon icon='mdi:download' fontSize={20} />
+              },
+              {
+                text: 'Edit',
+                href: `/apps/invoice/edit/${row.codigoSaldo}`,
+                icon: <Icon icon='mdi:pencil-outline' fontSize={20} />
+              },
+              {
+                text: 'Duplicate',
+                icon: <Icon icon='mdi:content-copy' fontSize={20} />
+              }
+            ]}
+          />
+        </Box>
+      )
+    }
+  ]
+
+  function loadServerRows(currentPage: number, data: IPreVSaldo[]) {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
 
+
+  const handleView=  (row : IPreVSaldo)=>{
+    dispatch(setPreVSAldoSeleccionado(row))
+    dispatch(setVerDetallePreVSaldoActive(true))
+
+  }
 
   const fetchTableData = useCallback(
     async (sort: SortType, q: string, column: string,codigoPresupuesto:number,codigoIPC:number,codigoPuc:number) => {
@@ -239,7 +268,7 @@ const TableServerSidePreVSaldo = () => {
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
       setLinkData(responseAll.data.linkData)
-
+      dispatch(setVerDetallePreVSaldoActive(false))
       if( responseAll.data.data.length>0){
         setMensaje('')
       }else{
@@ -275,6 +304,9 @@ const TableServerSidePreVSaldo = () => {
     fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
+
+
+
   return (
     <Card>
       {
@@ -289,6 +321,8 @@ const TableServerSidePreVSaldo = () => {
 
 
       <DataGrid
+
+
         getRowHeight={() => 'auto'}
         autoHeight
         rowHeight={38}
@@ -297,7 +331,7 @@ const TableServerSidePreVSaldo = () => {
         rows={rows}
         rowCount={total}
         columns={columns}
-        checkboxSelection
+
         pageSize={pageSize}
         sortingMode='server'
         paginationMode='server'
@@ -318,6 +352,8 @@ const TableServerSidePreVSaldo = () => {
           }
         }}
       />
+      <DialogPreVSaldoInfo/>
+
     </Card>
   )
 }

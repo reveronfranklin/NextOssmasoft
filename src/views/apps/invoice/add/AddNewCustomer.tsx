@@ -101,7 +101,7 @@ const AddNewCustomer = ({ open, toggle, setSelectedClient, clients, setClients }
       sx={{ '& .MuiDrawer-paper': { width: [300, 400] } }}
     >
       <Header>
-        <Typography variant='h6'>Add New Customer</Typography>
+        <Typography variant='h6'>Add New Customer..</Typography>
         <IconButton size='small' onClick={toggle} sx={{ color: 'text.primary' }}>
           <Icon icon='mdi:close' fontSize={20} />
         </IconButton>

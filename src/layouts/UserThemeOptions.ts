@@ -18,8 +18,8 @@ const UserThemeOptions = (): ThemeOptions => {
   // const palette = corePalette(mode, skin, themeColor)
 
   return {
-    /*
-    palette:{
+
+    /*palette:{
       primary: {
         light: '#9E69FD',
         main: '#9155FD',
@@ -175,7 +175,7 @@ const UserThemeOptions = (): ThemeOptions => {
     zIndex: {
       appBar: 1200,
       drawer: 1100
-    } */
+    }*/
   }
 }
 

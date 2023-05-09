@@ -6,6 +6,9 @@ import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc';
 import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-presupuesto-ipc-puc';
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto';
+import { IPreVSaldo } from 'src/interfaces/Presupuesto/i-pre-vsaldo';
+import { IPreDetalleDocumentoGetDto } from '../../../interfaces/Presupuesto/i-pre-detalle-documento-get-dto';
+import { IPreSaldoPorPartidaGetDto } from 'src/interfaces/Presupuesto/i-pre-saldo-por-partida-get-dto';
 
 
 
@@ -26,6 +29,23 @@ export const presupuestoSlice = createSlice({
     preMtrUnidadEjecutoraSeleccionado: {} as IListPreMtrUnidadEjecutora,
     preMtrDenominacionPucSeleccionado: {} as IListPreMtrDenominacionPuc,
     filterPresupuestoIpcPuc: {} as IFilterPresupuestoIpcPuc,
+    preVSaldoSeleccionado: {} as IPreVSaldo,
+    verDetallePreVSaldoActive:false,
+    preDetalleDocumentoCompromisos:[] as IPreDetalleDocumentoGetDto[],
+    verPreDetalleDocumentoCompromisosActive:false,
+    preDetalleDocumentoCausado:[] as IPreDetalleDocumentoGetDto[],
+    verPreDetalleDocumentoCausadoActive:false,
+    preDetalleDocumentoPagado:[] as IPreDetalleDocumentoGetDto[],
+    verPreDetalleDocumentoPagadoActive:false,
+    preDetalleDocumentoBloqueado:[] as IPreDetalleDocumentoGetDto[],
+    verPreDetalleDocumentoBloqueadoActive:false,
+    preDetalleDocumentoModificado:[] as IPreDetalleDocumentoGetDto[],
+    verPreDetalleDocumentoModificadoActive:false,
+    preDetalleSaldoPorPartida:[] as IPreSaldoPorPartidaGetDto[],
+    verPreDetalleSaldoPorPartidaActive:false,
+    preTotalSaldoPorPartida:{} as IPreSaldoPorPartidaGetDto,
+
+
     isLoading:false
   },
   reducers: {
@@ -78,9 +98,63 @@ export const presupuestoSlice = createSlice({
       state.listpresupuestoDtoSeleccionado=action.payload;
     },
     setFilterPresupuestoIpcPuc:(state,action)=>{
-      console.log('payload recibido en setFilterPresupuestoIpcPuc action',action.payload)
+
       state.filterPresupuestoIpcPuc=action.payload;
     },
+    setPreVSAldoSeleccionado:(state,action)=>{
+
+      state.preVSaldoSeleccionado=action.payload;
+    },
+    setVerDetallePreVSaldoActive:(state,action)=>{
+      state.verDetallePreVSaldoActive=action.payload;
+    },
+    setPreDetalleDocumentoCompromisos:(state,action)=>{
+
+      state.preDetalleDocumentoCompromisos=action.payload;
+    },
+    setVerPreDetalleDocumentoCompromisosActive:(state,action)=>{
+      state.verPreDetalleDocumentoCompromisosActive=action.payload;
+    },
+    setPreDetalleDocumentoCausado:(state,action)=>{
+
+      state.preDetalleDocumentoCausado=action.payload;
+    },
+    setVerPreDetalleDocumentoCausadoActive:(state,action)=>{
+      state.verPreDetalleDocumentoCausadoActive=action.payload;
+    },
+    setPreDetalleDocumentoPagado:(state,action)=>{
+
+      state.preDetalleDocumentoPagado=action.payload;
+    },
+    setVerPreDetalleDocumentoPagadoActive:(state,action)=>{
+      state.verPreDetalleDocumentoPagadoActive=action.payload;
+    },
+    setPreDetalleDocumentoBloqueado:(state,action)=>{
+
+      state.preDetalleDocumentoBloqueado=action.payload;
+    },
+    setVerPreDetalleDocumentoBloqueadoActive:(state,action)=>{
+      state.verPreDetalleDocumentoBloqueadoActive=action.payload;
+    },
+    setPreDetalleDocumentoModificado:(state,action)=>{
+
+      state.preDetalleDocumentoModificado=action.payload;
+    },
+    setVerPreDetalleDocumentoModificadoActive:(state,action)=>{
+      state.verPreDetalleDocumentoModificadoActive=action.payload;
+    },
+    setPreDetalleSaldoPorPartida:(state,action)=>{
+
+      state.preDetalleSaldoPorPartida=action.payload;
+    },
+    setVerPreDetalleSaldoPorPartidaActive:(state,action)=>{
+      state.verPreDetalleSaldoPorPartidaActive=action.payload;
+    },
+    setPreTotalSaldoPorPartida:(state,action)=>{
+      state.preTotalSaldoPorPartida=action.payload;
+    },
+
+
   },
 
 });
@@ -96,4 +170,19 @@ export const {startLoadingPresupuesto,
               setListPresupuestoDto,
               setListpresupuestoDtoSeleccionado,
               setPreMtrUnidadEjecutoraSeleccionado,
-              setPreMtrDenominacionPucSeleccionado} = presupuestoSlice.actions;
+              setPreMtrDenominacionPucSeleccionado,
+              setPreVSAldoSeleccionado,
+              setVerDetallePreVSaldoActive,
+              setPreDetalleDocumentoCompromisos,
+              setVerPreDetalleDocumentoCompromisosActive,
+              setPreDetalleDocumentoCausado,
+              setVerPreDetalleDocumentoCausadoActive,
+              setPreDetalleDocumentoPagado,
+              setVerPreDetalleDocumentoPagadoActive,
+              setPreDetalleDocumentoBloqueado,
+              setVerPreDetalleDocumentoBloqueadoActive,
+              setPreDetalleDocumentoModificado,
+              setVerPreDetalleDocumentoModificadoActive,
+              setPreDetalleSaldoPorPartida,
+              setVerPreDetalleSaldoPorPartidaActive,
+              setPreTotalSaldoPorPartida} = presupuestoSlice.actions;

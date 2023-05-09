@@ -15,9 +15,12 @@ import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc';
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto';
 import { FilterByPresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-presupuesto-dto';
+import { IPreDetalleDocumentoGetDto } from 'src/interfaces/Presupuesto/i-pre-detalle-documento-get-dto';
+import { IFilterDocumentosPreVSaldo } from 'src/interfaces/Presupuesto/i-filter-documentos-pre-VSaldo';
 
 // ** Config
 //import authConfig from 'src/configs/auth'
+
 
 // ** Fetch Presupuesto
 export const fetchData = async(dispatch:any) => {
@@ -94,6 +97,18 @@ export const fetchDataPreMtrDenominacionPuc= async(dispatch:any,filter:FilterByP
   console.log('responseAll fetchDataPreMtrDenominacionPuc',responseAll)
   const {data} = responseAll;
   dispatch(setPreMtrDenominacionPuc(data));
+
+  return data;
+
+};
+
+export const fetchDataPreVDocCompromisos = async(dispatch:any,filter:IFilterDocumentosPreVSaldo) => {
+
+
+
+  const responseAll= await ossmmasofApi.post<IPreDetalleDocumentoGetDto[]>('/PreVDocCompromisos/GetAllByCodigoSaldo',filter);
+  console.log('responseAll fetchDataPreVDocCompromisos',responseAll)
+  const {data} = responseAll;
 
   return data;
 
