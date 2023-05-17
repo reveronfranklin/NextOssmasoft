@@ -3,11 +3,13 @@
     "Actividad",
     "ajustado",
     "apellido",
+    "Aprobacion",
     "asignacion",
     "bloqueado",
     "Cargando",
     "cargar",
     "causado",
+    "Cerrar",
     "codigo",
     "Completo",
     "comprometido",
@@ -33,7 +35,9 @@
     "financiado",
     "Generica",
     "Grupo",
+    "Guardar",
     "Historico",
+    "Iconify",
     "listpresupuesto",
     "Mantenimiento",
     "Mensaje",
@@ -47,6 +51,7 @@
     "nominas",
     "numero",
     "Oficina",
+    "Ordenanza",
     "ossmmasof",
     "pagado",
     "Partida",
@@ -67,6 +72,7 @@
     "titulo",
     "Unidad",
     "Usuarios",
-    "vigente"
+    "vigente",
+    "vsaldo"
   ]
 }

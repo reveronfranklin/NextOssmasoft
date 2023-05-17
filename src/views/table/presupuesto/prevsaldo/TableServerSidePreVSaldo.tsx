@@ -49,7 +49,6 @@ import { useDispatch } from 'react-redux'
 import { setPreVSAldoSeleccionado } from 'src/store/apps/presupuesto'
 import { setVerDetallePreVSaldoActive } from 'src/store/apps/presupuesto'
 import DialogPreVSaldoInfo from 'src/views/pages/presupuesto/DialogPreVSaldoInfo'
-import { IFilterDocumentosPreVSaldo } from 'src/interfaces/Presupuesto/i-filter-documentos-pre-VSaldo'
 
 
 

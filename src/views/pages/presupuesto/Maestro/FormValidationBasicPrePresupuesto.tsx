@@ -32,6 +32,9 @@ import Icon from 'src/@core/components/icon'
 
 // ** Types
 import { DateType } from 'src/types/forms/reactDatepickerTypes'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 interface State {
   password: string
@@ -73,12 +76,17 @@ const CustomInput = forwardRef(({ ...props }: CustomInputProps, ref) => {
   return <TextField inputRef={ref} {...props} sx={{ width: '100%' }} />
 })
 
-const FormValidationBasic = () => {
+const FormValidationBasicPrePresupuesto = () => {
   // ** States
   const [state, setState] = useState<State>({
     password: '',
     showPassword: false
   })
+
+ // ** States
+ const dispatch = useDispatch();
+ const {verPresupuestoActive,presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+
 
   // ** Hooks
   const {
@@ -95,8 +103,8 @@ const FormValidationBasic = () => {
     event.preventDefault()
   }
 
-  const onSubmit = (data) => {
-    console.log('submit',data)
+  const onSubmit = () => {
+    console.log('submit',control)
     toast.success('Form Submitted')
   }
 
@@ -393,4 +401,4 @@ const FormValidationBasic = () => {
   )
 }
 
-export default FormValidationBasic
+export default FormValidationBasicPrePresupuesto

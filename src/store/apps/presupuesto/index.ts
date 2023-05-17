@@ -19,6 +19,7 @@ export const presupuestoSlice = createSlice({
   name: 'presupuesto',
   initialState: {
     presupuestoSeleccionado: {} as IPresupuesto,
+    verPresupuestoActive:false,
     presupuestos: [] as IPresupuesto[],
     listpresupuestoDto: [] as IListPresupuestoDto[],
     listpresupuestoDtoSeleccionado: {} as IListPresupuestoDto,
@@ -70,8 +71,11 @@ export const presupuestoSlice = createSlice({
       state.preDenominacionPucResumen=action.payload;
     },
     setPresupuesto:(state,action)=>{
-
+      console.log('setPresupuesto payload',action.payload.data)
       state.presupuestoSeleccionado=action.payload;
+    },
+    setVerPresupuestoActive:(state,action)=>{
+      state.verPresupuestoActive=action.payload;
     },
     setPreMtrUnidadEjecutora:(state,action)=>{
 
@@ -162,6 +166,7 @@ export const presupuestoSlice = createSlice({
 export const {startLoadingPresupuesto,
               setPresupuestos,
               setPresupuesto,
+              setVerPresupuestoActive,
               setPreDenominacionPuc,
               setPreDenominacionPucResumen,
               setPreMtrDenominacionPuc,

@@ -42,7 +42,7 @@ const DataGrid = () => {
       <Grid item xs={12}>
 
         <CardContent     title='Desde-Hasta Nomina' >
-        <DatePickerWrapper>
+        <DatePickerWrapper >
            <FilterHistoricoNomina popperPlacement={popperPlacement} />
         </DatePickerWrapper>
 
