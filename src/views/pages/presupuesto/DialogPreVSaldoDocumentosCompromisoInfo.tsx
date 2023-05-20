@@ -61,9 +61,15 @@ const DialogPreVSaldoDocumentosCompromisoInfo = () => {
 
       const filterDocumentosCompromisos:IFilterDocumentosPreVSaldo={codigoPresupuesto:codigoPresupuesto,codigoSaldo:codigoSaldo}
       const responseAll= await ossmmasofApi.post<any>('/PreVDocCompromisos/GetAllByCodigoSaldo',filterDocumentosCompromisos);
-      console.log('Respuesta llamando al saldo IPreDetalleDocumentoGetDto+++++++++======>',responseAll.data.data)
-      dispatch(setPreDetalleDocumentoCompromisos(responseAll.data.data));
-      props.data=responseAll.data.data
+
+      if(responseAll.data.data !== null){
+        props.data=responseAll.data.data
+
+      }else{
+        props.data=[];
+        dispatch(setPreDetalleDocumentoCompromisos(props.data));
+      }
+
 
 
     },
@@ -131,9 +137,7 @@ const DialogPreVSaldoDocumentosCompromisoInfo = () => {
           <Button variant='contained' sx={{ mr: 1 }} onClick={() => handleSetShow(false)}>
             Cerrar
           </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-            cerrar
-          </Button>
+
         </DialogActions>
       </Dialog>
     </Card>

@@ -62,8 +62,13 @@ const DialogPreVSaldoDocumentosCausadoInfo = () => {
       const filter:IFilterDocumentosPreVSaldo={codigoPresupuesto:codigoPresupuesto,codigoSaldo:codigoSaldo}
       const responseAll= await ossmmasofApi.post<any>('/PreVDocCausado/GetAllByCodigoSaldo',filter);
       console.log('Respuesta llamando al saldo IPreDetalleDocumentoGetDto+++++++++======>',responseAll.data.data)
-      dispatch(setPreDetalleDocumentoCausado(responseAll.data.data));
-      props.data=responseAll.data.data
+      let data:any=[];
+      if(responseAll.data.data!=null){
+        data=responseAll.data.data
+      }
+
+      dispatch(setPreDetalleDocumentoCausado(data));
+      props.data=data
 
 
     },
@@ -131,9 +136,7 @@ const DialogPreVSaldoDocumentosCausadoInfo = () => {
           <Button variant='contained' sx={{ mr: 1 }} onClick={() => handleSetShow(false)}>
             Cerrar
           </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-            cerrar
-          </Button>
+
         </DialogActions>
       </Dialog>
     </Card>

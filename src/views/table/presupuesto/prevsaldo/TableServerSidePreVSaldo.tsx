@@ -17,16 +17,16 @@ import Icon from 'src/@core/components/icon'
 
 // ** Custom Components
 //import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+//import CustomAvatar from 'src/@core/components/mui/avatar'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 
 // ** Types Imports
-import { ThemeColor } from 'src/@core/layouts/types'
+//import { ThemeColor } from 'src/@core/layouts/types'
 
 //import { DataGridRowType } from 'src/@fake-db/types'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
+//import { getInitials } from 'src/@core/utils/get-initials'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Button, IconButton, Tooltip} from '@mui/material'
@@ -64,7 +64,7 @@ import DialogPreVSaldoInfo from 'src/views/pages/presupuesto/DialogPreVSaldoInfo
 type SortType = 'asc' | 'desc' | undefined | null
 
 // ** renders client column
-const renderClient = (params: GridRenderCellParams) => {
+/*const renderClient = (params: GridRenderCellParams) => {
   const { row } = params
   const stateNum = Math.floor(Math.random() * 6)
   const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
@@ -83,15 +83,13 @@ const renderClient = (params: GridRenderCellParams) => {
       </CustomAvatar>
     )
   }
-}
+}*/
 
 interface CellType {
   row: IPreVSaldo
 }
 
-const handleTotal= ()=>{
-  //console.log("Total")
-}
+
 
 const defaultColumns = [
   {
@@ -264,6 +262,7 @@ const TableServerSidePreVSaldo = () => {
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
       console.log('Respuesta llamando al saldo presupuesto+++++++++======>',responseAll)
+
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
       setLinkData(responseAll.data.linkData)

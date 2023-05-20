@@ -134,9 +134,7 @@ const DialogPreVSaldoDocumentosPagadoInfo = () => {
           <Button variant='contained' sx={{ mr: 1 }} onClick={() => handleSetShow(false)}>
             Cerrar
           </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-            cerrar
-          </Button>
+
         </DialogActions>
       </Dialog>
     </Card>

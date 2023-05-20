@@ -66,7 +66,7 @@ const DialogPreVSaldoPorPartidaInfo = () => {
         data = responseAll.data.data;
 
         const total = data.filter(word => word.DescripcionFinanciado == 'TOTAL:');
-        console.log(total[0])
+
         dispatch(setPreTotalSaldoPorPartida(total[0]));
       }
 
@@ -139,9 +139,7 @@ const DialogPreVSaldoPorPartidaInfo = () => {
           <Button variant='contained' sx={{ mr: 1 }} onClick={() => handleSetShow(false)}>
             Cerrar
           </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-            cerrar
-          </Button>
+
         </DialogActions>
       </Dialog>
     </Card>
