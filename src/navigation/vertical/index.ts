@@ -12,7 +12,7 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: 'Presupuesto',
           path: '/dashboards/presupuesto'
-        },
+        }/*,
         {
           title: 'CRM',
           path: '/dashboards/crm'
@@ -24,10 +24,11 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: 'eCommerce',
           path: '/dashboards/ecommerce'
-        }
+        }*/
       ]
     },
-    {
+
+    /*{
       sectionTitle: 'Apps & Pages'
     },
     {
@@ -44,7 +45,8 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Calendar',
       icon: 'mdi:calendar-blank-outline',
       path: '/apps/calendar'
-    },
+    },*/
+
     {
       title: 'Presupuesto',
       icon: 'mdi:file-document-outline',
@@ -73,7 +75,7 @@ const navigation = (): VerticalNavItemsType => {
       ]
     },
 
-    {
+    /*{
       title: 'Invoice',
       icon: 'mdi:file-document-outline',
       children: [
@@ -95,6 +97,7 @@ const navigation = (): VerticalNavItemsType => {
         }
       ]
     },
+
     {
       title: 'User',
       icon: 'mdi:account-outline',
@@ -130,6 +133,7 @@ const navigation = (): VerticalNavItemsType => {
         }
       ]
     },
+
     {
       title: 'Roles & Permissions',
       icon: 'mdi:shield-outline',
@@ -651,7 +655,7 @@ const navigation = (): VerticalNavItemsType => {
           path: 'https://demos.themeselection.com/marketplace/materio-mui-react-nextjs-admin-template/documentation'
         }
       ]
-    }
+    }*/
   ]
 }
 

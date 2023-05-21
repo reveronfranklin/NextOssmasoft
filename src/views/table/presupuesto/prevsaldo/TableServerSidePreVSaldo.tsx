@@ -94,6 +94,17 @@ interface CellType {
 const defaultColumns = [
   {
     flex: 0.125,
+    field: 'descripcionFinanciado',
+    minWidth: 110,
+    headerName: 'Financiado',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.descripcionFinanciado}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.125,
     minWidth: 15,
     headerName: 'Dpto',
     field: 'unidadEjecutora',
@@ -147,6 +158,7 @@ const defaultColumns = [
       </Typography>
     )
   },
+
   {
     flex: 0.055,
     minWidth: 110,
@@ -213,26 +225,7 @@ const TableServerSidePreVSaldo = () => {
             </IconButton>
           </Tooltip>
 
-          <OptionsMenu
-            iconProps={{ fontSize: 20 }}
-            iconButtonProps={{ size: 'small' }}
-            menuProps={{ sx: { '& .MuiMenuItem-root svg': { mr: 2 } } }}
-            options={[
-              {
-                text: 'Download',
-                icon: <Icon icon='mdi:download' fontSize={20} />
-              },
-              {
-                text: 'Edit',
-                href: `/apps/invoice/edit/${row.codigoSaldo}`,
-                icon: <Icon icon='mdi:pencil-outline' fontSize={20} />
-              },
-              {
-                text: 'Duplicate',
-                icon: <Icon icon='mdi:content-copy' fontSize={20} />
-              }
-            ]}
-          />
+
         </Box>
       )
     }
