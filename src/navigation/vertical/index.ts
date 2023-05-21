@@ -64,7 +64,7 @@ const navigation = (): VerticalNavItemsType => {
     },
 
     {
-      title: 'RH',
+      title: 'Nomina',
       icon: 'mdi:file-document-outline',
       children: [
         {

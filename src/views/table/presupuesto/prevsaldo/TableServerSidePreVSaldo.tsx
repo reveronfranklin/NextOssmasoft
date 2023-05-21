@@ -115,7 +115,7 @@ const defaultColumns = [
     )
   },
   {
-    flex: 0.065,
+    flex: 0.125,
     minWidth: 15,
     headerName: 'IcpConcat',
     field: 'codigoIcpConcat',
