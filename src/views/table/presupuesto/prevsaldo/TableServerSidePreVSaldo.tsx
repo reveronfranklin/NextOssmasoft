@@ -95,7 +95,7 @@ const defaultColumns = [
   {
     flex: 0.125,
     field: 'descripcionFinanciado',
-    minWidth: 110,
+    minWidth: 15,
     headerName: 'Financiado',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
