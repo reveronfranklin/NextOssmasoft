@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridColumns, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
@@ -88,7 +88,7 @@ const renderClient = (params: GridRenderCellParams) => {
   5: { title: 'applied', color: 'info' }
 }*/
 
-const columns: GridColumns = [
+const columns: any = [
 
   {
     flex: 0.175,
@@ -242,7 +242,7 @@ const TableServerSide = () => {
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
       setLinkData(responseAll.data.linkData)
-      
+
       if( responseAll.data.data.length>0){
         setMensaje('')
       }else{

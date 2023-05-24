@@ -32,9 +32,10 @@ import Icon from 'src/@core/components/icon'
 
 // ** Types
 import { DateType } from 'src/types/forms/reactDatepickerTypes'
-import { useDispatch } from 'react-redux'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
+
+//import { useDispatch } from 'react-redux'
+//import { useSelector } from 'react-redux'
+//import { RootState } from 'src/store'
 
 interface State {
   password: string
@@ -84,8 +85,8 @@ const FormValidationBasicPrePresupuesto = () => {
   })
 
  // ** States
- const dispatch = useDispatch();
- const {verPresupuestoActive,presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+ //const dispatch = useDispatch();
+ //const {verPresupuestoActive,presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
   // ** Hooks

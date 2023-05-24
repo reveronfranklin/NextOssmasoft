@@ -5,7 +5,7 @@ import { useEffect} from 'react'
 import Box from '@mui/material/Box'
 
 // ** Third Party Imports
-import { ReactDatePickerProps } from 'react-datepicker'
+//import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 //import CustomInput from '../pickers/PickersCustomInput'
@@ -27,7 +27,9 @@ import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { FilterByPresupuestoDto } from '../../../../interfaces/Presupuesto/i-filter-by-presupuesto-dto';
 
-const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+//const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+
+const FilterPresupuesto = () => {
 
 
   const dispatch = useDispatch();
@@ -145,7 +147,7 @@ const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePick
 
 
 
-  }, [dispatch]);
+  }, [dispatch, listpresupuestoDtoSeleccionado.codigoPresupuesto]);
 
   return (
     <Grid item xs={12}>

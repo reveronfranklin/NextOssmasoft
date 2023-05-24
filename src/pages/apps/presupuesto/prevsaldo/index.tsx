@@ -1,10 +1,11 @@
 // ** MUI Imports
 import { CardContent } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
-import { ReactDatePickerProps } from 'react-datepicker'
+
+//import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Components Imports
 import PageHeader from 'src/@core/components/page-header'
@@ -18,9 +19,11 @@ import FilterPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterP
 import TableServerSidePreVSaldo from 'src/views/table/presupuesto/prevsaldo/TableServerSidePreVSaldo'
 
 const DataGrid = () => {
-  const theme = useTheme()
-  const { direction } = theme
-  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
+  //const theme = useTheme()
+  //const { direction } = theme
+
+  //const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
 
   return (
@@ -43,7 +46,7 @@ const DataGrid = () => {
 
         <CardContent     title='Desde-Hasta Nomina' >
         <DatePickerWrapper>
-           <FilterPresupuesto popperPlacement={popperPlacement} />
+           <FilterPresupuesto />
         </DatePickerWrapper>
 
         </CardContent>

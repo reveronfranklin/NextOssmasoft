@@ -43,7 +43,6 @@ import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
 import { IFilterPresupuestoIpcPuc } from 'src/interfaces/Presupuesto/i-filter-presupuesto-ipc-puc'
-import OptionsMenu from 'src/@core/components/option-menu'
 import { IPreVSaldo } from 'src/interfaces/Presupuesto/i-pre-vsaldo'
 import { useDispatch } from 'react-redux'
 import { setPreVSAldoSeleccionado } from 'src/store/apps/presupuesto'
@@ -171,7 +170,7 @@ const defaultColumns = [
     )
   },
   {
-    flex: 0.055,
+    flex: 0.025,
     minWidth: 110,
     field: 'disponibleFormat',
     headerName: 'Disponible',

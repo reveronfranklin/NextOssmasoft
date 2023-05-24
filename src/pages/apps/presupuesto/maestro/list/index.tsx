@@ -17,9 +17,8 @@ import { fetchData } from 'src/store/apps/presupuesto/thunks';
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
 import DialogPrePresupuestoInfo from 'src/views/pages/presupuesto/Maestro/DialogPrePresupuestoInfo';
-import moment from 'moment';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
-import {getDate} from 'src/utlities/ge-date'
+
 
 interface CellType {
   row: IPresupuesto
@@ -56,15 +55,13 @@ const PresupuestoList = () => {
 
 
     {
-      valueFormatter: params =>
-      params?.value,
+
       field: 'fechaDesde',
       headerName:'Desde',
       width: 130
     },
     {
-      valueFormatter: params =>
-      params?.value,
+
       field: 'fechaHasta',
       headerName:'Hasta',
       width: 130

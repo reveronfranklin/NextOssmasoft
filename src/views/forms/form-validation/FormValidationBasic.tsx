@@ -95,8 +95,8 @@ const FormValidationBasic = () => {
     event.preventDefault()
   }
 
-  const onSubmit = (data) => {
-    console.log('submit',data)
+  const onSubmit = () => {
+    //console.log('submit',data)
     toast.success('Form Submitted')
   }
 

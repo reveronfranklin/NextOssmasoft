@@ -13,15 +13,7 @@ import CardStatisticsVerticalComponent from 'src/@core/components/card-statistic
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 
 // ** Demo Components Imports
-import EcommerceTable from 'src/views/dashboards/ecommerce/EcommerceTable'
-import EcommerceTotalProfit from 'src/views/dashboards/ecommerce/EcommerceTotalProfit'
-import EcommerceNewVisitors from 'src/views/dashboards/ecommerce/EcommerceNewVisitors'
-import EcommerceTotalRevenue from 'src/views/dashboards/ecommerce/EcommerceTotalRevenue'
-import EcommerceTransactions from 'src/views/dashboards/ecommerce/EcommerceTransactions'
-import EcommerceTotalSalesDonut from 'src/views/dashboards/ecommerce/EcommerceTotalSalesDonut'
-import EcommerceMeetingSchedule from 'src/views/dashboards/ecommerce/EcommerceMeetingSchedule'
-import EcommerceTotalSalesRadial from 'src/views/dashboards/ecommerce/EcommerceTotalSalesRadial'
-import EcommerceWebsiteStatistics from 'src/views/dashboards/ecommerce/EcommerceWebsiteStatistics'
+
 import PresupuestoCongratulations from 'src/views/dashboards/presupuesto/PresupuestoCongratulations'
 import { useEffect, useState } from 'react';
 
