@@ -15,6 +15,7 @@ const withTM = require('next-transpile-modules')([
 module.exports = withTM({
   trailingSlash: true,
   reactStrictMode: false,
+  useFileSystemPublicRoutes: false,
   experimental: {
     esmExternals: false
   },
