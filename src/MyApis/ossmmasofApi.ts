@@ -5,12 +5,19 @@ import axios from 'axios';
 // ** Config
 import authConfig from 'src/configs/auth'
 
-
+//Producction
 
 export const  ossmmasofApi = axios.create({
-  baseURL:'http://localhost:5000/api'
+  baseURL:'http://192.168.171.210:5000/api'
 
 });
+
+//Development
+
+/*export const  ossmmasofApi = axios.create({
+  baseURL:'http://localhost:5000/api'
+
+});/*
 
 ossmmasofApi.interceptors.request.use(
 
