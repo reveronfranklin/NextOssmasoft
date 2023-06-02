@@ -1,8 +1,8 @@
 // ** React Imports
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Axios Import
-import axios from 'axios'
+//import axios from 'axios'
 
 // ** Type Import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
