@@ -45,7 +45,7 @@ const AuthProvider = ({ children }: Props) => {
       const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
 
       if (storedToken) {
-        console.log('endpoint de refresh',{AccessToken:storedToken,RefreshToken:refreshToken})
+
         const refreshToke:IRefreshTokenDto={refreshToken:refreshToken,accessToken:storedToken};
         setLoading(true)
         await axios
@@ -56,7 +56,8 @@ const AuthProvider = ({ children }: Props) => {
           })
           .then(async response => {
             setLoading(false)
-            console.log('response.data.userData en useEffect',response.data.userData )
+
+
             setUser({ ...response.data.userData })
           })
           .catch(() => {
@@ -80,7 +81,7 @@ const AuthProvider = ({ children }: Props) => {
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    console.log('authConfig.loginEndpoint******',authConfig.loginEndpoint)
+
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
@@ -91,7 +92,9 @@ const AuthProvider = ({ children }: Props) => {
           ? window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
           : null
         const returnUrl = router.query.returnUrl
+
         console.log('response.data.userData en handler login',response.data )
+
         setUser({ ...response.data.userData })
         params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
 

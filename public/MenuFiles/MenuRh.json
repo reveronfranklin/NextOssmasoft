@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Nomina",
+    "icon": "mdi:file-document-outline",
+    "children": [
+      {
+        "title": "Historico",
+        "path": "/apps/rh/historico"
+      }
+    ]
+  }
+]

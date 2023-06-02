@@ -1,7 +1,7 @@
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
-/*
+
 const menuDeveloper:VerticalNavItemsType=[
   {
     title: 'Dashboards',
@@ -657,61 +657,9 @@ const menuDeveloper:VerticalNavItemsType=[
     ]
   }
 ]
-*/
-const defaultColumns: VerticalNavItemsType= [];
-
-const menuPre :VerticalNavItemsType= [
-  {
-    title: 'Dashboards',
-    icon: 'mdi:home-outline',
-    badgeContent: 'new',
-    badgeColor: 'error',
-    children: [
-      {
-        title: 'Presupuesto',
-        path: '/dashboards/presupuesto'
-      }
-    ]
-  },
-
-  {
-    title: 'Presupuesto',
-    icon: 'mdi:file-document-outline',
-    children: [
-      {
-        title: 'List',
-        path: '/apps/presupuesto/maestro/list'
-      },
-      {
-        title: 'Saldo Presupuesto',
-        path: '/apps/presupuesto/prevsaldo'
-      },
-
-    ]
-  },
-
-]
-
-const menuRh: VerticalNavItemsType= [
 
 
-  {
-    title: 'Nomina',
-    icon: 'mdi:file-document-outline',
-    children: [
-      {
-        title: 'Historico',
-        path: '/apps/rh/historico'
-      },
-
-    ]
-  },
-
-
-]
-
-
-const navigation = (): VerticalNavItemsType => {
+const navigationDeveloper = (): VerticalNavItemsType => {
 
 
 
@@ -720,10 +668,10 @@ const navigation = (): VerticalNavItemsType => {
 
   return (
 
-    [...defaultColumns,...menuPre,...menuRh]
+    menuDeveloper
 
 
   )
 }
 
-export default navigation
+export default navigationDeveloper

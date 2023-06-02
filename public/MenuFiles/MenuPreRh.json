@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Dashboards",
+    "icon": "mdi:home-outline",
+    "badgeContent": "new",
+    "badgeColor": "error",
+    "children": [
+      {
+        "title": "Presupuesto",
+        "path": "/dashboards/presupuesto"
+      }
+    ]
+  },
+
+  {
+    "title": "Presupuesto",
+    "icon": "mdi:file-document-outline",
+    "children": [
+      {
+        "title": "List",
+        "path": "/apps/presupuesto/maestro/list"
+      },
+      {
+        "title": "Saldo Presupuesto",
+        "path": "/apps/presupuesto/prevsaldo"
+      }
+
+    ]
+  },
+  {
+    "title": "Nomina",
+    "icon": "mdi:file-document-outline",
+    "children": [
+      {
+        "title": "Historico",
+        "path": "/apps/rh/historico"
+      }
+    ]
+  }
+
+]

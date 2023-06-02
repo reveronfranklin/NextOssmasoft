@@ -12,9 +12,17 @@ export type RegisterParams = {
   password: string
 }
 
+export type  UserRole={
+
+        role :string
+
+}
+
+
 export type UserDataType = {
   id: number
   role: string
+  roles:UserRole[]
   email: string
   fullName: string
   username: string

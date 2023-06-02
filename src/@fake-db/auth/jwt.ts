@@ -14,6 +14,7 @@ const users: UserDataType[] = [
   {
     id: 1,
     role: 'admin',
+    roles:[],
     password: 'admin',
     fullName: 'John Doe',
     username: 'johndoe',
@@ -22,6 +23,7 @@ const users: UserDataType[] = [
   {
     id: 2,
     role: 'client',
+    roles:[],
     password: 'client',
     fullName: 'Jane Doe',
     username: 'janedoe',
@@ -88,7 +90,8 @@ mock.onPost('/jwt/register').reply(request => {
         username,
         avatar: null,
         fullName: '',
-        role: 'admin'
+        role: 'admin',
+        roles:[]
       }
 
       users.push(userData)

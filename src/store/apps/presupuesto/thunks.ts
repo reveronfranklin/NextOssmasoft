@@ -76,6 +76,16 @@ export const fetchDataPreDenominacionPuc = async(dispatch:any,filter:IFilterPreV
 
 
 };
+export const fetchDataMenu = async() => {
+
+
+  const {data} = await ossmmasofApi.get<any>('/SisUsuarios/GetMenu');
+
+
+  return data
+
+
+};
 
 export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any,filter:FilterByPresupuestoDto) => {
 
