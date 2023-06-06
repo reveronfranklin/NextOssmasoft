@@ -6,17 +6,17 @@ import axios from 'axios';
 import authConfig from 'src/configs/auth'
 
 //Producction
-export const  ossmmasofApi = axios.create({
+/*export const  ossmmasofApi = axios.create({
   baseURL:'http://192.168.171.210:5000/api'
 
-});
+});*/
 
 //Development
-/*
+
 export const  ossmmasofApi = axios.create({
   baseURL:'http://localhost:5000/api'
 
-});*/
+});
 
 ossmmasofApi.interceptors.request.use(
 

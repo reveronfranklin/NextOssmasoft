@@ -18,10 +18,12 @@ import Layout from 'src/@core/layouts/Layout'
 // ** Component Import
 // Uncomment the below line (according to the layout type) when using server-side menu
  import ServerSideVerticalNavItems from './components/vertical/ServerSideNavItems'
- import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
+
+ // import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
 
 import VerticalAppBarContent from './components/vertical/AppBarContent'
-import HorizontalAppBarContent from './components/horizontal/AppBarContent'
+
+//import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
@@ -40,7 +42,8 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
 
   // ** Vars for server side navigation
   const { menuItems: verticalMenuItems } = ServerSideVerticalNavItems()
-  const { menuItems: horizontalMenuItems } = ServerSideHorizontalNavItems()
+
+  //const { menuItems: horizontalMenuItems } = ServerSideHorizontalNavItems()
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -83,19 +86,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
             )
           }
         }}
-        {...(settings.layout === 'horizontal' && {
-          horizontalLayoutProps: {
-            navMenu: {
-              navItems: horizontalMenuItems
 
-              // Uncomment the below line when using server-side menu in horizontal layout and comment the above line
-              // navItems: horizontalMenuItems
-            },
-            appBar: {
-              content: () => <HorizontalAppBarContent hidden={hidden} settings={settings} saveSettings={saveSettings} />
-            }
-          }
-        })}
       >
         {children}
 

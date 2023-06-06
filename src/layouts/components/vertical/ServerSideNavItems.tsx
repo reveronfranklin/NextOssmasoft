@@ -16,7 +16,7 @@ const ServerSideNavItems = () => {
 
     let menuArray: any[]=[]
     ossmmasofApi.get<any>('/SisUsuarios/GetMenu').then(response => {
-
+      console.log('busqueda GetMenu ServerSideNavItems',response.data)
       response.data.forEach(function(item:any) {
         //menuArray = JSON.parse(item.menu)
         menuArray=menuArray.concat(JSON.parse(item.menu));
