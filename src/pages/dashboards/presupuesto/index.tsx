@@ -99,6 +99,8 @@ const EcommerceDashboard = () => {
 
     if(seleccionado.length>0){
      dispatch(setPresupuesto(seleccionado[0]));
+     console.log("seleccionado[0].preDenominacionPucResumen",seleccionado[0])
+
      if(seleccionado[0].preDenominacionPuc!= null && seleccionado[0].preDenominacionPuc.length>0){
       //setDenominacionPuc(seleccionado[0].preDenominacionPuc);
       dispatch(setPreDenominacionPuc(seleccionado[0].preDenominacionPuc));
@@ -196,7 +198,7 @@ useEffect(() => {
               <CardHeader title='Resumen Denominacion PUC' />
 
               {
-                preDenominacionPucResumen.length<=0
+                !preDenominacionPucResumen
                 ? <h1>No data</h1>
                 :
                 <Box sx={{ height: 500 }}>

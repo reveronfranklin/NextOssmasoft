@@ -24,6 +24,7 @@ export interface IPreDenominacionPuc{
 
 export interface IFilterPreVDenominacionPuc{
   codigoPresupuesto:string;
+
 }
 export interface IPreDenominacionPucResumen{
   codigoPresupuesto:string;
