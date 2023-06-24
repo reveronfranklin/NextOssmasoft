@@ -28,7 +28,6 @@ ossmmasofApi.interceptors.request.use(
       // Configure this as per your backend requirements
       config.headers!['Authorization'] = 'Bearer ' + token;
     }
-    console.log('pasando por el interceptor para agregar el header')
 
       return config;
 
@@ -48,6 +47,8 @@ ossmmasofApi.interceptors.response.use(
     const originalConfig = err.config;
 
     if (originalConfig.url !== '/login' && err.response) {
+      console.log("pasando por el interceptor para recibir respuesta",err);
+
       // Access Token was expired
       if (err.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
@@ -62,12 +63,8 @@ ossmmasofApi.interceptors.response.use(
             }
           );
 
-          console.log('desde el interceptor de la repuesta para evaluar el token de las cookies',rs.data.data);
-          const access = rs.data.data[authConfig.storageTokenKeyName];
-          const refresh = rs.data.data[authConfig.onTokenExpiration];
+          console.log('desde el interceptor de la repuesta para evaluar el token de las cookies rs.data.data',rs.data.data);
 
-          localStorage.setItem(authConfig.storageTokenKeyName, access);
-          localStorage.setItem(authConfig.onTokenExpiration, refresh);
 
           return ossmmasofApi(originalConfig);
         } catch (_error) {

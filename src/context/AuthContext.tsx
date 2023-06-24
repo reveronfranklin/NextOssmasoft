@@ -58,10 +58,22 @@ const AuthProvider = ({ children }: Props) => {
             setLoading(false)
 
 
+            localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken);
+            localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken);
             setUser({ ...response.data.userData })
+
+
+            const returnUrl = router.query.returnUrl
+
+            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+
+            router.replace(redirectURL as string)
+
+
+
           })
           .catch(() => {
-            console.log('deslogueando')
+
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('accessToken')

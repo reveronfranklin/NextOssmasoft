@@ -1,6 +1,3 @@
-
-
-
 import { IPreDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-denominacion-puc';
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 
@@ -17,7 +14,6 @@ import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupues
 import { FilterByPresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-presupuesto-dto';
 import { IPreDetalleDocumentoGetDto } from 'src/interfaces/Presupuesto/i-pre-detalle-documento-get-dto';
 import { IFilterDocumentosPreVSaldo } from 'src/interfaces/Presupuesto/i-filter-documentos-pre-VSaldo';
-import { IFilterPreDenominacionDto, IPreDenominacionDto } from 'src/interfaces/Presupuesto/i-filter-pre-denominacion-dto';
 
 // ** Config
 //import authConfig from 'src/configs/auth'
@@ -27,25 +23,10 @@ import { IFilterPreDenominacionDto, IPreDenominacionDto } from 'src/interfaces/P
 export const fetchData = async(dispatch:any) => {
 
     try {
-      //const storedToken = localStorage.getItem(authConfig.storageTokenKeyName)
-
-
-    //const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll',{headers: {Authorization: 'Bearer ' + storedToken}});
 
     const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll');
 
-   /*  const filter:IFilterPreDenominacionDto ={
-      codigoPresupuesto: 17,
-      financiadoId: 92,
-      fechaDesde: "2023-01-01T00:00:00.000Z",
-      fechaHasta: "2023-03-31T00:00:00.000Z",
-      codigoGrupo: "4",
-      nivel:1
-    }
 
-    const responseAllPreDenominacion= await ossmmasofApi.post<IPreDenominacionDto[]>('/PreVSaldos/GetPreVDenominacionPuc',filter);
-    console.log('responseAllPreDenominacion',responseAllPreDenominacion)
-      */
     const {data,status} = responseAll;
 
 
