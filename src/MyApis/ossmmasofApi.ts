@@ -22,6 +22,7 @@ ossmmasofApi.interceptors.request.use(
 
   config => {
 
+
     const token = localStorage.getItem(authConfig.storageTokenKeyName);
 
     if (token) {
@@ -33,6 +34,8 @@ ossmmasofApi.interceptors.request.use(
 
   },
   error => {
+
+
     return Promise.reject(error);
   }
 );
@@ -46,7 +49,7 @@ ossmmasofApi.interceptors.response.use(
 
     const originalConfig = err.config;
 
-    if (originalConfig.url !== '/login' && err.response) {
+    if (originalConfig && originalConfig.url !== '/login' && err.response) {
       console.log("pasando por el interceptor para recibir respuesta",err);
 
       // Access Token was expired
@@ -54,6 +57,7 @@ ossmmasofApi.interceptors.response.use(
         originalConfig._retry = true;
 
         try {
+
           const rs = await axios.post(
             authConfig.refreshEndPoint,
             {
@@ -68,6 +72,7 @@ ossmmasofApi.interceptors.response.use(
 
           return ossmmasofApi(originalConfig);
         } catch (_error) {
+
           console.log('Session time out. Please login again.', {
             id: 'sessionTimeOut'
           });

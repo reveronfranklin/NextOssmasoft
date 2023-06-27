@@ -48,6 +48,7 @@ import { useDispatch } from 'react-redux'
 import { setPreVSAldoSeleccionado } from 'src/store/apps/presupuesto'
 import { setVerDetallePreVSaldoActive } from 'src/store/apps/presupuesto'
 import DialogPreVSaldoInfo from 'src/views/pages/presupuesto/DialogPreVSaldoInfo'
+import Spinner from 'src/@core/components/spinner';
 
 
 
@@ -196,6 +197,7 @@ const TableServerSidePreVSaldo = () => {
   const [pageSize, setPageSize] = useState<number>(100)
   const [rows, setRows] = useState<IPreVSaldo[]>([])
   const [mensaje, setMensaje] = useState<string>('')
+  const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch();
 
@@ -246,15 +248,15 @@ const TableServerSidePreVSaldo = () => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
-      setMensaje('...cargando')
-
+      setMensaje('')
+      setLoading(true);
       const filterPresupuesto:IFilterPresupuestoIpcPuc={codigoPresupuesto,codigoIPC,codigoPuc}
 
 
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
       console.log('Respuesta llamando al saldo presupuesto+++++++++======>',responseAll)
-
+      setLoading(false);
       setTotal(responseAll.data.data.length);
       setRows(loadServerRows(page, responseAll.data.data))
       setLinkData(responseAll.data.linkData)
@@ -262,7 +264,7 @@ const TableServerSidePreVSaldo = () => {
       if( responseAll.data.data.length>0){
         setMensaje('')
       }else{
-        setMensaje('No Data')
+        setMensaje('')
       }
 
     },
@@ -300,7 +302,7 @@ const TableServerSidePreVSaldo = () => {
   return (
     <Card>
       {
-        mensaje.length===0 ?
+         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
           <Button variant='contained' href={linkData} size='large' >
             Descargar Todo {linkData}
@@ -308,7 +310,9 @@ const TableServerSidePreVSaldo = () => {
         </Box>
         : <Typography  m={2} pt={3}>{mensaje}</Typography>
       }
-
+ { loading  ? (
+       <Spinner sx={{ height: '100%' }} />
+      ) : (
 
       <DataGrid
 
@@ -342,6 +346,7 @@ const TableServerSidePreVSaldo = () => {
           }
         }}
       />
+      )}
       <DialogPreVSaldoInfo/>
 
     </Card>

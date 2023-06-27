@@ -21,6 +21,7 @@ import { fetchDataConceptos, fetchDataPersonas, fetchDataTipoNomina } from 'src/
 
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas';
+import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 
 const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -45,10 +46,17 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
     console.log('dateHasta',dateHasta)
   }
   const handleTiposNomina= (e: any,value:any)=>{
-
+    console.log('handleTiposNomina',value)
     if(value!=null){
       dispatch(setTiposNominaSeleccionado(value));
       buscarConceptos(value.codigoTipoNomina);
+    }else{
+      const tipoNomina: IListTipoNominaDto={
+        codigoTipoNomina: 0,
+        descripcion :  ''
+      }
+      dispatch(setTiposNominaSeleccionado(tipoNomina));
+      buscarConceptos(tipoNomina.codigoTipoNomina);
     }
 
 

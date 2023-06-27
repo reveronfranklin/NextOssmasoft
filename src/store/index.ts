@@ -10,8 +10,10 @@ import calendar from 'src/store/apps/calendar'
 import permissions from 'src/store/apps/permissions'
 import { presupuestoSlice } from './apps/presupuesto'
 import { nominaSlice } from './apps/rh'
+import {ossmmasoftSlice} from './apps/ossmasoft';
 
-//import { nominaSlice } from './apps/rh'
+
+
 
 
 export const store = configureStore({
@@ -24,6 +26,7 @@ export const store = configureStore({
     permissions,
     presupuesto:presupuestoSlice.reducer,
     nomina:nominaSlice.reducer,
+    ossmmasofGlobal:ossmmasoftSlice.reducer
 
     //nominas:nominaSlice.reducer,
   },

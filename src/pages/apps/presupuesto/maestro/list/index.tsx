@@ -1,5 +1,5 @@
 import { Box, Card, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Icon Imports
@@ -18,6 +18,7 @@ import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
 import DialogPrePresupuestoInfo from 'src/views/pages/presupuesto/Maestro/DialogPrePresupuestoInfo';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
+import Spinner from 'src/@core/components/spinner';
 
 
 interface CellType {
@@ -102,11 +103,14 @@ const PresupuestoList = () => {
 
   // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
   const {presupuestos=[]} = useSelector((state: RootState) => state.presupuesto)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
 
     const getPresupuestos = async () => {
+      setLoading(true);
       await fetchData(dispatch);
+      setLoading(false);
     };
      getPresupuestos();
 
@@ -124,8 +128,8 @@ const PresupuestoList = () => {
 
 
       {
-        presupuestos.length<=0
-        ? <h1>Cargando....</h1>
+        loading
+        ?   <Spinner sx={{ height: '100%' }} />
         :
          <Box sx={{ height: 500 }}>
           <DataGrid
