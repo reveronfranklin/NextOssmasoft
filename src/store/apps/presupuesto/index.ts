@@ -9,6 +9,7 @@ import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupues
 import { IPreVSaldo } from 'src/interfaces/Presupuesto/i-pre-vsaldo';
 import { IPreDetalleDocumentoGetDto } from '../../../interfaces/Presupuesto/i-pre-detalle-documento-get-dto';
 import { IPreSaldoPorPartidaGetDto } from 'src/interfaces/Presupuesto/i-pre-saldo-por-partida-get-dto';
+import { IPreFinanciadoDto } from 'src/interfaces/Presupuesto/i-list-pre-financiado-dto';
 
 
 
@@ -23,6 +24,7 @@ export const presupuestoSlice = createSlice({
     presupuestos: [] as IPresupuesto[],
     listpresupuestoDto: [] as IListPresupuestoDto[],
     listpresupuestoDtoSeleccionado: {} as IListPresupuestoDto,
+    preFinanciadoDtoSeleccionado:{} as IPreFinanciadoDto,
     preDenominacionPuc:[] as IPreDenominacionPuc[],
     preDenominacionPucResumen:[] as IPreDenominacionPucResumen[],
     preMtrUnidadEjecutora: [] as IListPreMtrUnidadEjecutora[],
@@ -55,10 +57,12 @@ export const presupuestoSlice = createSlice({
       state.isLoading=true;
     },
     setPresupuestos:(state,action)=>{
-      state.isLoading=false;
 
       state.presupuestos=action.payload.presupuestos;
+
       state.presupuestoSeleccionado=action.payload.presupuestos[0];
+
+
     },
     setPreDenominacionPuc:(state,action)=>{
       state.isLoading=false;
@@ -71,7 +75,7 @@ export const presupuestoSlice = createSlice({
       state.preDenominacionPucResumen=action.payload;
     },
     setPresupuesto:(state,action)=>{
-      console.log('setPresupuesto payload',action.payload.data)
+
       state.presupuestoSeleccionado=action.payload;
     },
     setVerPresupuestoActive:(state,action)=>{
@@ -101,6 +105,11 @@ export const presupuestoSlice = createSlice({
 
       state.listpresupuestoDtoSeleccionado=action.payload;
     },
+    setPreFinanciadoDtoSeleccionado:(state,action)=>{
+
+      state.preFinanciadoDtoSeleccionado=action.payload;
+    },
+
     setFilterPresupuestoIpcPuc:(state,action)=>{
 
       state.filterPresupuestoIpcPuc=action.payload;
@@ -174,6 +183,7 @@ export const {startLoadingPresupuesto,
               setFilterPresupuestoIpcPuc,
               setListPresupuestoDto,
               setListpresupuestoDtoSeleccionado,
+              setPreFinanciadoDtoSeleccionado,
               setPreMtrUnidadEjecutoraSeleccionado,
               setPreMtrDenominacionPucSeleccionado,
               setPreVSAldoSeleccionado,

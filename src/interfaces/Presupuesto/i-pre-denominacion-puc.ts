@@ -46,5 +46,7 @@ export interface IPreDenominacionPucResumen{
   totalPresupuestado:number;
   presupuestadoString:string;
   disponibilidadString:string;
+  modificadoString:string;
+  vigenteString:string;
   codigoPUC:string;
 }

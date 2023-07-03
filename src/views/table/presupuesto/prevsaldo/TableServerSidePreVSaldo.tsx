@@ -196,6 +196,7 @@ const TableServerSidePreVSaldo = () => {
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
   const [rows, setRows] = useState<IPreVSaldo[]>([])
+  const [allRows, setAllRows] = useState<IPreVSaldo[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -233,10 +234,25 @@ const TableServerSidePreVSaldo = () => {
   ]
 
   function loadServerRows(currentPage: number, data: IPreVSaldo[]) {
+
+    console.log('currentPage',currentPage);
+
+    //if(currentPage<=0) currentPage=1;
+
+    console.log('data en loadServerRows(',data.length);
+    console.log('currentPage',currentPage);
+    console.log('pageSize',pageSize);
+
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
 
-
+  const handlePageChange = (newPage:number) => {
+    console.log('handlePageChange',newPage)
+    setPage(newPage)
+    setRows(loadServerRows(newPage, allRows))
+    console.log('rows',rows)
+    console.log('allRows',allRows)
+  }
   const handleView=  (row : IPreVSaldo)=>{
     dispatch(setPreVSAldoSeleccionado(row))
     dispatch(setVerDetallePreVSaldoActive(true))
@@ -255,12 +271,15 @@ const TableServerSidePreVSaldo = () => {
 
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
-      console.log('Respuesta llamando al saldo presupuesto+++++++++======>',responseAll)
-      setLoading(false);
+      console.log('Respuesta llamando al saldo presupuesto+++++++++======>',responseAll.data.data)
+
       setTotal(responseAll.data.data.length);
-      setRows(loadServerRows(page, responseAll.data.data))
+      await setAllRows(responseAll.data.data);
+      await setRows(loadServerRows(page, responseAll.data.data))
+      console.log('Respuesta llamando al saldo presupuesto allRows+++++++++======>',allRows)
       setLinkData(responseAll.data.linkData)
       dispatch(setVerDetallePreVSaldoActive(false))
+      setLoading(false);
       if( responseAll.data.data.length>0){
         setMensaje('')
       }else{
@@ -269,7 +288,7 @@ const TableServerSidePreVSaldo = () => {
 
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [page, pageSize]
+    []
   )
 
 
@@ -331,7 +350,9 @@ const TableServerSidePreVSaldo = () => {
         paginationMode='server'
         onSortModelChange={handleSortModel}
         rowsPerPageOptions={[7, 10, 25, 50]}
-        onPageChange={newPage => setPage(newPage)}
+        onPageChange={handlePageChange}
+
+        //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
         componentsProps={{

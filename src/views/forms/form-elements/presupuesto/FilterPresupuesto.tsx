@@ -67,7 +67,7 @@ const FilterPresupuesto = () => {
       const presupuesto:IListPresupuestoDto ={
         codigoPresupuesto:0,
         descripcion:'',
-
+        preFinanciadoDto:[]
       };
 
 

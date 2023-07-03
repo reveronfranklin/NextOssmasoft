@@ -44,7 +44,7 @@ const PresupuestoCongratulations = () => {
             <Typography variant='body2'>Check your new raising badge in your profile.</Typography>
           </Grid>
           <StyledGrid item xs={12} sm={6}>
-            <Img alt='Congratulations Chacao' src='/images/cards/illustration-john-2.png' />
+            <Img alt='Felicitaciones Chacao' src='/images/cards/illustration-john-2.png' />
           </StyledGrid>
         </Grid>
       </CardContent>

@@ -1,5 +1,5 @@
 import { IPreDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-denominacion-puc';
-import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
+
 
 //import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
@@ -24,12 +24,14 @@ export const fetchData = async(dispatch:any) => {
 
     try {
 
-    const responseAll= await ossmmasofApi.get<IPresupuesto[]>('/PrePresupuesto/GetAll');
 
 
-    const {data,status} = responseAll;
+    const responseAll= await ossmmasofApi.get<any>('/PrePresupuesto/GetAll');
 
 
+    const {status} = responseAll;
+
+    const data = responseAll.data.data;
 
       if(data){
 
@@ -54,7 +56,42 @@ export const fetchData = async(dispatch:any) => {
 
 
 };
+export const fetchDataPost = async(dispatch:any,filter:any) => {
 
+  try {
+
+    console.log('fetchDataPost-filter-recibido',filter);
+
+    const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/GetAllFilter',filter);
+    console.log('fetchDataPost-responseAll',responseAll);
+
+    const {status} = responseAll;
+
+    const data = responseAll.data.data;
+
+    if(data){
+
+
+      dispatch(setPresupuestos({presupuestos:data}));
+
+      dispatch(setPresupuesto(data[0]));
+
+      dispatch(setPreDenominacionPuc(data[0].preDenominacionPuc))
+      dispatch(setPreDenominacionPucResumen(data[0].preDenominacionPucResumen))
+
+
+
+    }
+
+    return {data,status}
+  } catch (error) {
+    console.log(error)
+  }
+
+
+
+
+};
 export const fetchDataPreDenominacionPuc = async(dispatch:any,filter:IFilterPreVDenominacionPuc) => {
 
 
@@ -97,7 +134,7 @@ export const fetchDataPreMtrDenominacionPuc= async(dispatch:any,filter:FilterByP
 
 
   const responseAll= await ossmmasofApi.post<IListPreMtrDenominacionPuc[]>('/PreMtrDenominacionPuc/GetByPresupuesto',filter);
-  console.log('responseAll fetchDataPreMtrDenominacionPuc',responseAll)
+
   const {data} = responseAll;
   dispatch(setPreMtrDenominacionPuc(data));
 
@@ -110,7 +147,7 @@ export const fetchDataPreVDocCompromisos = async(dispatch:any,filter:IFilterDocu
 
 
   const responseAll= await ossmmasofApi.post<IPreDetalleDocumentoGetDto[]>('/PreVDocCompromisos/GetAllByCodigoSaldo',filter);
-  console.log('responseAll fetchDataPreVDocCompromisos',responseAll)
+
   const {data} = responseAll;
 
   return data;
@@ -123,7 +160,7 @@ export const fetchDataListPresupuestoDto= async(dispatch:any) => {
 
 
   const responseAll= await ossmmasofApi.get<IListPresupuestoDto[]>('/PrePresupuesto/GetListPresupuesto');
-  console.log('responseAll fetchDataListPresupuestoDto',responseAll)
+
   const {data} = responseAll;
   dispatch(setListPresupuestoDto(data));
 

@@ -1,8 +1,9 @@
 import { IPreDenominacionPuc ,IPreDenominacionPucResumen} from "./i-pre-denominacion-puc";
 import { IFechaDto } from '../fecha-dto';
+import { IPreFinanciadoDto } from "./i-list-pre-financiado-dto";
 
 export interface IPresupuesto{
-    codigoPresupuesto:string;
+    codigoPresupuesto:number;
     denominacion:string
     descripcion:string;
     ano:number;
@@ -22,10 +23,13 @@ export interface IPresupuesto{
 
     preDenominacionPuc:IPreDenominacionPuc[];
     preDenominacionPucResumen:IPreDenominacionPucResumen[];
+    preFinanciadoDto:IPreFinanciadoDto[];
     totalPresupuesto:number;
     totalDisponible:number;
     totalPresupuestoString:string;
     totalDisponibleString:string;
+    totalModificacionString:string
+    totalVigenteString:string
 }
 
 

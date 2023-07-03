@@ -54,6 +54,8 @@ interface FilterHistorico {
     codigoTipoNomina:number
     codigoPersona:number
     codigoConcepto:string
+    page:number,
+    pageSize:number
 
 }
 
@@ -214,6 +216,7 @@ const TableServerSide = () => {
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
   const [rows, setRows] = useState<IHistoricoMovimiento[]>([])
+  const [allRows, setAllRows] = useState<IHistoricoMovimiento[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -224,7 +227,12 @@ const TableServerSide = () => {
   const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado={} as IListConceptosDto,personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+    //if(currentPage<=0) currentPage=1;
+    console.log('data en loadServerRows data',data);
+    console.log('currentPage',currentPage);
+    console.log('pageSize',pageSize);
+
+    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   }
 
 
@@ -235,14 +243,18 @@ const TableServerSide = () => {
 
       setMensaje('')
       setLoading(true);
-      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona}
-
+      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize}
 
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
+      setAllRows(responseAll.data.data);
+      console.log('Respuesta llamando al historico responseAll.data.data+++++++++======>',responseAll.data.data)
 
-      console.log('Respuesta llamando al historico+++++++++======>',responseAll)
       setTotal(responseAll.data.data.length);
+
+      console.log('Respuesta llamando al historico allRows+++++++++======>',allRows)
+
       setRows(loadServerRows(page, responseAll.data.data))
+      console.log('Respuesta llamando al historico rows+++++++++======>',rows)
       setLinkData(responseAll.data.linkData)
       setLoading(false);
 
@@ -254,7 +266,7 @@ const TableServerSide = () => {
 
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [page, pageSize]
+    []
   )
 
 
@@ -279,6 +291,14 @@ const TableServerSide = () => {
   const handleSearch = (value: string) => {
     setSearchValue(value)
     fetchTableData(sort, value, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
+  }
+
+  const handlePageChange = (newPage:number) => {
+    console.log('handlePageChange',newPage)
+    setPage(newPage)
+    setRows(loadServerRows(newPage, allRows))
+    console.log('rows',rows)
+    console.log('allRows',allRows)
   }
 
   return (
@@ -307,10 +327,13 @@ const TableServerSide = () => {
         checkboxSelection
         pageSize={pageSize}
         sortingMode='server'
+
         paginationMode='server'
         onSortModelChange={handleSortModel}
         rowsPerPageOptions={[7, 10, 25, 50]}
-        onPageChange={newPage => setPage(newPage)}
+        onPageChange={handlePageChange}
+
+        //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
         componentsProps={{

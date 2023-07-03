@@ -14,7 +14,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
-import CardContent from '@mui/material/CardContent'
+//import CardContent from '@mui/material/CardContent'
 import Fade, { FadeProps } from '@mui/material/Fade'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
@@ -91,7 +91,7 @@ const DialogPreVSaldoDocumentosCausadoInfo = () => {
 
   return (
     <Card>
-      <CardContent sx={{ textAlign: 'center', '& svg': { mb: 2 } }}>
+      {/* <CardContent sx={{ textAlign: 'center', '& svg': { mb: 2 } }}>
         <Icon icon='mdi:account-outline' fontSize='2rem' />
         <Typography variant='h6' sx={{ mb: 4 }}>
           Edit User Info
@@ -100,7 +100,7 @@ const DialogPreVSaldoDocumentosCausadoInfo = () => {
         <Button variant='contained' onClick={() => handleSetShow(true)}>
           Show
         </Button>
-      </CardContent>
+      </CardContent> */}
       <Dialog
         fullWidth
         open={verPreDetalleDocumentoCausadoActive}
