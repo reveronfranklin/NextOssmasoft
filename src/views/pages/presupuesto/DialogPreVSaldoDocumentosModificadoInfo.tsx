@@ -62,6 +62,7 @@ const DialogPreVSaldoDocumentosModificadoInfo = () => {
 
       const filter:IFilterDocumentosPreVSaldo={codigoPresupuesto:codigoPresupuesto,codigoSaldo:codigoSaldo}
       const responseAll= await ossmmasofApi.post<any>('/PreVDocModificado/GetAllByCodigoSaldo',filter);
+      console.log('responseAll en DialogPreVSaldoDocumentosModificadoInfo***',responseAll)
       let data:any=[];
       if(responseAll.data.data!=null){
         data=responseAll.data.data

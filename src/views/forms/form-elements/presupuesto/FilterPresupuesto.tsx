@@ -163,6 +163,7 @@ const FilterPresupuesto = () => {
                 <Autocomplete
                     sx={{ width: 350 }}
                     options={listpresupuestoDto}
+                    isOptionEqualToValue={(option, value) => option.codigoPresupuesto === value.codigoPresupuesto}
                     id='autocomplete-tipo-nomina'
                     getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
                     onChange={handlePresupuestos}

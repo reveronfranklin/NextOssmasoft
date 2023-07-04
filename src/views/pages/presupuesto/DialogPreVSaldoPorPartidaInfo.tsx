@@ -62,6 +62,8 @@ const DialogPreVSaldoPorPartidaInfo = () => {
       const filter:IFilterPresupuestoPucConcat={codigoPresupuesto:codigoPresupuesto,CodigoPucConcat:codigoPucConcat}
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoPucConcat',filter);
       let data : any[]=[];
+
+      console.log('DialogPreVSaldoPorPartidaInfo',responseAll)
       if (responseAll.data.data && responseAll.data.data.length>0){
         data = responseAll.data.data;
 
@@ -125,7 +127,7 @@ const DialogPreVSaldoPorPartidaInfo = () => {
           <Box sx={{ mb: 8, textAlign: 'center' }}>
             <Typography variant='h4' sx={{ mb: 3 }}>
 
-                Saldos Por Partida
+                Saldos Por Partida.
             </Typography>
             <Typography variant='h5' sx={{ mb: 3 }}>
 
