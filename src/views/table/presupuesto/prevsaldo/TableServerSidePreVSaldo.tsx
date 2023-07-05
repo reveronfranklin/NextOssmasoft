@@ -235,23 +235,18 @@ const TableServerSidePreVSaldo = () => {
 
   function loadServerRows(currentPage: number, data: IPreVSaldo[]) {
 
-    console.log('currentPage',currentPage);
 
     //if(currentPage<=0) currentPage=1;
 
-    console.log('data en loadServerRows(',data.length);
-    console.log('currentPage',currentPage);
-    console.log('pageSize',pageSize);
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
 
   const handlePageChange = (newPage:number) => {
-    console.log('handlePageChange',newPage)
+
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
-    console.log('rows',rows)
-    console.log('allRows',allRows)
+
   }
   const handleView=  (row : IPreVSaldo)=>{
     dispatch(setPreVSAldoSeleccionado(row))
@@ -271,12 +266,11 @@ const TableServerSidePreVSaldo = () => {
 
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
-      console.log('Respuesta llamando al saldo presupuesto+++++++++======>',responseAll.data.data)
 
       setTotal(responseAll.data.data.length);
       await setAllRows(responseAll.data.data);
       await setRows(loadServerRows(page, responseAll.data.data))
-      console.log('Respuesta llamando al saldo presupuesto allRows+++++++++======>',allRows)
+
       setLinkData(responseAll.data.linkData)
       dispatch(setVerDetallePreVSaldoActive(false))
       setLoading(false);
@@ -345,16 +339,17 @@ const TableServerSidePreVSaldo = () => {
         rowCount={total}
         columns={columns}
 
-        pageSize={pageSize}
+
         sortingMode='server'
         paginationMode='server'
         onSortModelChange={handleSortModel}
-        rowsPerPageOptions={[7, 10, 25, 50]}
+
         onPageChange={handlePageChange}
 
         //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+
         componentsProps={{
           baseButton: {
             variant: 'outlined'

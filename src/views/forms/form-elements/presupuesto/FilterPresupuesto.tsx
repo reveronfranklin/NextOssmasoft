@@ -174,6 +174,7 @@ const FilterPresupuesto = () => {
                 <Autocomplete
                     sx={{ width: 350 }}
                     options={preMtrUnidadEjecutora}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     id='autocomplete-concepto'
                     getOptionLabel={option => option.dercripcion  + '-' + option.id }
                     onChange={handlerUnidadEjecutora}
@@ -187,6 +188,7 @@ const FilterPresupuesto = () => {
 
                       options={preMtrDenominacionPuc  }
                       id='autocomplete-preMtrDenominacionPuc'
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
                       getOptionLabel={option => option.dercripcion + '-' + option.id + '' + option.codigoPuc}
                       onChange={handlerDenominacionPuc}
                       renderInput={params => <TextField {...params} label='Puc' />}

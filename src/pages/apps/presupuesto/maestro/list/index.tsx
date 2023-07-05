@@ -10,15 +10,16 @@ import { useTheme } from '@mui/material/styles'
 
 //import { usePresupuesto } from 'src/hooks/usePresupuesto';
 
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store'
+
 import { useDispatch } from 'react-redux';
-import { fetchData } from 'src/store/apps/presupuesto/thunks';
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
 import DialogPrePresupuestoInfo from 'src/views/pages/presupuesto/Maestro/DialogPrePresupuestoInfo';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store';
 
 
 interface CellType {
@@ -102,21 +103,28 @@ const PresupuestoList = () => {
   const dispatch = useDispatch();
 
   // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
-  const {presupuestos=[]} = useSelector((state: RootState) => state.presupuesto)
+  const {verPresupuestoActive=false} = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false);
+
+  const [presupuestos, setPresupuestos] = useState([]);
 
   useEffect(() => {
 
     const getPresupuestos = async () => {
       setLoading(true);
-      await fetchData(dispatch);
+
+      const responseAll= await ossmmasofApi.get<any>('/PrePresupuesto/GetList');
+      const data = responseAll.data;
+
+      setPresupuestos(data);
+
       setLoading(false);
     };
      getPresupuestos();
 
 
 
-  }, [dispatch]);
+  }, [verPresupuestoActive]);
 
 
 

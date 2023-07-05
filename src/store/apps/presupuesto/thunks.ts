@@ -56,14 +56,49 @@ export const fetchData = async(dispatch:any) => {
 
 
 };
+export const fetchListPresupuesto = async(dispatch:any) => {
+
+  try {
+
+
+
+  const responseAll= await ossmmasofApi.get<any>('/PrePresupuesto/GetList');
+
+
+  const {status} = responseAll;
+
+  const data = responseAll.data.data;
+
+    if(data){
+
+
+      dispatch(setPresupuestos({presupuestos:data}));
+
+      dispatch(setPresupuesto(data[0]));
+
+      dispatch(setPreDenominacionPuc(data[0].preDenominacionPuc))
+      dispatch(setPreDenominacionPucResumen(data[0].preDenominacionPucResumen))
+
+
+
+    }
+
+    return {data,status}
+  } catch (error) {
+    console.log(error)
+  }
+
+
+
+
+};
+
 export const fetchDataPost = async(dispatch:any,filter:any) => {
 
   try {
 
-    console.log('fetchDataPost-filter-recibido',filter);
 
     const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/GetAllFilter',filter);
-    console.log('fetchDataPost-responseAll',responseAll);
 
     const {status} = responseAll;
 

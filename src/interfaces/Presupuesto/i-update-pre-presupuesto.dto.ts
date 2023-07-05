@@ -2,6 +2,7 @@
 
 export interface IUpdatePrePresupuesto{
 
+  codigoEmpresa:number
   codigoPresupuesto:number;
   denominacion :string;
   descripcion :string;

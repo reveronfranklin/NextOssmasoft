@@ -47,14 +47,18 @@ const FilterPresupuestoFinanciado = () => {
 
   const handlePresupuestos= async (e: any,value:any)=>{
 
-    console.log(value)
 
     if(value){
 
 
 
       dispatch(setListpresupuestoDtoSeleccionado(value));
+      const seleccionado:IPreFinanciadoDto ={
+        financiadoId:0,
+        descripcionFinanciado:'',
 
+      };
+      dispatch(setPreFinanciadoDtoSeleccionado(seleccionado));
 
 
 
@@ -67,15 +71,13 @@ const FilterPresupuestoFinanciado = () => {
 
       };
 
-
       dispatch(setListpresupuestoDtoSeleccionado(presupuesto));
     }
 
 
   }
   const handlerFinanciado =async (e: any,value:any)=>{
-    console.log('handlerFinanciado',value)
-    if(value){
+   if(value){
       //const seleccionado = listpresupuestoDtoSeleccionado.preFinanciadoDto.filter( pre => pre.financiadoId==e.target.value);
       dispatch(setPreFinanciadoDtoSeleccionado(value));
 
@@ -124,6 +126,7 @@ const FilterPresupuestoFinanciado = () => {
                     sx={{ width: 350 }}
                     options={listpresupuestoDto}
                     id='autocomplete-MaestroPresupuesto'
+                    isOptionEqualToValue={(option, value) => option.codigoPresupuesto=== value.codigoPresupuesto}
                     getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
                     onChange={handlePresupuestos}
                     renderInput={params => <TextField {...params} label='Presupuesto' />}
@@ -134,6 +137,7 @@ const FilterPresupuestoFinanciado = () => {
                     sx={{ width: 350 }}
                     options={listpresupuestoDtoSeleccionado.preFinanciadoDto}
                     id='autocomplete-FuenteFinanciado'
+                    isOptionEqualToValue={(option, value) => option.financiadoId=== value.financiadoId}
                     getOptionLabel={option => option.descripcionFinanciado  + '-' + option.financiadoId }
                     onChange={handlerFinanciado}
                     renderInput={params => <TextField {...params} label='Financiado' />}

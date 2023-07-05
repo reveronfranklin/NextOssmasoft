@@ -64,6 +64,14 @@ export const presupuestoSlice = createSlice({
 
 
     },
+    setOnlyPresupuestos:(state,action)=>{
+
+      state.presupuestos=action.payload.presupuestos;
+
+
+
+
+    },
     setPreDenominacionPuc:(state,action)=>{
       state.isLoading=false;
 
@@ -200,4 +208,5 @@ export const {startLoadingPresupuesto,
               setVerPreDetalleDocumentoModificadoActive,
               setPreDetalleSaldoPorPartida,
               setVerPreDetalleSaldoPorPartidaActive,
-              setPreTotalSaldoPorPartida} = presupuestoSlice.actions;
+              setPreTotalSaldoPorPartida,
+              setOnlyPresupuestos} = presupuestoSlice.actions;
