@@ -18,3 +18,28 @@ export const fechaToFechaObj = (hasta:Date)=>{
   return fechaObj;
 
 }
+
+
+
+export function padTo2Digits(num:any) {
+  return num.toString().padStart(2, '0');
+}
+
+export const getDefaultFechaObj=()=>{
+
+const date = new Date();
+
+const year = date.getFullYear().toString();
+const month = padTo2Digits(date.getMonth() + 1);
+const day = padTo2Digits(date.getDate());
+const defaultDate :IFechaDto={
+  year:year,
+  month:month,
+  day:day
+ }
+
+ return defaultDate
+
+
+}
+

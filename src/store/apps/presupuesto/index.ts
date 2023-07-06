@@ -47,7 +47,7 @@ export const presupuestoSlice = createSlice({
     preDetalleSaldoPorPartida:[] as IPreSaldoPorPartidaGetDto[],
     verPreDetalleSaldoPorPartidaActive:false,
     preTotalSaldoPorPartida:{} as IPreSaldoPorPartidaGetDto,
-
+    operacionCrudPresupuesto:0 as number,
 
     isLoading:false
   },
@@ -55,6 +55,9 @@ export const presupuestoSlice = createSlice({
 
     startLoadingPresupuesto:(state)=>{
       state.isLoading=true;
+    },
+    setOperacionCrudPresupuesto(state,action){
+      state.operacionCrudPresupuesto=action.payload
     },
     setPresupuestos:(state,action)=>{
 
@@ -209,4 +212,5 @@ export const {startLoadingPresupuesto,
               setPreDetalleSaldoPorPartida,
               setVerPreDetalleSaldoPorPartidaActive,
               setPreTotalSaldoPorPartida,
-              setOnlyPresupuestos} = presupuestoSlice.actions;
+              setOnlyPresupuestos,
+              setOperacionCrudPresupuesto} = presupuestoSlice.actions;

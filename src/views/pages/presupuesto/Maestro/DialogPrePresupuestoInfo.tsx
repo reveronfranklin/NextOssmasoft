@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions'
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
 
-import { setVerPresupuestoActive } from 'src/store/apps/presupuesto';
+import {  setVerPresupuestoActive } from 'src/store/apps/presupuesto';
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 
@@ -31,6 +31,7 @@ import { ReactDatePickerProps } from 'react-datepicker'
 
 import FormPresupuestoUpdateAsync from 'src/views/forms/presupuesto/maestro/FormPresupuestoUpdateAsync'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import FormPresupuestoCreateAsync from 'src/views/forms/presupuesto/maestro/FormPresupuestoCreateAsync'
 
 
 // ** Custom Component Imports
@@ -42,12 +43,14 @@ const Transition = forwardRef(function Transition(
   return <Fade ref={ref} {...props} />
 })
 
+
+
 const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
 
 
   // ** States
   const dispatch = useDispatch();
-  const {verPresupuestoActive} = useSelector((state: RootState) => state.presupuesto)
+  const {verPresupuestoActive,operacionCrudPresupuesto} = useSelector((state: RootState) => state.presupuesto)
 
 
 
@@ -56,6 +59,7 @@ const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactD
   const handleSetShow= (active:boolean)=>{
 
     dispatch(setVerPresupuestoActive(active))
+
   }
 
 
@@ -85,7 +89,11 @@ const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactD
               <Icon icon='mdi:close' />
             </IconButton>
             <DatePickerWrapper>
-              <FormPresupuestoUpdateAsync popperPlacement={popperPlacement} />
+              { operacionCrudPresupuesto===1
+              ?  <FormPresupuestoCreateAsync popperPlacement={popperPlacement} />
+                :<FormPresupuestoUpdateAsync popperPlacement={popperPlacement} />
+              }
+
             </DatePickerWrapper>
 
 

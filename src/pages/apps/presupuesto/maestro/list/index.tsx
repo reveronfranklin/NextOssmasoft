@@ -1,4 +1,4 @@
-import { Box, Card, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
+import { Box, Button, Card, CardActions, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
 
@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles'
 
 import { useDispatch } from 'react-redux';
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
-import { setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
+import { setOperacionCrudPresupuesto, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
 import DialogPrePresupuestoInfo from 'src/views/pages/presupuesto/Maestro/DialogPrePresupuestoInfo';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
@@ -97,9 +97,23 @@ const PresupuestoList = () => {
   const handleView=  (row : IPresupuesto)=>{
 
     dispatch(setPresupuesto(row))
+
+     // Operacion Crud 2 = Modificar presupuesto
+    dispatch(setOperacionCrudPresupuesto(2));
     dispatch(setVerPresupuestoActive(true))
 
+
   }
+  const handleAdd=  ()=>{
+
+    //dispatch(setPresupuesto(row))
+    // Operacion Crud 1 = Crear presupuesto
+    dispatch(setOperacionCrudPresupuesto(1));
+    dispatch(setVerPresupuestoActive(true))
+
+
+  }
+
   const dispatch = useDispatch();
 
   // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
@@ -134,6 +148,10 @@ const PresupuestoList = () => {
        <Card>
       <CardHeader title='Maestro de Presupuesto' />
 
+      <CardActions>
+        <Button size="small"  onClick={() => handleAdd()}>Agregar</Button>
+
+      </CardActions>
 
       {
         loading

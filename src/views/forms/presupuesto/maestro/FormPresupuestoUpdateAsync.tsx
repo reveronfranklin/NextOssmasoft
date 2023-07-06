@@ -38,25 +38,13 @@ import CustomInput from '../../form-elements/pickers/PickersCustomInput'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { fechaToFechaObj } from 'src/utlities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
-import { setOnlyPresupuestos, setPresupuesto } from 'src/store/apps/presupuesto'
+import { setOnlyPresupuestos, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto'
 import { getDateByObject } from 'src/utlities/ge-date-by-object'
 import { IUpdatePrePresupuesto } from 'src/interfaces/Presupuesto/i-update-pre-presupuesto.dto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useState } from 'react'
-
-
-/*interface State {
-  codigoPresupuesto:number
-  denominacion:string;
-  descripcion:string
-  año:number
-  numeroOrdenanza:string
-  extra1:string
-  extra2:string
-  extra3:string
-
-
-}*/
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import { IDeletePrePresupuestoDto } from 'src/interfaces/Presupuesto/i-delete-pre-presupuesto'
 
 interface FormInputs {
   codigoPresupuesto:number
@@ -80,20 +68,9 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [open, setOpen] = useState(false);
 
-
-  /*const [state, setState] = useState<State>({
-    codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-    denominacion: presupuestoSeleccionado.denominacion,
-    descripcion:presupuestoSeleccionado.descripcion,
-    año:presupuestoSeleccionado.ano,
-    numeroOrdenanza:presupuestoSeleccionado.numeroOrdenanza,
-    extra1:presupuestoSeleccionado.extra1,
-    extra2:presupuestoSeleccionado.extra2,
-    extra3:presupuestoSeleccionado.extra3,
-    password: '',
-    showPassword: false
-  })*/
 
   const defaultValues = {
     codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
@@ -155,6 +132,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
     const responseAll= await ossmmasofApi.get<any>('/PrePresupuesto/GetList');
+    setErrorMessage(responseAll.data.message)
     const data = responseAll.data;
     dispatch(setOnlyPresupuestos(data));
 
@@ -162,6 +140,30 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   };
 
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async  () => {
+
+    setOpen(false);
+    const deletePresupuesto : IDeletePrePresupuestoDto={
+      codigoPresupuesto:presupuestoSeleccionado.codigoPresupuesto
+    }
+    const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/Delete',deletePresupuesto);
+    setErrorMessage(responseAll.data.message)
+    if(responseAll.data.isValid){
+
+      dispatch(setVerPresupuestoActive(false))
+      dispatch(setPresupuesto({}))
+    }
+
+
+  };
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
@@ -185,6 +187,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
     dispatch(setPresupuesto(responseAll.data.data))
     await getPresupuestos();
+    setErrorMessage(responseAll.data.message)
 
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     //await sleep(2000)
@@ -463,8 +466,36 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                 ) : null}
                 Guardar
               </Button>
+              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
+                Eliminar
+              </Button>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Esta Seguro de Eliminar este Presupuesto?"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Se eliminara el presupuesto solo si no tiene movimiento asociado
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>No</Button>
+                  <Button onClick={handleDelete} autoFocus>
+                    Si
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Grid>
+
           </Grid>
+          <Box>
+              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' }}>{errorMessage}</FormHelperText>}
+          </Box>
         </form>
       </CardContent>
     </Card>
