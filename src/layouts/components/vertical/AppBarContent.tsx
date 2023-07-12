@@ -12,11 +12,14 @@ import { Settings } from 'src/@core/context/settingsContext'
 import Autocomplete from 'src/layouts/components/Autocomplete'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
-import LanguageDropdown from 'src/@core/layouts/components/shared-components/LanguageDropdown'
-import NotificationDropdown, {
+
+//import LanguageDropdown from 'src/@core/layouts/components/shared-components/LanguageDropdown'
+
+/* import NotificationDropdown, {
   NotificationsType
 } from 'src/@core/layouts/components/shared-components/NotificationDropdown'
-import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
+ */
+//import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 
 interface Props {
   hidden: boolean
@@ -25,7 +28,7 @@ interface Props {
   saveSettings: (values: Settings) => void
 }
 
-const notifications: NotificationsType[] = [
+/* const notifications: NotificationsType[] = [
   {
     meta: 'Today',
     avatarAlt: 'Flora',
@@ -68,9 +71,9 @@ const notifications: NotificationsType[] = [
     avatarImg: '/images/misc/chart.png',
     title: 'Finance report has been generated'
   }
-]
+] */
 
-const shortcuts: ShortcutsType[] = [
+/* const shortcuts: ShortcutsType[] = [
   {
     title: 'Calendar',
     url: '/apps/calendar',
@@ -120,7 +123,7 @@ const shortcuts: ShortcutsType[] = [
     url: '/pages/dialog-examples'
   }
 ]
-
+ */
 const AppBarContent = (props: Props) => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
@@ -136,10 +139,10 @@ const AppBarContent = (props: Props) => {
         <Autocomplete hidden={hidden} settings={settings} />
       </Box>
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
-        <LanguageDropdown settings={settings} saveSettings={saveSettings} />
+       {/*  <LanguageDropdown settings={settings} saveSettings={saveSettings} /> */}
         <ModeToggler settings={settings} saveSettings={saveSettings} />
-        <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
-        <NotificationDropdown settings={settings} notifications={notifications} />
+       {/*  <ShortcutsDropdown settings={settings} shortcuts={shortcuts} /> */}
+      {/*   <NotificationDropdown settings={settings} notifications={notifications} /> */}
         <UserDropdown settings={settings} />
       </Box>
     </Box>

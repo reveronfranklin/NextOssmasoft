@@ -88,11 +88,13 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   const {
     control,
     handleSubmit,
+
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
 
   const handlerDesde=(desde:Date)=>{
+
 
     const fechaObj:IFechaDto =fechaToFechaObj(desde);
     const presupuestoTmp= {...presupuestoSeleccionado,fechaDesde:desde.toISOString(),fechaDesdeObj:fechaObj};
@@ -494,7 +496,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' }}>{errorMessage}</FormHelperText>}
+          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
         </form>
       </CardContent>

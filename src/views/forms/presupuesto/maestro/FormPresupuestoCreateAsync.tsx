@@ -473,7 +473,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
           </Grid>
           <Box>
 
-            {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' }}>{errorMessage}</FormHelperText>}
+          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
 
 

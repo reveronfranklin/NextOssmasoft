@@ -17,8 +17,12 @@
     "icon": "mdi:file-document-outline",
     "children": [
       {
-        "title": "List",
+        "title": "Maestro Presupuesto",
         "path": "/apps/presupuesto/maestro/list"
+      },
+      {
+        "title": "Maestro ICP",
+        "path": "/apps/presupuesto/icp/list"
       },
       {
         "title": "Saldo Presupuesto",

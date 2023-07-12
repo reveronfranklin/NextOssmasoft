@@ -146,7 +146,7 @@ const LoginPage = () => {
 
       setError('email', {
         type: 'manual',
-        message: 'Email or Password is invalid'
+        message: 'Email or Password es invalido'
       })
     })
   }
@@ -261,16 +261,16 @@ const LoginPage = () => {
               </Typography>
             </Box>
             <Box sx={{ mb: 6 }}>
-              <TypographyStyled variant='h5'>Welcome to {themeConfig.templateName}! 👋🏻</TypographyStyled>
-              <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+              <TypographyStyled variant='h5'>Bienvenido a {themeConfig.templateName}! 👋🏻</TypographyStyled>
+              <Typography variant='body2'>Por Favor ingrese usuario y clave para iniciar</Typography>
             </Box>
             <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
               <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
-                Admin: <strong>xxxxxx@osmasoft.com</strong> / Pass: <strong>XXXXXX</strong>
+                <strong>xxxxxx@osmasoft.com</strong> / Pass: <strong>XXXXX (Minimo 5 Caracteres)</strong>
               </Typography>
-              <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
+             {/*  <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
                 Client: <strong>client@materio.com</strong> / Pass: <strong>client</strong>
-              </Typography>
+              </Typography> */}
             </Alert>
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
