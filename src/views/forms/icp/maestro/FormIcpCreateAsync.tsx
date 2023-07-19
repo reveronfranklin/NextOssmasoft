@@ -20,26 +20,33 @@ import { useForm, Controller } from 'react-hook-form'
 
 // ** Icon Imports
 
+//import { useDispatch } from 'react-redux'
+
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
+
+
 
 // ** Third Party Imports
+//import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 //import CustomInput from '../../form-elements/pickers/PickersCustomInput'
 
 // ** Types
 
-
+//import { IFechaDto } from 'src/interfaces/fecha-dto'
+//import { fechaToFechaObj } from 'src/utlities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
 
-
+//import { getDateByObject } from 'src/utlities/ge-date-by-object'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useState } from 'react'
-import { Box } from '@mui/material'
+import { Autocomplete, Box} from '@mui/material'
+import { setIcpSeleccionado, setVerIcpActive } from 'src/store/apps/ICP';
 import { IUpdateIcp } from 'src/interfaces/Presupuesto/i-update-pre-indice-categoria-programatica-dto'
-import { setIcpSeleccionado } from 'src/store/apps/ICP';
-
-import { RootState } from 'src/store'
-import { useSelector } from 'react-redux'
+import { IOssConfig } from 'src/interfaces/SIS/i-oss-config-get-dto'
+import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 
 interface FormInputs {
   codigoIcp :number;
@@ -63,25 +70,46 @@ interface FormInputs {
 const FormIcpCreateAsync = () => {
   // ** States
   const dispatch = useDispatch();
+  const {
+        listSectores,
+        listProgramas,
+        listSubProgramas,
+        listProyectos,
+        listActividades,
+        listOficinas,
+        listCodigosIcpHistorico
+      } = useSelector((state: RootState) => state.icp)
 
- const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const {personas} = useSelector((state: RootState) => state.nomina)
+  const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
-
-
-
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [sector, setSector] = useState<IOssConfig>({ clave: 'CODIGO_SECTOR', valor: '00'});
+  const [programa, setPrograma] = useState<IOssConfig>({ clave: 'CODIGO_PROGRAMA', valor: '00' });
+  const [subPrograma, setSubPrograma] = useState<IOssConfig>({ clave: 'CODIGO_SUBPROGRAMA', valor: '00'});
+  const [proyecto, setProyecto] = useState<IOssConfig>({ clave: 'CODIGO_PROYECTO', valor: '00'});
+  const [actividad, setActividad] = useState<IOssConfig>({ clave: 'CODIGO_ACTIVIDAD', valor: '00'});
+  const [oficina, setOficina] = useState<IOssConfig>({ clave: 'CODIGO_OFICINA', valor:'00'});
+
+  const [persona,setPersona] = useState<IListSimplePersonaDto>({codigoPersona :0,
+                                                                nombre :'',
+                                                                apellido :'',
+                                                                nombreCompleto :''});
+
+
   const defaultValues = {
     codigoIcp: 0,
-    ano:0,
-    codigoSector:'',
-    codigoPrograma:'',
-    codigoSubPrograma:'',
-    codigoProyecto:'',
-    codigoActividad:'',
-    codigoOficina:'',
+    ano:listpresupuestoDtoSeleccionado.ano,
+    codigoSector:'00',
+    codigoPrograma:'00',
+    codigoSubPrograma:'00',
+    codigoProyecto:'00',
+    codigoActividad:'00',
+    codigoOficina:'00',
     unidadEjecutora:'',
     denominacion:'',
     descripcion:'',
@@ -90,14 +118,99 @@ const FormIcpCreateAsync = () => {
 
   }
 
-
   // ** Hook
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
+
+
+
+
+
+
+  const handleChangeCodigoSector= async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoSector',value.valor);
+      setSector({ clave: 'CODIGO_SECTOR', valor: value.valor});
+    }
+  }
+  const handleChangeCodigoPrograma= async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoPrograma',value.valor);
+      setPrograma({ clave: 'CODIGO_PROGRAMA', valor: value.vaolr });
+    }
+  }
+
+  const handleChangeCodigoSubPrograma= async (e: any,value:any)=>{
+
+    if(value!=null){
+
+      setValue('codigoSubPrograma',value.valor);
+      setSubPrograma({ clave: 'CODIGO_SUBPROGRAMA', valor: value.valor })
+
+    }
+  }
+  const handleChangeCodigoProyecto= async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoProyecto',value.valor);
+      setProyecto({ clave: 'CODIGO_PROYECTO', valor:value.valor})
+    }
+  }
+
+  const handleChangeCodigoActividad= async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoActividad',value.valor);
+      setActividad({ clave: 'CODIGO_ACTIVIDAD', valor: value.valor});
+    }
+  }
+  const handleChangeCodigoOficina= async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoOficina',value.valor);
+      setOficina({ clave: 'CODIGO_OFICINA', valor:value.valor});
+    }
+  }
+
+  const handlerPersona=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('codigoFuncionario',value.codigoPersona);
+      setPersona(value);
+    }
+  }
+
+  const handleChangeIcpHistorico= async (e: any,value:any)=>{
+
+
+    if(value!=null){
+      setValue('codigoSector',value.codigoSector);
+      setValue('codigoPrograma',value.codigoPrograma);
+      setValue('codigoSubPrograma',value.codigoSubPrograma);
+      setValue('codigoProyecto',value.codigoProyecto);
+      setValue('codigoActividad',value.codigoActividad);
+      setValue('codigoOficina',value.codigoOficina);
+
+      setSector({ clave: 'CODIGO_SECTOR', valor: value.codigoSector});
+
+      setPrograma({ clave: 'CODIGO_PROGRAMA', valor: value.codigoPrograma });
+
+      setSubPrograma({ clave: 'CODIGO_SUBPROGRAMA', valor: value.codigoSubPrograma })
+      setProyecto({ clave: 'CODIGO_PROYECTO', valor: value.codigoProyecto });
+      setActividad({ clave: 'CODIGO_ACTIVIDAD', valor: value.codigoActividad } );
+      setOficina({ clave: 'CODIGO_OFICINA', valor: value.codigoOficina});
+
+    }
+
+
+  }
 
 
 
@@ -113,7 +226,7 @@ const FormIcpCreateAsync = () => {
       codigoProyecto:data.codigoProyecto,
       codigoActividad:data.codigoActividad,
       codigoOficina:data.codigoOficina,
-      unidadEjecutora:data.unidadEjecutora,
+      unidadEjecutora:(data.unidadEjecutora === null || data.unidadEjecutora === 'undefined') ? '' : data.unidadEjecutora,
       codigoPresupuesto:data.codigoPresupuesto,
       denominacion:data.denominacion,
       descripcion:data.descripcion,
@@ -121,17 +234,20 @@ const FormIcpCreateAsync = () => {
 
     };
 
-    console.log(updateIcp)
+
 
     const responseAll= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/Create',updateIcp);
+
     if(responseAll.data.isValid){
       dispatch(setIcpSeleccionado(responseAll.data.data))
+      dispatch(setVerIcpActive(false))
     }
 
 
     setErrorMessage(responseAll.data.message)
 
-
+    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    //await sleep(2000)
 
     setLoading(false)
     toast.success('Form Submitted')
@@ -139,13 +255,13 @@ const FormIcpCreateAsync = () => {
 
   return (
     <Card>
-      <CardHeader title='Crear ICP' />
+      <CardHeader title='Crear Indice Categoria Programatica(ICP)' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
 
-                       {/* Codigo de Indice Categoria Programada(ICP) */}
-                       <Grid item sm={2} xs={12}>
+            {/* Codigo de Indice Categoria Programada(ICP) */}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='codigoIcp'
@@ -222,163 +338,127 @@ const FormIcpCreateAsync = () => {
                 )}
               </FormControl>
             </Grid>
+            <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <Autocomplete
 
+                        options={listCodigosIcpHistorico}
+
+                        id='autocomplete-listicphistorico'
+                        isOptionEqualToValue={(option, value) => option.concat=== value.concat}
+                        getOptionLabel={option => option.concat }
+                        onChange={handleChangeIcpHistorico}
+                        renderInput={params => <TextField {...params} label='Codigos ICP' />}
+                      />
+
+                </FormControl>
+            </Grid>
              {/* Codigo Sector de Indice Categoria Programada(ICP) */}
+
             <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoSector'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Sector'
-                      onChange={onChange}
-                      placeholder='Sector'
-                      error={Boolean(errors.codigoSector)}
-                      aria-describedby='validation-async-sector'
-                    />
-                  )}
-                />
-                {errors.codigoSector && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sector'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listSectores}
+                        value={sector}
+                        id='autocomplete-sectores-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoSector}
+                        renderInput={params => <TextField {...params} label='Sectores' />}
+                      />
+
+                </FormControl>
             </Grid>
 
             {/* Codigo Programa de Indice Categoria Programada(ICP) */}
+
             <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoPrograma'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Programa'
-                      onChange={onChange}
-                      placeholder='Programa'
-                      error={Boolean(errors.codigoPrograma)}
-                      aria-describedby='validation-async-programa'
-                    />
-                  )}
-                />
-                {errors.codigoPrograma && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-programa'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listProgramas}
+
+                        value={programa}
+                        id='autocomplete-programas-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoPrograma}
+                        renderInput={params => <TextField {...params} label='Programas' />}
+                      />
+
+                </FormControl>
             </Grid>
 
             {/* Codigo SubPrograma de Indice Categoria Programada(ICP) */}
-            <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoSubPrograma'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='SubPrograma'
-                      onChange={onChange}
-                      placeholder='SubPrograma'
-                      error={Boolean(errors.codigoSubPrograma)}
-                      aria-describedby='validation-async-sub-programa'
-                    />
-                  )}
-                />
-                {errors.codigoSubPrograma && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sub-programa'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
 
+            <Grid item xs={2}>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listSubProgramas}
+                        value={subPrograma}
+                        id='autocomplete-subprogramas-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoSubPrograma}
+                        renderInput={params => <TextField {...params} label='SubProgramas' />}
+                      />
+
+                </FormControl>
+            </Grid>
             {/* Codigo Proyecto de Indice Categoria Programada(ICP) */}
-            <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoProyecto'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Proyecto.'
-                      onChange={onChange}
-                      placeholder='Proyecto'
-                      error={Boolean(errors.codigoProyecto)}
-                      aria-describedby='validation-async-proyecto'
-                    />
-                  )}
-                />
-                {errors.codigoProyecto && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sub-proyecto'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
 
+            <Grid item xs={2}>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listProyectos}
+                        value={proyecto}
+                        id='autocomplete-proyectos-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoProyecto}
+                        renderInput={params => <TextField {...params} label='Proyectos' />}
+                      />
+
+                </FormControl>
+            </Grid>
            {/* Codigo Actividad de Indice Categoria Programada(ICP) */}
-           <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoActividad'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Actividad u Obra'
-                      onChange={onChange}
-                      placeholder='Actividad u Obra'
-                      error={Boolean(errors.codigoActividad)}
-                      aria-describedby='validation-async-actividad'
-                    />
-                  )}
-                />
-                {errors.codigoActividad && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-actividad'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
+
+            <Grid item xs={2}>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listActividades}
+                        value={actividad}
+                        id='autocomplete-proyectos-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoActividad}
+                        renderInput={params => <TextField {...params} label='Actividades' />}
+                      />
+
+                </FormControl>
             </Grid>
 
             {/* Codigo Oficina de Indice Categoria Programada(ICP) */}
-            <Grid item xs={2}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoOficina'
-                  control={control}
-                  rules={{ minLength: 2 ,maxLength: 2}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Oficina'
-                      onChange={onChange}
-                      placeholder='Oficina'
-                      error={Boolean(errors.codigoOficina)}
-                      aria-describedby='validation-async-oficina'
-                    />
-                  )}
-                />
-                {errors.codigoOficina && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-oficina'>
-                    Logitud debe ser de 2 digitos
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
 
+            <Grid item xs={2}>
+                <FormControl fullWidth>
+                  <Autocomplete
+                        sx={{ width: 100 }}
+                        options={listOficinas}
+                        value={oficina}
+                        id='autocomplete-oficinas-create'
+                        isOptionEqualToValue={(option, value) => option.valor=== value.valor}
+                        getOptionLabel={option => option.valor }
+                        onChange={handleChangeCodigoOficina}
+                        renderInput={params => <TextField {...params} label='Oficinas' />}
+                      />
+
+                </FormControl>
+            </Grid>
 
             {/* Unidad Ejecutora de Indice Categoria Programada(ICP) */}
             <Grid item xs={12}>
@@ -434,61 +514,21 @@ const FormIcpCreateAsync = () => {
               </FormControl>
             </Grid>
 
-            {/* Codigo Funcionario de Indice Categoria Programada(ICP) */}
+
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoFuncionario'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Funcionario'
-                      onChange={onChange}
-                      placeholder='Funcionario'
-                      error={Boolean(errors.codigoFuncionario)}
-                      aria-describedby='validation-async-funcionario'
+                <FormControl fullWidth>
+                      <Autocomplete
+                      value={persona}
+                      options={personas}
+                      id='autocomplete-persona'
+                      isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
+                      getOptionLabel={option => option.codigoPersona + ' ' + option.nombreCompleto}
+                      onChange={handlerPersona}
+                      renderInput={params => <TextField {...params} label='Funcionario' />}
                     />
-                  )}
-                />
-                {errors.codigoFuncionario && (
-                  <FormHelperText sx={{ color: 'error.main'}} id='validation-async-funcionario'>
-                    This field is required
-                  </FormHelperText>
 
-                )}
-              </FormControl>
-            </Grid>
-
-
-
-            {/* Codigo Presupuesto de Indice Categoria Programada(ICP) */}
-            <Grid item sm={2} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoPresupuesto'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Presupuesto'
-                      onChange={onChange}
-                      placeholder='0'
-                      error={Boolean(errors.codigoPresupuesto)}
-                      aria-describedby='validation-async-codigo-presupuesto'
-                      disabled
-                    />
-                  )}
-                />
-                {errors.codigoPresupuesto && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigo-presupuesto'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
+                </FormControl>
+              </Grid>
 
 
 
@@ -507,14 +547,14 @@ const FormIcpCreateAsync = () => {
                 ) : null}
                 Guardar
               </Button>
+
+
             </Grid>
+
           </Grid>
           <Box>
-
-          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
-
-
         </form>
       </CardContent>
     </Card>

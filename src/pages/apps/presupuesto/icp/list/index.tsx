@@ -31,6 +31,7 @@ import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/Fil
 import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 
 import { IFilterClave } from 'src/interfaces/SIS/i-filter-clave';
+import { fetchDataPersonas } from 'src/store/apps/rh/thunks';
 
 interface CellType {
   row: IPreIndiceCategoriaProgramaticaGetDto}
@@ -41,6 +42,23 @@ const PresupuestoList = () => {
   //const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   const columns = [
+    {
+      flex: 0.1,
+      minWidth: 130,
+      sortable: false,
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='View'>
+            <IconButton size='small' onClick={() => handleView(row)}>
+            <Icon icon='mdi:eye-outline' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+        </Box>
+      )
+    },
     {
 
       field: 'ano',
@@ -105,23 +123,7 @@ const PresupuestoList = () => {
       width: 400
     },
 
-    {
-      flex: 0.1,
-      minWidth: 130,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='View'>
-            <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
-            </IconButton>
-          </Tooltip>
 
-        </Box>
-      )
-    }
 
 
   ]
@@ -207,6 +209,8 @@ const PresupuestoList = () => {
 
       const responseCodigosIcpHistorico =await ossmmasofApi.get<any>('/PreIndiceCategoriaProgramatica/ListCodigosHistoricoIcp');
       dispatch(setListCodigosIcpHistorico(responseCodigosIcpHistorico.data.data))
+
+      await fetchDataPersonas(dispatch);
 
       setLoading(false);
     };

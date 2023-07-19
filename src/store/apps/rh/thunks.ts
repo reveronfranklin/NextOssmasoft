@@ -82,7 +82,6 @@ export const fetchDataPersonas = async(dispatch:any) => {
 
     if(data){
 
-      console.log('Data en fetchData primer Personas',data[0]);
 
       dispatch(setPersonas(data));
 
