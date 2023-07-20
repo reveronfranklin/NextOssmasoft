@@ -27,6 +27,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import MuiXLicense from './MuiXLicense'
 
 //import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
@@ -89,6 +90,7 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
 
       >
         {children}
+        <MuiXLicense />
 
       </Layout>
   )

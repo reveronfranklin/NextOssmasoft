@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
+import { Box, Button, Card, CardActions, CardHeader, Checkbox, Grid, IconButton, Tooltip, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid  } from '@mui/x-data-grid';
 
 //import { useTheme } from '@mui/material/styles'
 
@@ -32,6 +32,7 @@ import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 
 import { IFilterClave } from 'src/interfaces/SIS/i-filter-clave';
 import { fetchDataPersonas } from 'src/store/apps/rh/thunks';
+import TreeViewIcp from 'src/presupuesto/components/TreViewIcp';
 
 interface CellType {
   row: IPreIndiceCategoriaProgramaticaGetDto}
@@ -128,6 +129,8 @@ const PresupuestoList = () => {
 
   ]
 
+
+
   const handleView=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
 
     console.log('handleView row',row)
@@ -155,6 +158,7 @@ const PresupuestoList = () => {
   const {verIcpActive=false} = useSelector((state: RootState) => state.icp)
   const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false);
+  const [viewTable, setViewTable] = useState(false);
 
   const [icp, setIcp] = useState([]);
 
@@ -170,6 +174,7 @@ const PresupuestoList = () => {
       dispatch(setListIcp(data));
 
       setIcp(data);
+
 
       const filterSectores:IFilterClave={
         clave:'CODIGO_SECTOR'
@@ -243,10 +248,16 @@ const PresupuestoList = () => {
         <FilterOnlyPresupuesto/>
         <CardActions>
           <Button size="small"  onClick={() => handleAdd()}>Agregar</Button>
-
+          <Checkbox
+              checked={viewTable}
+              onChange={(event) => setViewTable(event.target.checked)}
+            />
+             <Typography component="span">
+              Ver Estilo Arbol
+            </Typography>
         </CardActions>
 
-              {
+             {/*  {
                 loading
                 ?   <Spinner sx={{ height: '100%' }} />
                 :
@@ -256,12 +267,32 @@ const PresupuestoList = () => {
                   getRowId={(row) => row.codigoIcp}
                   columns={columns}
                   rows={icp} />
+
+
+                </Box>
+
+
+              } */}
+              {viewTable
+              ?  <TreeViewIcp></TreeViewIcp>
+              :
+                loading ?   <Spinner sx={{ height: '100%' }} />
+                :
+                <Box sx={{ height: 500 }}>
+                <DataGrid
+
+                  getRowId={(row) => row.codigoIcp}
+                  columns={columns}
+                  rows={icp} />
+
+
                 </Box>
 
               }
 
 
         </Card>
+
         <DatePickerWrapper>
               <DialogPreIcpInfo/>
         </DatePickerWrapper>

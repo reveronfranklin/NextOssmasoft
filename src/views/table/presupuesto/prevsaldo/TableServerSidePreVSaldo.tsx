@@ -173,11 +173,11 @@ const defaultColumns = [
   {
     flex: 0.025,
     minWidth: 110,
-    field: 'disponibleFormat',
-    headerName: 'Disponible',
+    field: 'modificadoFormat',
+    headerName: 'Modificado',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.disponibleFormat}
+        {params.row.modificadoFormat}
       </Typography>
     )
   },

@@ -34,7 +34,7 @@ const FilterPresupuestoFinanciado = () => {
 
   const dispatch = useDispatch();
 
-  const {listpresupuestoDto,listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const {listpresupuestoDto=[],listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
 
@@ -66,6 +66,7 @@ const FilterPresupuestoFinanciado = () => {
 
       const presupuesto:IListPresupuestoDto ={
         codigoPresupuesto:0,
+        ano:0,
         descripcion:'',
         preFinanciadoDto:[]
 
