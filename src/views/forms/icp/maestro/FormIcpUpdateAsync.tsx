@@ -155,7 +155,7 @@ const FormIcpUpdateAsync = () => {
 
     if(value!=null){
       setValue('codigoPrograma',value.valor);
-      setPrograma({ clave: 'CODIGO_PROGRAMA', valor: value.vaolr });
+      setPrograma({ clave: 'CODIGO_PROGRAMA', valor: value.valor });
     }
   }
 
@@ -269,6 +269,7 @@ const FormIcpUpdateAsync = () => {
     console.log('responseAll',responseAll)
     if(responseAll.data.isValid){
       dispatch(setIcpSeleccionado(responseAll.data.data))
+      dispatch(setVerIcpActive(false))
     }
 
 

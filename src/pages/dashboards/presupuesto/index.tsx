@@ -164,7 +164,7 @@ useEffect(() => {
           <CardStatisticsVerticalComponent
             stats={presupuestoSeleccionado?.totalPresupuestoString }
             color='info'
-            trendNumber='+38%'
+            trendNumber=''
             title='Presupuestado'
             subtitle='Presupuestado Anual'
             icon={<Icon icon='mdi:trending-up' />}
@@ -174,7 +174,8 @@ useEffect(() => {
           <CardStatisticsVerticalComponent
             stats={presupuestoSeleccionado?.totalModificacionString }
             color='info'
-            trendNumber='+38%'
+
+            trendNumber=''
             title='Modificacion'
             subtitle='Modificacion Presupuestaria'
             icon={<Icon icon='mdi:trending-up' />}
@@ -184,7 +185,7 @@ useEffect(() => {
           <CardStatisticsVerticalComponent
             stats={presupuestoSeleccionado?.totalVigenteString }
             color='info'
-            trendNumber='+38%'
+            trendNumber=''
             title='Vigente'
             subtitle='Presupuestado Vigente'
             icon={<Icon icon='mdi:trending-up' />}
@@ -195,7 +196,7 @@ useEffect(() => {
             stats={presupuestoSeleccionado?.totalDisponibleString}
             color='success'
             title='Disponibilidad'
-            trendNumber='+16%'
+            trendNumber=''
             subtitle='Presupuesto  Disponible'
             icon={<Icon icon='mdi:currency-usd' />}
           />

@@ -13,8 +13,8 @@ import Spinner from 'src/@core/components/spinner';
 import { RootState } from 'src/store';
 import { useSelector } from 'react-redux';
 
-//import { useDispatch } from 'react-redux';
-//import { setIcpSeleccionado, setOperacionCrudIcp, setVerIcpActive } from 'src/store/apps/ICP';
+import { useDispatch } from 'react-redux';
+import { setIcpSeleccionado, setOperacionCrudIcp, setVerIcpActive } from 'src/store/apps/ICP';
 
 //const rows: GridRowsProp = [];
 
@@ -30,7 +30,7 @@ const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
 const TreeViewIcp = ()  => {
 
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<GridRowsProp[]>([]);
   const {listIcp} = useSelector((state: RootState) => state.icp)
@@ -44,11 +44,11 @@ const TreeViewIcp = ()  => {
       const icp=listIcp.find((elemento)=> elemento.codigoIcp==row.id);
       console.log('icp',icp);
 
-      //dispatch(setIcpSeleccionado(icp))
+      dispatch(setIcpSeleccionado(icp))
 
      // Operacion Crud 2 = Modificar presupuesto
-      //dispatch(setOperacionCrudIcp(2));
-      //dispatch(setVerIcpActive(true))
+      dispatch(setOperacionCrudIcp(2));
+      dispatch(setVerIcpActive(true))
     }
 
 

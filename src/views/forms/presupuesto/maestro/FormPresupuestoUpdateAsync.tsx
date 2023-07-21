@@ -152,7 +152,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   const handleDelete = async  () => {
 
-    setOpen(false);
+
     const deletePresupuesto : IDeletePrePresupuestoDto={
       codigoPresupuesto:presupuestoSeleccionado.codigoPresupuesto
     }
@@ -162,6 +162,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
       dispatch(setVerPresupuestoActive(false))
       dispatch(setPresupuesto({}))
+      setOpen(false);
     }
 
 

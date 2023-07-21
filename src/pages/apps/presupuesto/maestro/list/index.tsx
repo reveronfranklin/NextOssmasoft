@@ -33,6 +33,24 @@ const PresupuestoList = () => {
 
   const columns = [
     {
+      flex: 0.1,
+      minWidth: 130,
+      sortable: false,
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='View'>
+            <IconButton size='small' onClick={() => handleView(row)}>
+            <Icon icon='mdi:eye-outline' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+        </Box>
+      )
+    },
+
+    {
 
       field: 'codigoPresupuesto'
       , headerName: 'Codigo', width: 130
@@ -73,22 +91,6 @@ const PresupuestoList = () => {
       field: 'montoPresupuesto',
       headerName:'Monto'
 
-    },  {
-      flex: 0.1,
-      minWidth: 130,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='View'>
-            <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
-            </IconButton>
-          </Tooltip>
-
-        </Box>
-      )
     }
 
 
@@ -104,6 +106,10 @@ const PresupuestoList = () => {
 
 
   }
+  const handleDoubleClick=(row:any)=>{
+    console.log(row.row)
+    handleView(row.row)
+}
   const handleAdd=  ()=>{
 
     //dispatch(setPresupuesto(row))
@@ -161,7 +167,9 @@ const PresupuestoList = () => {
           <DataGrid
            getRowId={(row) => row.codigoPresupuesto}
            columns={columns}
-           rows={presupuestos} />
+           rows={presupuestos}
+           onRowDoubleClick={(row) => handleDoubleClick(row)}
+           />
         </Box>
 
       }

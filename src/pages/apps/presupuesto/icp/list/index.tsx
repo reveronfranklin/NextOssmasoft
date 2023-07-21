@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardHeader, Checkbox, Grid, IconButton, Tooltip, Typography} from '@mui/material'
+import { Box, Button, Card, CardActions, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -130,7 +130,7 @@ const PresupuestoList = () => {
   ]
 
 
-
+  //IPreIndiceCategoriaProgramaticaGetDto
   const handleView=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
 
     console.log('handleView row',row)
@@ -142,6 +142,11 @@ const PresupuestoList = () => {
 
 
   }
+
+  const handleDoubleClick=(row:any)=>{
+      console.log(row.row)
+      handleView(row.row)
+  }
   const handleAdd=  ()=>{
 
     //dispatch(setPresupuesto(row))
@@ -152,6 +157,7 @@ const PresupuestoList = () => {
 
   }
 
+
   const dispatch = useDispatch();
 
 
@@ -161,7 +167,14 @@ const PresupuestoList = () => {
   const [viewTable, setViewTable] = useState(false);
 
   const [icp, setIcp] = useState([]);
+  const handleViewTree=()=>{
+    setViewTable(false);
 
+  }
+  const handleViewTable=()=>{
+    setViewTable(true);
+
+  }
   useEffect(() => {
 
     const getIcp = async (filter:FilterByPresupuestoDto) => {
@@ -248,13 +261,17 @@ const PresupuestoList = () => {
         <FilterOnlyPresupuesto/>
         <CardActions>
           <Button size="small"  onClick={() => handleAdd()}>Agregar</Button>
-          <Checkbox
-              checked={viewTable}
-              onChange={(event) => setViewTable(event.target.checked)}
-            />
-             <Typography component="span">
-              Ver Estilo Arbol
-            </Typography>
+
+            <div className='demo-space-x flex'>
+              <IconButton aria-label='capture screenshot' onClick={()=>handleViewTable()}>
+                <Icon icon='grommet-icons:tree' />
+              </IconButton>
+              <IconButton aria-label='capture screenshot' color='primary' onClick={()=>handleViewTree()}>
+                <Icon icon='fluent:table-24-regular' />
+              </IconButton>
+
+
+            </div>
         </CardActions>
 
              {/*  {
@@ -283,7 +300,9 @@ const PresupuestoList = () => {
 
                   getRowId={(row) => row.codigoIcp}
                   columns={columns}
-                  rows={icp} />
+                  rows={icp}
+                  onRowDoubleClick={(row) => handleDoubleClick(row)}
+                  />
 
 
                 </Box>

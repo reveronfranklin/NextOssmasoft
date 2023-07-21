@@ -31,7 +31,7 @@ import CustomInput from '../../form-elements/pickers/PickersCustomInput'
 
 
 import { useDispatch } from 'react-redux'
-import { setOnlyPresupuestos, setPresupuesto } from 'src/store/apps/presupuesto'
+import { setOnlyPresupuestos, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto'
 
 import { IUpdatePrePresupuesto } from 'src/interfaces/Presupuesto/i-update-pre-presupuesto.dto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
@@ -189,8 +189,14 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     //await sleep(2000)
-
+    dispatch(setVerPresupuestoActive(false))
     setLoading(false)
+
+
+
+
+
+
     toast.success('Form Submitted')
   }
 
