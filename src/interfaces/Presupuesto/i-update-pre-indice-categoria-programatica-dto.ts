@@ -1,5 +1,6 @@
 export interface IUpdateIcp {
   codigoIcp :number;
+  codigoIcpPadre:number;
   ano :number;
   codigoSector:string;
   codigoPrograma :string;

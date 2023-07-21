@@ -3,6 +3,7 @@ import { IFechaDto } from '../fecha-dto';
 export interface IPreIndiceCategoriaProgramaticaGetDto{
 
   codigoIcp :number;
+  codigoIcpPadre :number;
   ano :number;
   codigoSector:string;
   codigoPrograma :string;
@@ -22,5 +23,7 @@ export interface IPreIndiceCategoriaProgramaticaGetDto{
   extra3 :string;
   codigoOficina :string;
   codigoPresupuesto:number;
+  codigoIcpConcat:string;
+  searchText:string
 
 }

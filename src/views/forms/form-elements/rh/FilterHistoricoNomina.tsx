@@ -99,6 +99,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
   useEffect(() => {
 
     const getTipoNomina = async () => {
+      //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
       await fetchDataTipoNomina(dispatch);
       await fetchDataConceptos(dispatch);
       await fetchDataPersonas(dispatch);

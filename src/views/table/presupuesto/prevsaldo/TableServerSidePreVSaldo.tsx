@@ -208,7 +208,10 @@ const TableServerSidePreVSaldo = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('full_name')
 
-  const {preMtrDenominacionPucSeleccionado={} as IListPreMtrDenominacionPuc,preMtrUnidadEjecutoraSeleccionado={} as IListPreMtrUnidadEjecutora,listpresupuestoDtoSeleccionado={} as IListPresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
+  const {preMtrDenominacionPucSeleccionado={} as IListPreMtrDenominacionPuc,
+        preMtrUnidadEjecutoraSeleccionado={} as IListPreMtrUnidadEjecutora,
+        listpresupuestoDtoSeleccionado={} as IListPresupuestoDto} =
+        useSelector((state: RootState) => state.presupuesto)
 
 
   const columns = [
@@ -242,6 +245,8 @@ const TableServerSidePreVSaldo = () => {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
 
+
+
   const handlePageChange = (newPage:number) => {
 
     setPage(newPage)
@@ -255,7 +260,7 @@ const TableServerSidePreVSaldo = () => {
   }
 
   const fetchTableData = useCallback(
-    async (sort: SortType, q: string, column: string,codigoPresupuesto:number,codigoIPC:number,codigoPuc:number) => {
+    async (sort: SortType, column: string,codigoPresupuesto:number,codigoIPC:number,codigoPuc:number) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -266,15 +271,18 @@ const TableServerSidePreVSaldo = () => {
 
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
+      console.log(responseAll.data.data)
+      if(responseAll.data.data){
+        setTotal(responseAll.data.data.length);
+        await setAllRows(responseAll.data.data);
+        await setRows(loadServerRows(page, responseAll.data.data))
 
-      setTotal(responseAll.data.data.length);
-      await setAllRows(responseAll.data.data);
-      await setRows(loadServerRows(page, responseAll.data.data))
+        setLinkData(responseAll.data.linkData)
+      }
 
-      setLinkData(responseAll.data.linkData)
       dispatch(setVerDetallePreVSaldoActive(false))
       setLoading(false);
-      if( responseAll.data.data.length>0){
+      if( responseAll.data.data && responseAll.data.data.length>0){
         setMensaje('')
       }else{
         setMensaje('')
@@ -288,16 +296,17 @@ const TableServerSidePreVSaldo = () => {
 
 
   useEffect(() => {
-    fetchTableData(sort, searchValue, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc);
+
+    fetchTableData(sort, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc);
 
     //fetchTableExcel();
-  }, [fetchTableData, listpresupuestoDtoSeleccionado, preMtrDenominacionPucSeleccionado, preMtrUnidadEjecutoraSeleccionado, searchValue, sort, sortColumn])
+  }, [fetchTableData, listpresupuestoDtoSeleccionado, preMtrDenominacionPucSeleccionado, preMtrUnidadEjecutoraSeleccionado, sort, sortColumn])
 
   const handleSortModel = (newModel: GridSortModel) => {
     if (newModel.length) {
       setSort(newModel[0].sort)
       setSortColumn(newModel[0].field)
-      fetchTableData(newModel[0].sort, searchValue, newModel[0].field,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
+      fetchTableData(newModel[0].sort, newModel[0].field,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
     } else {
       setSort('asc')
       setSortColumn('full_name')
@@ -305,8 +314,18 @@ const TableServerSidePreVSaldo = () => {
   }
 
   const handleSearch = (value: string) => {
+
+    console.log(value)
     setSearchValue(value)
-    fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
+    if(value=='') {
+      setRows(allRows);
+    }else{
+      const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
+      setRows(newRows);
+
+    }
+
+    //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
 

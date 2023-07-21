@@ -53,5 +53,6 @@ export interface IPreVSaldo{
   comprometidoFormat:string;
   causadoFormat:string;
   pagadoFormat:string;
+  searchText:string;
 
 }

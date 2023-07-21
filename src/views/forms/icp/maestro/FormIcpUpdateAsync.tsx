@@ -48,9 +48,11 @@ import { IUpdateIcp } from 'src/interfaces/Presupuesto/i-update-pre-indice-categ
 import { IDeletePreIcpDto } from 'src/interfaces/Presupuesto/i-delete-pre-iicp-dto'
 import { IOssConfig } from 'src/interfaces/SIS/i-oss-config-get-dto'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+import { IPreIndiceCategoriaProgramaticaGetDto } from 'src/interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto'
 
 interface FormInputs {
   codigoIcp :number;
+  codigoIcpPadre :number;
   ano :number;
   codigoSector:string;
   codigoPrograma :string;
@@ -78,7 +80,8 @@ const FormIcpUpdateAsync = () => {
         listProyectos,
         listActividades,
         listOficinas,
-        listCodigosIcpHistorico
+        listCodigosIcpHistorico,
+        listIcp
       } = useSelector((state: RootState) => state.icp)
 
   const {personas} = useSelector((state: RootState) => state.nomina)
@@ -91,6 +94,15 @@ const FormIcpUpdateAsync = () => {
 
     return result[0];
   }
+  const  getIcp=(codigoIcp:number)=>{
+    const result = listIcp.filter((icp)=>{
+
+      return icp.codigoIcp==codigoIcp;
+    });
+
+    return result[0];
+  }
+
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
@@ -104,7 +116,7 @@ const FormIcpUpdateAsync = () => {
   const [actividad, setActividad] = useState<IOssConfig>({ clave: 'CODIGO_ACTIVIDAD', valor: icpSeleccionado.codigoActividad});
   const [oficina, setOficina] = useState<IOssConfig>({ clave: 'CODIGO_OFICINA', valor: icpSeleccionado.codigoOficina});
   const [persona,setPersona] = useState<IListSimplePersonaDto>(getPersona(icpSeleccionado.codigoFuncionario));
-
+  const [icpPadre,setIcpPadre] = useState<IPreIndiceCategoriaProgramaticaGetDto>(getIcp(icpSeleccionado.codigoIcpPadre));
 
   const defaultValues = {
     codigoIcp: icpSeleccionado.codigoIcp,
@@ -119,7 +131,7 @@ const FormIcpUpdateAsync = () => {
     denominacion:(icpSeleccionado.denominacion === null || icpSeleccionado.denominacion === 'undefined') ? '' : icpSeleccionado.denominacion,
     descripcion:(icpSeleccionado.descripcion === null || icpSeleccionado.descripcion === 'undefined') ? '' : icpSeleccionado.descripcion,
     codigoFuncionario:icpSeleccionado.codigoFuncionario,
-
+    codigoIcpPadre: icpSeleccionado.codigoIcpPadre,
 
     codigoPresupuesto:icpSeleccionado.codigoPresupuesto,
 
@@ -200,7 +212,15 @@ const FormIcpUpdateAsync = () => {
       setValue('codigoFuncionario',0);
     }
   }
-
+  const handlerIcpPadre=async (e: any,value:any)=>{
+    console.log('handlerIcpPadre',value)
+    if(value!=null){
+      setValue('codigoIcpPadre',value.codigoIcp);
+      setIcpPadre(value);
+    }else{
+      setValue('codigoIcpPadre',0);
+    }
+  }
   const handleChangeIcpHistorico= async (e: any,value:any)=>{
 
     if(value!=null){
@@ -260,7 +280,7 @@ const FormIcpUpdateAsync = () => {
       denominacion:data.denominacion,
       descripcion:data.descripcion,
       codigoFuncionario:data.codigoFuncionario,
-
+      codigoIcpPadre:data.codigoIcpPadre
     };
 
 
@@ -559,7 +579,20 @@ const FormIcpUpdateAsync = () => {
                 </FormControl>
               </Grid>
 
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                      <Autocomplete
+                      value={icpPadre}
 
+                      options={listIcp}
+                      id='autocomplete-icppadre'
+                      getOptionLabel={option => option.codigoIcpConcat + ' ' + option.denominacion}
+                      onChange={handlerIcpPadre}
+                      renderInput={params => <TextField {...params} label='Padre' />}
+                    />
+
+                </FormControl>
+              </Grid>
 
 
             <Grid item xs={12}>

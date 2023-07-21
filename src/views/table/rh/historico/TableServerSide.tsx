@@ -228,19 +228,17 @@ const TableServerSide = () => {
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     //if(currentPage<=0) currentPage=1;
-    console.log('data en loadServerRows data',data);
-    console.log('currentPage',currentPage);
-    console.log('pageSize',pageSize);
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   }
 
 
   const fetchTableData = useCallback(
-    async (sort: SortType, q: string, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:string,codigoPersona:number) => {
+    async (sort: SortType, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:string,codigoPersona:number) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
+      console.log('codigoTipoNomina a filtrar',codigoTipoNomina)
       setMensaje('')
       setLoading(true);
       const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize}
@@ -251,10 +249,10 @@ const TableServerSide = () => {
 
       setTotal(responseAll.data.data.length);
 
-      console.log('Respuesta llamando al historico allRows+++++++++======>',allRows)
+
 
       setRows(loadServerRows(page, responseAll.data.data))
-      console.log('Respuesta llamando al historico rows+++++++++======>',rows)
+
       setLinkData(responseAll.data.linkData)
       setLoading(false);
 
@@ -272,25 +270,37 @@ const TableServerSide = () => {
 
 
   useEffect(() => {
-    fetchTableData(sort, searchValue, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona);
+    fetchTableData(sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona);
 
     //fetchTableExcel();
-  }, [fetchTableData,searchValue, sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
+  }, [fetchTableData, sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
     if (newModel.length) {
       setSort(newModel[0].sort)
       setSortColumn(newModel[0].field)
-      fetchTableData(newModel[0].sort, searchValue, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
+      fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
     } else {
       setSort('asc')
       setSortColumn('full_name')
     }
   }
 
+
+
   const handleSearch = (value: string) => {
+
+    console.log(value)
     setSearchValue(value)
-    fetchTableData(sort, value, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
+    if(value=='') {
+      setRows(allRows);
+    }else{
+      const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
+      setRows(newRows);
+
+    }
+
+    //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
   const handlePageChange = (newPage:number) => {
