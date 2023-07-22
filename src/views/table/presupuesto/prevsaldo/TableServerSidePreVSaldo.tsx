@@ -315,7 +315,7 @@ const TableServerSidePreVSaldo = () => {
 
   const handleSearch = (value: string) => {
 
-    console.log(value)
+
     setSearchValue(value)
     if(value=='') {
       setRows(allRows);

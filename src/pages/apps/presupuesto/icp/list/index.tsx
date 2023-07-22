@@ -134,7 +134,7 @@ const PresupuestoList = () => {
   //IPreIndiceCategoriaProgramaticaGetDto
   const handleView=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
 
-    console.log('handleView row',row)
+
     dispatch(setIcpSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
@@ -301,18 +301,32 @@ const PresupuestoList = () => {
         <CardHeader title='Maestro de Indice Categoria Programatica' />
         <FilterOnlyPresupuesto/>
         <CardActions>
-          <Button size="small"  onClick={() => handleAdd()}>Agregar</Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='Agregar'>
+            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
+            <Icon icon='ci:add-row' fontSize={20} />
+            </IconButton>
+          </Tooltip>
 
-            <div className='demo-space-x flex'>
-              <IconButton aria-label='capture screenshot' onClick={()=>handleViewTable()}>
-                <Icon icon='grommet-icons:tree' />
-              </IconButton>
-              <IconButton aria-label='capture screenshot' color='primary' onClick={()=>handleViewTree()}>
-                <Icon icon='fluent:table-24-regular' />
-              </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='Arbol'>
+            <IconButton size='small'  color='primary' onClick={() => handleViewTable()}>
+            <Icon icon='grommet-icons:tree' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='Tabla'>
+            <IconButton size='small'  color='primary' onClick={() => handleViewTree()}>
+            <Icon icon='fluent:table-24-regular' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+        </Box>
 
 
-            </div>
         </CardActions>
 
              {/*  {
