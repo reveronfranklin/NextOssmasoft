@@ -352,7 +352,6 @@ const PresupuestoList = () => {
                 :
                 <Box sx={{ height: 500 }}>
                 <DataGrid
-
                   getRowId={(row) => row.codigoIcp}
                   columns={columns}
                   rows={icp}
