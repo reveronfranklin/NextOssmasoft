@@ -58,6 +58,7 @@ const FilterOnlyPresupuesto = () => {
     }else{
 
       const presupuesto:IListPresupuestoDto ={
+        ano:0,
         codigoPresupuesto:0,
         descripcion:'',
         preFinanciadoDto:[]

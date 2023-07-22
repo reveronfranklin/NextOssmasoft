@@ -9,9 +9,10 @@ import Autocomplete from 'src/layouts/components/Autocomplete'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import LanguageDropdown from 'src/@core/layouts/components/shared-components/LanguageDropdown'
-import NotificationDropdown, {
+/* import NotificationDropdown, {
   NotificationsType
-} from 'src/@core/layouts/components/shared-components/NotificationDropdown'
+} from  */'src/@core/layouts/components/shared-components/NotificationDropdown'
+
 import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
   saveSettings: (values: Settings) => void
 }
 
-const notifications: NotificationsType[] = [
+/* const notifications: NotificationsType[] = [
   {
     meta: 'Today',
     avatarAlt: 'Flora',
@@ -63,7 +64,7 @@ const notifications: NotificationsType[] = [
     avatarImg: '/images/misc/chart.png',
     title: 'Finance report has been generated'
   }
-]
+] */
 
 const shortcuts: ShortcutsType[] = [
   {
