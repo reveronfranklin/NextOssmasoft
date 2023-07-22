@@ -43,6 +43,7 @@ const PresupuestoList = () => {
   //const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   const columns = [
+
     {
       flex: 0.1,
       minWidth: 130,
@@ -51,9 +52,9 @@ const PresupuestoList = () => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='View'>
-            <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
+          <Tooltip title='Add hijo'>
+            <IconButton size='small' onClick={() => handleAddChild(row)}>
+            <Icon icon='ci:add-row' fontSize={20} />
             </IconButton>
           </Tooltip>
 
@@ -143,6 +144,21 @@ const PresupuestoList = () => {
 
   }
 
+  const handleAddChild=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
+
+    console.log('handleAddChild row',row)
+    const newRow = {...row};
+    newRow.codigoIcp=0;
+    dispatch(setIcpSeleccionado(newRow))
+
+
+   // Operacion Crud 1 = Crear presupuesto
+   dispatch(setOperacionCrudIcp(1));
+   dispatch(setVerIcpActive(true))
+
+
+  }
+
   const handleDoubleClick=(row:any)=>{
       console.log(row.row)
       handleView(row.row)
@@ -151,6 +167,31 @@ const PresupuestoList = () => {
 
     //dispatch(setPresupuesto(row))
     // Operacion Crud 1 = Crear presupuesto
+
+
+      const defaultValues:IPreIndiceCategoriaProgramaticaGetDto = {
+        codigoIcp: 0,
+        ano:listpresupuestoDtoSeleccionado.ano,
+        codigoSector:'00',
+        codigoPrograma:'00',
+        codigoSubPrograma:'00',
+        codigoProyecto:'00',
+        codigoActividad:'00',
+        codigoOficina:'00',
+        unidadEjecutora:'',
+        denominacion:'',
+        descripcion:'',
+        codigoFuncionario:0,
+        codigoIcpPadre:0,
+        codigoIcpConcat:'',
+        searchText:'',
+        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
+      }
+
+
+      dispatch(setIcpSeleccionado(defaultValues))
+
+
     dispatch(setOperacionCrudIcp(1));
     dispatch(setVerIcpActive(true))
 

@@ -8,7 +8,7 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
 
-import { setConceptos, setPersonas, setTiposNomina, setTiposNominaSeleccionado } from '.';
+import { setConceptos, setPersonas, setTiposNomina } from '.';
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto';
 
 //import { getValidationError } from 'src/utlities/get-validation-error';

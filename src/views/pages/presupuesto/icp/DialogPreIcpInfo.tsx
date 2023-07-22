@@ -32,9 +32,10 @@ import { useSelector } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-import { setVerIcpActive } from 'src/store/apps/ICP';
+import { setIcpSeleccionado, setVerIcpActive } from 'src/store/apps/ICP';
 import FormIcpUpdateAsync from 'src/views/forms/icp/maestro/FormIcpUpdateAsync'
 import FormIcpCreateAsync from 'src/views/forms/icp/maestro/FormIcpCreateAsync'
+import { IPreIndiceCategoriaProgramaticaGetDto } from 'src/interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto'
 
 
 // ** Custom Component Imports
@@ -54,14 +55,38 @@ const DialogPreIcpInfo = ()  => {
   // ** States
   const dispatch = useDispatch();
   const {verIcpActive,operacionCrudIcp} = useSelector((state: RootState) => state.icp)
-
+  const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
 
 
   const handleSetShow= (active:boolean)=>{
 
+    if(active==false){
+      const defaultValues:IPreIndiceCategoriaProgramaticaGetDto = {
+        codigoIcp: 0,
+        ano:listpresupuestoDtoSeleccionado.ano,
+        codigoSector:'00',
+        codigoPrograma:'00',
+        codigoSubPrograma:'00',
+        codigoProyecto:'00',
+        codigoActividad:'00',
+        codigoOficina:'00',
+        unidadEjecutora:'',
+        denominacion:'',
+        descripcion:'',
+        codigoFuncionario:0,
+        codigoIcpPadre:0,
+        codigoIcpConcat:'',
+        searchText:'',
+        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
+
+      }
+
+      dispatch(setIcpSeleccionado(defaultValues))
+    }
     dispatch(setVerIcpActive(active))
+
 
   }
 

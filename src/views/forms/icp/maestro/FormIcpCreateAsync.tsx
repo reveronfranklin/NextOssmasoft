@@ -71,6 +71,7 @@ const FormIcpCreateAsync = () => {
   // ** States
   const dispatch = useDispatch();
   const {
+        icpSeleccionado,
         listSectores,
         listProgramas,
         listSubProgramas,
@@ -88,10 +89,10 @@ const FormIcpCreateAsync = () => {
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [sector, setSector] = useState<IOssConfig>({ clave: 'CODIGO_SECTOR', valor: '00'});
-  const [programa, setPrograma] = useState<IOssConfig>({ clave: 'CODIGO_PROGRAMA', valor: '00' });
-  const [subPrograma, setSubPrograma] = useState<IOssConfig>({ clave: 'CODIGO_SUBPROGRAMA', valor: '00'});
-  const [proyecto, setProyecto] = useState<IOssConfig>({ clave: 'CODIGO_PROYECTO', valor: '00'});
+  const [sector, setSector] = useState<IOssConfig>({ clave: 'CODIGO_SECTOR', valor: icpSeleccionado.codigoSector});
+  const [programa, setPrograma] = useState<IOssConfig>({ clave: 'CODIGO_PROGRAMA', valor: icpSeleccionado.codigoPrograma });
+  const [subPrograma, setSubPrograma] = useState<IOssConfig>({ clave: 'CODIGO_SUBPROGRAMA', valor:icpSeleccionado.codigoSubPrograma});
+  const [proyecto, setProyecto] = useState<IOssConfig>({ clave: 'CODIGO_PROYECTO', valor: icpSeleccionado.codigoProyecto});
   const [actividad, setActividad] = useState<IOssConfig>({ clave: 'CODIGO_ACTIVIDAD', valor: '00'});
   const [oficina, setOficina] = useState<IOssConfig>({ clave: 'CODIGO_OFICINA', valor:'00'});
 
@@ -104,16 +105,17 @@ const FormIcpCreateAsync = () => {
   const defaultValues = {
     codigoIcp: 0,
     ano:listpresupuestoDtoSeleccionado.ano,
-    codigoSector:'00',
-    codigoPrograma:'00',
-    codigoSubPrograma:'00',
-    codigoProyecto:'00',
-    codigoActividad:'00',
-    codigoOficina:'00',
-    unidadEjecutora:'',
-    denominacion:'',
-    descripcion:'',
-    codigoFuncionario:0,
+    codigoSector:(icpSeleccionado.codigoSector === null || icpSeleccionado.codigoSector === 'undefined') ? '00' : icpSeleccionado.codigoSector,
+    codigoPrograma:icpSeleccionado.codigoPrograma,
+    codigoSubPrograma:icpSeleccionado.codigoSubPrograma,
+    codigoProyecto:icpSeleccionado.codigoProyecto,
+    codigoActividad:icpSeleccionado.codigoActividad,
+    codigoOficina:icpSeleccionado.codigoOficina,
+    unidadEjecutora:(icpSeleccionado.unidadEjecutora === null || icpSeleccionado.unidadEjecutora === 'undefined') ? '' : icpSeleccionado.unidadEjecutora,
+    denominacion:(icpSeleccionado.denominacion === null || icpSeleccionado.denominacion === 'undefined') ? '' : icpSeleccionado.denominacion,
+    descripcion:(icpSeleccionado.descripcion === null || icpSeleccionado.descripcion === 'undefined') ? '' : icpSeleccionado.descripcion,
+    codigoFuncionario:icpSeleccionado.codigoFuncionario,
+    codigoIcpPadre: icpSeleccionado.codigoIcpPadre,
     codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
 
   }
@@ -231,6 +233,7 @@ const FormIcpCreateAsync = () => {
       denominacion:data.denominacion,
       descripcion:data.descripcion,
       codigoFuncionario:data.codigoFuncionario,
+      codigoIcpPadre:0
 
     };
 

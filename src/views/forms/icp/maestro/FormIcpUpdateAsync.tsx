@@ -217,6 +217,8 @@ const FormIcpUpdateAsync = () => {
     if(value!=null){
       setValue('codigoIcpPadre',value.codigoIcp);
       setIcpPadre(value);
+
+
     }else{
       setValue('codigoIcpPadre',0);
     }
@@ -263,6 +265,8 @@ const FormIcpUpdateAsync = () => {
 
 
   };
+
+
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
