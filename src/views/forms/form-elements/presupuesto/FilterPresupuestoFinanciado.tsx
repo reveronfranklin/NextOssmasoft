@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect} from 'react'
+import { useEffect, useState} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,13 +17,12 @@ import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-import { fetchDataListPresupuestoDto } from 'src/store/apps/presupuesto/thunks'
 
-
-
-import { setListpresupuestoDtoSeleccionado,  setPreFinanciadoDtoSeleccionado} from 'src/store/apps/presupuesto'
+import { setListPresupuestoDto, setListpresupuestoDtoSeleccionado,  setPreFinanciadoDtoSeleccionado} from 'src/store/apps/presupuesto'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
 import { IPreFinanciadoDto } from 'src/interfaces/Presupuesto/i-list-pre-financiado-dto'
+import Spinner from 'src/@core/components/spinner';
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 
 
 
@@ -43,15 +42,16 @@ const FilterPresupuestoFinanciado = () => {
   // ** States
 
   //const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
+  const [pre, setPre] = useState<IListPresupuestoDto>(listpresupuestoDto[0]);
 
-
+    const [loading, setLoading] = useState(false)
   const handlePresupuestos= async (e: any,value:any)=>{
 
 
     if(value){
 
 
-
+      setPre(value)
       dispatch(setListpresupuestoDtoSeleccionado(value));
       const seleccionado:IPreFinanciadoDto ={
         financiadoId:0,
@@ -82,6 +82,7 @@ const FilterPresupuestoFinanciado = () => {
       //const seleccionado = listpresupuestoDtoSeleccionado.preFinanciadoDto.filter( pre => pre.financiadoId==e.target.value);
       dispatch(setPreFinanciadoDtoSeleccionado(value));
 
+
     }else{
       const seleccionado:IPreFinanciadoDto ={
         financiadoId:0,
@@ -101,8 +102,17 @@ const FilterPresupuestoFinanciado = () => {
   useEffect(() => {
 
     const getData = async () => {
+      setLoading(true)
+      const responseAll= await ossmmasofApi.get<IListPresupuestoDto[]>('/PrePresupuesto/GetListPresupuesto');
 
-      await fetchDataListPresupuestoDto(dispatch);
+      const {data} = responseAll;
+      dispatch(setListPresupuestoDto(data));
+      dispatch(setListpresupuestoDtoSeleccionado(data[0]));
+
+      setPre(data[0])
+
+
+      setLoading(false)
 
 
     };
@@ -110,50 +120,67 @@ const FilterPresupuestoFinanciado = () => {
 
 
 
-  }, [dispatch]);
+  }, []);
 
   return (
     <Grid item xs={12}>
-    <Card>
-      <CardHeader title='Filtrar Presupuesto' />
-      <CardContent>
-        <Grid container spacing={6}>
-          <Grid item xs={12} >
-          <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
+
+{ loading  ? (
+       <Spinner sx={{ height: '100%' }} />
+      ) : (
+
+        <Card>
+        <CardHeader title='Filtrar Presupuesto' />
+        <CardContent>
+          <Grid container spacing={6}>
+            <Grid item xs={12} >
+            <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
 
 
-              <div>
-                <Autocomplete
-                    sx={{ width: 350 }}
-                    options={listpresupuestoDto}
-                    id='autocomplete-MaestroPresupuesto'
-                    isOptionEqualToValue={(option, value) => option.codigoPresupuesto=== value.codigoPresupuesto}
-                    getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
-                    onChange={handlePresupuestos}
-                    renderInput={params => <TextField {...params} label='Presupuesto' />}
-                  />
-              </div>
-              <div>
-                <Autocomplete
+                <div>
+
+                      <Autocomplete
+                          sx={{ width: 350 }}
+                          options={listpresupuestoDto}
+                          value={pre}
+                          id='autocomplete-Presupuesto'
+                          isOptionEqualToValue={(option, value) => option.codigoPresupuesto=== value.codigoPresupuesto}
+                          getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion }
+                          onChange={handlePresupuestos}
+                          renderInput={params => <TextField {...params} label='Presupuesto' />}
+                        />
+
+                </div>
+
+                <div>
+                  {listpresupuestoDtoSeleccionado.preFinanciadoDto ?
+                    (<Autocomplete
                     sx={{ width: 350 }}
                     options={listpresupuestoDtoSeleccionado.preFinanciadoDto}
+
+                    //value={fin}
                     id='autocomplete-FuenteFinanciado'
                     isOptionEqualToValue={(option, value) => option.financiadoId=== value.financiadoId}
                     getOptionLabel={option => option.descripcionFinanciado  + '-' + option.financiadoId }
                     onChange={handlerFinanciado}
                     renderInput={params => <TextField {...params} label='Financiado' />}
-                  />
-              </div>
+                  />  ) : <div></div>
+                }
+
+                </div>
 
 
 
 
-          </Box>
-        </Grid>
+            </Box>
+          </Grid>
 
-        </Grid>
-      </CardContent>
-    </Card>
+          </Grid>
+        </CardContent>
+      </Card>
+      )}
+
+
   </Grid>
 
   )
