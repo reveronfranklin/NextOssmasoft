@@ -372,6 +372,7 @@ const PresupuestoList = () => {
                 <Box sx={{ height: 500 }}>
                 <DataGrid
                   getRowId={(row) => row.codigoPuc + row.codigoPucConcat}
+
                   columns={columns}
                   rows={puc}
                   onRowDoubleClick={(row) => handleDoubleClick(row)}
