@@ -23,19 +23,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
 import { FilterByPresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-presupuesto-dto';
-import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
-
-import { setIcpSeleccionado, setListActividades, setListCodigosIcpHistorico, setListIcp ,setListOficinas,setListProgramas,setListProyectos,setListSectores,setListSubProgramas,setOperacionCrudIcp,setVerIcpActive} from 'src/store/apps/ICP';
-import DialogPreIcpInfo from '../../../../../views/pages/presupuesto/icp/DialogPreIcpInfo';
 import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterOnlyPresupuesto';
 import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 
 import { IFilterClave } from 'src/interfaces/SIS/i-filter-clave';
-import { fetchDataPersonas } from 'src/store/apps/rh/thunks';
-import TreeViewIcp from 'src/presupuesto/components/TreViewIcp';
+
+import { setListCodigosPucHistorico, setListGrupos, setListNivel1, setListNivel2, setListNivel3, setListNivel4, setListNivel5, setListNivel6, setListPuc, setOperacionCrudPuc, setPucSeleccionado, setVerPucActive } from 'src/store/apps/PUC';
+import { IPrePlanUnicoCuentasGetDto } from 'src/interfaces/Presupuesto/i-pre-plan-unico-cuentas-get-dto';
+import DialogPrePucInfo from 'src/presupuesto/Puc/views/DialogPrePucInfo';
+import TreeViewPuc from 'src/presupuesto/Puc/components/TreViewPuc';
 
 interface CellType {
-  row: IPreIndiceCategoriaProgramaticaGetDto}
+  row: IPrePlanUnicoCuentasGetDto
+}
 
 const PresupuestoList = () => {
   //const theme = useTheme()
@@ -63,43 +63,64 @@ const PresupuestoList = () => {
     },
     {
 
-      field: 'ano',
-      headerName: 'Año',
+      field: 'codigoPuc',
+      headerName: 'Codigo',
       width: 80
 
     },
     {
 
-      field: 'codigoSector',
-      headerName: 'Sector',
+      field: 'codigoGrupo',
+      headerName: 'Grupo',
+      width: 70
+
+    },
+    {
+
+      field: 'codigoNivel1',
+      headerName: 'N-1',
+      width: 80
+
+    },
+    {
+
+      field: 'codigoNivel2',
+      headerName: 'Nivel2',
       width: 100
 
     },
     {
 
-      field: 'codigoPrograma',
-      headerName: 'Programa',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoSubPrograma',
-      headerName: 'Sub-Programa',
+      field: 'codigoNivel3',
+      headerName: 'Nivel3',
       width: 130
 
     },
     {
 
-      field: 'codigoProyecto',
-      headerName: 'Proyecto',
+      field: 'codigoNivel3',
+      headerName: 'Nivel3',
       width: 100
 
     },
     {
 
-      field: 'codigoActividad',
-      headerName: 'Actividad',
+      field: 'codigoNivel4',
+      headerName: 'Nivel4',
+      width: 100
+
+    },
+    {
+
+      field: 'codigoNivel5',
+      headerName: 'Nivel5',
+      width: 100
+
+    },
+    {
+
+      field: 'codigoNivel6',
+      headerName: 'Nivel6',
       width: 100
 
     },
@@ -109,14 +130,6 @@ const PresupuestoList = () => {
       headerName: 'Denominacion',
       width: 400
 
-    },
-
-
-    {
-
-      field: 'unidadEjecutora',
-      headerName: 'Unidad Ejecutora',
-      width: 400
     },
     {
 
@@ -132,34 +145,35 @@ const PresupuestoList = () => {
 
 
   //IPreIndiceCategoriaProgramaticaGetDto
-  const handleView=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
+  const handleView=  (row : IPrePlanUnicoCuentasGetDto)=>{
 
-
-    dispatch(setIcpSeleccionado(row))
+    console.log(row)
+    dispatch(setPucSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudIcp(2));
-    dispatch(setVerIcpActive(true))
+    dispatch(setOperacionCrudPuc(2));
+    dispatch(setVerPucActive(true))
 
 
   }
 
-  const handleAddChild=  (row : IPreIndiceCategoriaProgramaticaGetDto)=>{
+  const handleAddChild=  (row : IPrePlanUnicoCuentasGetDto)=>{
 
 
     const newRow = {...row};
-    newRow.codigoIcp=0;
-    dispatch(setIcpSeleccionado(newRow))
+    newRow.codigoPuc=0;
+    dispatch(setPucSeleccionado(newRow))
 
 
    // Operacion Crud 1 = Crear presupuesto
-   dispatch(setOperacionCrudIcp(1));
-   dispatch(setVerIcpActive(true))
+   dispatch(setOperacionCrudPuc(1));
+   dispatch(setVerPucActive(true))
 
 
   }
 
   const handleDoubleClick=(row:any)=>{
+
 
       handleView(row.row)
   }
@@ -169,31 +183,28 @@ const PresupuestoList = () => {
     // Operacion Crud 1 = Crear presupuesto
 
 
-      const defaultValues:IPreIndiceCategoriaProgramaticaGetDto = {
-        codigoIcp: 0,
-        ano:listpresupuestoDtoSeleccionado.ano,
-        codigoSector:'00',
-        codigoPrograma:'00',
-        codigoSubPrograma:'00',
-        codigoProyecto:'00',
-        codigoActividad:'00',
-        codigoOficina:'00',
-        unidadEjecutora:'',
+      const defaultValues:IPrePlanUnicoCuentasGetDto = {
+        codigoPuc: 0,
+        codigoGrupo:'0',
+        codigoNivel1:'00',
+        codigoNivel2:'00',
+        codigoNivel3:'00',
+        codigoNivel4:'00',
+        codigoNivel5:'00',
+        codigoNivel6:'',
         denominacion:'',
         descripcion:'',
-        codigoFuncionario:0,
-        codigoIcpPadre:0,
-        codigoIcpConcat:'',
-        searchText:'',
+        codigoPucPadre:0,
+        codigoPucConcat:'',
         codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
       }
 
 
-      dispatch(setIcpSeleccionado(defaultValues))
+      dispatch(setPucSeleccionado(defaultValues))
 
 
-    dispatch(setOperacionCrudIcp(1));
-    dispatch(setVerIcpActive(true))
+    dispatch(setOperacionCrudPuc(1));
+    dispatch(setVerPucActive(true))
 
 
   }
@@ -202,12 +213,12 @@ const PresupuestoList = () => {
   const dispatch = useDispatch();
 
 
-  const {verIcpActive=false} = useSelector((state: RootState) => state.icp)
+  const {verPucActive=false} = useSelector((state: RootState) => state.puc)
   const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false);
   const [viewTable, setViewTable] = useState(false);
 
-  const [icp, setIcp] = useState([]);
+  const [puc, setPuc] = useState([]);
   const handleViewTree=()=>{
     setViewTable(false);
 
@@ -218,58 +229,65 @@ const PresupuestoList = () => {
   }
   useEffect(() => {
 
-    const getIcp = async (filter:FilterByPresupuestoDto) => {
+    const getPuc = async (filter:FilterByPresupuestoDto) => {
       setLoading(true);
 
 
-      const responseAll= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/GetAllFilter',filter);
+      const responseAll= await ossmmasofApi.post<any>('/PrePlanUnicoCuentas/GetAllFilter',filter);
       const data = responseAll.data.data;
 
-      dispatch(setListIcp(data));
+      dispatch(setListPuc(data));
 
-      setIcp(data);
+      setPuc(data);
 
 
-      const filterSectores:IFilterClave={
-        clave:'CODIGO_SECTOR'
+      const filterGrupos:IFilterClave={
+        clave:'CODIGO_GRUPO'
       }
-      const responseSectores= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterSectores);
-      dispatch(setListSectores(responseSectores.data.data));
+      const responseGrupos= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterGrupos);
+      dispatch(setListGrupos(responseGrupos.data.data));
 
-      const filterProgramas:IFilterClave={
-        clave:'CODIGO_PROGRAMA'
+      const filterNivel1:IFilterClave={
+        clave:'CODIGO_NIVEL1'
       }
-      const responseProgramas= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterProgramas);
-      dispatch(setListProgramas(responseProgramas.data.data));
+      const responseNivel1= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel1);
+      dispatch(setListNivel1(responseNivel1.data.data));
 
-      const filterSubProgramas:IFilterClave={
-        clave:'CODIGO_SUBPROGRAMA'
+      const filterNivel2:IFilterClave={
+        clave:'CODIGO_NIVEL2'
       }
-      const responseSubProgramas= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterSubProgramas);
-      dispatch(setListSubProgramas(responseSubProgramas.data.data));
+      const responseNivel2= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel2);
+      dispatch(setListNivel2(responseNivel2.data.data));
 
-      const filterProyectos:IFilterClave={
-        clave:'CODIGO_PROYECTO'
+      const filterNivel3:IFilterClave={
+        clave:'CODIGO_NIVEL3'
       }
-      const responseProyectos= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterProyectos);
-      dispatch(setListProyectos(responseProyectos.data.data));
+      const responseNivel3= await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel3);
+      dispatch(setListNivel3(responseNivel3.data.data));
 
-      const filterActividades:IFilterClave={
-        clave:'CODIGO_ACTIVIDAD'
+      const filterNivel4:IFilterClave={
+        clave:'CODIGO_NIVEL4'
       }
-      const responseActividades =await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterActividades);
-      dispatch(setListActividades(responseActividades.data.data));
+      const responseNivel4 =await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel4);
+      dispatch(setListNivel4(responseNivel4.data.data));
 
-      const filterOfcinas:IFilterClave={
-        clave:'CODIGO_OFICINA'
+      const filterNivel5:IFilterClave={
+        clave:'CODIGO_NIVEL5'
       }
-      const responseOficinas =await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterOfcinas);
-      dispatch(setListOficinas(responseOficinas.data.data));
+      const responseNivel5 =await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel5);
+      dispatch(setListNivel5(responseNivel5.data.data));
 
-      const responseCodigosIcpHistorico =await ossmmasofApi.get<any>('/PreIndiceCategoriaProgramatica/ListCodigosHistoricoIcp');
-      dispatch(setListCodigosIcpHistorico(responseCodigosIcpHistorico.data.data))
+      const filterNivel6:IFilterClave={
+        clave:'CODIGO_NIVEL6'
+      }
+      const responseNivel6 =await ossmmasofApi.post<any>('/OssConfig/GetListByClave',filterNivel6);
+      dispatch(setListNivel6(responseNivel6.data.data));
 
-      await fetchDataPersonas(dispatch);
+
+
+      const responseCodigosPucHistorico =await ossmmasofApi.get<any>('/PrePlanUnicoCuentas/ListCodigosHistoricoPuc');
+      dispatch(setListCodigosPucHistorico(responseCodigosPucHistorico.data.data))
+
 
       setLoading(false);
     };
@@ -286,11 +304,12 @@ const PresupuestoList = () => {
       filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
       dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
     }
-     getIcp(filter);
+     getPuc(filter);
 
 
 
-  }, [verIcpActive, listpresupuestoDtoSeleccionado]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verPucActive, listpresupuestoDtoSeleccionado]);
 
 
 
@@ -298,7 +317,7 @@ const PresupuestoList = () => {
   return (
     <Grid item xs={12}>
        <Card>
-        <CardHeader title='Maestro de Indice Categoria Programatica' />
+        <CardHeader title='Maestro Plan Unico de Cuentas' />
         <FilterOnlyPresupuesto/>
         <CardActions>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -346,16 +365,17 @@ const PresupuestoList = () => {
 
               } */}
               {viewTable
-              ?  <TreeViewIcp></TreeViewIcp>
+              ?  <TreeViewPuc></TreeViewPuc>
               :
                 loading ?   <Spinner sx={{ height: '100%' }} />
                 :
                 <Box sx={{ height: 500 }}>
                 <DataGrid
-                  getRowId={(row) => row.codigoIcp}
+                  getRowId={(row) => row.codigoPuc + row.codigoPucConcat}
                   columns={columns}
-                  rows={icp}
+                  rows={puc}
                   onRowDoubleClick={(row) => handleDoubleClick(row)}
+
                   />
 
 
@@ -367,7 +387,7 @@ const PresupuestoList = () => {
         </Card>
 
         <DatePickerWrapper>
-              <DialogPreIcpInfo/>
+              <DialogPrePucInfo/>
         </DatePickerWrapper>
     </Grid>
 

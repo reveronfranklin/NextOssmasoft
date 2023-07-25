@@ -12,6 +12,7 @@ import { presupuestoSlice } from './apps/presupuesto'
 import { nominaSlice } from './apps/rh'
 import {ossmmasoftSlice} from './apps/ossmasoft';
 import { icpSlice } from './apps/ICP'
+import { pucSlice } from './apps/PUC'
 
 
 
@@ -27,6 +28,7 @@ export const store = configureStore({
     permissions,
     presupuesto:presupuestoSlice.reducer,
     icp:icpSlice.reducer,
+    puc:pucSlice.reducer,
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer
 

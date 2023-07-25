@@ -271,7 +271,7 @@ const TableServerSidePreVSaldo = () => {
 
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
 
-      console.log(responseAll.data.data)
+
       if(responseAll.data.data){
         setTotal(responseAll.data.data.length);
         await setAllRows(responseAll.data.data);

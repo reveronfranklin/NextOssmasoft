@@ -63,7 +63,7 @@ const DialogPreVSaldoPorPartidaInfo = () => {
       const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoPucConcat',filter);
       let data : any[]=[];
 
-      console.log('DialogPreVSaldoPorPartidaInfo',responseAll)
+
       if (responseAll.data.data && responseAll.data.data.length>0){
         data = responseAll.data.data;
 

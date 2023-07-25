@@ -38,15 +38,15 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
     dispatch(setFechaDesde(desde));
-    console.log('dateDesde',dateDesde)
+
   }
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
     dispatch(setFechaHasta(hasta));
-    console.log('dateHasta',dateHasta)
+
   }
   const handleTiposNomina= (e: any,value:any)=>{
-    console.log('handleTiposNomina',value)
+
     if(value!=null){
       dispatch(setTiposNominaSeleccionado(value));
       buscarConceptos(value.codigoTipoNomina);

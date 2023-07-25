@@ -14,39 +14,38 @@ import { RootState } from 'src/store';
 import { useSelector } from 'react-redux';
 
 import { useDispatch } from 'react-redux';
-import { setIcpSeleccionado, setOperacionCrudIcp, setVerIcpActive } from 'src/store/apps/ICP';
+import { setOperacionCrudPuc, setPucSeleccionado, setVerPucActive } from 'src/store/apps/PUC';
 
 //const rows: GridRowsProp = [];
 
 const columns: GridColDef[] = [
-  { field: 'denominacion', headerName: 'Denominacion', width: 300 },
+  { field: 'denominacion', headerName: 'Denominacion', width: 400 },
   { field: 'descripcion', headerName: 'Descripcion', width: 300 },
-  { field: 'unidadEjecutora', headerName: 'Unidad Ejecutora', width: 300 },
 
 ];
 
 
 const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
-const TreeViewIcp = ()  => {
+const TreeViewPuc = ()  => {
 
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<GridRowsProp[]>([]);
-  const {listIcp} = useSelector((state: RootState) => state.icp)
+  const {listPuc} = useSelector((state: RootState) => state.puc)
 
   const handleView=  (row : any)=>{
 
 
     if(!isNaN(+row.id)){
-      const icp=listIcp.find((elemento)=> elemento.codigoIcp==row.id);
+      const puc=listPuc.find((elemento)=> elemento.codigoPuc==row.id);
 
 
-      dispatch(setIcpSeleccionado(icp))
+      dispatch(setPucSeleccionado(puc))
 
      // Operacion Crud 2 = Modificar presupuesto
-      dispatch(setOperacionCrudIcp(2));
-      dispatch(setVerIcpActive(true))
+      dispatch(setOperacionCrudPuc(2));
+      dispatch(setVerPucActive(true))
     }
 
 
@@ -56,17 +55,17 @@ const TreeViewIcp = ()  => {
   }
 
   useEffect(() => {
-    const getDataTreeIcp = async () => {
+    const getDataTreePuc = async () => {
       setLoading(true);
       const filter:FilterByPresupuestoDto={
         codigoPresupuesto:0
       }
-      const responseTree= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/GetTree',filter);
-
+      const responseTree= await ossmmasofApi.post<any>('/PrePlanUnicoCuentas/GetTree',filter);
+      console.log('responseTree puc',responseTree )
       setData(responseTree.data.data)
       setLoading(false);
     };
-    getDataTreeIcp();
+    getDataTreePuc();
 
   }, [])
 
@@ -92,4 +91,4 @@ const TreeViewIcp = ()  => {
   );
 }
 
-export default TreeViewIcp
+export default TreeViewPuc

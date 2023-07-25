@@ -105,7 +105,7 @@ const FormValidationBasicPrePresupuesto = () => {
   }
 
   const onSubmit = () => {
-    console.log('submit',control)
+
     toast.success('Form Submitted')
   }
 

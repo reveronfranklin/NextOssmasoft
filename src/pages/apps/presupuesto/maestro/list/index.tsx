@@ -107,7 +107,7 @@ const PresupuestoList = () => {
 
   }
   const handleDoubleClick=(row:any)=>{
-    console.log(row.row)
+
     handleView(row.row)
 }
   const handleAdd=  ()=>{

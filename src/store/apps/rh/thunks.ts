@@ -36,7 +36,7 @@ export const fetchDataConceptos = async(dispatch:any) => {
 
       return {data,status}
     } catch (error) {
-      console.log(error)
+
     }
 
 };
@@ -63,7 +63,7 @@ export const fetchDataTipoNomina = async(dispatch:any) => {
 
     return {data,status}
   } catch (error) {
-    console.log(error)
+
   }
 
 };
@@ -90,7 +90,7 @@ export const fetchDataPersonas = async(dispatch:any) => {
 
     return {data,status}
   } catch (error) {
-    console.log(error)
+
   }
 
 };

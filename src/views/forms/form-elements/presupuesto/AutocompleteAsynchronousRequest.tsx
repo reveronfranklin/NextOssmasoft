@@ -53,7 +53,7 @@ const AutocompleteAsynchronousRequest = () => {
       const responseAll= await ossmmasofApi.get<IListPreMtrDenominacionPuc[]>('/PreMtrDenominacionPuc/GetAll');
 
       //const top100Films = await responseAll.data
-      console.log('responseAll fetchDataPreMtrDenominacionPuc',responseAll)
+
 
       if (active) {
 

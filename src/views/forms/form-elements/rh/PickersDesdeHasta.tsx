@@ -33,12 +33,12 @@ const PickersDesdeHasta = ({ popperPlacement }: { popperPlacement: ReactDatePick
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
     dispatch(setFechaDesde(desde));
-    console.log('dateDesde',dateDesde)
+
   }
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
     dispatch(setFechaHasta(hasta));
-    console.log('dateHasta',dateHasta)
+
   }
 
   return (

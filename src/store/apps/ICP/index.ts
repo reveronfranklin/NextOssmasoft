@@ -42,7 +42,7 @@ export const icpSlice = createSlice({
       state.icpSeleccionado=action.payload;
     },
     setVerIcpActive:(state,action)=>{
-      console.log('setVerIcpActive action',action)
+
       state.verIcpActive=action.payload;
     },
     setOperacionCrudIcp:(state,action)=>{

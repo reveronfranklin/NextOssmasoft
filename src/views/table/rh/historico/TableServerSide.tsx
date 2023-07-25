@@ -238,14 +238,13 @@ const TableServerSide = () => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
-      console.log('codigoTipoNomina a filtrar',codigoTipoNomina)
+
       setMensaje('')
       setLoading(true);
       const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize}
 
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
-      console.log('Respuesta llamando al historico responseAll.data.data+++++++++======>',responseAll.data.data)
 
       setTotal(responseAll.data.data.length);
 
@@ -290,7 +289,7 @@ const TableServerSide = () => {
 
   const handleSearch = (value: string) => {
 
-    console.log(value)
+
     setSearchValue(value)
     if(value=='') {
       setRows(allRows);
@@ -304,11 +303,10 @@ const TableServerSide = () => {
   }
 
   const handlePageChange = (newPage:number) => {
-    console.log('handlePageChange',newPage)
+
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
-    console.log('rows',rows)
-    console.log('allRows',allRows)
+
   }
 
   return (

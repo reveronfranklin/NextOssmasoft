@@ -110,7 +110,6 @@ const columns = [
 
 const TableBasicPreVSaldoPorPartida = () => {
   const {preDetalleSaldoPorPartida} = useSelector((state: RootState) => state.presupuesto)
-  console.log('TableBasicPreVSaldoPorPartida',preDetalleSaldoPorPartida);
 
   return (
     <Card>

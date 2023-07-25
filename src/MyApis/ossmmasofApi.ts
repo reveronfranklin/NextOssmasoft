@@ -50,7 +50,6 @@ ossmmasofApi.interceptors.response.use(
     const originalConfig = err.config;
 
     if (originalConfig && originalConfig.url !== '/login' && err.response) {
-      console.log("pasando por el interceptor para recibir respuesta",err);
 
       // Access Token was expired
       if (err.response.status === 401 && !originalConfig._retry) {

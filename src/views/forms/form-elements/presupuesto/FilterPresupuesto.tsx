@@ -47,7 +47,7 @@ const FilterPresupuesto = () => {
 
   const handlePresupuestos= async (e: any,value:any)=>{
 
-    console.log(value)
+
 
     if(value){
 
@@ -58,7 +58,7 @@ const FilterPresupuesto = () => {
       const filter:FilterByPresupuestoDto ={
         codigoPresupuesto:value.codigoPresupuesto
       }
-      console.log('Filter presupuesto seleccionado',filter)
+
       await fetchDataPreMtrDenominacionPuc(dispatch,filter);
       await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
 
@@ -79,7 +79,7 @@ const FilterPresupuesto = () => {
   }
   const handlerDenominacionPuc= (e: any,value:any)=>{
 
-    console.log('handlerDenominacionPuc',value)
+
     if(value){
 
       dispatch(setPreMtrDenominacionPucSeleccionado(value));
@@ -105,7 +105,7 @@ const FilterPresupuesto = () => {
 
   const handlerUnidadEjecutora =(e: any,value:any)=>{
 
-    console.log('handlerUnidadEjecutora en: ',value)
+
     if(value){
 
       dispatch(setPreMtrUnidadEjecutoraSeleccionado(value));

@@ -49,7 +49,7 @@ export const fetchData = async(dispatch:any) => {
 
       return {data,status}
     } catch (error) {
-      console.log(error)
+
     }
 
 
@@ -85,7 +85,7 @@ export const fetchListPresupuesto = async(dispatch:any) => {
 
     return {data,status}
   } catch (error) {
-    console.log(error)
+
   }
 
 
@@ -120,7 +120,7 @@ export const fetchDataPost = async(dispatch:any,filter:any) => {
 
     return {data,status}
   } catch (error) {
-    console.log(error)
+
   }
 
 

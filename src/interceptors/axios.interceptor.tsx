@@ -1,7 +1,8 @@
 
 // ** Axios Imports
 import axios, { AxiosRequestConfig } from 'axios';
-import { getValidationError } from 'src/utlities/get-validation-error';
+
+//import { getValidationError } from 'src/utlities/get-validation-error';
 
 
 export const AxiosInterceptor=()=>{
@@ -27,12 +28,10 @@ export const AxiosInterceptor=()=>{
 
   axios.interceptors.response.use(
     (response) => {
-      console.log('response desde el interceptor', response);
 
       return response;
     },
     (error) => {
-      console.log('error desde el interceptor', getValidationError(error.code));
 
       return Promise.reject(error);
     }

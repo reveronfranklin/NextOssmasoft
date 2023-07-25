@@ -25,6 +25,10 @@
         "path": "/apps/presupuesto/icp/list"
       },
       {
+        "title": "Maestro PUC",
+        "path": "/apps/presupuesto/puc/list"
+      },
+      {
         "title": "Saldo Presupuesto",
         "path": "/apps/presupuesto/prevsaldo"
       }

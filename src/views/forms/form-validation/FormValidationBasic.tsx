@@ -96,7 +96,7 @@ const FormValidationBasic = () => {
   }
 
   const onSubmit = () => {
-    //console.log('submit',data)
+
     toast.success('Form Submitted')
   }
 

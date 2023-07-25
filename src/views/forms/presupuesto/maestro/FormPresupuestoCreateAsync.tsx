@@ -179,7 +179,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
       extra2:(data.extra2 === null || data.extra2 === 'undefined') ? '' : data.extra2,
       extra3:(data.extra3 === null || data.extra3 === 'undefined') ? '' : data.extra3,
     };
-    console.log(updatePresupuesto)
+
 
     const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/Create',updatePresupuesto);
 

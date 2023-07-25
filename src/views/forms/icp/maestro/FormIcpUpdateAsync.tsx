@@ -204,7 +204,7 @@ const FormIcpUpdateAsync = () => {
   }
 
   const handlerPersona=async (e: any,value:any)=>{
-    console.log('handlerPersona',value)
+
     if(value!=null){
       setValue('codigoFuncionario',value.codigoPersona);
       setPersona(value);
@@ -213,7 +213,7 @@ const FormIcpUpdateAsync = () => {
     }
   }
   const handlerIcpPadre=async (e: any,value:any)=>{
-    console.log('handlerIcpPadre',value)
+
     if(value!=null){
       setValue('codigoIcpPadre',value.codigoIcp);
       setIcpPadre(value);
@@ -290,7 +290,7 @@ const FormIcpUpdateAsync = () => {
 
 
     const responseAll= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/Update',updateIcp);
-    console.log('responseAll',responseAll)
+
     if(responseAll.data.isValid){
       dispatch(setIcpSeleccionado(responseAll.data.data))
       dispatch(setVerIcpActive(false))
