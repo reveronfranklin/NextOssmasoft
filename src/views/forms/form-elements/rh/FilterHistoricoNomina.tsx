@@ -87,7 +87,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
     setConceptosPorTipoNomina(dataFilter);
   }
   const handlerConceptos =(e: any,value:any)=>{
-
+    console.log('conceptos',value)
     if(value){
       dispatch(setConceptoSeleccionado(value));
     }
@@ -151,6 +151,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
               </div>
               <div>
                 <Autocomplete
+                    multiple={true}
                     sx={{ width: 350 }}
                     options={conceptosPorTipoNomina}
                     id='autocomplete-concepto'

@@ -53,7 +53,7 @@ interface FilterHistorico {
     hasta: Date
     codigoTipoNomina:number
     codigoPersona:number
-    codigoConcepto:string
+    codigoConcepto:IListConceptosDto[]
     page:number,
     pageSize:number
 
@@ -224,7 +224,7 @@ const TableServerSide = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('full_name')
 
-  const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado={} as IListConceptosDto,personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     //if(currentPage<=0) currentPage=1;
@@ -234,7 +234,7 @@ const TableServerSide = () => {
 
 
   const fetchTableData = useCallback(
-    async (sort: SortType, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:string,codigoPersona:number) => {
+    async (sort: SortType, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:IListConceptosDto[],codigoPersona:number) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -242,9 +242,10 @@ const TableServerSide = () => {
       setMensaje('')
       setLoading(true);
       const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize}
-
+      console.log('filterHistorico enviado',filterHistorico)
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
+      console.log(responseAll.data.data)
 
       setTotal(responseAll.data.data.length);
 
@@ -269,7 +270,7 @@ const TableServerSide = () => {
 
 
   useEffect(() => {
-    fetchTableData(sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona);
+    fetchTableData(sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
 
     //fetchTableExcel();
   }, [fetchTableData, sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
@@ -278,7 +279,8 @@ const TableServerSide = () => {
     if (newModel.length) {
       setSort(newModel[0].sort)
       setSortColumn(newModel[0].field)
-      fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado.codigo,personaSeleccionado.codigoPersona)
+
+      fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona)
     } else {
       setSort('asc')
       setSortColumn('full_name')
@@ -315,7 +317,7 @@ const TableServerSide = () => {
         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
           <Button variant='contained' href={linkData} size='large' >
-            Descargar Todo {linkData}
+            Descargar Todo
           </Button>
         </Box>
         : <Typography>{mensaje}</Typography>

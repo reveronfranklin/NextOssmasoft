@@ -13,7 +13,7 @@ export const nominaSlice = createSlice({
     fechaDesde:  new Date(),
     fechaHasta:new Date(),
     filterHistorico:{} as IFilterHistoricoNomina,
-    conceptoSeleccionado: {} as IListConceptosDto,
+    conceptoSeleccionado: [] as IListConceptosDto[],
     conceptos: [] as IListConceptosDto[],
     tiposNomina:[] as IListTipoNominaDto[],
     tiposNominaSeleccionado:{} as IListTipoNominaDto,
