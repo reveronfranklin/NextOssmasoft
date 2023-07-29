@@ -130,17 +130,7 @@ const columns: any = [
       )
     }
   },
-  {
-    flex: 0.125,
-    minWidth: 15,
-    headerName: 'Estado Civil',
-    field: 'estadoCivil',
-    renderCell: (params: GridRenderCellParams) => (
-      <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.estadoCivil}
-      </Typography>
-    )
-  },
+
 
   {
     flex: 0.125,
