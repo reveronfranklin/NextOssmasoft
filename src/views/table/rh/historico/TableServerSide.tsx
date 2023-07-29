@@ -37,6 +37,7 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import Spinner from 'src/@core/components/spinner';
+import dayjs from 'dayjs'
 
 
 
@@ -148,7 +149,7 @@ const columns: any = [
     field: 'fechaNomina',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
-        {params.row.fechaNominaMov}
+        {dayjs(params.row.fechaNomina).format('DD/MM/YYYY') }
       </Typography>
     )
   },
@@ -247,7 +248,7 @@ const TableServerSide = () => {
       console.log('filterHistorico enviado',filterHistorico)
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
-      console.log(responseAll.data.data)
+      console.log('historico response all',responseAll.data.data)
 
       setTotal(responseAll.data.data.length);
 
