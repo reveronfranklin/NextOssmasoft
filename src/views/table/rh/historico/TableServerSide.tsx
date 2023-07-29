@@ -56,7 +56,8 @@ interface FilterHistorico {
     codigoConcepto:IListConceptosDto[]
     page:number,
     pageSize:number
-
+    tipoSort:SortType;
+    sortColumn:string;
 }
 
 type SortType = 'asc' | 'desc' | undefined | null
@@ -139,11 +140,12 @@ const columns: any = [
       </Typography>
     )
   },
+
   {
     flex: 0.125,
     minWidth: 15,
     headerName: 'Fecha',
-    field: 'fechaNominaMov',
+    field: 'fechaNomina',
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
         {params.row.fechaNominaMov}
@@ -222,7 +224,7 @@ const TableServerSide = () => {
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
-  const [sortColumn, setSortColumn] = useState<string>('full_name')
+  const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
   const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
 
@@ -234,14 +236,14 @@ const TableServerSide = () => {
 
 
   const fetchTableData = useCallback(
-    async (sort: SortType, column: string,desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:IListConceptosDto[],codigoPersona:number) => {
+    async (desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:IListConceptosDto[],codigoPersona:number) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
 
       setMensaje('')
       setLoading(true);
-      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize}
+      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize,tipoSort:sort,sortColumn:sortColumn}
       console.log('filterHistorico enviado',filterHistorico)
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
@@ -270,17 +272,39 @@ const TableServerSide = () => {
 
 
   useEffect(() => {
-    fetchTableData(sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
+    fetchTableData(fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
 
     //fetchTableExcel();
-  }, [fetchTableData, sort, sortColumn,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
+  }, [fetchTableData,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
-    if (newModel.length) {
-      setSort(newModel[0].sort)
-      setSortColumn(newModel[0].field)
 
-      fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona)
+    const temp  = [... allRows];
+
+    if (newModel.length) {
+      console.log('newModel en handleSortModel>>>',newModel,sort)
+      setSort(newModel[0].sort);
+      setSortColumn(newModel[0].field);
+
+      //const column: string=newModel[0].field.toString();
+
+      if(sortColumn==='denominacion' ||
+         sortColumn==='full_name' ||
+         sortColumn ==='fechaNomina' ||
+         sortColumn=== 'tipoNomina' ||
+         sortColumn==='sueldo' ||
+         sortColumn === 'monto')
+      {
+
+            const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
+            const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
+            setRows(loadServerRows(page, dataToFilter))
+      }
+
+
+
+      //fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
+
     } else {
       setSort('asc')
       setSortColumn('full_name')

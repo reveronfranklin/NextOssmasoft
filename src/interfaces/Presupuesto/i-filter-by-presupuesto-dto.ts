@@ -6,4 +6,6 @@ export interface FilterPrePresupuestoDto{
   searchText? :string;
   codigoEmpresa:number;
   financiadoId:number;
+  fechaDesde:Date;
+  fechaHasta:Date;
 }

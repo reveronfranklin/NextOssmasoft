@@ -64,12 +64,11 @@ const TableEditable = () => {
 
   return (
     <Card>
-      <CardHeader title='Editable.' />
+      <CardHeader title='Relacion Cargo' />
       <Box sx={{ height: 700 }}>
         <DataGrid
           columns={columns}
           rows={rows.slice(0, 10)}
-
           onCellEditCommit={row =>handleOnCellEditCommit(row)}
         />
       </Box>

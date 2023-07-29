@@ -23,6 +23,7 @@ import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupues
 import { IPreFinanciadoDto } from 'src/interfaces/Presupuesto/i-list-pre-financiado-dto'
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import PickersDesdeHasta from 'src/share/components/pickers/PickersDesdeHasta'
 
 
 
@@ -132,7 +133,7 @@ const FilterPresupuestoFinanciado = () => {
         <Card>
         <CardHeader title='Filtrar Presupuesto' />
         <CardContent>
-          <Grid container spacing={6}>
+          <Grid container >
             <Grid item xs={12} >
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
 
@@ -168,7 +169,9 @@ const FilterPresupuestoFinanciado = () => {
                 }
 
                 </div>
-
+                <div>
+                 <PickersDesdeHasta/>
+                </div>
 
 
 

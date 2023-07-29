@@ -26,13 +26,13 @@ import { FilterByPresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-p
 import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
 
 import { setIcpSeleccionado, setListActividades, setListCodigosIcpHistorico, setListIcp ,setListOficinas,setListProgramas,setListProyectos,setListSectores,setListSubProgramas,setOperacionCrudIcp,setVerIcpActive} from 'src/store/apps/ICP';
-import DialogPreIcpInfo from '../../../../../views/pages/presupuesto/icp/DialogPreIcpInfo';
 import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterOnlyPresupuesto';
 import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 
 import { IFilterClave } from 'src/interfaces/SIS/i-filter-clave';
 import { fetchDataPersonas } from 'src/store/apps/rh/thunks';
-import TreeViewIcp from 'src/presupuesto/components/TreViewIcp';
+import TreeViewIcp from 'src/presupuesto/Icp/components/TreViewIcp';
+import DialogPreIcpInfo from 'src/presupuesto/Icp/views/DialogPreIcpInfo';
 
 interface CellType {
   row: IPreIndiceCategoriaProgramaticaGetDto}
@@ -342,7 +342,7 @@ const PresupuestoList = () => {
 
 
                 </Box>
-
+ s
 
               } */}
               {viewTable

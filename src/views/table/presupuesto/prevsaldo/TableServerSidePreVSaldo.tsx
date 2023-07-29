@@ -258,7 +258,10 @@ const TableServerSidePreVSaldo = () => {
     dispatch(setVerDetallePreVSaldoActive(true))
 
   }
+  const handleDoubleClick=(row:any)=>{
 
+    handleView(row.row)
+}
   const fetchTableData = useCallback(
     async (sort: SortType, column: string,codigoPresupuesto:number,codigoIPC:number,codigoPuc:number) => {
 
@@ -337,7 +340,7 @@ const TableServerSidePreVSaldo = () => {
          !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
           <Button variant='contained' href={linkData} size='large' >
-            Descargar Todo {linkData}
+            Descargar Todo
           </Button>
         </Box>
         : <Typography  m={2} pt={3}>{mensaje}</Typography>
@@ -357,7 +360,7 @@ const TableServerSidePreVSaldo = () => {
         rows={rows}
         rowCount={total}
         columns={columns}
-
+        onRowDoubleClick={(row) => handleDoubleClick(row)}
 
         sortingMode='server'
         paginationMode='server'

@@ -10,7 +10,7 @@ import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas';
 export const nominaSlice = createSlice({
   name: 'nomina',
   initialState: {
-    fechaDesde:  new Date(),
+    fechaDesde: new Date(new Date().getFullYear(), 0, 1),
     fechaHasta:new Date(),
     filterHistorico:{} as IFilterHistoricoNomina,
     conceptoSeleccionado: [] as IListConceptosDto[],

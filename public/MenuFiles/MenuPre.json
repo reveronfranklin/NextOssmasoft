@@ -29,6 +29,10 @@
         "path": "/apps/presupuesto/puc/list"
       },
       {
+        "title": "Relacion Cargo",
+        "path": "/apps/presupuesto/relacionCargo"
+      },
+      {
         "title": "Saldo Presupuesto",
         "path": "/apps/presupuesto/prevsaldo"
       }

@@ -98,6 +98,7 @@ const EcommerceDashboard = () => {
   const dispatch = useDispatch();
 
   const {presupuestoSeleccionado,preDenominacionPucResumen=[],preFinanciadoDtoSeleccionado,listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const {fechaDesde,fechaHasta} = useSelector((state: RootState) => state.ossmmasofGlobal)
   const [loading, setLoading] = useState(false)
 
 
@@ -111,7 +112,9 @@ useEffect(() => {
       codigoPresupuesto: 0,
       searchText : '',
       codigoEmpresa: 0,
-      financiadoId:0
+      financiadoId:0,
+      fechaDesde,
+      fechaHasta
     }
 
     if(preFinanciadoDtoSeleccionado.financiadoId){
@@ -134,7 +137,7 @@ useEffect(() => {
 
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [listpresupuestoDtoSeleccionado,preFinanciadoDtoSeleccionado]);
+}, [listpresupuestoDtoSeleccionado,preFinanciadoDtoSeleccionado,fechaDesde,fechaHasta]);
 
 
     return (

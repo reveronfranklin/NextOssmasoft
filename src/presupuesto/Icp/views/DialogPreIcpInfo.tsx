@@ -20,18 +20,23 @@ import DialogActions from '@mui/material/DialogActions'
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
 
-import {  setVerPresupuestoActive } from 'src/store/apps/presupuesto';
+
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 
 
 
 // ** Third Party Imports
-import { ReactDatePickerProps } from 'react-datepicker'
+//import { ReactDatePickerProps } from 'react-datepicker'
 
-import FormPresupuestoUpdateAsync from 'src/views/forms/presupuesto/maestro/FormPresupuestoUpdateAsync'
+
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import FormPresupuestoCreateAsync from 'src/views/forms/presupuesto/maestro/FormPresupuestoCreateAsync'
+
+import { setIcpSeleccionado, setVerIcpActive } from 'src/store/apps/ICP';
+
+import { IPreIndiceCategoriaProgramaticaGetDto } from 'src/interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto'
+import FormIcpCreateAsync from '../forms/FormIcpCreateAsync'
+import FormIcpUpdateAsync from '../forms/FormIcpUpdateAsync'
 
 
 // ** Custom Component Imports
@@ -45,20 +50,44 @@ const Transition = forwardRef(function Transition(
 
 
 
-const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
+const DialogPreIcpInfo = ()  => {
 
 
   // ** States
   const dispatch = useDispatch();
-  const {verPresupuestoActive,operacionCrudPresupuesto} = useSelector((state: RootState) => state.presupuesto)
-
+  const {verIcpActive,operacionCrudIcp} = useSelector((state: RootState) => state.icp)
+  const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
 
 
   const handleSetShow= (active:boolean)=>{
 
-    dispatch(setVerPresupuestoActive(active))
+    if(active==false){
+      const defaultValues:IPreIndiceCategoriaProgramaticaGetDto = {
+        codigoIcp: 0,
+        ano:listpresupuestoDtoSeleccionado.ano,
+        codigoSector:'00',
+        codigoPrograma:'00',
+        codigoSubPrograma:'00',
+        codigoProyecto:'00',
+        codigoActividad:'00',
+        codigoOficina:'00',
+        unidadEjecutora:'',
+        denominacion:'',
+        descripcion:'',
+        codigoFuncionario:0,
+        codigoIcpPadre:0,
+        codigoIcpConcat:'',
+        searchText:'',
+        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
+
+      }
+
+      dispatch(setIcpSeleccionado(defaultValues))
+    }
+    dispatch(setVerIcpActive(active))
+
 
   }
 
@@ -73,7 +102,7 @@ const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactD
 
         <Dialog
           fullWidth
-          open={verPresupuestoActive}
+          open={verIcpActive}
           maxWidth='md'
           scroll='body'
           onClose={() => handleSetShow(false)}
@@ -88,12 +117,12 @@ const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactD
             >
               <Icon icon='mdi:close' />
             </IconButton>
-            <DatePickerWrapper>
-              { operacionCrudPresupuesto===1
-              ?  <FormPresupuestoCreateAsync popperPlacement={popperPlacement} />
-                :<FormPresupuestoUpdateAsync popperPlacement={popperPlacement} />
-              }
 
+            <DatePickerWrapper>
+              { operacionCrudIcp===1
+              ?  <FormIcpCreateAsync/>
+                :<FormIcpUpdateAsync/>
+              }
             </DatePickerWrapper>
 
 
@@ -112,4 +141,4 @@ const DialogPrePresupuestoInfo = ({ popperPlacement }: { popperPlacement: ReactD
 
 }
 
-export default DialogPrePresupuestoInfo
+export default DialogPreIcpInfo
