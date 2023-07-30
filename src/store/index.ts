@@ -13,6 +13,7 @@ import { nominaSlice } from './apps/rh'
 import {ossmmasoftSlice} from './apps/ossmasoft';
 import { icpSlice } from './apps/ICP'
 import { pucSlice } from './apps/PUC'
+import { preDescriptivaSlice } from './apps/pre-descriptiva'
 
 
 
@@ -29,6 +30,7 @@ export const store = configureStore({
     presupuesto:presupuestoSlice.reducer,
     icp:icpSlice.reducer,
     puc:pucSlice.reducer,
+    preDescriptiva:preDescriptivaSlice.reducer,
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer
 

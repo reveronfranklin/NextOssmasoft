@@ -35,6 +35,10 @@
       {
         "title": "Saldo Presupuesto",
         "path": "/apps/presupuesto/prevsaldo"
+      },
+      {
+        "title": "Descriptivas",
+        "path": "/apps/presupuesto/descriptiva"
       }
 
     ]

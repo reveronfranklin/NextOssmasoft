@@ -76,6 +76,7 @@ const TreeViewIcp = ()  => {
                 loading
                 ?   <Spinner sx={{ height: '100%' }} />
                 :
+
                 <Box sx={{ height: 500 }}>
                   <DataGridPro
                     treeData

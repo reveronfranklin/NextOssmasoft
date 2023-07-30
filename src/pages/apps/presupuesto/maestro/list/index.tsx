@@ -1,11 +1,11 @@
-import { Box, Card, CardActions, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
+import { Box, Card, CardActions, CardHeader, Grid, IconButton, Tooltip, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles'
 
 //import { usePresupuesto } from 'src/hooks/usePresupuesto';
@@ -20,11 +20,10 @@ import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
+import dayjs from 'dayjs';
 
 
-interface CellType {
-  row: IPresupuesto
-}
+
 
 const PresupuestoList = () => {
   const theme = useTheme()
@@ -32,23 +31,7 @@ const PresupuestoList = () => {
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   const columns = [
-    {
-      flex: 0.1,
-      minWidth: 130,
-      sortable: false,
-      field: 'actions',
-      headerName: 'Actions',
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='View'>
-            <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
-            </IconButton>
-          </Tooltip>
 
-        </Box>
-      )
-    },
 
     {
 
@@ -59,39 +42,39 @@ const PresupuestoList = () => {
     {
 
       field: 'denominacion',
-      width: 330
+      width: 430
 
     },
-    {
 
-      field: 'descripcion',
-      width: 100
-    },
     {
-
+      headerName:'',
       field: 'ano',
       width: 100
     },
 
 
-    {
 
+    {
+     with:100,
+      headerName: 'Desde',
       field: 'fechaDesde',
-      headerName:'Desde',
-      width: 130
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {dayjs(params.row.fechaDesde).format('DD/MM/YYYY') }
+        </Typography>
+      )
     },
     {
-
+      with:100,
+      headerName: 'Hasta',
       field: 'fechaHasta',
-      headerName:'Hasta',
-      width: 130
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {dayjs(params.row.fechaHasta).format('DD/MM/YYYY') }
+        </Typography>
+      )
     },
-    {
 
-      field: 'montoPresupuesto',
-      headerName:'Monto'
-
-    }
 
 
   ]

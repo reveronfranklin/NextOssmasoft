@@ -37,6 +37,7 @@ import { IUpdatePrePresupuesto } from 'src/interfaces/Presupuesto/i-update-pre-p
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useState } from 'react'
 import { Box } from '@mui/material'
+import dayjs from 'dayjs'
 
 interface FormInputs {
   codigoPresupuesto:number
@@ -310,9 +311,9 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
             </Grid>
             <Grid item  sm={3} xs={12}>
                 <DatePicker
-                   selected={ fechaDesdeDate}
+                   selected={fechaDesdeDate}
                   id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
+                  dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerDesde(date)}
                   placeholderText='Click to select a date'
@@ -326,7 +327,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
                 <DatePicker
                   selected={ fechaHastaDate}
                   id='date-time-picker-hasta'
-                  dateFormat='dd/MM/yyyy'
+                  dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerHasta(date)}
                   placeholderText='Click to select a date'
@@ -338,7 +339,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
                   selected={ fechaAprobacionDate}
                   id='date-time-picker-aprobacion'
-                  dateFormat='dd/MM/yyyy'
+                  dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerFechaAprobacion(date)}
                   placeholderText='Click to select a date'
@@ -375,7 +376,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
                 <DatePicker
                   selected={ fechaOrdenanzaDate}
                   id='date-time-picker-ordenanza'
-                  dateFormat='dd/MM/yyyy'
+                  dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerFechaOrdenanza(date)}
                   customInput={<CustomInput label='Fecha Ordenanza' />}
