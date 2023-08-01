@@ -15,6 +15,7 @@ import { icpSlice } from './apps/ICP'
 import { pucSlice } from './apps/PUC'
 import { preDescriptivaSlice } from './apps/pre-descriptiva'
 import { preTituloSlice } from './apps/pre-titulos'
+import { preCargoSlice } from './apps/pre-cargo'
 
 
 
@@ -32,6 +33,7 @@ export const store = configureStore({
     icp:icpSlice.reducer,
     puc:pucSlice.reducer,
     preDescriptiva:preDescriptivaSlice.reducer,
+    preCargo:preCargoSlice.reducer,
     preTitulo:preTituloSlice.reducer,
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer

@@ -43,6 +43,10 @@
       {
         "title": "Titulos",
         "path": "/apps/presupuesto/titulo"
+      },
+      {
+        "title": "Cargos",
+        "path": "/apps/presupuesto/cargo"
       }
 
     ]
