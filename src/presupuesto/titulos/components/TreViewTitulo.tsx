@@ -11,8 +11,8 @@ import { Box } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
-import { setOperacionCrudPreDescriptiva, setPreDescriptivaSeleccionado, setVerPreDescriptivaActive } from 'src/store/apps/pre-descriptiva';
 import { useDispatch } from 'react-redux';
+import { setOperacionCrudPreTitulo, setPreTituloSeleccionado, setVerPreTituloActive } from 'src/store/apps/pre-titulos';
 
 //import { DataGrid } from '@mui/x-data-grid';
 
@@ -26,12 +26,12 @@ const columns: GridColDef[] = [
 
 
 
-const TreeViewDescriptiva = ()  => {
+const TreeViewTitulo = ()  => {
 
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [rows, setRows] = React.useState<GridRowsProp[]>([]);
-  const {listPreDescriptivas} = useSelector((state: RootState) => state.preDescriptiva)
+  const {listPreTitulos} = useSelector((state: RootState) => state.preTitulo)
  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
  const onFilterChange= ()=>{
@@ -42,14 +42,14 @@ const TreeViewDescriptiva = ()  => {
 
    console.log(row)
   if(!isNaN(+row.id)){
-    const descriptiva=listPreDescriptivas.find((elemento)=> elemento.descripcionId==row.id);
+    const titulo=listPreTitulos.find((elemento)=> elemento.tituloId==row.id);
 
 
-    dispatch(setPreDescriptivaSeleccionado(descriptiva))
+    dispatch(setPreTituloSeleccionado(titulo))
 
    // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudPreDescriptiva(2));
-    dispatch(setVerPreDescriptivaActive(true))
+    dispatch(setOperacionCrudPreTitulo(2));
+    dispatch(setVerPreTituloActive(true))
   }
 
 
@@ -62,7 +62,7 @@ const TreeViewDescriptiva = ()  => {
     const getDataTree = async () => {
       setLoading(true);
 
-      const responseTree= await ossmmasofApi.get<any>('/PreDescriptivas/GetTreeDescriptiva');
+      const responseTree= await ossmmasofApi.get<any>('/PreTitulos/GetTreeTitulos');
       setRows(responseTree.data.data)
       console.log(responseTree.data.data)
       setLoading(false);
@@ -100,4 +100,4 @@ const TreeViewDescriptiva = ()  => {
   );
 }
 
-export default TreeViewDescriptiva
+export default TreeViewTitulo

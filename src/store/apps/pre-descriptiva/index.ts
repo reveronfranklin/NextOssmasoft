@@ -3,10 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto';
 
 
-import { IPreTitulosGetDto } from 'src/interfaces/Presupuesto/i-pre-titulos-get-dto';
-
-
-
 
 
 
@@ -14,10 +10,10 @@ export const preDescriptivaSlice = createSlice({
   name: 'preDescriptiva',
   initialState: {
     preDescriptivaSeleccionado: {} as IPreDescriptivasGetDto,
-
+    listPreDescriptivas:[] as IPreDescriptivasGetDto[],
     verPreDescriptivaActive:false,
     operacionCrudPreDescriptiva:0,
-    listPreTitulos:[] as IPreTitulosGetDto[],
+
 
   },
   reducers: {
@@ -29,6 +25,10 @@ export const preDescriptivaSlice = createSlice({
 
       state.preDescriptivaSeleccionado=action.payload;
     },
+    setListPreDescriptivas:(state,action)=>{
+
+      state.listPreDescriptivas=action.payload;
+    },
     setVerPreDescriptivaActive:(state,action)=>{
 
       state.verPreDescriptivaActive=action.payload;
@@ -36,16 +36,15 @@ export const preDescriptivaSlice = createSlice({
     setOperacionCrudPreDescriptiva:(state,action)=>{
       state.operacionCrudPreDescriptiva=action.payload;
     },
-    setListPreTitulo:(state,action)=>{
-      state.listPreTitulos=action.payload;
-    },
+
 
   },
 
 });
 
 export const {setPreDescriptivaSeleccionado,
+              setListPreDescriptivas,
               setVerPreDescriptivaActive,
               setOperacionCrudPreDescriptiva,
-              setListPreTitulo
+
               } = preDescriptivaSlice.actions;

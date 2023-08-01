@@ -68,7 +68,7 @@ interface FormInputs {
 
 
 
-const FormPucUpdateAsync = () => {
+const FormPreDescriptivaUpdateAsync = () => {
   // ** States
   const dispatch = useDispatch();
   const {pucSeleccionado,
@@ -287,7 +287,7 @@ const FormPucUpdateAsync = () => {
 
   return (
     <Card>
-      <CardHeader title='Modificar Indice Categoria Programatica(ICP)' />
+      <CardHeader title='Modificar Plan Unico de Cuentas(PUC)' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -581,4 +581,4 @@ const FormPucUpdateAsync = () => {
 
 }
 
-export default FormPucUpdateAsync
+export default FormPreDescriptivaUpdateAsync

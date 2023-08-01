@@ -32,10 +32,12 @@ import { useSelector } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-import { IPrePlanUnicoCuentasGetDto } from 'src/interfaces/Presupuesto/i-pre-plan-unico-cuentas-get-dto'
-import { setPucSeleccionado, setVerPucActive } from 'src/store/apps/PUC'
-import FormPucCreateAsync from '../forms/FormPucCreateAsync'
-import FormPucUpdateAsync from '../forms/FormPucUpdateAsync'
+
+import FormPreDescriptivaCreateAsync from '../forms/FormPreDescriptivaCreateAsync'
+import FormPreDescriptivaUpdateAsync from '../forms/FormPreDescriptivaUpdateAsync'
+import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto'
+import { setPreDescriptivaSeleccionado, setVerPreDescriptivaActive } from 'src/store/apps/pre-descriptiva'
+
 
 
 // ** Custom Component Imports
@@ -49,13 +51,12 @@ const Transition = forwardRef(function Transition(
 
 
 
-const DialogPrePucInfo = ()  => {
+const DialogPreDescriptivaInfo = ()  => {
 
 
   // ** States
   const dispatch = useDispatch();
-  const {verPucActive,operacionCrudPuc} = useSelector((state: RootState) => state.puc)
-  const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const {verPreDescriptivaActive,operacionCrudPreDescriptiva} = useSelector((state: RootState) => state.preDescriptiva)
 
 
 
@@ -64,24 +65,21 @@ const DialogPrePucInfo = ()  => {
 
     if(active==false){
 
-      const defaultValues:IPrePlanUnicoCuentasGetDto = {
-        codigoPuc: 0,
-        codigoGrupo:'0',
-        codigoNivel1:'00',
-        codigoNivel2:'00',
-        codigoNivel3:'00',
-        codigoNivel4:'00',
-        codigoNivel5:'00',
-        codigoNivel6:'',
-        denominacion:'',
+      const defaultValues:IPreDescriptivasGetDto = {
+        descripcionId: 0,
+        descripcionIdFk:0,
+        tituloId:0,
+        descripcionTitulo:'',
         descripcion:'',
-        codigoPucPadre:0,
-        codigoPucConcat:'',
-        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
+        codigo:'',
+        extra1:'',
+        extra2:'',
+        extra3:'',
+
       }
-      dispatch(setPucSeleccionado(defaultValues))
+      dispatch(setPreDescriptivaSeleccionado(defaultValues))
     }
-    dispatch(setVerPucActive(active))
+    dispatch(setVerPreDescriptivaActive(active))
 
 
   }
@@ -97,7 +95,7 @@ const DialogPrePucInfo = ()  => {
 
         <Dialog
           fullWidth
-          open={verPucActive}
+          open={verPreDescriptivaActive}
           maxWidth='md'
           scroll='body'
           onClose={() => handleSetShow(false)}
@@ -114,9 +112,9 @@ const DialogPrePucInfo = ()  => {
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudPuc===1
-              ?  <FormPucCreateAsync/>
-                :<FormPucUpdateAsync/>
+              { operacionCrudPreDescriptiva===1
+              ?  <FormPreDescriptivaCreateAsync/>
+                :<FormPreDescriptivaUpdateAsync/>
               }
             </DatePickerWrapper>
 
@@ -136,4 +134,4 @@ const DialogPrePucInfo = ()  => {
 
 }
 
-export default DialogPrePucInfo
+export default DialogPreDescriptivaInfo

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Card, CardActions, CardHeader, FormControl, Grid, IconButton, TextField, Tooltip} from '@mui/material'
+import { Box, Card, CardActions, CardHeader,  Grid, IconButton, Tooltip} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -24,15 +24,14 @@ import { RootState } from 'src/store';
 
 
 
-import TreeViewDescriptiva from 'src/presupuesto/descriptivas/components/TreViewDescriptiva';
-import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto';
-import {setListPreDescriptivas, setOperacionCrudPreDescriptiva, setPreDescriptivaSeleccionado, setVerPreDescriptivaActive } from 'src/store/apps/pre-descriptiva';
-import DialogPreDescriptivaInfo from 'src/presupuesto/descriptivas/views/DialogPreDescriptivaInfo';
-import { setListPreTitulo } from 'src/store/apps/pre-titulos';
+
+import { setListPreTitulo, setOperacionCrudPreTitulo, setPreTituloSeleccionado, setVerPreTituloActive } from 'src/store/apps/pre-titulos';
 import { IPreTitulosGetDto } from '../../../../interfaces/Presupuesto/i-pre-titulos-get-dto';
+import DialogPreTituloInfo from 'src/presupuesto/titulos/views/DialogPreTituloInfo';
+import TreeViewTitulo from 'src/presupuesto/titulos/components/TreViewTitulo';
 
 interface CellType {
-  row: IPreDescriptivasGetDto
+  row: IPreTitulosGetDto
 }
 
 const PresupuestoList = () => {
@@ -61,23 +60,23 @@ const PresupuestoList = () => {
     },
     {
 
-      field: 'descripcionId',
+      field: 'tituloId',
       headerName: 'Id',
       width: 80
 
     },
     {
 
-      field: 'descripcionIdFk',
+      field: 'tituloIdFk',
       headerName: 'Padre',
       width: 80
 
     },
     {
 
-      field: 'tituloId',
-      headerName: 'TituloId',
-      width: 80
+      field: 'titulo',
+      headerName: 'Titulo',
+      width: 500
 
     },
     {
@@ -87,20 +86,7 @@ const PresupuestoList = () => {
       width: 100
 
     },
-    {
 
-      field: 'descripcionTitulo',
-      headerName: 'Titulo',
-      width: 300
-
-    },
-    {
-
-      field: 'descripcion',
-      headerName: 'Descripcion',
-      width: 300
-
-    },
 
 
 
@@ -110,30 +96,30 @@ const PresupuestoList = () => {
 
 
   //IPreIndiceCategoriaProgramaticaGetDto
-  const handleView=  (row : IPreDescriptivasGetDto)=>{
+  const handleView=  (row : IPreTitulosGetDto)=>{
 
     console.log('Descriptiva seleccionada',row)
-    dispatch(setPreDescriptivaSeleccionado(row))
+    dispatch(setPreTituloSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudPreDescriptiva(2));
-    dispatch(setVerPreDescriptivaActive(true))
+    dispatch(setOperacionCrudPreTitulo(2));
+    dispatch(setVerPreTituloActive(true))
 
 
   }
 
-  const handleAddChild=  (row : IPreDescriptivasGetDto)=>{
+  const handleAddChild=  (row : IPreTitulosGetDto)=>{
 
 
     const newRow = {...row};
-    newRow.descripcionId=0;
-    newRow.descripcionIdFk=row.descripcionId;
-    dispatch(setPreDescriptivaSeleccionado(newRow))
+    newRow.tituloId=0;
+    newRow.tituloIdFk=row.tituloId;
+    dispatch(setPreTituloSeleccionado(newRow))
 
 
    // Operacion Crud 1 = Crear presupuesto
-   dispatch(setOperacionCrudPreDescriptiva(1));
-   dispatch(setVerPreDescriptivaActive(true))
+   dispatch(setOperacionCrudPreTitulo(1));
+   dispatch(setVerPreTituloActive(true))
 
 
   }
@@ -145,16 +131,14 @@ const PresupuestoList = () => {
   }
   const handleAdd=  ()=>{
 
-    //dispatch(setPresupuesto(row))
-    // Operacion Crud 1 = Crear presupuesto
+
+    // Operacion Crud 1 = Crear titulo
 
 
-      const defaultValues:IPreDescriptivasGetDto = {
-        descripcionId: 0,
-        descripcionIdFk:0,
-        tituloId:0,
-        descripcionTitulo:'',
-        descripcion:'',
+      const defaultValues:IPreTitulosGetDto = {
+        tituloId: 0,
+        tituloIdFk:0,
+        titulo:'',
         codigo:'',
         extra1:'',
         extra2:'',
@@ -163,11 +147,9 @@ const PresupuestoList = () => {
       }
 
 
-      dispatch(setPreDescriptivaSeleccionado(defaultValues))
-
-
-    dispatch(setOperacionCrudPreDescriptiva(1));
-    dispatch(setVerPreDescriptivaActive(true))
+      dispatch(setPreTituloSeleccionado(defaultValues))
+      dispatch(setOperacionCrudPreTitulo(1));
+      dispatch(setVerPreTituloActive(true))
 
 
   }
@@ -176,15 +158,16 @@ const PresupuestoList = () => {
   const dispatch = useDispatch();
 
 
-  const {verPreDescriptivaActive=true} = useSelector((state: RootState) => state.preDescriptiva)
+  const {verPreTituloActive=true} = useSelector((state: RootState) => state.preTitulo)
 
   const [loading, setLoading] = useState(false);
 
-  const [descriptivasAll, setDescriptivasAll] = useState<IPreDescriptivasGetDto[]>([]);  const [viewTable, setViewTable] = useState(false);
 
-  const [descriptivas, setDescriptivas] = useState<IPreDescriptivasGetDto[]>([]);
+  const [viewTable, setViewTable] = useState(false);
+
+
   const [titulos, setTitulos] =useState<IPreTitulosGetDto[]> ([]);
-  const [titulo] = useState<IPreTitulosGetDto> ();
+
   const handleViewTree=()=>{
     setViewTable(false);
 
@@ -194,36 +177,17 @@ const PresupuestoList = () => {
 
   }
 
-  const handleChangeTitulo= async (e: any,value:any)=>{
 
-    if(value!=null){
-
-      const data = descriptivasAll.filter((elemento)=>{
-        return elemento.tituloId==value.tituloId
-      });
-
-      setDescriptivas(data)
-
-    }else{
-      setDescriptivas(descriptivasAll)
-    }
-
-  }
   useEffect(() => {
 
     const getData = async () => {
       setLoading(true);
 
-
-      const responseAll= await ossmmasofApi.get<any>('/PreDescriptivas/GetAll');
-      const data = responseAll.data.data;
-      dispatch(setListPreDescriptivas(data));
       const responseAllTitulos= await ossmmasofApi.get<any>('/PreTitulos/GetAll');
       const dataTitulos = responseAllTitulos.data.data;
       dispatch(setListPreTitulo(dataTitulos))
       setTitulos(dataTitulos);
-      setDescriptivas(data);
-      setDescriptivasAll(data)
+
 
 
       setLoading(false);
@@ -234,7 +198,7 @@ const PresupuestoList = () => {
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreDescriptivaActive]);
+  }, [verPreTituloActive]);
 
 
 
@@ -242,7 +206,7 @@ const PresupuestoList = () => {
   return (
     <Grid item xs={12}>
        <Card>
-        <CardHeader title='Maestro de Descriptivas' />
+        <CardHeader title='Maestro de Titulos' />
 
         <CardActions>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -292,7 +256,7 @@ const PresupuestoList = () => {
               {viewTable
               ?
               <Box sx={{ height: 500 }}>
-                <TreeViewDescriptiva></TreeViewDescriptiva>
+                <TreeViewTitulo></TreeViewTitulo>
 
             </Box>
 
@@ -301,25 +265,13 @@ const PresupuestoList = () => {
                 :
                 <Box sx={{ height: 500 }}>
 
-                <FormControl fullWidth>
-                  <Autocomplete
 
-                        options={titulos}
-                        value={titulo}
-                        id='autocomplete-titulo'
-                        isOptionEqualToValue={(option, value) => option.tituloId=== value.tituloId}
-                        getOptionLabel={option => option.tituloId + '-' + option.titulo }
-                        onChange={handleChangeTitulo}
-                        renderInput={params => <TextField {...params} label='Titulos' />}
-                      />
-
-                </FormControl>
 
                   <DataGrid
-                    getRowId={(row) => row.descripcionId}
+                    getRowId={(row) => row.tituloId}
 
                     columns={columns}
-                    rows={descriptivas}
+                    rows={titulos}
                     onRowDoubleClick={(row) => handleDoubleClick(row)}
 
                     />
@@ -333,7 +285,7 @@ const PresupuestoList = () => {
         </Card>
 
         <DatePickerWrapper>
-              <DialogPreDescriptivaInfo/>
+              <DialogPreTituloInfo/>
         </DatePickerWrapper>
     </Grid>
 
