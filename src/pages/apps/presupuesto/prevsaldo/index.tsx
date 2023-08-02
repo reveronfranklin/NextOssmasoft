@@ -2,7 +2,6 @@
 import { CardContent } from '@mui/material'
 
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -31,9 +30,9 @@ const DataGrid = () => {
       <PageHeader
         title={
           <Typography variant='h5'>
-            <Link href='https://mui.com/x/react-data-grid/' target='_blank'>
+
               Presupuesto
-            </Link>
+
           </Typography>
         }
         subtitle={
