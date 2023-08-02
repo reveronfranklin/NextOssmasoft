@@ -39,14 +39,14 @@ import { RootState } from 'src/store'
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
 
 
 
 import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto'
 import { IPreCargosDeleteDto } from 'src/interfaces/Presupuesto/i-pre-cargos-delete-dto'
-import { setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo'
+import { setPreCargoSeleccionado, setTipoPersonalSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo'
 import { IPreCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-cargos-update-dto'
 
 interface FormInputs {
@@ -68,13 +68,37 @@ interface FormInputs {
 const FormPreCargoUpdateAsync = () => {
   // ** States
   const dispatch = useDispatch();
-  const { listTipoCargo,listTipoPersonal,preCargoSeleccionado
+  const { listTipoPersonal,preCargoSeleccionado
       } = useSelector((state: RootState) => state.preCargo)
 
+      const defaultCargo:IPreDescriptivasGetDto={
+        descripcionId : 0,
+        descripcionIdFk : 0,
+        descripcion : 'Seleccione',
+        codigo : '',
+        tituloId : 0,
+        descripcionTitulo : '',
+        extra1 : '',
+        extra2 : '',
+        extra3 : '',
+        listaDescriptiva:[{
+          descripcionId : 0,
+          descripcionIdFk : 0,
+          descripcion : 'Seleccione',
+          codigo : '',
+          tituloId : 0,
+          descripcionTitulo : '',
+          extra1 : '',
+          extra2 : '',
+          extra3 : '',
+          listaDescriptiva:[]
+        }]
+      }
 
 
   const  getTipoCargo=(id:number)=>{
-    const result = listTipoCargo.filter((elemento)=>{
+    console.log('getTipoCargo>>>>>>>>>>>>>',id,tipoPersonal)
+    const result = tipoPersonal?.listaDescriptiva?.filter((elemento)=>{
 
       return elemento.descripcionId==id;
     });
@@ -82,6 +106,8 @@ const FormPreCargoUpdateAsync = () => {
     return result[0];
   }
   const  getTipoPersonal=(id:number)=>{
+
+    if(id==0) return defaultCargo;
     const result = listTipoPersonal.filter((elemento)=>{
 
       return elemento.descripcionId==id;
@@ -98,9 +124,12 @@ const FormPreCargoUpdateAsync = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false);
+  const [tipoPersonal,setTipoPersonal] = useState<IPreDescriptivasGetDto>(getTipoPersonal(preCargoSeleccionado.tipoPersonalId))
 
-  const [tipoCargo] = useState<IPreDescriptivasGetDto>(getTipoCargo(preCargoSeleccionado.tipoCargoId))
-  const [tipoPersonal] = useState<IPreDescriptivasGetDto>(getTipoPersonal(preCargoSeleccionado.tipoPersonalId))
+  const [tipoCargo,setTipoCargo] = useState<IPreDescriptivasGetDto>(getTipoCargo(preCargoSeleccionado.tipoCargoId))
+
+  const [listCargos,setListCargos] = useState<IPreDescriptivasGetDto[]>([])
+
 
   const defaultValues = {
       codigoCargo :preCargoSeleccionado.codigoCargo,
@@ -125,22 +154,35 @@ const FormPreCargoUpdateAsync = () => {
   } = useForm<FormInputs>({ defaultValues })
 
   const handlerTipoPersonal=async (e: any,value:any)=>{
-    console.log('tipoPersonalId',value)
+
     if(value!=null){
       setValue('tipoPersonalId',value.descripcionId);
+      setTipoPersonal(value);
+      setListCargos(value.listaDescriptiva);
+      setValue('tipoCargoId',0);
+      setTipoCargo(getTipoCargo(0))
+      dispatch(setTipoPersonalSeleccionado(value))
 
-      //setPadre(value)
+      const newSeleccionado = {...preCargoSeleccionado,tipoPersonalId:value.descripcionId,tipoCargoId:0}
+      dispatch(setPreCargoSeleccionado(newSeleccionado))
+
 
 
     }else{
       setValue('tipoPersonalId',0);
-
+      setValue('tipoCargoId',0);
+      setListCargos([]);
     }
   }
+
   const handlerTipoCargo=async (e: any,value:any)=>{
-    console.log('tipoCargoId',value)
+
     if(value!=null){
       setValue('tipoCargoId',value.descripcionId);
+      setTipoCargo(value)
+      const newSeleccionado = {...preCargoSeleccionado,tipoCargoId:value.descripcionId}
+      dispatch(setPreCargoSeleccionado(newSeleccionado))
+
 
     }else{
       setValue('tipoCargoId',0);
@@ -205,6 +247,14 @@ const FormPreCargoUpdateAsync = () => {
     setLoading(false)
     toast.success('Form Submitted')
   }
+  useEffect(() => {
+
+
+   const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
+   setListCargos(selec.listaDescriptiva);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card>
@@ -289,55 +339,8 @@ const FormPreCargoUpdateAsync = () => {
                 )}
               </FormControl>
             </Grid>
-
-
-            {/* tipoCargoId */}
-            <Grid item sm={2} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='tipoCargoId'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || 0}
-                      label='Id Tipo Cargo'
-                      onChange={onChange}
-                      placeholder='0'
-                      error={Boolean(errors.tipoCargoId)}
-                      aria-describedby='validation-async-tipoCargoId'
-                      disabled
-                    />
-                  )}
-                />
-                {errors.tipoCargoId && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-tipoCargoId'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-               {/* TipoCargo */}
-
-               <Grid item sm={10} xs={12}>
-                <FormControl fullWidth>
-                  <Autocomplete
-
-                        options={listTipoCargo}
-                        value={tipoCargo}
-                        id='autocomplete-padre'
-                        isOptionEqualToValue={(option, value) => option.descripcionId=== value.descripcionId}
-                        getOptionLabel={option => option.descripcionId + '-' + option.descripcion }
-                        onChange={handlerTipoCargo}
-                        renderInput={params => <TextField {...params} label='Tipo Cargo' />}
-                      />
-
-                </FormControl>
-            </Grid>
-
-
-            {/* tipoPersonalId */}
-            <Grid item sm={2} xs={12}>
+          {/* tipoPersonalId */}
+          <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='tipoPersonalId'
@@ -379,6 +382,53 @@ const FormPreCargoUpdateAsync = () => {
 
                 </FormControl>
             </Grid>
+
+
+            {/* tipoCargoId */}
+            <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='tipoCargoId'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value || 0}
+                      label='Id Tipo Cargo'
+                      onChange={onChange}
+                      placeholder='0'
+                      error={Boolean(errors.tipoCargoId)}
+                      aria-describedby='validation-async-tipoCargoId'
+                      disabled
+                    />
+                  )}
+                />
+                {errors.tipoCargoId && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-tipoCargoId'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+               {/* TipoCargo */}
+
+               <Grid item sm={10} xs={12}>
+                <FormControl fullWidth>
+                  <Autocomplete
+
+                        options={listCargos}
+                        value={tipoCargo}
+                        id='autocomplete-padre'
+                        isOptionEqualToValue={(option, value) => option.descripcionId=== value.descripcionId}
+                        getOptionLabel={option => option.descripcionId + '-' + option.descripcion }
+                        onChange={handlerTipoCargo}
+                        renderInput={params => <TextField {...params} label='Tipo Cargo' />}
+                      />
+
+                </FormControl>
+            </Grid>
+
+
 
 
             {/* grado*/}

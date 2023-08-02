@@ -162,7 +162,7 @@ const FormPreTituloCreateAsync = () => {
 
   return (
     <Card>
-      <CardHeader title='Presupuesto - Crear Descriptiva' />
+      <CardHeader title='Presupuesto - Crear Titulo' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>

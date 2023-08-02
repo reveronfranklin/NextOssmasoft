@@ -180,7 +180,7 @@ const FormPreTituloUpdateAsync = () => {
 
   return (
     <Card>
-      <CardHeader title='Presupuesto - Modificar Descriptiva' />
+      <CardHeader title='Presupuesto - Modificar Titulo' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>

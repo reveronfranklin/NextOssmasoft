@@ -27,7 +27,7 @@ import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/Fil
 import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dto';
 import { IFilterPreTituloDto } from 'src/interfaces/Presupuesto/i-filter-pre-titulo-dto';
-import { setListPreCargos, setListTipoCargo, setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
+import { setListPreCargos, setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
 import DialogPreCargoInfo from 'src/presupuesto/cargo/views/DialogPreCargoInfo';
 
 interface CellType {
@@ -200,16 +200,19 @@ const CargoList = () => {
 
 
       const filterTipoPersonal:IFilterPreTituloDto={
-        tituloId:1
+        tituloId:0,
+        codigo:'TP'
       }
-      const responseTipoPersonal= await ossmmasofApi.post<any>('/PreDescriptivas/GetAllByTitulo',filterTipoPersonal);
+      const responseTipoPersonal= await ossmmasofApi.post<any>('/PreDescriptivas/GetAllByCodigoTitulo',filterTipoPersonal);
+      console.log('responseTipoPersonal.data.data',responseTipoPersonal.data.data)
       dispatch(setListTipoPersonal(responseTipoPersonal.data.data));
 
-      const filterTipoCargo:IFilterPreTituloDto={
-        tituloId:2
+      /*const filterTipoCargo:IFilterPreTituloDto={
+        tituloId:2,
+        codigo:''
       }
       const responseTipoCargo= await ossmmasofApi.post<any>('/PreDescriptivas/GetAllByTitulo',filterTipoCargo);
-      dispatch(setListTipoCargo(responseTipoCargo.data.data));
+      dispatch(setListTipoCargo(responseTipoCargo.data.data));*/
 
       setLoading(false);
     };

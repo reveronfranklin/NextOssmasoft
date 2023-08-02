@@ -8,4 +8,5 @@ export interface IPreDescriptivasGetDto{
   extra1 :string;
   extra2 :string;
   extra3 :string;
+  listaDescriptiva:IPreDescriptivasGetDto[];
 }

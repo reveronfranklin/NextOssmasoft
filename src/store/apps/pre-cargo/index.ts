@@ -15,6 +15,7 @@ export const preCargoSlice = createSlice({
     verPreCargoActive:false,
     operacionCrudPreCargo:0,
     listTipoPersonal:[] as IPreDescriptivasGetDto[],
+    tipoPersonalSeleccionado: {} as IPreDescriptivasGetDto,
     listTipoCargo:[] as IPreDescriptivasGetDto[],
 
   },
@@ -30,6 +31,10 @@ export const preCargoSlice = createSlice({
     setListPreCargos:(state,action)=>{
 
       state.listPreCargos=action.payload;
+    },
+    setTipoPersonalSeleccionado:(state,action)=>{
+
+      state.tipoPersonalSeleccionado=action.payload;
     },
     setVerPreCargoActive:(state,action)=>{
 
@@ -54,6 +59,7 @@ export const {setPreCargoSeleccionado,
               setVerPreCargoActive,
               setOperacionCrudPreCargo,
               setListTipoPersonal,
-              setListTipoCargo
+              setListTipoCargo,
+              setTipoPersonalSeleccionado
 
               } = preCargoSlice.actions;
