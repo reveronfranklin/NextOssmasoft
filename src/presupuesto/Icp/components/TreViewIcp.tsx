@@ -62,7 +62,7 @@ const TreeViewIcp = ()  => {
         codigoPresupuesto:0
       }
       const responseTree= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/GetTree',filter);
-
+      console.log(responseTree.data.data)
       setData(responseTree.data.data)
       setLoading(false);
     };

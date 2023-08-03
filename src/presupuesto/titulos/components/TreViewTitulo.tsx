@@ -40,7 +40,11 @@ const TreeViewTitulo = ()  => {
 
  const handleView=  (row : any)=>{
 
-   console.log(row)
+
+   const {id} = row;
+
+
+
   if(!isNaN(+row.id)){
     const titulo=listPreTitulos.find((elemento)=> elemento.tituloId==row.id);
 
@@ -50,6 +54,9 @@ const TreeViewTitulo = ()  => {
    // Operacion Crud 2 = Modificar presupuesto
     dispatch(setOperacionCrudPreTitulo(2));
     dispatch(setVerPreTituloActive(true))
+  }else{
+    const splitted = id.split('/', 2);
+    console.log('splitted',splitted[1])
   }
 
 

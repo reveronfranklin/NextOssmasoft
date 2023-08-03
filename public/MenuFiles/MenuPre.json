@@ -17,6 +17,10 @@
     "icon": "mdi:file-document-outline",
     "children": [
       {
+        "title": "Saldo Presupuesto",
+        "path": "/apps/presupuesto/prevsaldo"
+      },
+      {
         "title": "Maestro Presupuesto",
         "path": "/apps/presupuesto/maestro/list"
       },
@@ -31,24 +35,21 @@
       {
         "title": "Relacion Cargo",
         "path": "/apps/presupuesto/relacionCargo"
-      },
-      {
-        "title": "Saldo Presupuesto",
-        "path": "/apps/presupuesto/prevsaldo"
-      },
-      {
-        "title": "Descriptivas",
-        "path": "/apps/presupuesto/descriptiva"
+      }, {
+        "title": "Cargos",
+        "path": "/apps/presupuesto/cargo"
       },
       {
         "title": "Titulos",
         "path": "/apps/presupuesto/titulo"
-      }
-      ,
+      },
       {
-        "title": "Cargos",
-        "path": "/apps/presupuesto/cargo"
+        "title": "Descriptivas",
+        "path": "/apps/presupuesto/descriptiva"
       }
+
+
+
 
     ]
   }
