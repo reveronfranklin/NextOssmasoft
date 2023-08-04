@@ -49,18 +49,18 @@ const columns = [
   },
   {
     flex: 0.15,
-    minWidth: 130,
+    minWidth: 230,
 
     field: 'denominacionCargo',
     headerName: 'Denominacion Cargo'
   },
   {
-    flex: 0.15,
-    minWidth: 120,
+    flex: 0.015,
+    minWidth: 70,
     editable: true,
     type: 'number',
     field: 'cantidad',
-    headerName: 'Nro Cargos'
+    headerName: 'Cargos'
   },
   {
     flex: 0.1,
@@ -70,21 +70,21 @@ const columns = [
     editable: true,
     headerName: 'Sueldo'
   },
+
   {
     flex: 0.1,
-    field: 'prima',
+    field: 'totalMensual',
     minWidth: 80,
-    type: 'number',
-    editable: true,
-    headerName: 'Prima'
+    disableColumnMenu:true,
+    headerName: 'Total Mensual'
   },
   {
     flex: 0.1,
-    field: 'otro',
+    field: 'totalAnual',
     minWidth: 80,
-    type: 'number',
-    editable: true,
-    headerName: 'Otro'
+    disableColumnMenu:true,
+    headerHeight: 80,
+    headerName: 'Total Anual'
   }
 ]
 
@@ -163,6 +163,7 @@ const TableEditable = () => {
       ) : (
 
         <DataGrid
+          autoHeight
           columns={columns}
           rows={rows}
           getRowId={(row) => row.codigoRelacionCargo}

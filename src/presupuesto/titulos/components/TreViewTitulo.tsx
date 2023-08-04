@@ -43,7 +43,7 @@ const TreeViewTitulo = ()  => {
 
    const {id} = row;
 
-
+  console.log(row)
 
   if(!isNaN(+row.id)){
     const titulo=listPreTitulos.find((elemento)=> elemento.tituloId==row.id);

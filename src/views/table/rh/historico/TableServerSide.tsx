@@ -349,7 +349,6 @@ const TableServerSide = () => {
         rows={rows}
         rowCount={total}
         columns={columns}
-        checkboxSelection
         pageSize={pageSize}
         sortingMode='server'
 

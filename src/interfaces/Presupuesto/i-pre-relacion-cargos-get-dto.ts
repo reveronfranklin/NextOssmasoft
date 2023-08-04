@@ -17,4 +17,6 @@ export interface IPreRelacionCargosGetDto {
   extra2: string
   extra3: string
   codigoPresupuesto: number
+  totalMensual: string
+  totalAnual: string
 }
