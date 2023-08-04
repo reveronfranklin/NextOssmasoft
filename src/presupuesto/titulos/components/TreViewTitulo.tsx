@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useEffect } from 'react';
+
 import {
   DataGridPro,
   GridColDef,
   GridRowsProp,
   DataGridProProps,
 } from '@mui/x-data-grid-pro';
+
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { Box } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
@@ -31,7 +33,7 @@ const TreeViewTitulo = ()  => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [rows, setRows] = React.useState<GridRowsProp[]>([]);
-  const {listPreTitulos} = useSelector((state: RootState) => state.preTitulo)
+  const {listPreTitulos,verPreTituloActive} = useSelector((state: RootState) => state.preTitulo)
  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
  const onFilterChange= ()=>{
@@ -76,7 +78,7 @@ const TreeViewTitulo = ()  => {
     };
     getDataTree();
 
-  }, [])
+  }, [verPreTituloActive])
 
   return (
     <div style={{ height: 400, width: '100%' }}>
