@@ -33,7 +33,7 @@ const TreeViewIcp = ()  => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<GridRowsProp[]>([]);
-  const {listIcp} = useSelector((state: RootState) => state.icp)
+  const {listIcp,verIcpActive} = useSelector((state: RootState) => state.icp)
 
   const handleView=  (row : any)=>{
 
@@ -68,7 +68,7 @@ const TreeViewIcp = ()  => {
     };
     getDataTreeIcp();
 
-  }, [])
+  }, [verIcpActive])
 
   return (
     <div style={{ height: 400, width: '100%' }}>

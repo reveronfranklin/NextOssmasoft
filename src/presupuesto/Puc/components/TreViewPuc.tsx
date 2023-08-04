@@ -32,7 +32,7 @@ const TreeViewPuc = ()  => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<GridRowsProp[]>([]);
-  const {listPuc} = useSelector((state: RootState) => state.puc)
+  const {listPuc,verPucActive} = useSelector((state: RootState) => state.puc)
 
   const handleView=  (row : any)=>{
 
@@ -67,7 +67,7 @@ const TreeViewPuc = ()  => {
     };
     getDataTreePuc();
 
-  }, [])
+  }, [verPucActive])
 
   return (
     <div style={{ height: 400, width: '100%' }}>
