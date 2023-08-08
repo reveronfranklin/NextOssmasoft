@@ -159,6 +159,7 @@ const columns: any = [
     minWidth: 110,
     field: 'sueldo',
     headerName: 'Sueldo',
+    editable: true,
     renderCell: (params: GridRenderCellParams) => (
       <Typography variant='body2' sx={{ color: 'text.primary' }}>
         {params.row.sueldo}
@@ -235,10 +236,9 @@ const TableServerSide = () => {
       setMensaje('')
       setLoading(true);
       const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize,tipoSort:sort,sortColumn:sortColumn}
-      console.log('filterHistorico enviado',filterHistorico)
+
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
-      console.log('historico response all',responseAll.data.data)
 
       setTotal(responseAll.data.data.length);
 
@@ -273,7 +273,7 @@ const TableServerSide = () => {
     const temp  = [... allRows];
 
     if (newModel.length) {
-      console.log('newModel en handleSortModel>>>',newModel,sort)
+
       setSort(newModel[0].sort);
       setSortColumn(newModel[0].field);
 
@@ -354,7 +354,8 @@ const TableServerSide = () => {
 
         paginationMode='server'
         onSortModelChange={handleSortModel}
-        rowsPerPageOptions={[7, 10, 25, 50]}
+
+        //rowsPerPageOptions={[7, 10, 25, 50]}
         onPageChange={handlePageChange}
 
         //onPageChange={newPage => setPage(newPage)}

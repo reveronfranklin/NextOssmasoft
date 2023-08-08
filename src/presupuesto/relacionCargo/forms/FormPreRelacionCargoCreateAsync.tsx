@@ -35,19 +35,18 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
+//import { IFechaDto } from 'src/interfaces/fecha-dto'
+//import { fechaToFechaObj } from 'src/utlities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
 
+//import { getDateByObject } from 'src/utlities/ge-date-by-object'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
-
-
-
+import { Autocomplete, Box} from '@mui/material'
 import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto'
-import { IPreCargosDeleteDto } from 'src/interfaces/Presupuesto/i-pre-cargos-delete-dto'
 import { setPreCargoSeleccionado, setTipoPersonalSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo'
 import { IPreCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-cargos-update-dto'
+
 
 interface FormInputs {
   codigoCargo :number;
@@ -65,39 +64,43 @@ interface FormInputs {
 
 
 
-const FormPreCargoUpdateAsync = () => {
+
+
+const FormPreRelacionCargoCreateAsync = () => {
   // ** States
   const dispatch = useDispatch();
   const { listTipoPersonal,preCargoSeleccionado
-      } = useSelector((state: RootState) => state.preCargo)
+  } = useSelector((state: RootState) => state.preCargo)
 
-      const defaultCargo:IPreDescriptivasGetDto={
-        descripcionId : 0,
-        descripcionIdFk : 0,
-        descripcion : 'Seleccione',
-        codigo : '',
-        tituloId : 0,
-        descripcionTitulo : '',
-        extra1 : '',
-        extra2 : '',
-        extra3 : '',
-        listaDescriptiva:[{
-          descripcionId : 0,
-          descripcionIdFk : 0,
-          descripcion : 'Seleccione',
-          codigo : '',
-          tituloId : 0,
-          descripcionTitulo : '',
-          extra1 : '',
-          extra2 : '',
-          extra3 : '',
-          listaDescriptiva:[]
-        }]
-      }
+
+  const defaultCargo:IPreDescriptivasGetDto={
+    descripcionId : 0,
+    descripcionIdFk : 0,
+    descripcion : 'Seleccione',
+    codigo : '',
+    tituloId : 0,
+    descripcionTitulo : '',
+    extra1 : '',
+    extra2 : '',
+    extra3 : '',
+    listaDescriptiva:[{
+      descripcionId : 0,
+      descripcionIdFk : 0,
+      descripcion : 'Seleccione',
+      codigo : '',
+      tituloId : 0,
+      descripcionTitulo : '',
+      extra1 : '',
+      extra2 : '',
+      extra3 : '',
+      listaDescriptiva:[]
+    }]
+  }
+
 
 
   const  getTipoCargo=(id:number)=>{
-    console.log('getTipoCargo>>>>>>>>>>>>>',id,tipoPersonal)
+
     const result = tipoPersonal?.listaDescriptiva?.filter((elemento)=>{
 
       return elemento.descripcionId==id;
@@ -118,12 +121,10 @@ const FormPreCargoUpdateAsync = () => {
 
 
 
-
-  // ** States
+ // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [open, setOpen] = useState(false);
   const [tipoPersonal,setTipoPersonal] = useState<IPreDescriptivasGetDto>(getTipoPersonal(preCargoSeleccionado.tipoPersonalId))
 
   const [tipoCargo,setTipoCargo] = useState<IPreDescriptivasGetDto>(getTipoCargo(preCargoSeleccionado.tipoCargoId))
@@ -152,7 +153,6 @@ const FormPreCargoUpdateAsync = () => {
     setValue,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
-
   const handlerTipoPersonal=async (e: any,value:any)=>{
 
     if(value!=null){
@@ -190,30 +190,10 @@ const FormPreCargoUpdateAsync = () => {
     }
   }
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleDelete = async  () => {
-
-    setOpen(false);
-    const deleteCargo : IPreCargosDeleteDto={
-      codigoCargo:preCargoSeleccionado.codigoCargo
-    }
-    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Delete',deleteCargo);
-    setErrorMessage(responseAll.data.message)
-    if(responseAll.data.isValid){
-
-      dispatch(setVerPreCargoActive(false))
-      dispatch(setPreCargoSeleccionado({}))
-    }
 
 
-  };
+
+
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
@@ -231,7 +211,7 @@ const FormPreCargoUpdateAsync = () => {
 
     };
 
-    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Update',updateCargo);
+    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Create',updateCargo);
 
     if(responseAll.data.isValid){
       dispatch(setPreCargoSeleccionado(responseAll.data.data))
@@ -250,13 +230,14 @@ const FormPreCargoUpdateAsync = () => {
   useEffect(() => {
 
 
-   const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
-   setListCargos(selec.listaDescriptiva);
+    const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
+    setListCargos(selec.listaDescriptiva);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
 
-  return (
+
+   return (
     <Card>
       <CardHeader title='Presupuesto - Modificar Cargo' />
       <CardContent>
@@ -549,30 +530,6 @@ const FormPreCargoUpdateAsync = () => {
                 ) : null}
                 Guardar
               </Button>
-              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
-                Eliminar
-              </Button>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar este Cargo?"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Se eliminara el Cargo solo si no tiene movimiento asociado
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>No</Button>
-                  <Button onClick={handleDelete} autoFocus>
-                    Si
-                  </Button>
-                </DialogActions>
-              </Dialog>
 
             </Grid>
 
@@ -588,4 +545,4 @@ const FormPreCargoUpdateAsync = () => {
 
 }
 
-export default FormPreCargoUpdateAsync
+export default FormPreRelacionCargoCreateAsync

@@ -68,62 +68,16 @@ const PresupuestoList = () => {
       width: 80
 
     },
+
     {
 
-      field: 'codigoGrupo',
-      headerName: 'Grupo',
-      width: 70
+      field: 'codigoPucConcat',
+      headerName: 'Puc',
+      width: 300
 
     },
-    {
 
-      field: 'codigoNivel1',
-      headerName: 'N-1',
-      width: 80
 
-    },
-    {
-
-      field: 'codigoNivel2',
-      headerName: 'Nivel2',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoNivel3',
-      headerName: 'Nivel3',
-      width: 130
-
-    },
-    {
-
-      field: 'codigoNivel3',
-      headerName: 'Nivel3',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoNivel4',
-      headerName: 'Nivel4',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoNivel5',
-      headerName: 'Nivel5',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoNivel6',
-      headerName: 'Nivel6',
-      width: 100
-
-    },
     {
 
       field: 'denominacion',

@@ -159,7 +159,7 @@ const PresupuestoList = () => {
         extra1:'',
         extra2:'',
         extra3:'',
-
+        listaDescriptiva:[]
       }
 
 

@@ -16,6 +16,7 @@ import { pucSlice } from './apps/PUC'
 import { preDescriptivaSlice } from './apps/pre-descriptiva'
 import { preTituloSlice } from './apps/pre-titulos'
 import { preCargoSlice } from './apps/pre-cargo'
+import { preRelacionCargoSlice } from './apps/pre-relacion-cargo'
 
 
 
@@ -35,6 +36,7 @@ export const store = configureStore({
     preDescriptiva:preDescriptivaSlice.reducer,
     preCargo:preCargoSlice.reducer,
     preTitulo:preTituloSlice.reducer,
+    preRelacionCargo:preRelacionCargoSlice.reducer,
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer
 

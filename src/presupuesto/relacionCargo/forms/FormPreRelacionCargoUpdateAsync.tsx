@@ -35,85 +35,80 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-//import { IFechaDto } from 'src/interfaces/fecha-dto'
-//import { fechaToFechaObj } from 'src/utlities/fecha-to-fecha-object'
+
 import { useDispatch } from 'react-redux'
 
-//import { getDateByObject } from 'src/utlities/ge-date-by-object'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box} from '@mui/material'
-import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descriptivas-get-dto'
-import { setPreCargoSeleccionado, setTipoPersonalSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo'
-import { IPreCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-cargos-update-dto'
+import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
 
+import { IPreRelacionCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-get-dto'
+import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dto'
+import { IPreRelacionCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-update-dto'
+import { setPreRelacionCargoSeleccionado, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
+import { IPreRelacionCargosDeleteDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-delete-dto'
+import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
 
 interface FormInputs {
-  codigoCargo :number;
-  tipoPersonalId :number;
-  tipoCargoId :number;
-  denominacion:string;
-  descripcion:string;
-  grado:number;
-  extra1 :string;
-  extra2 :string;
-  extra3 :string;
-  codigoPresupuesto:number;
+  codigoRelacionCargo: number
+  ano: number
+  escenario: number
+  codigoIcp: number
+  denominacionIcp: string
+  codigoCargo: number
+  denominacionCargo: string
+  descripcionTipoCargo: string
+  descripcionTipoPersonal: string
+  cantidad: number
+  sueldo: number
+  compensacion: number
+  prima: number
+  otro: number
+  extra1: string
+  extra2: string
+  extra3: string
+  codigoPresupuesto: number
+  totalMensual: string
+  totalAnual: string
+
 
 }
 
 
 
-
-
-const FormPreCargoCreateAsync = () => {
+const FormPreRelacionCargoUpdateAsync = () => {
   // ** States
   const dispatch = useDispatch();
-  const { listTipoPersonal,preCargoSeleccionado
-  } = useSelector((state: RootState) => state.preCargo)
 
 
-  const defaultCargo:IPreDescriptivasGetDto={
-    descripcionId : 0,
-    descripcionIdFk : 0,
-    descripcion : 'Seleccione',
-    codigo : '',
-    tituloId : 0,
-    descripcionTitulo : '',
-    extra1 : '',
-    extra2 : '',
-    extra3 : '',
-    listaDescriptiva:[{
-      descripcionId : 0,
-      descripcionIdFk : 0,
-      descripcion : 'Seleccione',
-      codigo : '',
-      tituloId : 0,
-      descripcionTitulo : '',
-      extra1 : '',
-      extra2 : '',
-      extra3 : '',
-      listaDescriptiva:[]
-    }]
-  }
+  const { preRelacionCargoSeleccionado} = useSelector((state: RootState) => state.preRelacionCargo)
+  const { presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
+  const { listIcp} = useSelector((state: RootState) => state.icp)
+  const { listPreCargos} = useSelector((state: RootState) => state.preCargo)
 
 
 
-  const  getTipoCargo=(id:number)=>{
 
-    const result = tipoPersonal?.listaDescriptiva?.filter((elemento)=>{
 
-      return elemento.descripcionId==id;
+
+  const  getCargo=(id:number)=>{
+
+    //if(id==0) return default;
+    console.log('listPreCargos',listPreCargos)
+    const result = listPreCargos.filter((elemento)=>{
+
+      return elemento.codigoCargo==id;
     });
 
     return result[0];
   }
-  const  getTipoPersonal=(id:number)=>{
 
-    if(id==0) return defaultCargo;
-    const result = listTipoPersonal.filter((elemento)=>{
+  const  getIcp=(id:number)=>{
 
-      return elemento.descripcionId==id;
+    //if(id==0) return default;
+    const result = listIcp.filter((elemento)=>{
+
+      return elemento.codigoIcp==id;
     });
 
     return result[0];
@@ -121,28 +116,40 @@ const FormPreCargoCreateAsync = () => {
 
 
 
- // ** States
+  // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [tipoPersonal,setTipoPersonal] = useState<IPreDescriptivasGetDto>(getTipoPersonal(preCargoSeleccionado.tipoPersonalId))
-
-  const [tipoCargo,setTipoCargo] = useState<IPreDescriptivasGetDto>(getTipoCargo(preCargoSeleccionado.tipoCargoId))
-
-  const [listCargos,setListCargos] = useState<IPreDescriptivasGetDto[]>([])
+  const [open, setOpen] = useState(false);
 
 
-  const defaultValues = {
-      codigoCargo :preCargoSeleccionado.codigoCargo,
-      tipoPersonalId :preCargoSeleccionado.tipoPersonalId,
-      tipoCargoId:preCargoSeleccionado.tipoCargoId,
-      denominacion :preCargoSeleccionado.denominacion,
-      descripcion :preCargoSeleccionado.descripcion,
-      grado :preCargoSeleccionado.grado,
-      extra1 :preCargoSeleccionado.extra1,
-      extra2 :preCargoSeleccionado.extra2,
-      extra3 :preCargoSeleccionado.extra3,
-      codigoPresupuesto:preCargoSeleccionado.codigoPresupuesto
+
+  const [icp,setIcp] = useState<IPreIndiceCategoriaProgramaticaGetDto>(getIcp(preRelacionCargoSeleccionado.codigoIcp))
+  const [cargo,setCargo] = useState<IPreCargosGetDto>(getCargo(preRelacionCargoSeleccionado.codigoCargo))
+
+  const defaultValues:IPreRelacionCargosGetDto = {
+    codigoRelacionCargo:preRelacionCargoSeleccionado.codigoRelacionCargo,
+    ano: presupuestoSeleccionado.ano,
+    escenario: preRelacionCargoSeleccionado.escenario,
+    codigoIcp: preRelacionCargoSeleccionado.codigoIcp,
+    denominacionIcp:preRelacionCargoSeleccionado.denominacionIcp,
+    codigoCargo:preRelacionCargoSeleccionado.codigoCargo,
+    denominacionCargo: preRelacionCargoSeleccionado.denominacionCargo,
+    descripcionTipoCargo:preRelacionCargoSeleccionado.descripcionTipoCargo,
+    descripcionTipoPersonal: preRelacionCargoSeleccionado.descripcionTipoPersonal,
+    cantidad: preRelacionCargoSeleccionado.cantidad,
+    sueldo: preRelacionCargoSeleccionado.sueldo,
+    compensacion: preRelacionCargoSeleccionado.compensacion,
+    prima: preRelacionCargoSeleccionado.prima ,
+    otro: preRelacionCargoSeleccionado.otro,
+    extra1: preRelacionCargoSeleccionado.extra1,
+    extra2: preRelacionCargoSeleccionado.extra2,
+    extra3: preRelacionCargoSeleccionado.extra3,
+    totalMensual: preRelacionCargoSeleccionado.totalMensual,
+    totalAnual: preRelacionCargoSeleccionado.totalAnual,
+    codigoPresupuesto:presupuestoSeleccionado.codigoPresupuesto,
+    icpConcat:preRelacionCargoSeleccionado.icpConcat,
+    searchText:preRelacionCargoSeleccionado.searchText
 
   }
 
@@ -153,69 +160,88 @@ const FormPreCargoCreateAsync = () => {
     setValue,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
-  const handlerTipoPersonal=async (e: any,value:any)=>{
 
+
+  const handlerCargo=async (e: any,value:any)=>{
+    console.log(value)
     if(value!=null){
-      setValue('tipoPersonalId',value.descripcionId);
-      setTipoPersonal(value);
-      setListCargos(value.listaDescriptiva);
-      setValue('tipoCargoId',0);
-      setTipoCargo(getTipoCargo(0))
-      dispatch(setTipoPersonalSeleccionado(value))
-
-      const newSeleccionado = {...preCargoSeleccionado,tipoPersonalId:value.descripcionId,tipoCargoId:0}
-      dispatch(setPreCargoSeleccionado(newSeleccionado))
-
-
+      setValue('codigoCargo',value.codigoCargo);
+      setValue('denominacionCargo',value.denominacion);
+      setCargo(value)
+      console.log(cargo)
 
     }else{
-      setValue('tipoPersonalId',0);
-      setValue('tipoCargoId',0);
-      setListCargos([]);
-    }
-  }
-
-  const handlerTipoCargo=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setValue('tipoCargoId',value.descripcionId);
-      setTipoCargo(value)
-      const newSeleccionado = {...preCargoSeleccionado,tipoCargoId:value.descripcionId}
-      dispatch(setPreCargoSeleccionado(newSeleccionado))
-
-
-    }else{
-      setValue('tipoCargoId',0);
+      setValue('codigoCargo',0);
 
     }
   }
+  const handlerCodigoIcp= async (e: any,value:any)=>{
+    console.log(value)
+    if(value!=null){
+      setValue('codigoIcp',value.codigoIcp);
+      setValue('denominacionIcp',value.denominacion);
+      setIcp(value)
+
+    }else{
+      setValue('codigoIcp',0);
+      setValue('denominacionIcp','');
+    }
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async  () => {
+
+    setOpen(false);
+    const deleteRelacionCargo : IPreRelacionCargosDeleteDto={
+      codigoRelacionCargo:preRelacionCargoSeleccionado.codigoRelacionCargo
+    }
+    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Delete',deleteRelacionCargo);
+    setErrorMessage(responseAll.data.message)
+    if(responseAll.data.isValid){
+
+      dispatch(setVerPreRelacionCargoActive(false))
+      dispatch(setPreRelacionCargoSeleccionado({}))
+    }
 
 
-
-
-
+  };
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
-    const updateCargo:IPreCargosUpdateDto= {
-      codigoCargo :preCargoSeleccionado.codigoCargo,
-      tipoPersonalId :data.tipoPersonalId,
-      tipoCargoId:data.tipoCargoId,
-      denominacion :data.denominacion,
-      descripcion :data.descripcion,
-      grado :data.grado,
-      extra1 :data.extra1,
-      extra2 :data.extra2,
-      extra3 :data.extra3,
-      codigoPresupuesto:preCargoSeleccionado.codigoPresupuesto
+    const updateRelacionCargo:IPreRelacionCargosUpdateDto= {
+
+
+      codigoRelacionCargo: data.codigoRelacionCargo,
+      ano: data.ano,
+      escenario: data.escenario,
+      codigoIcp: data.codigoIcp,
+      denominacionIcp: data.denominacionIcp,
+      codigoCargo: data.codigoCargo,
+      cantidad: data.cantidad,
+      sueldo: data.sueldo,
+      compensacion: data.compensacion,
+      prima: data.prima,
+      otro: data.otro,
+      extra1: data.extra1,
+      extra2: data.extra2,
+      extra3: data.extra3,
+      codigoPresupuesto:data.codigoPresupuesto
+
 
     };
 
-    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Create',updateCargo);
+    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/Update',updateRelacionCargo);
 
     if(responseAll.data.isValid){
-      dispatch(setPreCargoSeleccionado(responseAll.data.data))
-      dispatch(setVerPreCargoActive(false))
+      dispatch(setPreRelacionCargoSeleccionado(responseAll.data.data))
+      dispatch(setVerPreRelacionCargoActive(false))
     }
 
 
@@ -230,25 +256,23 @@ const FormPreCargoCreateAsync = () => {
   useEffect(() => {
 
 
-    const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
-    setListCargos(selec.listaDescriptiva);
-
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
 
 
-   return (
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
     <Card>
-      <CardHeader title='Presupuesto - Modificar Cargo' />
+      <CardHeader title='Presupuesto - Modificar Relacion Cargo' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
 
             {/* descripcionId */}
-            <Grid item sm={2} xs={12}>
+            <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='codigoCargo'
+                  name='codigoRelacionCargo'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
@@ -271,50 +295,55 @@ const FormPreCargoCreateAsync = () => {
               </FormControl>
             </Grid>
                {/* descripcion*/}
-               <Grid item sm={10} xs={12}>
+               <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='denominacion'
+                  name='ano'
                   control={control}
                   rules={{ required: true ,maxLength:200}}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
-                      label='Denominacion'
+                      label='Ano'
                       onChange={onChange}
-                      placeholder='Denominacion'
-                      error={Boolean(errors.denominacion)}
-                      aria-describedby='validation-async-denominacion'
+                      placeholder='Ano'
+                      error={Boolean(errors.ano)}
+                      disabled
+                      aria-describedby='validation-async-ano'
                     />
                   )}
                 />
-                {errors.denominacion && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-denominacion'>
+                {errors.ano && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-ano'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
             {/* descripcion*/}
-            <Grid item sm={12} xs={12}>
+            <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='descripcion'
+                  name='escenario'
                   control={control}
-                  rules={{ maxLength:2000}}
+                  rules={{ min:0}}
+
                   render={({ field: { value, onChange } }) => (
+
                     <TextField
-                      value={value || ''}
-                      label='Descripcion'
+
+                      value={value || 0}
+                      type="number"
+                      label='Escenario'
                       onChange={onChange}
-                      placeholder='Descripcion'
-                      error={Boolean(errors.descripcion)}
-                      aria-describedby='validation-async-descripcion'
+                      placeholder='Escenario'
+                      error={Boolean(errors.escenario)}
+                      aria-describedby='validation-async-escenario'
                     />
                   )}
                 />
-                {errors.descripcion && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-descripcion'>
+                {errors.escenario && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-escenario'>
                     This field is required
                   </FormHelperText>
                 )}
@@ -324,41 +353,42 @@ const FormPreCargoCreateAsync = () => {
           <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='tipoPersonalId'
+                  name='codigoIcp'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || 0}
-                      label='Tipo Personal Id'
+                      label='codigoIcp'
                       onChange={onChange}
                       placeholder='0'
-                      error={Boolean(errors.tipoPersonalId)}
-                      aria-describedby='validation-async-tipoPersonalId'
+                      error={Boolean(errors.codigoIcp)}
+                      aria-describedby='validation-async-codigoIcp'
                       disabled
                     />
                   )}
                 />
-                {errors.tipoPersonalId && (
+                {errors.codigoIcp && (
                   <FormHelperText sx={{ color: 'error.main' }} id='validation-async-tipoPersonalId'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
+
                {/* TipoPersonal */}
 
                <Grid item sm={10} xs={12}>
                 <FormControl fullWidth>
                   <Autocomplete
 
-                        options={listTipoPersonal}
-                        value={tipoPersonal}
-                        id='autocomplete-tipoPersonal'
-                        isOptionEqualToValue={(option, value) => option.descripcionId=== value.descripcionId}
-                        getOptionLabel={option => option.descripcionId + '-' + option.descripcion }
-                        onChange={handlerTipoPersonal}
-                        renderInput={params => <TextField {...params} label='Tipo Personal' />}
+                        options={listIcp}
+                        value={icp}
+                        id='autocomplete-icp'
+                        isOptionEqualToValue={(option, value) => option.codigoIcp=== value.codigoIcp}
+                        getOptionLabel={option => option.codigoIcpConcat + '-' + option.denominacion }
+                        onChange={handlerCodigoIcp}
+                        renderInput={params => <TextField {...params} label='Icp' />}
                       />
 
                 </FormControl>
@@ -369,23 +399,23 @@ const FormPreCargoCreateAsync = () => {
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='tipoCargoId'
+                  name='codigoCargo'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || 0}
-                      label='Id Tipo Cargo'
+                      label='Id Cargo'
                       onChange={onChange}
                       placeholder='0'
-                      error={Boolean(errors.tipoCargoId)}
-                      aria-describedby='validation-async-tipoCargoId'
+                      error={Boolean(errors.codigoCargo)}
+                      aria-describedby='validation-async-codigoCargo'
                       disabled
                     />
                   )}
                 />
-                {errors.tipoCargoId && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-tipoCargoId'>
+                {errors.codigoCargo && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoCargo'>
                     This field is required
                   </FormHelperText>
                 )}
@@ -397,13 +427,13 @@ const FormPreCargoCreateAsync = () => {
                 <FormControl fullWidth>
                   <Autocomplete
 
-                        options={listCargos}
-                        value={tipoCargo}
+                        options={listPreCargos}
+                        value={cargo}
                         id='autocomplete-padre'
-                        isOptionEqualToValue={(option, value) => option.descripcionId=== value.descripcionId}
-                        getOptionLabel={option => option.descripcionId + '-' + option.descripcion }
-                        onChange={handlerTipoCargo}
-                        renderInput={params => <TextField {...params} label='Tipo Cargo' />}
+                        isOptionEqualToValue={(option, value) => option.codigoCargo=== value.codigoCargo}
+                        getOptionLabel={option => option.codigoCargo + '-' + option.denominacion }
+                        onChange={handlerCargo}
+                        renderInput={params => <TextField {...params} label='Cargo' />}
                       />
 
                 </FormControl>
@@ -412,32 +442,7 @@ const FormPreCargoCreateAsync = () => {
 
 
 
-            {/* grado*/}
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='grado'
-                  control={control}
-                  rules={{ maxLength:10}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                    type='number'
-                      value={value || ''}
-                      label='Grado'
-                      onChange={onChange}
-                      placeholder='Grado'
-                      error={Boolean(errors.grado)}
-                      aria-describedby='validation-async-grado'
-                    />
-                  )}
-                />
-                {errors.grado && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-grado'>
-                    Este Campo es Requerido y su longitud Maxima es de 10 digitos.
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
+
             {/* extra1*/}
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -530,6 +535,30 @@ const FormPreCargoCreateAsync = () => {
                 ) : null}
                 Guardar
               </Button>
+              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
+                Eliminar
+              </Button>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Esta Seguro de Eliminar este Cargo?"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Se eliminara el Cargo solo si no tiene movimiento asociado
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>No</Button>
+                  <Button onClick={handleDelete} autoFocus>
+                    Si
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
             </Grid>
 
@@ -545,4 +574,4 @@ const FormPreCargoCreateAsync = () => {
 
 }
 
-export default FormPreCargoCreateAsync
+export default FormPreRelacionCargoUpdateAsync

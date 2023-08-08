@@ -1,13 +1,10 @@
-export interface IPreRelacionCargosGetDto {
+export interface IPreRelacionCargosUpdateDto {
   codigoRelacionCargo: number
   ano: number
   escenario: number
   codigoIcp: number
   denominacionIcp: string
   codigoCargo: number
-  denominacionCargo: string
-  descripcionTipoCargo: string
-  descripcionTipoPersonal: string
   cantidad: number
   sueldo: number
   compensacion: number
@@ -17,8 +14,4 @@ export interface IPreRelacionCargosGetDto {
   extra2: string
   extra3: string
   codigoPresupuesto: number
-  totalMensual: string
-  totalAnual: string
-  icpConcat:string
-  searchText:string
 }

@@ -32,10 +32,11 @@ import { useSelector } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-import { setPreTituloSeleccionado, setVerPreTituloActive } from 'src/store/apps/pre-titulos'
-import { IPreTitulosGetDto } from 'src/interfaces/Presupuesto/i-pre-titulos-get-dto'
-import FormPreTituloUpdateAsync from '../forms/FormPreTituloUpdateAsync'
-import FormPreTituloCreateAsync from '../forms/FormPreTituloCreateAsync'
+
+import { setPreRelacionCargoSeleccionado, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
+import { IPreRelacionCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-get-dto'
+import FormPreRelacionCargoCreateAsync from '../forms/FormPreRelacionCargoCreateAsync'
+import FormPreRelacionCargoUpdateAsync from '../forms/FormPreRelacionCargoUpdateAsync'
 
 
 
@@ -55,7 +56,7 @@ const DialogPreRelacionCargoInfo = ()  => {
 
   // ** States
   const dispatch = useDispatch();
-  const {verPreTituloActive,operacionCrudPreTitulo} = useSelector((state: RootState) => state.preTitulo)
+  const {verPreRelacionCargoActive,operacionCrudPreRelacionCargo} = useSelector((state: RootState) => state.preRelacionCargo)
 
 
 
@@ -64,19 +65,34 @@ const DialogPreRelacionCargoInfo = ()  => {
 
     if(active==false){
 
-      const defaultValues:IPreTitulosGetDto = {
-        tituloId: 0,
-        tituloIdFk:0,
-        titulo:'',
-        codigo:'',
-        extra1:'',
-        extra2:'',
-        extra3:'',
-
+      const defaultValues:IPreRelacionCargosGetDto = {
+        codigoRelacionCargo:0,
+        ano: 0,
+        escenario: 0,
+        codigoIcp: 0,
+        denominacionIcp:'',
+        codigoCargo:0,
+        denominacionCargo: '',
+        descripcionTipoCargo:'',
+        descripcionTipoPersonal: '',
+        cantidad: 0,
+        sueldo: 0,
+        compensacion: 0,
+        prima: 0,
+        otro: 0,
+        extra1: '',
+        extra2: '',
+        extra3: '',
+        codigoPresupuesto: 0,
+        totalMensual: '',
+        totalAnual: '',
+        icpConcat:'',
+        searchText:''
       }
-      dispatch(setPreTituloSeleccionado(defaultValues))
+
+      dispatch(setPreRelacionCargoSeleccionado(defaultValues))
     }
-    dispatch(setVerPreTituloActive(active))
+    dispatch(setVerPreRelacionCargoActive(active))
 
 
   }
@@ -92,7 +108,7 @@ const DialogPreRelacionCargoInfo = ()  => {
 
         <Dialog
           fullWidth
-          open={verPreTituloActive}
+          open={verPreRelacionCargoActive}
           maxWidth='md'
           scroll='body'
           onClose={() => handleSetShow(false)}
@@ -109,9 +125,9 @@ const DialogPreRelacionCargoInfo = ()  => {
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudPreTitulo===1
-              ?  <FormPreTituloCreateAsync/>
-                :<FormPreTituloUpdateAsync/>
+              { operacionCrudPreRelacionCargo===1
+              ?  <FormPreRelacionCargoCreateAsync/>
+                :<FormPreRelacionCargoUpdateAsync/>
               }
             </DatePickerWrapper>
 

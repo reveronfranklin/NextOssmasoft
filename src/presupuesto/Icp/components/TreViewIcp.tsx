@@ -41,17 +41,12 @@ const TreeViewIcp = ()  => {
     if(!isNaN(+row.id)){
       const icp=listIcp.find((elemento)=> elemento.codigoIcp==row.id);
 
-
       dispatch(setIcpSeleccionado(icp))
 
      // Operacion Crud 2 = Modificar presupuesto
       dispatch(setOperacionCrudIcp(2));
       dispatch(setVerIcpActive(true))
     }
-
-
-
-
 
   }
 
@@ -62,7 +57,6 @@ const TreeViewIcp = ()  => {
         codigoPresupuesto:0
       }
       const responseTree= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/GetTree',filter);
-      console.log(responseTree.data.data)
       setData(responseTree.data.data)
       setLoading(false);
     };

@@ -75,6 +75,7 @@ const DialogPreDescriptivaInfo = ()  => {
         extra1:'',
         extra2:'',
         extra3:'',
+        listaDescriptiva:[]
 
       }
       dispatch(setPreDescriptivaSeleccionado(defaultValues))

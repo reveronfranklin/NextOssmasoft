@@ -68,41 +68,17 @@ const PresupuestoList = () => {
       width: 80
 
     },
+
+
     {
 
-      field: 'codigoSector',
-      headerName: 'Sector',
-      width: 100
+      field: 'codigoIcpConcat',
+      headerName: 'icp',
+      width: 300
 
     },
-    {
 
-      field: 'codigoPrograma',
-      headerName: 'Programa',
-      width: 100
 
-    },
-    {
-
-      field: 'codigoSubPrograma',
-      headerName: 'Sub-Programa',
-      width: 130
-
-    },
-    {
-
-      field: 'codigoProyecto',
-      headerName: 'Proyecto',
-      width: 100
-
-    },
-    {
-
-      field: 'codigoActividad',
-      headerName: 'Actividad',
-      width: 100
-
-    },
     {
 
       field: 'denominacion',
