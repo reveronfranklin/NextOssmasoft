@@ -76,6 +76,8 @@ export const fetchDataPersonas = async(dispatch:any) => {
 
    const responseAll= await ossmmasofApi.get<IListSimplePersonaDto[]>('/RhPersona/GetAllSimple');
 
+   console.log('responseAll personal',responseAll)
+
 
     const {data,status} = responseAll;
 

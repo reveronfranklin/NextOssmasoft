@@ -52,7 +52,7 @@ interface FilterHistorico {
 
     desde: Date
     hasta: Date
-    codigoTipoNomina:number
+    codigoTipoNomina:IListTipoNominaDto[]
     codigoPersona:number
     codigoConcepto:IListConceptosDto[]
     page:number,
@@ -218,7 +218,7 @@ const TableServerSide = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-  const {fechaDesde,fechaHasta,tiposNominaSeleccionado={} as IListTipoNominaDto,conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto} = useSelector((state: RootState) => state.nomina)
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     //if(currentPage<=0) currentPage=1;
@@ -228,21 +228,29 @@ const TableServerSide = () => {
 
 
   const fetchTableData = useCallback(
-    async (desde:Date,hasta:Date,codigoTipoNomina:number,codigoConcepto:IListConceptosDto[],codigoPersona:number) => {
+    async (desde:Date,hasta:Date,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[],codigoPersona:number) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
 
       setMensaje('')
       setLoading(true);
-      const filterHistorico:FilterHistorico={desde,hasta,codigoTipoNomina,codigoConcepto,codigoPersona,page,pageSize,tipoSort:sort,sortColumn:sortColumn}
+      const filterHistorico:FilterHistorico={
+        desde,
+        hasta,
+        codigoTipoNomina,
+        codigoConcepto,
+        codigoPersona,
+        page,
+        pageSize,
+        tipoSort:sort,
+        sortColumn:sortColumn
+      }
 
+      console.log('filetr historico',filterHistorico)
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
-
       setTotal(responseAll.data.data.length);
-
-
 
       setRows(loadServerRows(page, responseAll.data.data))
 
@@ -263,7 +271,7 @@ const TableServerSide = () => {
 
 
   useEffect(() => {
-    fetchTableData(fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
+    fetchTableData(fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona);
 
     //fetchTableExcel();
   }, [fetchTableData,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado])

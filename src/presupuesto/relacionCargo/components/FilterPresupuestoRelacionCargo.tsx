@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-import { fetchDataListPresupuestoDto } from 'src/store/apps/presupuesto/thunks'
+import { fetchDataListPresupuestoDto, fetchDataPost } from 'src/store/apps/presupuesto/thunks'
 
 
 
@@ -28,6 +28,7 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { setIcpSeleccionado, setListIcp } from 'src/store/apps/ICP'
 import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
 import { IFilterPresupuestoIcp } from 'src/interfaces/Presupuesto/i-filter-presupuesto-icp'
+import { FilterPrePresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-by-presupuesto-dto'
 
 //const FilterPresupuesto = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -121,7 +122,19 @@ const FilterPresupuestoRelacionCargo = () => {
   useEffect(() => {
 
     const getData = async (filter:IFilterPresupuestoIcp) => {
-      console.log('IFilterPresupuestoIcp++++++++++',filter)
+
+
+      const filterPresupuesto: FilterPrePresupuestoDto={
+        codigoPresupuesto: 0,
+        searchText : '',
+        codigoEmpresa: 0,
+        financiadoId:0,
+        fechaDesde:new Date(),
+        fechaHasta:new Date()
+      }
+      await fetchDataPost(dispatch,filterPresupuesto)
+
+
       await fetchDataListPresupuestoDto(dispatch);
 
       const responseAll= await ossmmasofApi.post<any>('/PreIndiceCategoriaProgramatica/GetAllFilter',filter);
@@ -142,6 +155,8 @@ const FilterPresupuestoRelacionCargo = () => {
         filter.codigoIcp=icpSeleccionado.codigoIcp;
       }
     }else{
+      console.log('no hay presupuesto seleccionado')
+
       filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
       filter.codigoIcp=listIcp[0].codigoIcp;
       dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));

@@ -16,19 +16,21 @@ import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@m
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import { setConceptoSeleccionado, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setTiposNominaSeleccionado } from 'src/store/apps/rh'
+import { setConceptoSeleccionado, setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setTiposNomina, setTiposNominaSeleccionado } from 'src/store/apps/rh'
 import { fetchDataConceptos, fetchDataPersonas, fetchDataTipoNomina } from 'src/store/apps/rh/thunks'
 
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 
 const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
 
   const dispatch = useDispatch();
 
-  const {fechaDesde,fechaHasta,tiposNomina,conceptos,personas} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNomina,conceptos,personas,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
 
 
   // ** States
@@ -39,6 +41,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
     setDateDesde(desde)
     dispatch(setFechaDesde(desde));
 
+
   }
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
@@ -46,24 +49,66 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
 
   }
   const handleTiposNomina= (e: any,value:any)=>{
-
+    console.log('handler tipo nomina',value)
     if(value!=null){
       dispatch(setTiposNominaSeleccionado(value));
-      buscarConceptos(value.codigoTipoNomina);
+      buscarConceptos(value);
     }else{
-      const tipoNomina: IListTipoNominaDto={
+      const tipoNomina: IListTipoNominaDto[]=[{
         codigoTipoNomina: 0,
         descripcion :  ''
-      }
+      }]
       dispatch(setTiposNominaSeleccionado(tipoNomina));
-      buscarConceptos(tipoNomina.codigoTipoNomina);
+      dispatch(setConceptoSeleccionado([]));
+      buscarConceptos(tipoNomina);
+
     }
 
 
 
   }
-  const handlerPersona= (e: any,value:any)=>{
+
+  const dataTipoNomina= async (value:any)=>{
+    const filterTipoNomina:IPersonaFilterDto = {
+      codigoPersona:value.codigoPersona,
+      desde:fechaDesde,
+      hasta:fechaHasta
+    }
+    const responseAllTipoNomina= await ossmmasofApi.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
+
+
+    const {data} = responseAllTipoNomina;
+
+    if(data){
+      console.log('responseAll tipo nomina por persona',dataTipoNomina)
+      dispatch(setTiposNomina(data));
+
+    }
+  }
+
+  const dataConceptos= async (value:any)=>{
+    const filter:IPersonaFilterDto = {
+      codigoPersona:value.codigoPersona,
+      desde:fechaDesde,
+      hasta:fechaHasta
+    }
+    const responseAll= await ossmmasofApi.post<any>('/RhConceptos/GetConceptosByPersonas',filter);
+
+
+    const {data} = responseAll;
+
+    if(data){
+      console.log('responseAll conceptos por persona',data)
+      dispatch(setConceptos(data));
+
+    }
+  }
+  const handlerPersona= async (e: any,value:any)=>{
+
     if(value){
+
+      await  dataConceptos(value)
+      await  dataTipoNomina(value);
       dispatch(setPersonaSeleccionado(value));
     }else{
 
@@ -76,16 +121,35 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
 
 
       dispatch(setPersonaSeleccionado(persona));
+      await fetchDataConceptos(dispatch);
+      await fetchDataTipoNomina(dispatch);
     }
 
 
 
   }
 
-  const buscarConceptos=(codigoTipoNomina:number)=>{
-    const dataFilter= conceptos.filter(concepto=>concepto.codigoTipoNomina==codigoTipoNomina);
-    setConceptosPorTipoNomina(dataFilter);
+  const buscarConceptos=async (codigoTipoNomina:IListTipoNominaDto[])=>{
+
+    console.log('buscar conceptos',codigoTipoNomina);
+    if(personaSeleccionado){
+      await  dataConceptos(personaSeleccionado)
+      await fetchDataConceptos(dispatch);
+    }
+
+    let conceptosNew:IListConceptosDto[]=[];
+    for (let index = 0; index < codigoTipoNomina.length; index++) {
+      const element = codigoTipoNomina[index];
+      console.log(element)
+      const dataFilter= conceptos.filter(concepto=>concepto.codigoTipoNomina==element.codigoTipoNomina);
+      conceptosNew= [...conceptosNew,...dataFilter]
+    }
+    console.log(conceptosNew)
+
+    setConceptosPorTipoNomina(conceptosNew);
   }
+
+
   const handlerConceptos =(e: any,value:any)=>{
     console.log('conceptos',value)
     if(value){
@@ -93,22 +157,38 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
     }
 
 
-
   }
 
   useEffect(() => {
 
+
+    console.log('entrando a useEffect')
+
+
     const getTipoNomina = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
-      await fetchDataTipoNomina(dispatch);
-      await fetchDataConceptos(dispatch);
+
       await fetchDataPersonas(dispatch);
+
+      if(personaSeleccionado){
+        await  dataTipoNomina(personaSeleccionado);
+        await  dataConceptos(personaSeleccionado)
+        dispatch(setPersonaSeleccionado(personaSeleccionado));
+      }else{
+        await fetchDataTipoNomina(dispatch);
+        await fetchDataConceptos(dispatch);
+      }
+
+
     };
+
      getTipoNomina();
 
 
 
-  }, [dispatch]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch,fechaDesde,fechaHasta]);
 
   return (
     <Grid item xs={12}>
@@ -141,10 +221,24 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
               </div>
               <div>
                 <Autocomplete
+
+                    sx={{ width: 450 }}
+                    options={personas}
+                    id='autocomplete-persona'
+                    isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
+                    getOptionLabel={option => option.codigoPersona + ' ' + option.nombreCompleto}
+                    onChange={handlerPersona}
+                    renderInput={params => <TextField {...params} label='Personas' />}
+                  />
+              </div>
+              <div>
+                <Autocomplete
+                    multiple={true}
                     sx={{ width: 350 }}
                     options={tiposNomina}
                     id='autocomplete-tipo-nomina'
-                    getOptionLabel={option => option.descripcion}
+                    isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
+                    getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
                     onChange={handleTiposNomina}
                     renderInput={params => <TextField {...params} label='Tipo Nomina' />}
                   />
@@ -155,22 +249,14 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
                     sx={{ width: 350 }}
                     options={conceptosPorTipoNomina}
                     id='autocomplete-concepto'
-                    getOptionLabel={option => option.dercripcion}
+                    value={conceptoSeleccionado}
+                    isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
+                    getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
                     onChange={handlerConceptos}
                     renderInput={params => <TextField {...params} label='Conceptos' />}
                   />
               </div>
-              <div>
-                <Autocomplete
 
-                    sx={{ width: 450 }}
-                    options={personas}
-                    id='autocomplete-persona'
-                    getOptionLabel={option => option.codigoPersona + ' ' + option.nombreCompleto}
-                    onChange={handlerPersona}
-                    renderInput={params => <TextField {...params} label='Personas' />}
-                  />
-              </div>
 
           </Box>
         </Grid>

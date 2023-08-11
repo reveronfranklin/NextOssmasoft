@@ -16,7 +16,7 @@ export const nominaSlice = createSlice({
     conceptoSeleccionado: [] as IListConceptosDto[],
     conceptos: [] as IListConceptosDto[],
     tiposNomina:[] as IListTipoNominaDto[],
-    tiposNominaSeleccionado:{} as IListTipoNominaDto,
+    tiposNominaSeleccionado:[]  as IListTipoNominaDto[] ,
     personas:[] as IListSimplePersonaDto[],
     personaSeleccionado:{} as IListSimplePersonaDto,
     isLoading:false
