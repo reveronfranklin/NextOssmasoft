@@ -55,8 +55,16 @@
     "icon": "mdi:file-document-outline",
     "children": [
       {
-        "title": "Historico",
-        "path": "/apps/rh/historico"
+        "title": "Historico Individual",
+        "path": "/apps/rh/individual"
+      },
+      {
+        "title": "Historico Masivo",
+        "path": "/apps/rh/masivo"
+      },
+      {
+        "title": "Historico Proceso",
+        "path": "/apps/rh/proceso"
       }
     ]
   }

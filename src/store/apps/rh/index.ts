@@ -4,6 +4,7 @@ import { IFilterHistoricoNomina } from 'src/interfaces/rh/i-filter-historico';
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas';
+import { IRhProcesoGetDto } from '../../../interfaces/rh/i-rh-procesos-get-dto';
 
 
 
@@ -19,7 +20,8 @@ export const nominaSlice = createSlice({
     tiposNominaSeleccionado:[]  as IListTipoNominaDto[] ,
     personas:[] as IListSimplePersonaDto[],
     personaSeleccionado:{} as IListSimplePersonaDto,
-    isLoading:false
+    isLoading:false,
+    procesoSeleccionado: {} as IRhProcesoGetDto,
   },
   reducers: {
 
@@ -72,6 +74,11 @@ export const nominaSlice = createSlice({
       state.conceptoSeleccionado=action.payload;
 
     },
+    setProcesoSeleccionado:(state,action)=>{
+      state.isLoading=false;
+      state.procesoSeleccionado=action.payload;
+
+    },
   },
 
 });
@@ -86,4 +93,5 @@ export const {startLoadingNomina,
               setTiposNomina,
               setTiposNominaSeleccionado,
               setConceptos,
-              setConceptoSeleccionado} = nominaSlice.actions;
+              setConceptoSeleccionado,
+              setProcesoSeleccionado} = nominaSlice.actions;
