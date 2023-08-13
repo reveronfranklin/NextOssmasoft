@@ -141,7 +141,8 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
 
     const procesoDefault: IRhProcesoGetDto={
       codigoProceso: 0,
-      descripcion : ''
+      descripcion : '',
+      conceptos:[]
     }
     dispatch(setProcesoSeleccionado(procesoDefault))
 

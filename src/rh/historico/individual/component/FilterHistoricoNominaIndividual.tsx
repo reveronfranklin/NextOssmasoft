@@ -166,7 +166,8 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
 
     const procesoDefault: IRhProcesoGetDto={
       codigoProceso: 0,
-      descripcion : ''
+      descripcion : '',
+      conceptos:[]
     }
     dispatch(setProcesoSeleccionado(procesoDefault))
 

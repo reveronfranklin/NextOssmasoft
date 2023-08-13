@@ -97,6 +97,7 @@ const FormIcpCreateAsync = () => {
   const [oficina, setOficina] = useState<IOssConfig>({ clave: 'CODIGO_OFICINA', valor:'00'});
 
   const [persona,setPersona] = useState<IListSimplePersonaDto>({codigoPersona :0,
+                                                              cedula:0,
                                                                 nombre :'',
                                                                 apellido :'',
                                                                 nombreCompleto :''});

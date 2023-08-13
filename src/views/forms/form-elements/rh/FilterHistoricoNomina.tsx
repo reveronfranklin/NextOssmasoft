@@ -114,6 +114,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
 
       const persona:IListSimplePersonaDto ={
         apellido:'',
+        cedula:0,
         codigoPersona:0,
         nombre:'',
         nombreCompleto:''
@@ -222,7 +223,7 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
               <div>
                 <Autocomplete
 
-                    sx={{ width: 450 }}
+                    sx={{ width: 350 }}
                     options={personas}
                     id='autocomplete-persona'
                     isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}

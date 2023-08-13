@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -12,7 +12,7 @@ import CustomInput from 'src/utilities/pickers//PickersCustomInput'
 
 // ** Types
 import { DateType } from 'src/types/forms/reactDatepickerTypes'
-import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@mui/material'
+import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField} from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
@@ -25,6 +25,7 @@ import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
+import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 
 const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -38,7 +39,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
   const [dateHasta, setDateHasta] = useState<DateType>(fechaHasta)
   const [procesos, setProcesos] = useState<IRhProcesoGetDto[]>([])
-
+  const [conceptosProceso, setConceptosProceso] = useState<IListConceptosDto[]>([])
 
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
@@ -57,12 +58,15 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
     console.log('',value)
     if(value!=null){
       dispatch(setProcesoSeleccionado(value))
+      setConceptosProceso(value.conceptos)
     }else{
       const procesoDefault: IRhProcesoGetDto={
         codigoProceso: procesos[0].codigoProceso,
-        descripcion :  procesos[0].descripcion
+        descripcion :  procesos[0].descripcion,
+        conceptos:[]
       }
       dispatch(setProcesoSeleccionado(procesoDefault))
+      setConceptosProceso([]);
 
     }
   }
@@ -159,7 +163,8 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
       if(procesos && procesos.length>0){
         const procesoDefault: IRhProcesoGetDto={
           codigoProceso: procesos[0].codigoProceso,
-          descripcion :  procesos[0].descripcion
+          descripcion :  procesos[0].descripcion,
+          conceptos:[]
         }
         dispatch(setProcesoSeleccionado(procesoDefault))
       }
@@ -224,7 +229,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
               <div>
                 <Autocomplete
 
-                    sx={{ width: 450 }}
+                    sx={{ width: 550 }}
                     options={personas}
                     id='autocomplete-persona'
                     isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
@@ -237,7 +242,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
               <div>
                 <Autocomplete
 
-                    sx={{ width: 350 }}
+                    sx={{ width: 250 }}
                     options={procesos}
                     id='autocomplete-procesos'
                     isOptionEqualToValue={(option, value) => option.codigoProceso === value.codigoProceso}
@@ -246,7 +251,18 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
                     renderInput={params => <TextField {...params} label='Procesos' />}
                   />
               </div>
+              <div>
+                <Autocomplete
+                    multiple={true}
+                    sx={{ width: 250 }}
+                    options={conceptosProceso}
+                    id='autocomplete-conceptoProceso'
+                    isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
+                    getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
 
+                    renderInput={params => <TextField {...params} label='Conceptos Por Proceso' />}
+                  />
+              </div>
 
 
           </Box>
