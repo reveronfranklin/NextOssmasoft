@@ -238,6 +238,13 @@ const TableServerSideHistorico = () => {
 
       setMensaje('')
       setLoading(true);
+      setAllRows([]);
+      setTotal(0);
+      setRows(loadServerRows(page, []))
+      setLinkData('')
+
+
+
       const filterHistorico:FilterHistorico={
         desde,
         hasta,
