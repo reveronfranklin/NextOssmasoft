@@ -53,6 +53,7 @@ interface FilterHistorico {
 
     desde: Date
     hasta: Date
+    tipoQuery:string;
     codigoTipoNomina:IListTipoNominaDto[]
     codigoPersona:number
     codigoConcepto:IListConceptosDto[]
@@ -220,7 +221,7 @@ const TableServerSideHistorico = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-  const {fechaDesde,fechaHasta,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto,procesoSeleccionado={} as IRhProcesoGetDto} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto,procesoSeleccionado={} as IRhProcesoGetDto} = useSelector((state: RootState) => state.nomina)
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     //if(currentPage<=0) currentPage=1;
@@ -230,7 +231,7 @@ const TableServerSideHistorico = () => {
 
 
   const fetchTableData = useCallback(
-    async (desde:Date,hasta:Date,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[],codigoPersona:number,procesoSeleccionado:IRhProcesoGetDto) => {
+    async (desde:Date,hasta:Date,tipoQuery:string,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[],codigoPersona:number,procesoSeleccionado:IRhProcesoGetDto) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -240,6 +241,7 @@ const TableServerSideHistorico = () => {
       const filterHistorico:FilterHistorico={
         desde,
         hasta,
+        tipoQuery,
         codigoTipoNomina,
         codigoConcepto,
         codigoPersona,
@@ -274,9 +276,10 @@ const TableServerSideHistorico = () => {
 
 
   useEffect(() => {
-    fetchTableData(fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
+    fetchTableData(fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
 
     //fetchTableExcel();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchTableData,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado,procesoSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {

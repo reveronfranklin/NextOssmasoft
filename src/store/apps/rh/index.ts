@@ -22,6 +22,7 @@ export const nominaSlice = createSlice({
     personaSeleccionado:{} as IListSimplePersonaDto,
     isLoading:false,
     procesoSeleccionado: {} as IRhProcesoGetDto,
+    tipoQuery:''
   },
   reducers: {
 
@@ -79,6 +80,12 @@ export const nominaSlice = createSlice({
       state.procesoSeleccionado=action.payload;
 
     },
+    setTipoQuery:(state,action)=>{
+      state.isLoading=false;
+      state.tipoQuery=action.payload;
+
+    },
+
   },
 
 });
@@ -94,4 +101,5 @@ export const {startLoadingNomina,
               setTiposNominaSeleccionado,
               setConceptos,
               setConceptoSeleccionado,
-              setProcesoSeleccionado} = nominaSlice.actions;
+              setProcesoSeleccionado,
+              setTipoQuery} = nominaSlice.actions;

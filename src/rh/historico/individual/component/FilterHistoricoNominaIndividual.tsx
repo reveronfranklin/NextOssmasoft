@@ -16,7 +16,7 @@ import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@m
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import { setConceptoSeleccionado, setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTiposNomina, setTiposNominaSeleccionado } from 'src/store/apps/rh'
+import { setConceptoSeleccionado, setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTipoQuery, setTiposNomina, setTiposNominaSeleccionado } from 'src/store/apps/rh'
 import { fetchDataConceptos, fetchDataPersonas } from 'src/store/apps/rh/thunks'
 
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
@@ -170,6 +170,7 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
       conceptos:[]
     }
     dispatch(setProcesoSeleccionado(procesoDefault))
+    dispatch(setTipoQuery('INDIVIDUAL'))
 
 
     const getData = async () => {

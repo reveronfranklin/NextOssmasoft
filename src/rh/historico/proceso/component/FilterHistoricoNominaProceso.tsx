@@ -16,7 +16,7 @@ import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField} from '@mu
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import {  setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTiposNomina } from 'src/store/apps/rh'
+import {  setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTipoQuery, setTiposNomina } from 'src/store/apps/rh'
 import {  fetchDataPersonas } from 'src/store/apps/rh/thunks'
 
 
@@ -154,10 +154,10 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
 
 
 
-
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
 
+      dispatch(setTipoQuery('PROCESO'))
       await fetchDataPersonas(dispatch);
       await dataProcesos()
       if(procesos && procesos.length>0){
