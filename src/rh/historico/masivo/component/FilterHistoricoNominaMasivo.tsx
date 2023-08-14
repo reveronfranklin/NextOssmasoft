@@ -175,7 +175,7 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
   return (
     <Grid item xs={12}>
     <Card>
-      <CardHeader title='Filtrar Nomina Individual' />
+      <CardHeader title='Filtrar Nomina Masivo' />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} >

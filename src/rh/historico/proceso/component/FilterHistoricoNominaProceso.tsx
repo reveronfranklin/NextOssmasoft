@@ -200,7 +200,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
   return (
     <Grid item xs={12}>
     <Card>
-      <CardHeader title='Filtrar Nomina Individual' />
+      <CardHeader title='Filtrar Nomina Proceso' />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} >
