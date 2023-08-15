@@ -404,7 +404,153 @@ const FormPreRelacionCargoCreateAsync = () => {
                 </FormControl>
             </Grid>
 
+ {/* cantidad*/}
+ <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='cantidad'
+                  control={control}
+                  rules={{ min:1}}
 
+                  render={({ field: { value, onChange } }) => (
+
+                    <TextField
+
+                      value={value || 0}
+                      type="number"
+                      label='Cantidad'
+                      onChange={onChange}
+                      placeholder='Cantidad'
+                      error={Boolean(errors.cantidad)}
+                      aria-describedby='validation-async-Cantidad'
+                    />
+                  )}
+                />
+                {errors.escenario && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cantidad'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            {/* sueldo*/}
+            <Grid item sm={3} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='sueldo'
+                  control={control}
+                  rules={{ min:1}}
+
+                  render={({ field: { value, onChange } }) => (
+
+                    <TextField
+
+                      value={value || 0}
+                      type="decimal"
+                      label='Sueldo'
+                      onChange={onChange}
+                      placeholder='Sueldo'
+                      error={Boolean(errors.sueldo)}
+                      aria-describedby='validation-async-sueldo'
+                    />
+                  )}
+                />
+                {errors.sueldo && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            {/* compensacion*/}
+            <Grid item sm={3} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='compensacion'
+                  control={control}
+                  rules={{ min:1}}
+
+                  render={({ field: { value, onChange } }) => (
+
+                    <TextField
+
+                      value={value || 0}
+                      type="decimal"
+                      label='Compensacion'
+                      onChange={onChange}
+                      placeholder='Compensacion'
+                      error={Boolean(errors.sueldo)}
+                      aria-describedby='validation-async-compensacion'
+                    />
+                  )}
+                />
+                {errors.compensacion && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-compensacion'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* prima*/}
+            <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='prima'
+                  control={control}
+                  rules={{ min:1}}
+
+                  render={({ field: { value, onChange } }) => (
+
+                    <TextField
+
+                      value={value || 0}
+                      type="decimal"
+                      label='Prima'
+                      onChange={onChange}
+                      placeholder='Prima'
+                      error={Boolean(errors.sueldo)}
+                      aria-describedby='validation-async-prima'
+                    />
+                  )}
+                />
+                {errors.prima && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-prima'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* otro*/}
+            <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='otro'
+                  control={control}
+                  rules={{ min:1}}
+
+                  render={({ field: { value, onChange } }) => (
+
+                    <TextField
+
+                      value={value || 0}
+                      type="decimal"
+                      label='Otro'
+                      onChange={onChange}
+                      placeholder='Otro'
+                      error={Boolean(errors.sueldo)}
+                      aria-describedby='validation-async-otro'
+                    />
+                  )}
+                />
+                {errors.otro && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-otro'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
 
 
 

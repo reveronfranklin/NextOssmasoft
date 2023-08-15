@@ -205,7 +205,7 @@ const columns: any = [
   },
 ]
 
-const TableServerSideHistorico = () => {
+const TableServerSideHistoricoProceso = () => {
   // ** State
   const [page, setPage] = useState(0)
   const [linkData, setLinkData] = useState('')
@@ -221,7 +221,7 @@ const TableServerSideHistorico = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-  const {fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto,procesoSeleccionado={} as IRhProcesoGetDto} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto,procesoSeleccionado={} as IRhProcesoGetDto} = useSelector((state: RootState) => state.nomina)
 
   function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
     //if(currentPage<=0) currentPage=1;
@@ -259,7 +259,7 @@ const TableServerSideHistorico = () => {
         codigoProceso:procesoSeleccionado.codigoProceso
       }
 
-      console.log('filetr historico',filterHistorico)
+
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
       setAllRows(responseAll.data.data);
       setTotal(responseAll.data.data.length);
@@ -283,11 +283,11 @@ const TableServerSideHistorico = () => {
 
 
   useEffect(() => {
-    fetchTableData(fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
+    fetchTableData(fechaDesde,fechaHasta,'PROCESO',tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
 
-    //fetchTableExcel();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchTableData,fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado,procesoSeleccionado])
+  }, [fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado,procesoSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -401,4 +401,4 @@ const TableServerSideHistorico = () => {
   )
 }
 
-export default TableServerSideHistorico
+export default TableServerSideHistoricoProceso

@@ -163,6 +163,16 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
   useEffect(() => {
 
 
+    /*const persona:IListSimplePersonaDto ={
+      apellido:'',
+      cedula:0,
+      codigoPersona:0,
+      nombre:'',
+      nombreCompleto:''
+    };*/
+
+
+    dispatch(setPersonaSeleccionado({}));
 
     const procesoDefault: IRhProcesoGetDto={
       codigoProceso: 0,
@@ -170,31 +180,13 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
       conceptos:[]
     }
     dispatch(setProcesoSeleccionado(procesoDefault))
-    dispatch(setTipoQuery('INDIVIDUAL'))
+
 
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
-
+      dispatch(setTipoQuery('INDIVIDUAL'))
       await fetchDataPersonas(dispatch);
-
-      if(personaSeleccionado){
-        await  dataTipoNomina(personaSeleccionado);
-        await  dataConceptos(personaSeleccionado)
-        dispatch(setPersonaSeleccionado(personaSeleccionado));
-      }else{
-        const persona:IListSimplePersonaDto ={
-          apellido:'',
-          codigoPersona:0,
-          nombre:'',
-          nombreCompleto:'',
-          cedula:0
-        };
-
-
-        dispatch(setPersonaSeleccionado(persona));
-      }
-
 
     };
 

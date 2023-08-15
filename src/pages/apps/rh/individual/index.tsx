@@ -14,7 +14,8 @@ import PageHeader from 'src/@core/components/page-header'
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import FilterHistoricoNominaIndividual from 'src/rh/historico/individual/component/FilterHistoricoNominaIndividual'
-import TableServerSideHistorico from 'src/rh/historico/components/TableServerSideHistorico'
+
+import TableServerSideHistoricoIndividual from 'src/rh/historico/components/TableServerSideHistoricoIndividual'
 
 const DataGrid = () => {
   const theme = useTheme()
@@ -43,7 +44,7 @@ const DataGrid = () => {
         </CardContent>
       </Grid>
       <Grid item xs={12}>
-        <TableServerSideHistorico />
+        <TableServerSideHistoricoIndividual />
       </Grid>
     </Grid>
   )

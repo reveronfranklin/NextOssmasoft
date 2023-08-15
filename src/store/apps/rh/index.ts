@@ -49,7 +49,8 @@ export const nominaSlice = createSlice({
 
     },
     setPersonaSeleccionado:(state,action)=>{
-      state.isLoading=false;
+
+
 
       state.personaSeleccionado=action.payload
 

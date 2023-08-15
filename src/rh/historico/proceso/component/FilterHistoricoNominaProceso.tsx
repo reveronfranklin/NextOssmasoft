@@ -32,7 +32,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
 
   const dispatch = useDispatch();
 
-  const {fechaDesde,fechaHasta,personas,personaSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,personas} = useSelector((state: RootState) => state.nomina)
 
 
   // ** States
@@ -169,7 +169,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
         dispatch(setProcesoSeleccionado(procesoDefault))
       }
 
-      if(personaSeleccionado){
+      /*if(personaSeleccionado){
         await  dataTipoNomina(personaSeleccionado);
         await  dataConceptos(personaSeleccionado)
         dispatch(setPersonaSeleccionado(personaSeleccionado));
@@ -184,7 +184,7 @@ const FilterHistoricoNominaProceso = ({ popperPlacement }: { popperPlacement: Re
 
 
         dispatch(setPersonaSeleccionado(persona));
-      }
+      }*/
 
 
     };
