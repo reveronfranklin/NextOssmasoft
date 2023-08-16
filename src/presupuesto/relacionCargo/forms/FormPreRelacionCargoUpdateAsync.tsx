@@ -25,7 +25,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
+import { useTheme } from '@mui/material/styles'
 
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
@@ -40,7 +40,7 @@ import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
+import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider} from '@mui/material'
 
 import { IPreRelacionCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-get-dto'
 import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dto'
@@ -48,6 +48,10 @@ import { IPreRelacionCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-re
 import { setPreRelacionCargoSeleccionado, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
 import { IPreRelacionCargosDeleteDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-delete-dto'
 import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
+import TableServerSideRhRelacionCargo from 'src/rh/relacionCargo/components/TableServerSideRhRelacionCArgo'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DialogRhRelacionCargoInfo from 'src/rh/relacionCargo/views/DialogRhRelacionCargoInfo'
+import { ReactDatePickerProps } from 'react-datepicker'
 
 interface FormInputs {
   codigoRelacionCargo: number
@@ -64,9 +68,7 @@ interface FormInputs {
   compensacion: number
   prima: number
   otro: number
-  extra1: string
-  extra2: string
-  extra3: string
+
   codigoPresupuesto: number
   totalMensual: string
   totalAnual: string
@@ -77,6 +79,10 @@ interface FormInputs {
 
 
 const FormPreRelacionCargoUpdateAsync = () => {
+  const theme = useTheme()
+  const { direction } = theme
+  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
   // ** States
   const dispatch = useDispatch();
 
@@ -142,9 +148,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
     compensacion: preRelacionCargoSeleccionado.compensacion,
     prima: preRelacionCargoSeleccionado.prima ,
     otro: preRelacionCargoSeleccionado.otro,
-    extra1: preRelacionCargoSeleccionado.extra1,
-    extra2: preRelacionCargoSeleccionado.extra2,
-    extra3: preRelacionCargoSeleccionado.extra3,
+
     totalMensual: preRelacionCargoSeleccionado.totalMensual,
     totalAnual: preRelacionCargoSeleccionado.totalAnual,
     codigoPresupuesto:presupuestoSeleccionado.codigoPresupuesto,
@@ -229,9 +233,6 @@ const FormPreRelacionCargoUpdateAsync = () => {
       compensacion: data.compensacion,
       prima: data.prima,
       otro: data.otro,
-      extra1: data.extra1,
-      extra2: data.extra2,
-      extra3: data.extra3,
       codigoPresupuesto:data.codigoPresupuesto
 
 
@@ -320,7 +321,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 )}
               </FormControl>
             </Grid>
-            {/* descripcion*/}
+            {/* escenario*/}
             <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
                 <Controller
@@ -376,7 +377,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
               </FormControl>
             </Grid>
 
-               {/* TipoPersonal */}
+               {/* Icp */}
 
                <Grid item sm={10} xs={12}>
                 <FormControl fullWidth>
@@ -475,7 +476,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 <Controller
                   name='sueldo'
                   control={control}
-                  rules={{ min:1}}
+                  rules={{ min:0.001}}
 
                   render={({ field: { value, onChange } }) => (
 
@@ -505,7 +506,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 <Controller
                   name='compensacion'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 
@@ -534,7 +535,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 <Controller
                   name='prima'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 
@@ -563,7 +564,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 <Controller
                   name='otro'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 
@@ -586,84 +587,6 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 )}
               </FormControl>
             </Grid>
-
-            {/* extra1*/}
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='extra1'
-                  control={control}
-                  rules={{ maxLength:100}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Extra1'
-                      onChange={onChange}
-                      placeholder='extra1'
-                      error={Boolean(errors.extra1)}
-                      aria-describedby='validation-async-codigo'
-                    />
-                  )}
-                />
-                {errors.extra1 && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-extra1'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-            {/* extra2*/}
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='extra2'
-                  control={control}
-                  rules={{ maxLength:100}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Extra2'
-                      onChange={onChange}
-                      placeholder='extra1'
-                      error={Boolean(errors.extra2)}
-                      aria-describedby='validation-async-extra2'
-                    />
-                  )}
-                />
-                {errors.extra2 && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-extra2'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-            {/* extra3*/}
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='extra3'
-                  control={control}
-                  rules={{ maxLength:100}}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='Extra3'
-                      onChange={onChange}
-                      placeholder='extra3'
-                      error={Boolean(errors.extra2)}
-                      aria-describedby='validation-async-extra3'
-                    />
-                  )}
-                />
-                {errors.extra3 && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-extra3'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-
-
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
@@ -711,6 +634,14 @@ const FormPreRelacionCargoUpdateAsync = () => {
               {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
         </form>
+        <Divider>Movimientos de Cargo</Divider>
+        <Grid item sm={12} xs={12}>
+          <TableServerSideRhRelacionCargo></TableServerSideRhRelacionCargo>
+        </Grid>
+        <DatePickerWrapper>
+          <DialogRhRelacionCargoInfo  popperPlacement={popperPlacement} />
+        </DatePickerWrapper>
+
       </CardContent>
     </Card>
   )

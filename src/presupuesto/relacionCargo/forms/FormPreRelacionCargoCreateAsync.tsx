@@ -440,7 +440,7 @@ const FormPreRelacionCargoCreateAsync = () => {
                 <Controller
                   name='sueldo'
                   control={control}
-                  rules={{ min:1}}
+                  rules={{ min:0.001}}
 
                   render={({ field: { value, onChange } }) => (
 
@@ -470,7 +470,7 @@ const FormPreRelacionCargoCreateAsync = () => {
                 <Controller
                   name='compensacion'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 
@@ -499,7 +499,7 @@ const FormPreRelacionCargoCreateAsync = () => {
                 <Controller
                   name='prima'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 
@@ -528,7 +528,7 @@ const FormPreRelacionCargoCreateAsync = () => {
                 <Controller
                   name='otro'
                   control={control}
-                  rules={{ min:1}}
+
 
                   render={({ field: { value, onChange } }) => (
 

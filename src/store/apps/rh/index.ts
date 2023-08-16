@@ -44,16 +44,10 @@ export const nominaSlice = createSlice({
     },
     setPersonas:(state,action)=>{
       state.isLoading=false;
-
       state.personas=action.payload
-
     },
     setPersonaSeleccionado:(state,action)=>{
-
-
-
       state.personaSeleccionado=action.payload
-
     },
     setTiposNomina:(state,action)=>{
       state.isLoading=false;

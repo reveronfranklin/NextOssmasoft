@@ -32,12 +32,12 @@ import { useSelector } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
+import { setRhRelacionCargoSeleccionado, setVerRhRelacionCargoActive } from 'src/store/apps/rh-relacion-cargo'
+import { IRhRelacionCargoDto } from 'src/interfaces/rh/i-rh-relacion-cargo-dto'
+import FormRhRelacionCargoCreateAsync from '../forms/FormRhRelacionCargoCreateAsync'
+import FormRhRelacionCargoUpdateAsync from '../forms/FormRhRelacionCargoUpdateAsync'
+import { ReactDatePickerProps } from 'react-datepicker'
 
-import { setPreRelacionCargoSeleccionado, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
-import { IPreRelacionCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-get-dto'
-
-import FormPreRelacionCargoUpdateAsync from '../forms/FormPreRelacionCargoUpdateAsync'
-import FormPreRelacionCargoCreateAsync from '../forms/FormPreRelacionCargoCreateAsync'
 
 
 // ** Custom Component Imports
@@ -49,12 +49,14 @@ const Transition = forwardRef(function Transition(
   return <Fade ref={ref} {...props} />
 })
 
-const DialogPreRelacionCargoInfo = ()  => {
+
+
+const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
 
 
   // ** States
   const dispatch = useDispatch();
-  const {verPreRelacionCargoActive,operacionCrudPreRelacionCargo} = useSelector((state: RootState) => state.preRelacionCargo)
+  const {verRhRelacionCargoActive,operacionCrudRhRelacionCargo} = useSelector((state: RootState) => state.rhRelacionCargo)
 
 
 
@@ -63,34 +65,27 @@ const DialogPreRelacionCargoInfo = ()  => {
 
     if(active==false){
 
-      const defaultValues:IPreRelacionCargosGetDto = {
+      const defaultValues:IRhRelacionCargoDto = {
         codigoRelacionCargo:0,
-        ano: 0,
-        escenario: 0,
-        codigoIcp: 0,
-        denominacionIcp:'',
-        codigoCargo:0,
-        denominacionCargo: '',
-        descripcionTipoCargo:'',
-        descripcionTipoPersonal: '',
-        cantidad: 0,
-        sueldo: 0,
-        compensacion: 0,
-        prima: 0,
-        otro: 0,
-        extra1: '',
-        extra2: '',
-        extra3: '',
-        codigoPresupuesto: 0,
-        totalMensual: '',
-        totalAnual: '',
-        icpConcat:'',
-        searchText:''
+        codigoCargo :0,
+        denominacionCargo :'',
+        codigoPersona :0,
+        nombre:'',
+        apellido :'',
+        cedula:0,
+        sueldo :0,
+        codigoRelacionCargoPre :0,
+        searchText:'',
+        fechaIni:'',
+        fechaFin:'',
+        fechaIniObj:{ year:'2024',month:'08',day:'01'},
+        fechaFinObj:{ year:'2024',month:'08',day:'01'}
+
       }
 
-      dispatch(setPreRelacionCargoSeleccionado(defaultValues))
+      dispatch(setRhRelacionCargoSeleccionado(defaultValues))
     }
-    dispatch(setVerPreRelacionCargoActive(active))
+    dispatch(setVerRhRelacionCargoActive(active))
 
 
   }
@@ -106,14 +101,16 @@ const DialogPreRelacionCargoInfo = ()  => {
 
         <Dialog
           fullWidth
-          open={verPreRelacionCargoActive}
           maxWidth='lg'
+          open={verRhRelacionCargoActive}
+
           scroll='body'
           onClose={() => handleSetShow(false)}
           TransitionComponent={Transition}
           onBackdropClick={() => handleSetShow(false)}
+
         >
-          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
+          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }} style={{height:'600px'}}>
             <IconButton
               size='small'
               onClick={() => handleSetShow(false)}
@@ -123,9 +120,9 @@ const DialogPreRelacionCargoInfo = ()  => {
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudPreRelacionCargo===1
-              ?  <FormPreRelacionCargoCreateAsync/>
-                :<FormPreRelacionCargoUpdateAsync/>
+              { operacionCrudRhRelacionCargo===1
+              ?  <FormRhRelacionCargoCreateAsync popperPlacement={popperPlacement}/>
+                :<FormRhRelacionCargoUpdateAsync  popperPlacement={popperPlacement}/>
               }
             </DatePickerWrapper>
 
@@ -145,4 +142,4 @@ const DialogPreRelacionCargoInfo = ()  => {
 
 }
 
-export default DialogPreRelacionCargoInfo
+export default DialogRhRelacionCargoInfo

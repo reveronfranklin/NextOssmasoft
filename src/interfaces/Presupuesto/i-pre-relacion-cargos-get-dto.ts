@@ -13,9 +13,9 @@ export interface IPreRelacionCargosGetDto {
   compensacion: number
   prima: number
   otro: number
-  extra1: string
-  extra2: string
-  extra3: string
+  extra1?: string
+  extra2?: string
+  extra3?: string
   codigoPresupuesto: number
   totalMensual: string
   totalAnual: string

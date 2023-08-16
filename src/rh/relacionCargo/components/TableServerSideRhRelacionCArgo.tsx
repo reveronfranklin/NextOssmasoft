@@ -28,7 +28,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Tooltip,IconButton, TextField, Grid, Toolbar } from '@mui/material'
+import { Tooltip,IconButton, Grid, Toolbar } from '@mui/material'
 
 
 // ** Types
@@ -37,15 +37,13 @@ import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 import Spinner from 'src/@core/components/spinner';
 
-import { setListPreCargos } from 'src/store/apps/pre-cargo'
-import { useDispatch } from 'react-redux'
-import { IPreRelacionCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-get-dto'
-import { IFilterPresupuestoIcp } from 'src/interfaces/Presupuesto/i-filter-presupuesto-icp'
-import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto'
-import { setOperacionCrudPreRelacionCargo, setPreRelacionCargoSeleccionado, setTotalSueldo, setTotalSueldoAnual, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
-import { NumericFormat } from 'react-number-format'
-import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 
+import { useDispatch } from 'react-redux'
+import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+import { IRhRelacionCargoDto } from 'src/interfaces/rh/i-rh-relacion-cargo-dto'
+import { setOperacionCrudRhRelacionCargo, setRhRelacionCargoSeleccionado, setVerRhRelacionCargoActive } from 'src/store/apps/rh-relacion-cargo'
+import { IFilterByPreRelacionCargoDto } from 'src/interfaces/rh/i-filter-by-pre-relacion-cargo-dto'
+import { fetchDataPersonas, fetchDataTipoNomina } from 'src/store/apps/rh/thunks'
 
 
 
@@ -75,7 +73,7 @@ const renderClient = (params: GridRenderCellParams) => {
         color={color as ThemeColor}
         sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
       >
-        {getInitials(row.denominacionCargo? row.descripcionTipoCargo : 'John Doe')}
+        {getInitials(row.denominacionCargo? row.denominacionCargo : 'John Doe')}
       </CustomAvatar>
     )
   }
@@ -89,19 +87,18 @@ const renderClient = (params: GridRenderCellParams) => {
   5: { title: 'applied', color: 'info' }
 }*/
 interface CellType {
-  row: IPreRelacionCargosGetDto
+  row: IRhRelacionCargoDto
 }
 
 
-const TableServerSide = () => {
+const TableServerSideRhRelacionCargo = () => {
   // ** State
   const [page, setPage] = useState(0)
-  const [linkData, setLinkData] = useState('')
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
-  const [rows, setRows] = useState<IPreRelacionCargosGetDto[]>([])
-  const [allRows, setAllRows] = useState<IPreRelacionCargosGetDto[]>([])
+  const [rows, setRows] = useState<IRhRelacionCargoDto[]>([])
+  const [allRows, setAllRows] = useState<IRhRelacionCargoDto[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -110,20 +107,20 @@ const TableServerSide = () => {
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
 
-  function loadServerRows(currentPage: number, data: IPreRelacionCargosGetDto[]) {
+  function loadServerRows(currentPage: number, data: IRhRelacionCargoDto[]) {
     //if(currentPage<=0) currentPage=1;
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   }
   const dispatch = useDispatch();
-  const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
-  const {icpSeleccionado} = useSelector((state: RootState) => state.icp)
-  const {verPreRelacionCargoActive,totalSueldo,totalSueldoAnual} = useSelector((state: RootState) => state.preRelacionCargo)
+
+  const {preRelacionCargoSeleccionado} = useSelector((state: RootState) => state.preRelacionCargo)
+  const {verRhRelacionCargoActive} = useSelector((state: RootState) => state.rhRelacionCargo)
 
   const columns: any = [
     {
-      flex: 0.1,
-      minWidth: 130,
+      flex: 0.035,
+      minWidth: 90,
       sortable: false,
       field: 'actions',
       headerName: 'Actions',
@@ -139,23 +136,13 @@ const TableServerSide = () => {
         </Box>
       )
     },
-    {
-      flex: 0.075,
-      minWidth: 15,
-      headerName: 'Año',
-      field: 'ano',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.ano}
-        </Typography>
-      )
-    },
+
 
     {
-      flex: 0.25,
-      minWidth: 290,
-      field: 'denominacionCargo',
-      headerName: 'Denominacion',
+      flex: 0.15,
+      minWidth: 190,
+      field: 'nombre',
+      headerName: 'Persona',
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
 
@@ -165,24 +152,25 @@ const TableServerSide = () => {
             {renderClient(params)}
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
-                {row.denominacionCargo}
+                {row.nombre}
               </Typography>
               <Typography noWrap variant='caption'>
-                {row.descripcionTipoCargo}
+                {row.apellido }
               </Typography>
             </Box>
           </Box>
         )
       }
     },
+
     {
-      flex: 0.175,
-      minWidth: 15,
-      headerName: 'ICP-Concat',
-      field: 'icpConcat',
+      flex: 0.035,
+      minWidth: 80,
+      headerName: 'Cedula',
+      field: 'cedula',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.icpConcat}
+          {params.row.cedula}
         </Typography>
       )
     },
@@ -190,28 +178,17 @@ const TableServerSide = () => {
     {
       flex: 0.175,
       minWidth: 15,
-      headerName: 'ICP',
-      field: 'denominacionIcp',
+      headerName: 'Cargo',
+      field: 'denominacionCargo',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.denominacionIcp}
+          {params.row.denominacionCargo}
         </Typography>
       )
     },
 
 
-    {
-      flex: 0.075,
-      minWidth: 15,
-      headerName: 'Cargos',
-      field: 'cantidad',
-      editable: true,
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.cantidad}
-        </Typography>
-      )
-    },
+
     {
       flex: 0.125,
       minWidth: 110,
@@ -225,45 +202,23 @@ const TableServerSide = () => {
       )
     },
 
-    {
-      flex: 0.175,
-      field: 'totalMensual',
-      minWidth: 150,
-      headerName: 'Mensual',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.sueldo * params.row.cantidad)}
-        </Typography>
-      )
-    },
-    ,
-    {
-      flex: 0.125,
-      minWidth: 110,
-      field: 'totalAnual',
-      headerName: 'Anual',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format((params.row.sueldo * params.row.cantidad)*12)}
-        </Typography>
-      )
-    },
+
   ]
 
-  const handleView=  (row : IPreRelacionCargosGetDto)=>{
+  const handleView=  (row : IRhRelacionCargoDto)=>{
 
 
-    dispatch(setPreRelacionCargoSeleccionado(row))
+    dispatch(setRhRelacionCargoSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudPreRelacionCargo(2));
-    dispatch(setVerPreRelacionCargoActive(true))
+    dispatch(setOperacionCrudRhRelacionCargo(2));
+    dispatch(setVerRhRelacionCargoActive(true))
 
 
   }
 
   const fetchTableData = useCallback(
-    async (filter:IFilterPresupuestoIcp) => {
+    async (filter:IFilterByPreRelacionCargoDto) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -271,41 +226,19 @@ const TableServerSide = () => {
       setMensaje('')
       setLoading(true);
 
-      const responseAllCargos= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
-      const dataCargos = responseAllCargos.data.data;
-
-      dispatch(setListPreCargos(dataCargos));
-
-      const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/GetAllByPresupuesto',filter);
 
 
-      if(responseAll.data.data){
-        setAllRows(responseAll.data.data);
-        setTotal(responseAll.data.data.length);
-        setRows(loadServerRows(page, responseAll.data.data))
-        const suma = responseAll.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad), 0);
-        dispatch(setTotalSueldo(suma));
-        const sumaAnual = responseAll.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad)*12, 0);
-        dispatch(setTotalSueldoAnual(sumaAnual));
-        setLinkData(responseAll.data.linkData)
-        setMensaje('')
-      }else{
-        setTotal(0)
-        setAllRows([]);
-        setRows([]);
-        dispatch(setTotalSueldo(0));
-        dispatch(setTotalSueldoAnual(0));
-        setLinkData('')
-        setMensaje('')
-      }
-
-
-
-
-
-
+      const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo',filter);
+      setAllRows(responseAll.data.data);
+      setTotal(responseAll.data.data.length);
+      setRows(loadServerRows(page, responseAll.data.data))
       setLoading(false);
 
+      if( responseAll.data.data.length>0){
+        setMensaje('')
+      }else{
+        setMensaje('')
+      }
 
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -315,25 +248,22 @@ const TableServerSide = () => {
 
 
   useEffect(() => {
-    const filter:IFilterPresupuestoIcp={
-      codigoPresupuesto:0,
-      codigoIcp:0
+    const filter:IFilterByPreRelacionCargoDto={
+      codigoRelacionCargoPre:0
+
     }
 
-    if(listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.codigoPresupuesto!=null){
-      filter.codigoPresupuesto=listpresupuestoDtoSeleccionado.codigoPresupuesto;
-      if(icpSeleccionado && icpSeleccionado.codigoIcp!=null){
-        filter.codigoIcp=icpSeleccionado.codigoIcp;
-      }
-    }else{
-      filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
-      dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
+    if(preRelacionCargoSeleccionado && preRelacionCargoSeleccionado.codigoRelacionCargo!=null){
+      filter.codigoRelacionCargoPre=preRelacionCargoSeleccionado.codigoRelacionCargo;
+
     }
     fetchTableData(filter);
+    fetchDataPersonas(dispatch);
+    fetchDataTipoNomina(dispatch);
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreRelacionCargoActive,listpresupuestoDtoSeleccionado,icpSeleccionado])
+  }, [verRhRelacionCargoActive,preRelacionCargoSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -347,9 +277,9 @@ const TableServerSide = () => {
       //const column: string=newModel[0].field.toString();
 
       if(sortColumn==='denominacionCargo' ||
-         sortColumn==='descripcionTipoCargo' ||
-         sortColumn ==='descripcionTipoPersonal' ||
-         sortColumn==='icpConcat')
+         sortColumn==='nombre' ||
+         sortColumn ==='apellido' ||
+         sortColumn==='cedula')
       {
 
             const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
@@ -413,22 +343,10 @@ const TableServerSide = () => {
        }
 
     }
-    if(row.field=='cantidad'){
-      for (const i of allRows) {
-        if (i.codigoRelacionCargo == row.id) {
-         i.cantidad = row.value;
-        }
-       }
-       for (const i of rows) {
-        if (i.codigoRelacionCargo == row.id) {
-         i.cantidad = row.value;
-        }
-       }
-
-    }
 
 
-    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/UpdateField',updateDto);
+
+    const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/UpdateField',updateDto);
     console.log(responseAll);
   }
 
@@ -438,36 +356,28 @@ const TableServerSide = () => {
     // Operacion Crud 1 = Crear titulo
 
 
-      const defaultValues:IPreRelacionCargosGetDto = {
+      const defaultValues:IRhRelacionCargoDto = {
         codigoRelacionCargo:0,
-        ano: 0,
-        escenario: 0,
-        codigoIcp: 0,
-        denominacionIcp:'',
-        codigoCargo:0,
-        denominacionCargo: '',
-        descripcionTipoCargo:'',
-        descripcionTipoPersonal: '',
-        cantidad: 0,
-        sueldo: 0,
-        compensacion: 0,
-        prima: 0,
-        otro: 0,
-        extra1: '',
-        extra2: '',
-        extra3: '',
-        codigoPresupuesto: 0,
-        totalMensual: '',
-        totalAnual: '',
-        searchText:'',
-        icpConcat:''
+        codigoCargo :preRelacionCargoSeleccionado.codigoCargo,
+        denominacionCargo :preRelacionCargoSeleccionado.denominacionCargo,
+        codigoPersona :0,
+        nombre:'',
+        apellido :'',
+        cedula:0,
+        sueldo :0,
+        fechaFin:'1900-01-01',
+        fechaIni:'1900-01-01',
+        fechaIniObj:{year:'1900',month:'01',day:'01'},
+        fechaFinObj:{year:'1900',month:'01',day:'01'},
+        codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
+        searchText:''
 
       }
 
 
-      dispatch(setPreRelacionCargoSeleccionado(defaultValues))
-      dispatch(setOperacionCrudPreRelacionCargo(1));
-      dispatch(setVerPreRelacionCargoActive(true))
+      dispatch(setRhRelacionCargoSeleccionado(defaultValues))
+      dispatch(setOperacionCrudRhRelacionCargo(1));
+      dispatch(setVerRhRelacionCargoActive(true))
 
 
   }
@@ -475,7 +385,7 @@ const TableServerSide = () => {
   return (
     <Card>
       {
-        !loading && linkData.length>0 ?
+        !loading ?
 
         <Grid m={2} pt={3}  item justifyContent="flex-end">
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
@@ -485,26 +395,9 @@ const TableServerSide = () => {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title='Descargar'  >
-            <IconButton  color='primary' size='small' href={linkData} >
-            <Icon icon='ci:download' fontSize={20} />
-            </IconButton>
-          </Tooltip>
 
 
-          <NumericFormat
-            sx={{ml:2 ,typography: 'body1' }}
-            label='Total Mensual:'
-            disabled
-            customInput={TextField}
-            value={totalSueldo} decimalSeparator="," decimalScale={2} thousandSeparator="."
-          />
-         <NumericFormat
-              sx={{ml:2 ,typography: 'body1' }}
-              label='Total Anual:'
-              disabled
-              customInput={TextField}
-              value={totalSueldoAnual} decimalSeparator="," decimalScale={2} thousandSeparator="."/>
+
           </Toolbar>
 
         </Grid>
@@ -557,4 +450,4 @@ const TableServerSide = () => {
   )
 }
 
-export default TableServerSide
+export default TableServerSideRhRelacionCargo

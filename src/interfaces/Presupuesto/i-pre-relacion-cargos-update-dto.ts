@@ -10,8 +10,6 @@ export interface IPreRelacionCargosUpdateDto {
   compensacion: number
   prima: number
   otro: number
-  extra1: string
-  extra2: string
-  extra3: string
+
   codigoPresupuesto: number
 }

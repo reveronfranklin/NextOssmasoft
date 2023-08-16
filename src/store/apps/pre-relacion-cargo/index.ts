@@ -10,7 +10,7 @@ import { IPreRelacionCargosGetDto } from '../../../interfaces/Presupuesto/i-pre-
 
 
 export const preRelacionCargoSlice = createSlice({
-  name: 'preTitulo',
+  name: 'preRelacionCargo',
   initialState: {
     preRelacionCargoSeleccionado: {} as IPreRelacionCargosGetDto,
     verPreRelacionCargoActive:false,

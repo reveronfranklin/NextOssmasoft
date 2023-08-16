@@ -17,6 +17,7 @@ import { preDescriptivaSlice } from './apps/pre-descriptiva'
 import { preTituloSlice } from './apps/pre-titulos'
 import { preCargoSlice } from './apps/pre-cargo'
 import { preRelacionCargoSlice } from './apps/pre-relacion-cargo'
+import { rhRelacionCargoSlice } from './apps/rh-relacion-cargo'
 
 
 
@@ -37,6 +38,7 @@ export const store = configureStore({
     preCargo:preCargoSlice.reducer,
     preTitulo:preTituloSlice.reducer,
     preRelacionCargo:preRelacionCargoSlice.reducer,
+    rhRelacionCargo:rhRelacionCargoSlice.reducer,
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer
 
