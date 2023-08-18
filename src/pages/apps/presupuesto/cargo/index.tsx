@@ -171,7 +171,7 @@ const CargoList = () => {
 
 
   const {verPreCargoActive=false} = useSelector((state: RootState) => state.preCargo)
-  const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
+  const {listpresupuestoDtoSeleccionado={},listpresupuestoDto=[]} = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false);
   const [viewTable, setViewTable] = useState(false);
 
