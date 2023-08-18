@@ -327,8 +327,11 @@ const TableServerSide = () => {
         filter.codigoIcp=icpSeleccionado.codigoIcp;
       }
     }else{
-      filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
-      dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
+      if(listpresupuestoDto && listpresupuestoDto.length>0){
+        filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
+        dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
+      }
+
     }
     fetchTableData(filter);
 

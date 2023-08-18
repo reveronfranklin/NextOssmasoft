@@ -79,7 +79,8 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
         fechaIni:'',
         fechaFin:'',
         fechaIniObj:{ year:'2024',month:'08',day:'01'},
-        fechaFinObj:{ year:'2024',month:'08',day:'01'}
+        fechaFinObj:{ year:'2024',month:'08',day:'01'},
+        tipoNomina:0
 
       }
 

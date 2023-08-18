@@ -194,9 +194,6 @@ const FormPreRelacionCargoCreateAsync = () => {
       compensacion: data.compensacion,
       prima: data.prima,
       otro: data.otro,
-      extra1: data.extra1,
-      extra2: data.extra2,
-      extra3: data.extra3,
       codigoPresupuesto:data.codigoPresupuesto
 
 
