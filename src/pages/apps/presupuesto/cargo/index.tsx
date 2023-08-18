@@ -29,6 +29,7 @@ import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dt
 import { IFilterPreTituloDto } from 'src/interfaces/Presupuesto/i-filter-pre-titulo-dto';
 import { setListPreCargos, setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
 import DialogPreCargoInfo from 'src/presupuesto/cargo/views/DialogPreCargoInfo';
+import { IListPresupuestoDto } from '../../../../interfaces/Presupuesto/i-list-presupuesto-dto';
 
 interface CellType {
   row: IPreCargosGetDto
@@ -171,7 +172,7 @@ const CargoList = () => {
 
 
   const {verPreCargoActive=false} = useSelector((state: RootState) => state.preCargo)
-  const {listpresupuestoDtoSeleccionado={},listpresupuestoDto=[]} = useSelector((state: RootState) => state.presupuesto)
+  const {listpresupuestoDtoSeleccionado={} as IListPresupuestoDto ,listpresupuestoDto=[] as IListPresupuestoDto[] } = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false);
   const [viewTable, setViewTable] = useState(false);
 

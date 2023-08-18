@@ -230,15 +230,18 @@ const TableServerSideRhRelacionCargo = () => {
 
       const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo',filter);
       setAllRows(responseAll.data.data);
-      setTotal(responseAll.data.data.length);
-      setRows(loadServerRows(page, responseAll.data.data))
-      setLoading(false);
-
-      if( responseAll.data.data.length>0){
-        setMensaje('')
+      if(responseAll.data.data && responseAll.data.data.length>0){
+        setTotal(responseAll.data.data.length);
+        setRows(loadServerRows(page, responseAll.data.data))
       }else{
-        setMensaje('')
+        setTotal(0);
+        setRows([])
       }
+
+
+      setLoading(false);
+      setMensaje('')
+
 
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
