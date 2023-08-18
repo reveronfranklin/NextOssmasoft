@@ -14,6 +14,7 @@ import Icon from 'src/@core/components/icon'
 
 // ** ThirdParty Components
 //import axios from 'axios'
+import toast from 'react-hot-toast'
 
 // ** Custom Components
 //import CustomChip from 'src/@core/components/mui/chip'
@@ -401,6 +402,11 @@ const TableServerSide = () => {
     }
 
     if(row.field=='sueldo'){
+      if(row.value<=0){
+        toast.success('Sueldo debe ser mayor a cero(0)')
+
+        return;
+      }
       for (const i of allRows) {
         if (i.codigoRelacionCargo == row.id) {
          i.sueldo = row.value;
@@ -414,6 +420,11 @@ const TableServerSide = () => {
 
     }
     if(row.field=='cantidad'){
+      if(row.value<=0){
+        toast.success('Cantidad de Cargos debe ser mayor a cero(0)')
+
+        return;
+      }
       for (const i of allRows) {
         if (i.codigoRelacionCargo == row.id) {
          i.cantidad = row.value;
@@ -532,6 +543,7 @@ const TableServerSide = () => {
 
         onPageChange={handlePageChange}
         onCellEditCommit={row =>handleOnCellEditCommit(row)}
+
 
         //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}

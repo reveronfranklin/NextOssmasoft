@@ -155,12 +155,13 @@ const FilterPresupuestoRelacionCargo = () => {
         filter.codigoIcp=icpSeleccionado.codigoIcp;
       }
     }else{
-      console.log('no hay presupuesto seleccionado')
+      if(listpresupuestoDto && listpresupuestoDto.length>0){
+        filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
+        filter.codigoIcp=listIcp[0].codigoIcp;
+        dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
+        dispatch(setListIcp(listIcp[0]));
+      }
 
-      filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
-      filter.codigoIcp=listIcp[0].codigoIcp;
-      dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
-      dispatch(setListIcp(listIcp[0]));
     }
     getData(filter);
 
