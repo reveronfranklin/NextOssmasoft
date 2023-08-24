@@ -350,7 +350,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
                 )}
               </FormControl>
             </Grid>
-          {/* tipoPersonalId */}
+          {/* codigoIcp */}
           <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
@@ -375,25 +375,25 @@ const FormPreRelacionCargoUpdateAsync = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-            </Grid>
+          </Grid>
 
                {/* Icp */}
 
-               <Grid item sm={10} xs={12}>
-                <FormControl fullWidth>
-                  <Autocomplete
+          <Grid item sm={10} xs={12}>
+          <FormControl fullWidth>
+            <Autocomplete
 
-                        options={listIcp}
-                        value={icp}
-                        id='autocomplete-icp'
-                        isOptionEqualToValue={(option, value) => option.codigoIcp=== value.codigoIcp}
-                        getOptionLabel={option => option.codigoIcpConcat + '-' + option.denominacion }
-                        onChange={handlerCodigoIcp}
-                        renderInput={params => <TextField {...params} label='Icp' />}
-                      />
+                  options={listIcp}
+                  value={icp}
+                  id='autocomplete-icp'
+                  isOptionEqualToValue={(option, value) => option.codigoIcp=== value.codigoIcp}
+                  getOptionLabel={option => option.codigoIcpConcat + '-' + option.denominacion }
+                  onChange={handlerCodigoIcp}
+                  renderInput={params => <TextField {...params} label='Icp' />}
+                />
 
-                </FormControl>
-            </Grid>
+          </FormControl>
+          </Grid>
 
 
             {/* tipoCargoId */}

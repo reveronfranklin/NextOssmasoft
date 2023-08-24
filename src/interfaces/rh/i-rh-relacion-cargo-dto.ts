@@ -6,6 +6,7 @@ export interface  IRhRelacionCargoDto{
   codigoCargo :number
   denominacionCargo :string;
   tipoNomina:number;
+  codigoIcp:number;
   codigoPersona :number;
   nombre:string;
   apellido :string;

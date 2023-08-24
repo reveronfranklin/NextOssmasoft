@@ -80,7 +80,8 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
         fechaFin:'',
         fechaIniObj:{ year:'2024',month:'08',day:'01'},
         fechaFinObj:{ year:'2024',month:'08',day:'01'},
-        tipoNomina:0
+        tipoNomina:0,
+        codigoIcp:0
 
       }
 
@@ -111,7 +112,7 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
           onBackdropClick={() => handleSetShow(false)}
 
         >
-          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }} style={{height:'600px'}}>
+          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }} style={{height:'700px'}}>
             <IconButton
               size='small'
               onClick={() => handleSetShow(false)}

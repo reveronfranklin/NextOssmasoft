@@ -56,6 +56,7 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IListTipoNominaDto } from '../../../interfaces/rh/i-list-tipo-nomina';
+import { IPreIndiceCategoriaProgramaticaGetDto } from 'src/interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto'
 
 
 
@@ -63,6 +64,7 @@ interface FormInputs {
   codigoRelacionCargoPre:number
   codigoRelacionCargo: number
   tipoNomina:number
+  codigoIcp:number
   codigoCargo: number
   denominacionCargo: string
   codigoPersona:number
@@ -82,7 +84,19 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
   const { preRelacionCargoSeleccionado} = useSelector((state: RootState) => state.preRelacionCargo)
   const { rhRelacionCargoSeleccionado} = useSelector((state: RootState) => state.rhRelacionCargo)
   const { personas,tiposNomina} = useSelector((state: RootState) => state.nomina)
+  const { listIcp} = useSelector((state: RootState) => state.icp)
 
+
+  const  getIcp=(id:number)=>{
+
+    //if(id==0) return default;
+    const result = listIcp.filter((elemento)=>{
+
+      return elemento.codigoIcp==id;
+    });
+
+    return result[0];
+  }
   const  getPersona=(id:number)=>{
 
     //if(id==0) return default;
@@ -111,12 +125,13 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
   const [open, setOpen] = useState(false);
   const [persona, setPersona] = useState<IListSimplePersonaDto>(getPersona(rhRelacionCargoSeleccionado.codigoPersona));
   const [tipo, setTipo] = useState<IListTipoNominaDto>(getTipoNomina(rhRelacionCargoSeleccionado.tipoNomina));
-
+  const [icp,setIcp] = useState<IPreIndiceCategoriaProgramaticaGetDto>(getIcp(preRelacionCargoSeleccionado.codigoIcp))
 
   const defaultValues:IRhRelacionCargoDto = {
     codigoRelacionCargo:rhRelacionCargoSeleccionado.codigoRelacionCargo,
     codigoCargo :rhRelacionCargoSeleccionado.codigoCargo,
     tipoNomina:rhRelacionCargoSeleccionado.tipoNomina,
+    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp,
     denominacionCargo :rhRelacionCargoSeleccionado.denominacionCargo,
     codigoPersona :rhRelacionCargoSeleccionado.codigoPersona,
     nombre:rhRelacionCargoSeleccionado.nombre,
@@ -190,7 +205,18 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
       setValue('tipoNomina',0);
     }
   }
+  const handlerCodigoIcp= async (e: any,value:any)=>{
+    console.log(value)
+    if(value!=null){
+      setValue('codigoIcp',value.codigoIcp);
 
+      setIcp(value)
+
+    }else{
+      setValue('codigoIcp',0);
+
+    }
+  }
   const handleDelete = async  () => {
 
     setOpen(false);
@@ -223,6 +249,7 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
       codigoRelacionCargoPre:data.codigoRelacionCargoPre,
       codigoRelacionCargo: data.codigoRelacionCargo,
       tipoNomina:data.tipoNomina,
+      codigoIcp: data.codigoIcp,
       codigoCargo: data.codigoCargo,
       codigoPersona :data.codigoPersona,
       sueldo: data.sueldo,
@@ -256,7 +283,7 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
   }, []);
 
   return (
-    <Card style={{height:'400px'}}>
+    <Card style={{height:'500px'}}>
       <CardHeader title='RH - Modificar Relacion Cargo' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -347,7 +374,50 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
 
                 </FormControl>
             </Grid>
+          {/* codigoIcp */}
+          <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='codigoIcp'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value || 0}
+                      label='codigoIcp'
+                      onChange={onChange}
+                      placeholder='0'
+                      error={Boolean(errors.codigoIcp)}
+                      aria-describedby='validation-async-codigoIcp'
+                      disabled
+                    />
+                  )}
+                />
+                {errors.codigoIcp && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-tipoPersonalId'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+          </Grid>
 
+               {/* Icp */}
+
+          <Grid item sm={10} xs={12}>
+          <FormControl fullWidth>
+            <Autocomplete
+
+                  options={listIcp}
+                  value={icp}
+                  id='autocomplete-icp'
+                  isOptionEqualToValue={(option, value) => option.codigoIcp=== value.codigoIcp}
+                  getOptionLabel={option => option.codigoIcpConcat + '-' + option.denominacion }
+                  onChange={handlerCodigoIcp}
+                  renderInput={params => <TextField {...params} label='Icp' />}
+                />
+
+          </FormControl>
+          </Grid>
             {/* sueldo*/}
             <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
