@@ -18,6 +18,9 @@ import { preTituloSlice } from './apps/pre-titulos'
 import { preCargoSlice } from './apps/pre-cargo'
 import { preRelacionCargoSlice } from './apps/pre-relacion-cargo'
 import { rhRelacionCargoSlice } from './apps/rh-relacion-cargo'
+import { rhAdministrativosSlice } from './apps/rh-administrativos'
+import { reportViewSlice } from './apps/report'
+import { bmBm1Slice } from './apps/bm'
 
 
 
@@ -39,8 +42,11 @@ export const store = configureStore({
     preTitulo:preTituloSlice.reducer,
     preRelacionCargo:preRelacionCargoSlice.reducer,
     rhRelacionCargo:rhRelacionCargoSlice.reducer,
+    rhAdministrativos:rhAdministrativosSlice.reducer,
     nomina:nominaSlice.reducer,
-    ossmmasofGlobal:ossmmasoftSlice.reducer
+    ossmmasofGlobal:ossmmasoftSlice.reducer,
+    reportView:reportViewSlice.reducer,
+    bmBm1:bmBm1Slice.reducer
 
     //nominas:nominaSlice.reducer,
   },

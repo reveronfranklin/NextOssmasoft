@@ -51,6 +51,17 @@
     ]
   },
   {
+    "title": "BM",
+    "icon": "mdi:file-document-outline",
+    "children": [
+      {
+        "title": "BM1",
+        "path": "/apps/Bm/Bm1"
+      }
+
+    ]
+  },
+  {
     "title": "Nomina",
     "icon": "mdi:file-document-outline",
     "children": [
@@ -65,6 +76,41 @@
       {
         "title": "Historico Proceso",
         "path": "/apps/rh/proceso"
+      },
+      {
+        "title": "Personas",
+        "icon": "mdi:account-outline",
+        "children": [
+          {
+            "title": "Lista",
+            "path": "/apps/rh/persona/list"
+          },
+          {
+            "title": "Ficha",
+            "children": [
+              {
+                "title": "Overview",
+                "path": "/apps/rh/persona/view/overview"
+              },
+              {
+                "title": "Security",
+                "path": "/apps/rh/persona/view/security"
+              },
+              {
+                "title": "Billing & Plans",
+                "path": "/apps/rh/persona/view/billing-plan"
+              },
+              {
+                "title": "Notifications",
+                "path": "/apps/rh/persona/view/notification"
+              },
+              {
+                "title": "Connection",
+                "path": "/apps/rh/persona/view/connection"
+              }
+            ]
+          }
+        ]
       }
     ]
   }

@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+
+
 import { DataGrid  } from '@mui/x-data-grid';
 
 //import { useTheme } from '@mui/material/styles'
@@ -18,7 +20,7 @@ import { useDispatch } from 'react-redux';
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApi} from 'src/MyApis/ossmmasofApi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
@@ -32,6 +34,9 @@ import { setListCodigosPucHistorico, setListGrupos, setListNivel1, setListNivel2
 import { IPrePlanUnicoCuentasGetDto } from 'src/interfaces/Presupuesto/i-pre-plan-unico-cuentas-get-dto';
 import DialogPrePucInfo from 'src/presupuesto/Puc/views/DialogPrePucInfo';
 import TreeViewPuc from 'src/presupuesto/Puc/components/TreViewPuc';
+import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo';
+import { setReportName, setVerReportViewActive } from 'src/store/apps/report';
+import { IReportRequestDto } from 'src/interfaces/SIS/ReportRequestDto';
 
 interface CellType {
   row: IPrePlanUnicoCuentasGetDto
@@ -172,6 +177,7 @@ const PresupuestoList = () => {
   const [loading, setLoading] = useState(false);
   const [viewTable, setViewTable] = useState(false);
 
+
   const [puc, setPuc] = useState([]);
   const handleViewTree=()=>{
     setViewTable(false);
@@ -181,7 +187,28 @@ const PresupuestoList = () => {
     setViewTable(true);
 
   }
+
+  const getReport = async () => {
+    setLoading(true);
+
+    const filter:IReportRequestDto={
+      reportName:'RptPlanUnicoCuentas.pdf',
+      reportUrl:'http://192.168.1.124:7779/reports/rwservlet?destype=cache&desformat=pdf&server=samiAIO_webpre&report=PRE_PUC2.rdf&userid=system/s4m1apps@samiapps'
+    }
+    const responseAll= await ossmmasofApi.post<any>('/AppReport/Report',filter);
+    console.log('responseAll report',responseAll)
+    dispatch(setReportName(responseAll.data));
+
+    //dispatch(setReportName('report.pdf'));
+
+    dispatch(setVerReportViewActive(true))
+
+    setLoading(false);
+  };
+
   useEffect(() => {
+
+
 
     const getPuc = async (filter:FilterByPresupuestoDto) => {
       setLoading(true);
@@ -298,9 +325,21 @@ const PresupuestoList = () => {
           </Tooltip>
 
         </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='Report'>
+            <IconButton size='small'  color='primary' onClick={() => getReport()}>
+            <Icon icon='codicon:file-pdf' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+
+        </Box>
 
 
         </CardActions>
+
+        <DialogReportInfo></DialogReportInfo>
+
+
 
              {/*  {
                 loading
@@ -337,6 +376,8 @@ const PresupuestoList = () => {
                 </Box>
 
               }
+
+
 
 
         </Card>

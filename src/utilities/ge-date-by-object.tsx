@@ -5,7 +5,7 @@ export const getDateByObject=(dateObject:IFechaDto)=>{
 if(dateObject !== undefined){
 
 
-  const date = new Date(+dateObject.year, +dateObject.month-1, +dateObject.day);
+  const date = new Date(+dateObject.year, +dateObject.month, +dateObject.day);
 
   return date;
 }else{

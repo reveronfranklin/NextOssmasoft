@@ -5,6 +5,8 @@ import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas';
 import { IRhProcesoGetDto } from '../../../interfaces/rh/i-rh-procesos-get-dto';
+import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto';
+import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 
 
 
@@ -19,10 +21,17 @@ export const nominaSlice = createSlice({
     tiposNomina:[] as IListTipoNominaDto[],
     tiposNominaSeleccionado:[]  as IListTipoNominaDto[] ,
     personas:[] as IListSimplePersonaDto[],
+    personasDto:[] as IPersonaDto[],
     personaSeleccionado:{} as IListSimplePersonaDto,
     isLoading:false,
     procesoSeleccionado: {} as IRhProcesoGetDto,
-    tipoQuery:''
+    tipoQuery:'',
+    personasDtoSeleccionado:{} as IPersonaDto,
+    verRhPersonasActive:false,
+    operacionCrudRhPersonas:0,
+    listPaises: [] as ISelectListDescriptiva[],
+    listEstados: [] as ISelectListDescriptiva[],
+
   },
   reducers: {
 
@@ -49,6 +58,11 @@ export const nominaSlice = createSlice({
     setPersonaSeleccionado:(state,action)=>{
       state.personaSeleccionado=action.payload
     },
+    setPersonasDto:(state,action)=>{
+      state.isLoading=false;
+      state.personasDto=action.payload
+    },
+
     setTiposNomina:(state,action)=>{
       state.isLoading=false;
 
@@ -80,6 +94,21 @@ export const nominaSlice = createSlice({
       state.tipoQuery=action.payload;
 
     },
+    setPersonasDtoSeleccionado:(state,action)=>{
+      state.personasDtoSeleccionado=action.payload
+    },
+    setVerRhPersonasActive:(state,action)=>{
+      state.verRhPersonasActive=action.payload
+    },
+    setOperacionCrudRhPersonas:(state,action)=>{
+      state.operacionCrudRhPersonas=action.payload
+    },
+    setListPaises:(state,action)=>{
+      state.listPaises=action.payload
+    },
+    setListEstados:(state,action)=>{
+      state.listEstados=action.payload
+    },
 
   },
 
@@ -97,4 +126,11 @@ export const {startLoadingNomina,
               setConceptos,
               setConceptoSeleccionado,
               setProcesoSeleccionado,
-              setTipoQuery} = nominaSlice.actions;
+              setTipoQuery,
+              setPersonasDto,
+              setPersonasDtoSeleccionado,
+              setVerRhPersonasActive,
+              setOperacionCrudRhPersonas,
+              setListPaises,
+              setListEstados
+            } = nominaSlice.actions;

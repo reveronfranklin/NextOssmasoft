@@ -126,6 +126,7 @@ const defaultValues:IRhRelacionCargoDto = {
     fechaFinObj :rhRelacionCargoSeleccionado.fechaFinObj,
     codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
     searchText:'',
+    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
 
 
   }
@@ -204,7 +205,8 @@ const defaultValues:IRhRelacionCargoDto = {
       codigoPersona :data.codigoPersona,
       sueldo: data.sueldo,
       fechaIni:data.fechaIni,
-      fechaFin:data.fechaFin
+      fechaFin:data.fechaFin,
+      codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
 
 
     };

@@ -85,6 +85,35 @@ const FormIcpCreateAsync = () => {
   const {listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
 
+  const personaDefault:IListSimplePersonaDto ={
+    apellido:'',
+    cedula:0,
+    codigoPersona:0,
+    nombre:'',
+    nombreCompleto:'',
+    avatar:'',
+    descripcionStatus:'',
+    nacionalidad:'',
+    sexo:'',
+    fechaNacimiento:'',
+    email:'',
+    paisNacimiento:'',
+    edad:0,
+    descripcionEstadoCivil:'',
+    paisNacimientoId:0,
+    estadoNacimientoId:0,
+    manoHabil:'',
+    status:'',
+    fechaGacetaNacional:'',
+    estadoCivilId:0,
+    estatura:0,
+    peso:0,
+    identificacionId:0,
+    numeroIdentificacion:0,
+    numeroGacetaNacional:0,
+
+  };
+
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
@@ -96,11 +125,7 @@ const FormIcpCreateAsync = () => {
   const [actividad, setActividad] = useState<IOssConfig>({ clave: 'CODIGO_ACTIVIDAD', valor: '00'});
   const [oficina, setOficina] = useState<IOssConfig>({ clave: 'CODIGO_OFICINA', valor:'00'});
 
-  const [persona,setPersona] = useState<IListSimplePersonaDto>({codigoPersona :0,
-                                                              cedula:0,
-                                                                nombre :'',
-                                                                apellido :'',
-                                                                nombreCompleto :''});
+  const [persona,setPersona] = useState<IListSimplePersonaDto>(personaDefault)
 
 
   const defaultValues = {

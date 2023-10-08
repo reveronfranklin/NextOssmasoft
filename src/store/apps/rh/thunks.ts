@@ -8,8 +8,9 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
 
-import { setConceptos, setPersonas, setTiposNomina } from '.';
+import { setConceptos, setPersonaSeleccionado, setPersonas, setPersonasDto, setTiposNomina } from '.';
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto';
+import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto';
 
 //import { getValidationError } from 'src/utlities/get-validation-error';
 
@@ -87,6 +88,62 @@ export const fetchDataPersonas = async(dispatch:any) => {
 
 
       dispatch(setPersonas(data));
+
+    }
+
+    return {data,status}
+  } catch (error) {
+
+  }
+
+};
+
+export const fetchDataPersonasDto = async(dispatch:any) => {
+
+  try {
+
+
+   const responseAll= await ossmmasofApi.get<IListSimplePersonaDto[]>('/RhPersona/GetAll');
+
+   console.log('responseAll personal personasDto',responseAll)
+
+
+    const {data,status} = responseAll;
+
+
+
+    if(data){
+
+
+      dispatch(setPersonasDto(data));
+
+    }
+
+    return {data,status}
+  } catch (error) {
+
+  }
+
+};
+
+export const fetchGetPersonasDto = async(dispatch:any) => {
+
+  try {
+
+
+   const responseAll= await ossmmasofApi.get<IPersonaDto>('/RhPersona/GetPersona');
+
+   console.log('responseAll persona personasDto>>>>>',responseAll)
+
+
+    const {data,status} = responseAll;
+
+
+
+    if(data){
+
+
+      dispatch(setPersonaSeleccionado(data));
 
     }
 

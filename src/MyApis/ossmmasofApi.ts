@@ -17,7 +17,11 @@ export const  ossmmasofApi = axios.create({
   baseURL:'http://localhost:5000/api'
 
 });
+export const  ossmmasofApiBlob = axios.create({
+  baseURL:'http://localhost:5000/api',
+  responseType: 'blob'
 
+});
 ossmmasofApi.interceptors.request.use(
 
   config => {

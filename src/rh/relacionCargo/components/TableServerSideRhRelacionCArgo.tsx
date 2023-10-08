@@ -374,7 +374,8 @@ const TableServerSideRhRelacionCargo = () => {
         fechaFinObj:{year:'1900',month:'01',day:'01'},
         codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
         searchText:'',
-        tipoNomina:0
+        tipoNomina:0,
+        codigoIcp:0
 
       }
 

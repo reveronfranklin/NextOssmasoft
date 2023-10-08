@@ -102,6 +102,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     dispatch(setPresupuesto(presupuestoTmp))
 
   }
+
   const handlerHasta=(hasta:Date)=>{
 
 
@@ -331,6 +332,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
             </Grid>
             <Grid item  sm={3} xs={12}>
                 <DatePicker
+
                   selected={ getDateByObject(presupuestoSeleccionado.fechaAprobacionObj)}
                   id='date-time-picker-aprobacion'
                   dateFormat='dd/MM/yyyy'

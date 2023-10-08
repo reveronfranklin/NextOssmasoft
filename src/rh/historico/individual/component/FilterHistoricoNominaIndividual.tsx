@@ -113,12 +113,34 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
       dispatch(setPersonaSeleccionado(value));
     }else{
 
+
       const persona:IListSimplePersonaDto ={
         apellido:'',
         cedula:0,
         codigoPersona:0,
         nombre:'',
-        nombreCompleto:''
+        nombreCompleto:'',
+        avatar:'',
+        descripcionStatus:'',
+        nacionalidad:'',
+        sexo:'',
+        fechaNacimiento:'',
+        email:'',
+        paisNacimiento:'',
+        edad:0,
+        descripcionEstadoCivil:'',
+        paisNacimientoId:0,
+        estadoNacimientoId:0,
+        manoHabil:'',
+        status:'',
+        fechaGacetaNacional:'',
+        estadoCivilId:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
+
       };
 
 
