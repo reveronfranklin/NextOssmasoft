@@ -38,19 +38,19 @@
             "title": "Ficha",
             "children": [
               {
-                "title": "Overview",
+                "title": "Resumen",
                 "path": "/apps/rh/persona/view/overview"
               },
               {
-                "title": "Security",
+                "title": "Comunicaciones",
                 "path": "/apps/rh/persona/view/security"
               },
               {
-                "title": "Billing & Plans",
+                "title": "Familiares",
                 "path": "/apps/rh/persona/view/billing-plan"
               },
               {
-                "title": "Notifications",
+                "title": "Educacion",
                 "path": "/apps/rh/persona/view/notification"
               },
               {
