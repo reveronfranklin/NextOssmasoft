@@ -1,21 +1,13 @@
 [
-  {
-    "title": "Dashboards",
-    "icon": "mdi:home-outline",
-    "badgeContent": "new",
-    "badgeColor": "error",
-    "children": [
-      {
-        "title": "Presupuesto",
-        "path": "/dashboards/presupuesto"
-      }
-    ]
-  },
 
   {
     "title": "Presupuesto",
     "icon": "mdi:file-document-outline",
     "children": [
+      {
+        "title": "Presupuesto",
+        "path": "/dashboards/presupuesto"
+      },
       {
         "title": "Saldo Presupuesto",
         "path": "/apps/presupuesto/prevsaldo"

@@ -50,13 +50,14 @@ import { useDispatch } from 'react-redux'
 import { setListEstados, setListPaises, setOperacionCrudRhPersonas, setPersonaSeleccionado, setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { Autocomplete } from '@mui/material'
-import { fetchDataPersonas } from 'src/store/apps/rh/thunks'
+import {fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogRhPersonasInfo from './DialogRhPersonasInfo'
 import QRCode from "react-qr-code";
+import toast from 'react-hot-toast';
 
 interface ColorsType {
   [key: string]: ThemeColor
@@ -144,11 +145,11 @@ const PersonaViewLeft = () => {
         status:'',
         fechaGacetaNacional:'',
         estadoCivilId:0,
-  estatura:0,
-  peso:0,
-  identificacionId:0,
-  numeroIdentificacion:0,
-  numeroGacetaNacional:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
 
       };
 
@@ -165,16 +166,14 @@ const PersonaViewLeft = () => {
 
 
 
-    dispatch(setPersonaSeleccionado({}));
-
-
-
-
-
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
 
-      await fetchDataPersonas(dispatch);
+      const data= await fetchDataPersonasDto(dispatch);
+
+      if(data?.data.isValid===false){
+        toast.error(data?.data.message)
+      }
       const filterClave={clave:''}
       const responseEstados= await ossmmasofApi.post<ISelectListDescriptiva[]>('/SisUbicacion/GetEstados',filterClave);
       dispatch(setListEstados(responseEstados.data))

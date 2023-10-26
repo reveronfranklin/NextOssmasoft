@@ -18,14 +18,15 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Icon from 'src/@core/components/icon'
 
 // ** Demo Components Imports
-import UserViewBilling from 'src/views/apps/user/view/UserViewBilling'
+import UserViewBilling from './UserViewBilling'
 import PersonaViewOverview from './PersonaViewOverview'
-import UserViewSecurity from 'src/views/apps/user/view/UserViewSecurity'
-import UserViewConnection from 'src/views/apps/user/view/UserViewConnection'
-import UserViewNotification from 'src/views/apps/user/view/UserViewNotification'
+
+import UserViewConnection from './UserViewConnection'
+import UserViewNotification from './UserViewNotification'
 
 // ** Types
 import { InvoiceType } from 'src/types/apps/invoiceTypes'
+import UserViewSecurity from './UserViewSecurity'
 
 
 interface Props {
@@ -96,7 +97,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
         aria-label='forced scroll tabs example'
       >
         <Tab
-          value='overview'
+          value='resumen'
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:account-outline' />
@@ -109,7 +110,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:lock-outline' />
-              Security
+              Comunicacion
             </Box>
           }
         />
@@ -118,7 +119,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:bookmark-outline' />
-              Billing & Plan
+              Familiares
             </Box>
           }
         />
@@ -127,7 +128,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:bell-outline' />
-              Notification
+              Educacion
             </Box>
           }
         />
@@ -136,7 +137,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:link' />
-              Connection
+              Variacion
             </Box>
           }
         />
@@ -149,7 +150,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           </Box>
         ) : (
           <>
-            <TabPanel sx={{ p: 0 }} value='overview'>
+            <TabPanel sx={{ p: 0 }} value='resumen'>
               <PersonaViewOverview />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='security'>

@@ -21,7 +21,6 @@ import { RootState } from 'src/store'
 import { setListPresupuestoDto, setListpresupuestoDtoSeleccionado,  setPreFinanciadoDtoSeleccionado} from 'src/store/apps/presupuesto'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
 import { IPreFinanciadoDto } from 'src/interfaces/Presupuesto/i-list-pre-financiado-dto'
-import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import PickersDesdeHasta from 'src/share/components/pickers/PickersDesdeHasta'
 
@@ -44,8 +43,6 @@ const FilterPresupuestoFinanciado = () => {
 
   //const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
   const [pre, setPre] = useState<IListPresupuestoDto>(listpresupuestoDto[0]);
-
-    const [loading, setLoading] = useState(false)
   const handlePresupuestos= async (e: any,value:any)=>{
 
 
@@ -103,7 +100,7 @@ const FilterPresupuestoFinanciado = () => {
   useEffect(() => {
 
     const getData = async () => {
-      setLoading(true)
+
       const responseAll= await ossmmasofApi.get<IListPresupuestoDto[]>('/PrePresupuesto/GetListPresupuesto');
 
       const {data} = responseAll;
@@ -111,9 +108,6 @@ const FilterPresupuestoFinanciado = () => {
       dispatch(setListpresupuestoDtoSeleccionado(data[0]));
 
       setPre(data[0])
-
-
-      setLoading(false)
 
 
     };
@@ -126,11 +120,7 @@ const FilterPresupuestoFinanciado = () => {
   return (
     <Grid item xs={12}>
 
-{ loading  ? (
-       <Spinner sx={{ height: '100%' }} />
-      ) : (
-
-        <Card>
+<Card>
         <CardHeader title='Filtrar Presupuesto' />
         <CardContent>
           <Grid container >
@@ -180,9 +170,7 @@ const FilterPresupuestoFinanciado = () => {
 
           </Grid>
         </CardContent>
-      </Card>
-      )}
-
+        </Card>
 
   </Grid>
 

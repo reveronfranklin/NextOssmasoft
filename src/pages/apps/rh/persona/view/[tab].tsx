@@ -17,7 +17,7 @@ const PersonaView = ({ tab, invoiceData }: InferGetStaticPropsType<typeof getSta
 export const getStaticPaths: GetStaticPaths = () => {
   return {
     paths: [
-      { params: { tab: 'overview' } },
+      { params: { tab: 'resumen' } },
       { params: { tab: 'security' } },
       { params: { tab: 'billing-plan' } },
       { params: { tab: 'notification' } },

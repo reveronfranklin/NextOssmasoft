@@ -56,6 +56,7 @@ export const nominaSlice = createSlice({
       state.personas=action.payload
     },
     setPersonaSeleccionado:(state,action)=>{
+      console.log('Seleccionando persona',action.payload)
       state.personaSeleccionado=action.payload
     },
     setPersonasDto:(state,action)=>{

@@ -18,7 +18,7 @@ import MuiTimeline, { TimelineProps } from '@mui/lab/Timeline'
 import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Demo Component Imports
-import UsersProjectListTable from 'src/views/apps/user/view/UsersProjectListTable'
+
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
@@ -130,9 +130,7 @@ const PersonaViewOverview = () => {
 
         <AdministrativoList></AdministrativoList>
       </Grid>
-      <Grid item xs={12}>
-        <UsersProjectListTable />
-      </Grid>
+
 
     </Grid>
   )

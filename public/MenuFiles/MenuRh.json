@@ -15,17 +15,7 @@
         "title": "Historico Proceso",
         "path": "/apps/rh/proceso"
       },
-      {
-        "title": "BM",
-        "icon": "mdi:file-document-outline",
-        "children": [
-          {
-            "title": "BM1",
-            "path": "/apps/Bm/Bm1"
-          }
 
-        ]
-      },
       {
         "title": "Personas",
         "icon": "mdi:account-outline",
@@ -39,7 +29,7 @@
             "children": [
               {
                 "title": "Resumen",
-                "path": "/apps/rh/persona/view/overview"
+                "path": "/apps/rh/persona/view/resumen"
               },
               {
                 "title": "Comunicaciones",
@@ -54,7 +44,7 @@
                 "path": "/apps/rh/persona/view/notification"
               },
               {
-                "title": "Connection",
+                "title": "Variacion",
                 "path": "/apps/rh/persona/view/connection"
               }
             ]

@@ -130,9 +130,16 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
   const  getManoHabil=(id:string)=>{
 
+    console.log('listManoHabil',listManoHabil)
+    console.log('id mano habil',id)
+    if(id==='' || id ===null || id==='undefined'){
+      id='D'
+
+    };
     const result = listManoHabil?.filter((elemento)=>{
 
       return elemento.id==id;
+
     });
 
 
@@ -271,7 +278,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
 
   const handlerManoHabil=async (e: any,value:any)=>{
-
+   console.log(value)
     if(value!=null){
       setValue('manoHabil',value.id);
       setManoHabil(value);
@@ -411,7 +418,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
 
     };
-
+    console.log('updatePersona',updatePersona)
     const responseAll= await ossmmasofApi.post<any>('/RhPersona/Update',updatePersona);
 
     if(responseAll.data.isValid){
@@ -675,7 +682,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 <Controller
                   name='estatura'
                   control={control}
-                  rules={{ maxLength:20,minLength:20}}
+                  rules={{ min:1}}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || 0}
@@ -700,7 +707,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 <Controller
                   name='peso'
                   control={control}
-                  rules={{ maxLength:20,minLength:20}}
+                  rules={{ min:10}}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || 0}
@@ -751,6 +758,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 onChange={handlerStatus}
                 renderInput={params => <TextField {...params} label='Staus' />}
               />
+
 
 
             </Grid>

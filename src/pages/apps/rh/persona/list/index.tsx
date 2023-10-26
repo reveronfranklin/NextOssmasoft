@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState, useEffect, MouseEvent, useCallback } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router';
 
 // ** Next Imports
 import Link from 'next/link'
@@ -8,22 +9,17 @@ import { GetStaticProps } from 'next/types'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Menu from '@mui/material/Menu'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
 import { DataGrid } from '@mui/x-data-grid'
 import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
-import CardContent from '@mui/material/CardContent'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+
+import toast from 'react-hot-toast';
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+//import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,7 +32,6 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/user'
 
 // ** Third Party Components
 import axios from 'axios'
@@ -47,10 +42,13 @@ import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Table Components Imports
-import TableHeader from 'src/views/apps/user/list/TableHeader'
+
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
+import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
+import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
 
 
@@ -99,69 +97,6 @@ const renderClient = (row: IPersonaDto) => {
   }
 }
 
-const RowOptions = ({ id }: { id: number | string }) => {
-  // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-
-  // ** State
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const rowOptionsOpen = Boolean(anchorEl)
-
-  const handleRowOptionsClick = (event: MouseEvent<HTMLElement>) => {
-
-    setAnchorEl(event.currentTarget)
-  }
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleDelete = () => {
-    dispatch(deleteUser(id))
-    handleRowOptionsClose()
-  }
-
-  return (
-    <>
-      <IconButton size='small' onClick={handleRowOptionsClick}>
-        <Icon icon='mdi:dots-vertical' />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        PaperProps={{ style: { minWidth: '8rem' } }}
-      >
-        <MenuItem
-          component={Link}
-          sx={{ '& svg': { mr: 2 } }}
-          onClick={handleRowOptionsClose}
-          href='/apps/user/view/overview/'
-        >
-          <Icon icon='mdi:eye-outline' fontSize={20} />
-          View
-        </MenuItem>
-        <MenuItem onClick={handleRowOptionsClose} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='mdi:pencil-outline' fontSize={20} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='mdi:delete-outline' fontSize={20} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  )
-}
 
 const columns = [
   {
@@ -241,23 +176,12 @@ const columns = [
         />
       )
     }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: 'actions',
-    headerName: 'Actions',
-    renderCell: ({ row }: CellType) => <RowOptions id={row.codigoPersona}/>
   }
 ]
 
 const UserList = () => {
   // ** State
-  const [role, setRole] = useState<string>('')
-  const [plan, setPlan] = useState<string>('')
-  const [value, setValue] = useState<string>('')
-  const [status, setStatus] = useState<string>('')
+
   const [pageSize, setPageSize] = useState<number>(10)
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
@@ -265,37 +189,81 @@ const UserList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const store = useSelector((state: RootState) => state.nomina)
 
+  const router = useRouter();
+
+  const handlerPersona= async   (value:any)=>{
+    console.log('value en handlerPersona en list',value.row)
+    if(value){
+
+      dispatch(setPersonaSeleccionado({}));
+
+      dispatch(setPersonasDtoSeleccionado({}));
+
+      const filter={codigoPersona:value.row.codigoPersona}
+      const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
+      console.log('handlerPersona en list',responseAll.data)
+      dispatch(setPersonaSeleccionado(responseAll.data));
+      dispatch(setPersonasDtoSeleccionado(responseAll.data));
+      router.replace("/apps/rh/persona/view/overview/");
+
+    }else{
+
+      const personaDefault:IListSimplePersonaDto ={
+        apellido:'',
+        cedula:0,
+        codigoPersona:0,
+        nombre:'',
+        nombreCompleto:'',
+        avatar:'',
+        descripcionStatus:'',
+        nacionalidad:'',
+        sexo:'',
+        fechaNacimiento:'',
+        email:'',
+        paisNacimiento:'',
+        edad:0,
+        descripcionEstadoCivil:'',
+        paisNacimientoId:0,
+        estadoNacimientoId:0,
+        manoHabil:'',
+        status:'',
+        fechaGacetaNacional:'',
+        estadoCivilId:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
+
+      };
+
+      dispatch(setPersonaSeleccionado(personaDefault));
+
+    }
+
+
+
+  }
   useEffect(() => {
 
+    const getData = async () => {
+      //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
+
+      const data = await  fetchDataPersonasDto(dispatch);
+      if(data?.data.isValid===false){
+        toast.error(data?.data.message)
+      }
+      console.log('fetchDataPersonasDto en list',store.personasDto)
+
+    };
+
+    getData();
 
 
-   fetchDataPersonasDto(dispatch)
-   console.log('fetchDataPersonasDto',store.personasDto)
-    dispatch(
-      fetchData({
-        role,
-        status,
-        q: value,
-        currentPlan: plan
-      })
-    )
-  }, [dispatch, plan, role, status, value])
 
-  const handleFilter = useCallback((val: string) => {
-    setValue(val)
-  }, [])
 
-  const handleRoleChange = useCallback((e: SelectChangeEvent) => {
-    setRole(e.target.value)
-  }, [])
+  }, [dispatch])
 
-  const handlePlanChange = useCallback((e: SelectChangeEvent) => {
-    setPlan(e.target.value)
-  }, [])
-
-  const handleStatusChange = useCallback((e: SelectChangeEvent) => {
-    setStatus(e.target.value)
-  }, [])
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
@@ -304,73 +272,10 @@ const UserList = () => {
 
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Search Filters' />
-          <CardContent>
-            <Grid container spacing={6}>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='role-select'>Select Role</InputLabel>
-                  <Select
-                    fullWidth
-                    value={role}
-                    id='select-role'
-                    label='Select Role'
-                    labelId='role-select'
-                    onChange={handleRoleChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='admin'>Admin</MenuItem>
-                    <MenuItem value='author'>Author</MenuItem>
-                    <MenuItem value='editor'>Editor</MenuItem>
-                    <MenuItem value='maintainer'>Maintainer</MenuItem>
-                    <MenuItem value='subscriber'>Subscriber</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='plan-select'>Select Plan</InputLabel>
-                  <Select
-                    fullWidth
-                    value={plan}
-                    id='select-plan'
-                    label='Select Plan'
-                    labelId='plan-select'
-                    onChange={handlePlanChange}
-                    inputProps={{ placeholder: 'Select Plan' }}
-                  >
-                    <MenuItem value=''>Select Plan</MenuItem>
-                    <MenuItem value='basic'>Basic</MenuItem>
-                    <MenuItem value='company'>Company</MenuItem>
-                    <MenuItem value='enterprise'>Enterprise</MenuItem>
-                    <MenuItem value='team'>Team</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='status-select'>Select Status</InputLabel>
-                  <Select
-                    fullWidth
-                    value={status}
-                    id='select-status'
-                    label='Select Status'
-                    labelId='status-select'
-                    onChange={handleStatusChange}
-                    inputProps={{ placeholder: 'Select Role' }}
-                  >
-                    <MenuItem value=''>Select Role</MenuItem>
-                    <MenuItem value='pending'>Pending</MenuItem>
-                    <MenuItem value='active'>Active</MenuItem>
-                    <MenuItem value='inactive'>Inactive</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </CardContent>
+          <CardHeader title='Personas' />
+
           <Divider />
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
+       {/*    <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
           <DataGrid
             autoHeight
             rows={store.personasDto}
@@ -379,6 +284,7 @@ const UserList = () => {
             checkboxSelection
             pageSize={pageSize}
             disableSelectionOnClick
+            onRowDoubleClick={(row) => handlerPersona(row)}
             rowsPerPageOptions={[10, 25, 50]}
             onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
           />

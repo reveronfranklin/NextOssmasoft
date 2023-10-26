@@ -99,7 +99,7 @@ export const fetchDataPost = async(dispatch:any,filter:any) => {
 
 
     const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/GetAllFilter',filter);
-
+    console.log('responseAll fetchDataPost PrePresupuesto',responseAll)
     const {status} = responseAll;
 
     const data = responseAll.data.data;

@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Bienes Municipales",
+    "icon": "mdi:file-document-outline",
+    "children": [
+      {
+        "title": "BM1",
+        "path": "/apps/Bm/Bm1"
+      }
+    ]
+  }
+]

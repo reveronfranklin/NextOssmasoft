@@ -1,7 +1,6 @@
 
 import { IFilterHistoricoNomina } from 'src/interfaces/rh/i-filter-historico';
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos';
-import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 
 //import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
@@ -75,20 +74,18 @@ export const fetchDataPersonas = async(dispatch:any) => {
   try {
 
 
-   const responseAll= await ossmmasofApi.get<IListSimplePersonaDto[]>('/RhPersona/GetAllSimple');
-
-   console.log('responseAll personal',responseAll)
+   const responseAll= await ossmmasofApi.get<any>('/RhPersona/GetAllSimple');
 
 
     const {data,status} = responseAll;
 
+    if(data.isValid){
 
 
-    if(data){
+      dispatch(setPersonas(data.data));
 
-
-      dispatch(setPersonas(data));
-
+    }else{
+      dispatch(setPersonas([]));
     }
 
     return {data,status}
@@ -103,7 +100,7 @@ export const fetchDataPersonasDto = async(dispatch:any) => {
   try {
 
 
-   const responseAll= await ossmmasofApi.get<IListSimplePersonaDto[]>('/RhPersona/GetAll');
+   const responseAll= await ossmmasofApi.get<any>('/RhPersona/GetAll');
 
    console.log('responseAll personal personasDto',responseAll)
 
@@ -112,12 +109,15 @@ export const fetchDataPersonasDto = async(dispatch:any) => {
 
 
 
-    if(data){
+    if(data.isValid){
 
 
-      dispatch(setPersonasDto(data));
+      dispatch(setPersonasDto(data.data));
 
+    }else{
+      dispatch(setPersonasDto([]));
     }
+
 
     return {data,status}
   } catch (error) {
