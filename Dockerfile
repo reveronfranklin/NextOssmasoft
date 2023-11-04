@@ -1,14 +1,12 @@
 FROM node:16-alpine
 
-RUN mkdir -p /home/app/ && chown -R node:node /home/app
+RUN mkdir -p /usr/app/
 
-WORKDIR /home/app
+WORKDIR /usr/app
 
-COPY --chown=node:node . .
+COPY ./ ./
 
-USER node
-
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 RUN yarn build
 
