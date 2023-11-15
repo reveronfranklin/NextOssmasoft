@@ -170,7 +170,7 @@ const AdministrativosListTable = () => {
   return (
     <Card>
       <CardHeader
-        title='Administrativos'
+        title='Administrativos...'
         sx={{ '& .MuiCardHeader-action': { m: 0 } }}
         action={
           <>

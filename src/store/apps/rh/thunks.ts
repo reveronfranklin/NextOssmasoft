@@ -102,15 +102,12 @@ export const fetchDataPersonasDto = async(dispatch:any) => {
 
    const responseAll= await ossmmasofApi.get<any>('/RhPersona/GetAll');
 
-   console.log('responseAll personal personasDto',responseAll)
 
 
     const {data,status} = responseAll;
 
 
-
     if(data.isValid){
-
 
       dispatch(setPersonasDto(data.data));
 

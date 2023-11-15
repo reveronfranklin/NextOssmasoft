@@ -102,8 +102,8 @@ const PersonaViewLeft = () => {
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
   const dispatch = useDispatch();
-
-  const {personas,personaSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
+  const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
   // Handle Edit dialog
   const handleEditClickOpen = () => {
@@ -173,7 +173,11 @@ const PersonaViewLeft = () => {
 
       if(data?.data.isValid===false){
         toast.error(data?.data.message)
+      }else{
+        setPersonas(data?.data.data)
       }
+      console.log('personas *****',personas)
+      console.log('personas data.data *****',data?.data.data)
       const filterClave={clave:''}
       const responseEstados= await ossmmasofApi.post<ISelectListDescriptiva[]>('/SisUbicacion/GetEstados',filterClave);
       dispatch(setListEstados(responseEstados.data))

@@ -26,6 +26,7 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IRhTipoNominaCargosResponseDto } from 'src/interfaces/rh/RhTipoNominaCargosResponseDto'
 
 import AdministrativoList from 'src/rh/administrativos/views/AdministrativoList'
+import PersonaHistoricoPagoListTable from './PersonaHistoricoPagoListTable'
 
 
 interface ColorsType {
@@ -129,6 +130,10 @@ const PersonaViewOverview = () => {
       <Grid item xs={12}>
 
         <AdministrativoList></AdministrativoList>
+      </Grid>
+      <Grid item xs={12}>
+
+        <PersonaHistoricoPagoListTable></PersonaHistoricoPagoListTable>
       </Grid>
 
 

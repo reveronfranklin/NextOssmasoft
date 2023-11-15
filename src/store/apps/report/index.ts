@@ -25,6 +25,7 @@ export const reportViewSlice = createSlice({
       state.reportName=action.payload;
     }
 
+
   },
 
 });
