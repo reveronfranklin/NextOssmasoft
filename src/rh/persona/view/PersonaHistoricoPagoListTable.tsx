@@ -117,11 +117,9 @@ const PersonaHistoricoPagoListTable = () => {
       const filter={codigoPersona:personaSeleccionado.codigoPersona}
       const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetResumenPago',filter);
 
-      console.log('PersonaHistoricoPagoListTable >>>>>>>>',responseAll.data)
 
 
       setData(responseAll.data.data);
-      console.log('data---------->',data)
 
     };
 
