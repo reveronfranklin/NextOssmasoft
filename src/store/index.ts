@@ -21,6 +21,7 @@ import { rhRelacionCargoSlice } from './apps/rh-relacion-cargo'
 import { rhAdministrativosSlice } from './apps/rh-administrativos'
 import { reportViewSlice } from './apps/report'
 import { bmBm1Slice } from './apps/bm'
+import { rhComunicacionSlice } from './apps/rh-comunicacion'
 
 
 
@@ -46,7 +47,8 @@ export const store = configureStore({
     nomina:nominaSlice.reducer,
     ossmmasofGlobal:ossmmasoftSlice.reducer,
     reportView:reportViewSlice.reducer,
-    bmBm1:bmBm1Slice.reducer
+    bmBm1:bmBm1Slice.reducer,
+    rhComunicacion:rhComunicacionSlice.reducer,
 
     //nominas:nominaSlice.reducer,
   },
