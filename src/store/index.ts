@@ -22,8 +22,7 @@ import { rhAdministrativosSlice } from './apps/rh-administrativos'
 import { reportViewSlice } from './apps/report'
 import { bmBm1Slice } from './apps/bm'
 import { rhComunicacionSlice } from './apps/rh-comunicacion'
-
-
+import { rhFamiliaresSlice } from './apps/rh-familiares'
 
 
 
@@ -49,6 +48,7 @@ export const store = configureStore({
     reportView:reportViewSlice.reducer,
     bmBm1:bmBm1Slice.reducer,
     rhComunicacion:rhComunicacionSlice.reducer,
+    rhFamiliares:rhFamiliaresSlice.reducer
 
     //nominas:nominaSlice.reducer,
   },

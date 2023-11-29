@@ -58,6 +58,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogRhPersonasInfo from './DialogRhPersonasInfo'
 import QRCode from "react-qr-code";
 import toast from 'react-hot-toast';
+import Spinner from 'src/@core/components/spinner';
 
 interface ColorsType {
   [key: string]: ThemeColor
@@ -100,6 +101,8 @@ const PersonaViewLeft = () => {
   const [openEdit, setOpenEdit] = useState<boolean>(false)
 
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
+
+  const [loading, setLoading] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
   const dispatch = useDispatch();
   const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
@@ -116,7 +119,8 @@ const PersonaViewLeft = () => {
 
   const handlerPersona= async (e: any,value:any)=>{
 
-    if(value){
+    if(value && value.codigoPersona>0){
+
       const filter={codigoPersona:value.codigoPersona}
       const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
       console.log('handlerPersona',responseAll.data)
@@ -168,7 +172,7 @@ const PersonaViewLeft = () => {
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
-
+      setLoading(true);
       const data= await fetchDataPersonasDto(dispatch);
 
       if(data?.data.isValid===false){
@@ -176,8 +180,7 @@ const PersonaViewLeft = () => {
       }else{
         setPersonas(data?.data.data)
       }
-      console.log('personas *****',personas)
-      console.log('personas data.data *****',data?.data.data)
+
       const filterClave={clave:''}
       const responseEstados= await ossmmasofApi.post<ISelectListDescriptiva[]>('/SisUbicacion/GetEstados',filterClave);
       dispatch(setListEstados(responseEstados.data))
@@ -185,6 +188,7 @@ const PersonaViewLeft = () => {
 
       const responsePaises= await ossmmasofApi.post<ISelectListDescriptiva[]>('/SisUbicacion/GetPaises',filterClave);
       dispatch(setListPaises(responsePaises.data))
+      setLoading(false);
 
     };
 
@@ -199,289 +203,299 @@ const PersonaViewLeft = () => {
   if (data) {
     return (
       <Grid container spacing={6}>
+
+
+
         <Grid item xs={12}>
-          <Card>
+        {
+        loading
+        ?   <Spinner sx={{ height: '100%' }} />
+        :
+        <Card>
+        <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+          <div>
+              <Autocomplete
+
+                  sx={{ width: 400 }}
+                  options={personas}
+                  id='autocomplete-persona'
+                  isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
+                  getOptionLabel={option => option.cedula + ' ' + option.nombreCompleto}
+                  onChange={handlerPersona}
+                  renderInput={params => <TextField {...params} label='Personas' />}
+                />
+            </div>
+
+          </CardContent>
           <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-            <div>
-                <Autocomplete
 
-                    sx={{ width: 400 }}
-                    options={personas}
-                    id='autocomplete-persona'
-                    isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
-                    getOptionLabel={option => option.cedula + ' ' + option.nombreCompleto}
-                    onChange={handlerPersona}
-                    renderInput={params => <TextField {...params} label='Personas' />}
-                  />
-              </div>
-
-            </CardContent>
-            <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-
-              {data.avatar.length ? (
-                <CustomAvatar
-                  src={personaSeleccionado.avatar}
-                  variant='rounded'
-                  alt={personaSeleccionado.nombreCompleto}
-                  sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-                />
-              ) : (
-                <CustomAvatar
-                  skin='light'
-                  variant='rounded'
-                  color={data.avatarColor as ThemeColor}
-                  sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-                >
-                  {getInitials(personaSeleccionado.nombreCompleto)}
-                </CustomAvatar>
-              )}
-               <QRCode
-                size={256}
-                style={{ height: "auto", maxWidth: "80%", width: "80%" }}
-                value={String(personaSeleccionado.cedula)}
-                viewBox={`0 0 128 128`}
-                />
-              <Typography variant='h6' sx={{ mb: 4 }}>
-                {personaSeleccionado.nombreCompleto}
-              </Typography>
-              <CustomChip
-                skin='light'
-                size='small'
-                label={personaSeleccionado.descripcionStatus}
-                color={roleColors[personaSeleccionado.descripcionStatus]}
-                sx={{ textTransform: 'capitalize' }}
+            {data.avatar.length ? (
+              <CustomAvatar
+                src={personaSeleccionado.avatar}
+                variant='rounded'
+                alt={personaSeleccionado.nombreCompleto}
+                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
               />
-            </CardContent>
+            ) : (
+              <CustomAvatar
+                skin='light'
+                variant='rounded'
+                color={data.avatarColor as ThemeColor}
+                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
+              >
+                {getInitials(personaSeleccionado.nombreCompleto)}
+              </CustomAvatar>
+            )}
+             <QRCode
+              size={256}
+              style={{ height: "auto", maxWidth: "80%", width: "80%" }}
+              value={String(personaSeleccionado.cedula)}
+              viewBox={`0 0 128 128`}
+              />
+            <Typography variant='h6' sx={{ mb: 4 }}>
+              {personaSeleccionado.nombreCompleto}
+            </Typography>
+            <CustomChip
+              skin='light'
+              size='small'
+              label={personaSeleccionado.descripcionStatus}
+              color={roleColors[personaSeleccionado.descripcionStatus]}
+              sx={{ textTransform: 'capitalize' }}
+            />
+          </CardContent>
 
-            <CardContent sx={{ my: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Box sx={{ mr: 8, display: 'flex', alignItems: 'center' }}>
-                  <CustomAvatar skin='light' variant='rounded' sx={{ mr: 4, width: 44, height: 44 }}>
-                    <Icon icon='mdi:check' />
-                  </CustomAvatar>
-                  <div>
-                    <Typography variant='h6'>{personaSeleccionado.sueldo}</Typography>
-                    <Typography variant='body2'>Sueldo</Typography>
-                  </div>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <CustomAvatar skin='light' variant='rounded' sx={{ mr: 4, width: 44, height: 44 }}>
-                    <Icon icon='mdi:star-outline' />
-                  </CustomAvatar>
-                  <div>
-                    <Typography variant='h6'> {personaSeleccionado.tiempoServicio?.cantidadAños} </Typography>
-                    <Typography variant='body2'>Años Servicio</Typography>
-                  </div>
-                </Box>
+          <CardContent sx={{ my: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box sx={{ mr: 8, display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' variant='rounded' sx={{ mr: 4, width: 44, height: 44 }}>
+                  <Icon icon='mdi:check' />
+                </CustomAvatar>
+                <div>
+                  <Typography variant='h6'>{personaSeleccionado.sueldo}</Typography>
+                  <Typography variant='body2'>Sueldo</Typography>
+                </div>
               </Box>
-            </CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <CustomAvatar skin='light' variant='rounded' sx={{ mr: 4, width: 44, height: 44 }}>
+                  <Icon icon='mdi:star-outline' />
+                </CustomAvatar>
+                <div>
+                  <Typography variant='h6'> {personaSeleccionado.tiempoServicio?.cantidadAños} </Typography>
+                  <Typography variant='body2'>Años Servicio</Typography>
+                </div>
+              </Box>
+            </Box>
+          </CardContent>
 
-            <CardContent>
-              <Typography variant='h6'>Detalle</Typography>
-              <Divider sx={{ my: theme => `${theme.spacing(4)} !important` }} />
-              <Box sx={{ pb: 1 }}>
+          <CardContent>
+            <Typography variant='h6'>Detalle</Typography>
+            <Divider sx={{ my: theme => `${theme.spacing(4)} !important` }} />
+            <Box sx={{ pb: 1 }}>
+            <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Dpto:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                {personaSeleccionado.descripcionIcp}
+                </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cargo:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                {personaSeleccionado.descripcionCargo}
+                </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Ficha:</Typography>
+                <Typography variant='body2'>{personaSeleccionado.codigoPersona}</Typography>
+              </Box>
               <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Dpto:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                  {personaSeleccionado.descripcionIcp}
-                  </Typography>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cedula:</Typography>
+                <Typography variant='body2'>{personaSeleccionado.cedula}</Typography>
               </Box>
               <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cargo:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                  {personaSeleccionado.descripcionCargo}
-                  </Typography>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Nacionalidad:</Typography>
+                <Typography variant='body2'>{personaSeleccionado.nacionalidad}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Sexo:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.sexo}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Fecha Nacimiento:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.fechaNacimiento}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Edad:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.edad}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Estado Civil:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.descripcionEstadoCivil}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Pais Nacimiento:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.paisNacimiento}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Email:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.email}
+                </Typography>
               </Box>
 
               <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Ficha:</Typography>
-                  <Typography variant='body2'>{personaSeleccionado.codigoPersona}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cedula:</Typography>
-                  <Typography variant='body2'>{personaSeleccionado.cedula}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Nacionalidad:</Typography>
-                  <Typography variant='body2'>{personaSeleccionado.nacionalidad}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Sexo:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.sexo}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Fecha Nacimiento:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.fechaNacimiento}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Edad:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.edad}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Estado Civil:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.descripcionEstadoCivil}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Pais Nacimiento:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.paisNacimiento}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Email:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.email}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Fecha Ingreso:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                  {personaSeleccionado.tiempoServicio?.fechaDesdeString}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', mb: 2 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Tiempo Servicio:</Typography>
-                  <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    {personaSeleccionado.tiempoServicio?.cantidadAños} Años {personaSeleccionado.tiempoServicio?.cantidadMeses} Meses {personaSeleccionado.tiempoServicio?.cantidadDias} Dias
-                  </Typography>
-                </Box>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Fecha Ingreso:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                {personaSeleccionado.tiempoServicio?.fechaDesdeString}
+                </Typography>
               </Box>
-            </CardContent>
+              <Box sx={{ display: 'flex', mb: 2 }}>
+                <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Tiempo Servicio:</Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.tiempoServicio?.cantidadAños} Años {personaSeleccionado.tiempoServicio?.cantidadMeses} Meses {personaSeleccionado.tiempoServicio?.cantidadDias} Dias
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
 
 
-            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-                Edit
-              </Button>
-              <Button color='error' variant='outlined' onClick={() => setSuspendDialogOpen(true)}>
-                Suspend
-              </Button>
-            </CardActions>
+          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
+              Edit
+            </Button>
+            <Button color='error' variant='outlined' onClick={() => setSuspendDialogOpen(true)}>
+              Suspend
+            </Button>
+          </CardActions>
 
 
-            <DatePickerWrapper>
-              <DialogRhPersonasInfo  popperPlacement={popperPlacement} />
-            </DatePickerWrapper>
+          <DatePickerWrapper>
+            <DialogRhPersonasInfo  popperPlacement={popperPlacement} />
+          </DatePickerWrapper>
 
-            <Dialog
-              open={openEdit}
-              onClose={handleEditClose}
-              aria-labelledby='user-view-edit'
-              sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
-              aria-describedby='user-view-edit-description'
-            >
-              <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-                Edit User Information
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
-                  Updating user details will receive a privacy audit.
-                </DialogContentText>
-                <form>
-                  <Grid container spacing={6}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label='Full Name' defaultValue={data.fullName} />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label='Username'
-                        defaultValue={data.username}
-                        InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField fullWidth type='email' label='Billing Email' defaultValue={data.email} />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id='user-view-status-label'>Status</InputLabel>
-                        <Select
-                          label='Status'
-                          defaultValue={data.status}
-                          id='user-view-status'
-                          labelId='user-view-status-label'
-                        >
-                          <MenuItem value='pending'>Pending</MenuItem>
-                          <MenuItem value='active'>Active</MenuItem>
-                          <MenuItem value='inactive'>Inactive</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label='TAX ID' defaultValue='Tax-8894' />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label='Contact' defaultValue={`+1 ${data.contact}`} />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id='user-view-language-label'>Language</InputLabel>
-                        <Select
-                          label='Language'
-                          defaultValue='English'
-                          id='user-view-language'
-                          labelId='user-view-language-label'
-                        >
-                          <MenuItem value='English'>English</MenuItem>
-                          <MenuItem value='Spanish'>Spanish</MenuItem>
-                          <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                          <MenuItem value='Russian'>Russian</MenuItem>
-                          <MenuItem value='French'>French</MenuItem>
-                          <MenuItem value='German'>German</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id='user-view-country-label'>Country</InputLabel>
-                        <Select
-                          label='Country'
-                          defaultValue='USA'
-                          id='user-view-country'
-                          labelId='user-view-country-label'
-                        >
-                          <MenuItem value='USA'>USA</MenuItem>
-                          <MenuItem value='UK'>UK</MenuItem>
-                          <MenuItem value='Spain'>Spain</MenuItem>
-                          <MenuItem value='Russia'>Russia</MenuItem>
-                          <MenuItem value='France'>France</MenuItem>
-                          <MenuItem value='Germany'>Germany</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormControlLabel
-                        label='Use as a billing address?'
-                        control={<Switch defaultChecked />}
-                        sx={{ '& .MuiTypography-root': { fontWeight: 500 } }}
-                      />
-                    </Grid>
+          <Dialog
+            open={openEdit}
+            onClose={handleEditClose}
+            aria-labelledby='user-view-edit'
+            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
+            aria-describedby='user-view-edit-description'
+          >
+            <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
+              Edit User Information
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
+                Updating user details will receive a privacy audit.
+              </DialogContentText>
+              <form>
+                <Grid container spacing={6}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField fullWidth label='Full Name' defaultValue={data.fullName} />
                   </Grid>
-                </form>
-              </DialogContent>
-              <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button variant='contained' sx={{ mr: 1 }} onClick={handleEditClose}>
-                  Salvar
-                </Button>
-                <Button variant='outlined' color='secondary' onClick={handleEditClose}>
-                  Cancelar
-                </Button>
-              </DialogActions>
-            </Dialog>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label='Username'
+                      defaultValue={data.username}
+                      InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField fullWidth type='email' label='Billing Email' defaultValue={data.email} />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel id='user-view-status-label'>Status</InputLabel>
+                      <Select
+                        label='Status'
+                        defaultValue={data.status}
+                        id='user-view-status'
+                        labelId='user-view-status-label'
+                      >
+                        <MenuItem value='pending'>Pending</MenuItem>
+                        <MenuItem value='active'>Active</MenuItem>
+                        <MenuItem value='inactive'>Inactive</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField fullWidth label='TAX ID' defaultValue='Tax-8894' />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField fullWidth label='Contact' defaultValue={`+1 ${data.contact}`} />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel id='user-view-language-label'>Language</InputLabel>
+                      <Select
+                        label='Language'
+                        defaultValue='English'
+                        id='user-view-language'
+                        labelId='user-view-language-label'
+                      >
+                        <MenuItem value='English'>English</MenuItem>
+                        <MenuItem value='Spanish'>Spanish</MenuItem>
+                        <MenuItem value='Portuguese'>Portuguese</MenuItem>
+                        <MenuItem value='Russian'>Russian</MenuItem>
+                        <MenuItem value='French'>French</MenuItem>
+                        <MenuItem value='German'>German</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel id='user-view-country-label'>Country</InputLabel>
+                      <Select
+                        label='Country'
+                        defaultValue='USA'
+                        id='user-view-country'
+                        labelId='user-view-country-label'
+                      >
+                        <MenuItem value='USA'>USA</MenuItem>
+                        <MenuItem value='UK'>UK</MenuItem>
+                        <MenuItem value='Spain'>Spain</MenuItem>
+                        <MenuItem value='Russia'>Russia</MenuItem>
+                        <MenuItem value='France'>France</MenuItem>
+                        <MenuItem value='Germany'>Germany</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      label='Use as a billing address?'
+                      control={<Switch defaultChecked />}
+                      sx={{ '& .MuiTypography-root': { fontWeight: 500 } }}
+                    />
+                  </Grid>
+                </Grid>
+              </form>
+            </DialogContent>
+            <DialogActions sx={{ justifyContent: 'center' }}>
+              <Button variant='contained' sx={{ mr: 1 }} onClick={handleEditClose}>
+                Salvar
+              </Button>
+              <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                Cancelar
+              </Button>
+            </DialogActions>
+          </Dialog>
 
-            <UserSuspendDialog open={suspendDialogOpen} setOpen={setSuspendDialogOpen} />
-            <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} />
-          </Card>
+          <UserSuspendDialog open={suspendDialogOpen} setOpen={setSuspendDialogOpen} />
+          <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} />
+        </Card>
+
+      }
+
         </Grid>
 
        {/*  <Grid item xs={12}>
