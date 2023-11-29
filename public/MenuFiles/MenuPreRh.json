@@ -103,6 +103,37 @@
             ]
           }
         ]
+      },
+      {
+        "title": "Ret./Aportes",
+        "icon": "mdi:account-outline",
+        "children": [
+          {
+            "title": "CAH",
+            "path": "/apps/rh/persona/list"
+          },
+          {
+            "title": "FAOV",
+            "path": "/apps/rh/persona/list"
+          },
+          {
+            "title": "FJP",
+            "path": "/apps/rh/persona/list"
+          },
+          {
+            "title": "INCE",
+            "path": "/apps/rh/persona/list"
+          },
+          {
+            "title": "SIND",
+            "path": "/apps/rh/persona/list"
+          } ,
+           {
+            "title": "SSO",
+            "path": "/apps/rh/persona/list"
+          }
+
+        ]
       }
     ]
   }

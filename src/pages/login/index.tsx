@@ -188,7 +188,11 @@ const LoginPage = () => {
                 justifyContent: 'center'
               }}
             >
-              <svg
+               <img
+                  width={92}
+                  height={78}
+                  alt='Felicitaciones Chacao' src='/images/favicon.png' />
+{/*               <svg
                 width={35}
                 height={29}
                 version='1.1'
@@ -246,7 +250,7 @@ const LoginPage = () => {
                     </g>
                   </g>
                 </g>
-              </svg>
+              </svg> */}
               <Typography
                 variant='h6'
                 sx={{
