@@ -8,7 +8,6 @@ import { ReactDatePickerProps } from 'react-datepicker'
 import Icon from 'src/@core/components/icon'
 
 import { DataGrid  } from '@mui/x-data-grid';
-import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles'
 import { useDispatch } from 'react-redux';
 
@@ -21,9 +20,7 @@ import { RootState } from 'src/store';
 
 import { IRhAdministrativosResponseDto } from 'src/interfaces/rh/i-rh-administrativos-response-dto';
 import { setOperacionCrudRhAdministrativas, setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos';
-import dayjs from 'dayjs';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
-import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 import DialogRhFamiliaresInfo from './DialogRhFamiliaresInfo';
 import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto';
 

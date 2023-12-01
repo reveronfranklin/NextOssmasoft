@@ -22,8 +22,8 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
       }}
     >
     <img
-        width={92}
-        height={78}
+        width={102}
+        height={58}
         alt='Felicitaciones Chacao' src='/images/favicon.png' />
         <CircularProgress disableShrink sx={{ mt: 6 }} />
     {/*   <svg

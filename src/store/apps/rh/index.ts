@@ -19,6 +19,7 @@ export const nominaSlice = createSlice({
     conceptoSeleccionado: [] as IListConceptosDto[],
     conceptos: [] as IListConceptosDto[],
     tiposNomina:[] as IListTipoNominaDto[],
+    tipoNominaSeleccionado:{}  as IListTipoNominaDto ,
     tiposNominaSeleccionado:[]  as IListTipoNominaDto[] ,
     personas:[] as IListSimplePersonaDto[],
     personasDto:[] as IPersonaDto[],
@@ -68,6 +69,12 @@ export const nominaSlice = createSlice({
       state.isLoading=false;
 
       state.tiposNomina=action.payload;
+    },
+    setTipoNominaSeleccionado:(state,action)=>{
+      state.isLoading=false;
+
+      state.tipoNominaSeleccionado=action.payload;
+
     },
     setTiposNominaSeleccionado:(state,action)=>{
       state.isLoading=false;
@@ -133,5 +140,6 @@ export const {startLoadingNomina,
               setVerRhPersonasActive,
               setOperacionCrudRhPersonas,
               setListPaises,
-              setListEstados
+              setListEstados,
+              setTipoNominaSeleccionado
             } = nominaSlice.actions;
