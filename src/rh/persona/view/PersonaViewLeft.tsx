@@ -56,7 +56,8 @@ import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogRhPersonasInfo from './DialogRhPersonasInfo'
-import QRCode from "react-qr-code";
+
+//import QRCode from "react-qr-code";
 import toast from 'react-hot-toast';
 import Spinner from 'src/@core/components/spinner';
 
@@ -246,12 +247,12 @@ const PersonaViewLeft = () => {
                 {getInitials(personaSeleccionado.nombreCompleto)}
               </CustomAvatar>
             )}
-             <QRCode
+            {/*  <QRCode
               size={256}
               style={{ height: "auto", maxWidth: "80%", width: "80%" }}
               value={String(personaSeleccionado.cedula)}
               viewBox={`0 0 128 128`}
-              />
+              /> */}
             <Typography variant='h6' sx={{ mb: 4 }}>
               {personaSeleccionado.nombreCompleto}
             </Typography>

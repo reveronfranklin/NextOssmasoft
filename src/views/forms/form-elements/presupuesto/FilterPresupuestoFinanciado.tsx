@@ -144,7 +144,7 @@ const FilterPresupuestoFinanciado = () => {
                 </div>
 
                 <div>
-                  {listpresupuestoDtoSeleccionado.preFinanciadoDto ?
+                  {listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.preFinanciadoDto ?
                     (<Autocomplete
                     sx={{ width: 350 }}
                     options={listpresupuestoDtoSeleccionado.preFinanciadoDto}

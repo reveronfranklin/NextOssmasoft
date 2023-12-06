@@ -219,9 +219,10 @@ const TableServerSideCah = () => {
 
 
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesCah/GetRetencionesCah',filter);
-
+      console.log('responseAll',responseAll)
       setAllRows(responseAll.data.data);
-      setTotal(responseAll.data.data.length);
+
+      //setTotal(responseAll.data.data.length);
 
       setRows(loadServerRows(page, responseAll.data.data))
 
@@ -247,7 +248,7 @@ const TableServerSideCah = () => {
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fechaDesde,fechaHasta,tipoNominaSeleccionado])
+  }, [])
 
   const handleSortModel = (newModel: GridSortModel) => {
 

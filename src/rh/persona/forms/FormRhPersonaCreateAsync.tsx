@@ -60,6 +60,9 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
+import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
+import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 
 interface FormInputs {
   codigoAdministrativo:number,
@@ -205,6 +208,53 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     setValue('fechaIngreso',desde.toISOString());
   }
 
+  const handlerPersona= async (value:any)=>{
+
+    if(value && value.codigoPersona>0){
+
+      const filter={codigoPersona:value.codigoPersona}
+      const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
+      console.log('handlerPersona',responseAll.data)
+      dispatch(setPersonaSeleccionado(responseAll.data));
+      dispatch(setPersonasDtoSeleccionado(responseAll.data));
+    }else{
+
+      const personaDefault:IListSimplePersonaDto ={
+        apellido:'',
+        cedula:0,
+        codigoPersona:0,
+        nombre:'',
+        nombreCompleto:'',
+        avatar:'',
+        descripcionStatus:'',
+        nacionalidad:'',
+        sexo:'',
+        fechaNacimiento:'',
+        email:'',
+        paisNacimiento:'',
+        edad:0,
+        descripcionEstadoCivil:'',
+        paisNacimientoId:0,
+        estadoNacimientoId:0,
+        manoHabil:'',
+        status:'',
+        fechaGacetaNacional:'',
+        estadoCivilId:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
+
+      };
+
+      dispatch(setPersonaSeleccionado(personaDefault));
+
+    }
+
+
+
+  }
 
 
   const onSubmit = async (data:FormInputs) => {
@@ -252,6 +302,7 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     if(responseAll.data.isValid){
       dispatch(setRhAdministrativoSeleccionado(responseAll.data.data))
       dispatch(setVerRhAdministrativasActive(false))
+      handlerPersona(responseAll.data.data)
     }
 
 

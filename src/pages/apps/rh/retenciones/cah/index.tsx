@@ -17,6 +17,8 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import FilterDesdeHastaTipoNomina from 'src/rh/retenciones/FilterDesdeHastaTipoNomina'
 import TableServerSideCah from 'src/rh/retenciones/TableServerSideCah'
 
+//import TableServerSideCah from 'src/rh/retenciones/TableServerSideCah'
+
 const DataGrid = () => {
   const theme = useTheme()
   const { direction } = theme
@@ -43,7 +45,7 @@ const DataGrid = () => {
         </CardContent>
       </Grid>
       <Grid item xs={12}>
-        <TableServerSideCah />
+       {/*  <TableServerSideCah /> */}
       </Grid>
     </Grid>
   )

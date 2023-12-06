@@ -62,11 +62,13 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
-import { setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
+import { setPersonaSeleccionado, setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
 import { RhPersonaDeleteDto } from 'src/interfaces/rh/RhPersonaDeleteDto'
 import { IRhPersonaUpdateDto } from 'src/interfaces/rh/RhPersonaUpdateDto'
 
 import { styled } from '@mui/material/styles'
+import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
+import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 
 interface FormInputs {
   codigoPersona :number;
@@ -424,6 +426,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     if(responseAll.data.isValid){
       dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
       dispatch(setVerRhPersonasActive(false))
+      handlerPersona(responseAll.data.data);
     }
 
 
@@ -435,6 +438,57 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     setLoading(false)
     toast.success('Form Submitted')
   }
+
+
+  const handlerPersona= async (value:any)=>{
+
+    if(value && value.codigoPersona>0){
+
+      const filter={codigoPersona:value.codigoPersona}
+      const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
+      console.log('handlerPersona',responseAll.data)
+      dispatch(setPersonaSeleccionado(responseAll.data));
+      dispatch(setPersonasDtoSeleccionado(responseAll.data));
+    }else{
+
+      const personaDefault:IListSimplePersonaDto ={
+        apellido:'',
+        cedula:0,
+        codigoPersona:0,
+        nombre:'',
+        nombreCompleto:'',
+        avatar:'',
+        descripcionStatus:'',
+        nacionalidad:'',
+        sexo:'',
+        fechaNacimiento:'',
+        email:'',
+        paisNacimiento:'',
+        edad:0,
+        descripcionEstadoCivil:'',
+        paisNacimientoId:0,
+        estadoNacimientoId:0,
+        manoHabil:'',
+        status:'',
+        fechaGacetaNacional:'',
+        estadoCivilId:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
+
+      };
+
+      dispatch(setPersonaSeleccionado(personaDefault));
+
+    }
+
+
+
+  }
+
+
   useEffect(() => {
 
     const getData = async () => {

@@ -121,7 +121,7 @@ useEffect(() => {
 
       filter.financiadoId=preFinanciadoDtoSeleccionado.financiadoId;
     }
-    if(listpresupuestoDtoSeleccionado.codigoPresupuesto){
+    if(listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.codigoPresupuesto){
 
       filter.codigoPresupuesto=listpresupuestoDtoSeleccionado.codigoPresupuesto;
     }

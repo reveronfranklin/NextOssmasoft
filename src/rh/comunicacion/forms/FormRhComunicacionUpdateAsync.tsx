@@ -172,8 +172,23 @@ const FormRhComunicacionUpdateAsync = () => {
 
 
   };
-
+  function validarEmail(valor:string) {
+    if (/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(valor)){
+     return true;
+    } else {
+     return false;
+    }
+  }
   const onSubmit = async (data:FormInputs) => {
+
+    console.log('tipoComunicacion',tipoComunicacion.descripcion)
+    const isEmail = tipoComunicacion.descripcion.includes('CORREO');
+    console.log('es email',isEmail)
+    if(isEmail==true && !validarEmail(data.lineaComunicacion)){
+      setErrorMessage('Formato de Email Invalido');
+
+      return;
+    }
     setLoading(true)
 
     const updateComunicacion:IRhComunicacionUpdate= {

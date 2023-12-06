@@ -60,6 +60,7 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import dayjs from 'dayjs'
 
 interface FormInputs {
   codigoAdministrativo:number,
@@ -204,11 +205,14 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
 
   const handlerFechaDesde=(desde:Date)=>{
 
+    const dateIsValid = dayjs(desde).isValid();
+    if(dateIsValid){
+      const fechaObj:IFechaDto =fechaToFechaObj(desde);
+      const presupuestoTmp= {...rhAdministrativoSeleccionado,fechaIngreso:desde.toISOString(),fechaIngresoObj:fechaObj};
+      dispatch(setRhAdministrativoSeleccionado(presupuestoTmp))
+      setValue('fechaIngreso',desde.toISOString());
+    }
 
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...rhAdministrativoSeleccionado,fechaIngreso:desde.toISOString(),fechaIngresoObj:fechaObj};
-    dispatch(setRhAdministrativoSeleccionado(presupuestoTmp))
-    setValue('fechaIngreso',desde.toISOString());
   }
 
 
@@ -230,6 +234,15 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
   };
 
   const onSubmit = async (data:FormInputs) => {
+    const  now = dayjs();
+    const fechaIngreso=dayjs(data.fechaIngreso)
+    const fechaPosterior = dayjs(fechaIngreso).isAfter(now );
+    console.log('Fecha Posterior',fechaIngreso,fechaPosterior)
+    if(fechaPosterior==true){
+      setErrorMessage('Fecha de Ingreso Invalida')
+
+      return;
+    }
     setLoading(true)
 
     const updateAdministrativo:IRhAdministrativosUpdateDto= {

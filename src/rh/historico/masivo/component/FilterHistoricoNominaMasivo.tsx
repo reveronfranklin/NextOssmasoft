@@ -224,18 +224,23 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
                 />
               </div>
 
-              <div>
-                <Autocomplete
-                    multiple={true}
-                    sx={{ width: 350 }}
-                    options={tiposNomina}
-                    id='autocomplete-tipo-nomina'
-                    isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
-                    getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
-                    onChange={handleTiposNomina}
-                    renderInput={params => <TextField {...params} label='Tipo Nomina' />}
-                  />
-              </div>
+               <div>
+
+                {tiposNomina ?
+                    ( <Autocomplete
+                      multiple={true}
+                      sx={{ width: 350 }}
+                      options={tiposNomina}
+                      id='autocomplete-tipo-nomina'
+                      isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
+                      getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
+                      onChange={handleTiposNomina}
+                      renderInput={params => <TextField {...params} label='Tipo Nomina' />}
+                    /> ) : <div></div>
+                }
+             </div>
+
+
               <div>
                 <Autocomplete
                     multiple={true}
