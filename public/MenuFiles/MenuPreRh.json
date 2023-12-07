@@ -114,23 +114,23 @@
           },
           {
             "title": "FAOV",
-            "path": "/apps/rh/persona/list"
+            "path": "/apps/rh/retenciones/faov"
           },
           {
             "title": "FJP",
-            "path": "/apps/rh/persona/list"
+            "path": "/apps/rh/retenciones/fjp"
           },
           {
             "title": "INCE",
-            "path": "/apps/rh/persona/list"
+            "path": "/apps/rh/retenciones/ince"
           },
           {
             "title": "SIND",
-            "path": "/apps/rh/persona/list"
+            "path": "/apps/rh/retenciones/sind"
           } ,
            {
             "title": "SSO",
-            "path": "/apps/rh/persona/list"
+            "path": "/apps/rh/retenciones/sso"
           }
 
         ]

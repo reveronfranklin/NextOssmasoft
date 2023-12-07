@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
 
 // ** Next Imports
-import Link from 'next/link'
 import { GetStaticProps } from 'next/types'
 
 // ** MUI Imports
@@ -12,7 +11,6 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
 import { DataGrid } from '@mui/x-data-grid'
-import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 
@@ -69,16 +67,7 @@ const personaStatusObj: UserStatusType = {
   Suspendido: 'secondary'
 }
 
-const StyledLink = styled(Link)(({ theme }) => ({
-  fontWeight: 600,
-  fontSize: '1rem',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  color: theme.palette.text.secondary,
-  '&:hover': {
-    color: theme.palette.primary.main
-  }
-}))
+
 
 // ** renders client column
 const renderClient = (row: IPersonaDto) => {
@@ -105,13 +94,13 @@ const columns = [
     field: 'nombre',
     headerName: 'User',
     renderCell: ({ row }: CellType) => {
-      const { nombre, apellido } = row
+      const { apellido } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {renderClient(row)}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <StyledLink href='/apps/user/view/overview/'>{nombre}</StyledLink>
+           {/*  <StyledLink href='/apps/rh/persona/view/overview/'>{nombre}</StyledLink> */}
             <Typography noWrap variant='caption'>
               {apellido}
             </Typography>
@@ -204,7 +193,7 @@ const UserList = () => {
       console.log('handlerPersona en list',responseAll.data)
       dispatch(setPersonaSeleccionado(responseAll.data));
       dispatch(setPersonasDtoSeleccionado(responseAll.data));
-      router.replace("/apps/rh/persona/view/overview/");
+      router.replace("/apps/rh/persona/view/resumen/");
 
     }else{
 

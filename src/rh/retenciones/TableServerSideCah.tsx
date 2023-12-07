@@ -66,13 +66,6 @@ const renderClient = (params: GridRenderCellParams) => {
   }
 }
 
-/*const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}*/
 
 const columns: any = [
 
@@ -90,7 +83,7 @@ const columns: any = [
   {
     flex: 0.25,
     minWidth: 290,
-    field: 'full_Name',
+    field: 'nombresApellidos',
     headerName: 'Nombre',
     renderCell: (params: GridRenderCellParams) => {
       const { row } = params

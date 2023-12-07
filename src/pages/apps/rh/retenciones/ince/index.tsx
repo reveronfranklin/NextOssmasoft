@@ -15,7 +15,8 @@ import PageHeader from 'src/@core/components/page-header'
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import FilterDesdeHastaTipoNomina from 'src/rh/retenciones/FilterDesdeHastaTipoNomina'
-import CahList from 'src/rh/retenciones/CahList'
+
+import InceList from 'src/rh/retenciones/InceList'
 
 const DataGrid = () => {
   const theme = useTheme()
@@ -28,7 +29,7 @@ const DataGrid = () => {
       <PageHeader
         title={
           <Typography variant='h5'>
-            CAH
+            INCE
           </Typography>
         }
 
@@ -43,7 +44,7 @@ const DataGrid = () => {
         </CardContent>
       </Grid>
       <Grid item xs={12}>
-       <CahList />
+       <InceList />
       </Grid>
     </Grid>
   )
