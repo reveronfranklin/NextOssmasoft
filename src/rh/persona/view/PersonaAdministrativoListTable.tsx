@@ -151,7 +151,7 @@ const AdministrativosListTable = () => {
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
-
+      console.log('personaSeleccionado en list administrativo',personaSeleccionado)
       const filter={codigoPersona:personaSeleccionado.codigoPersona}
       const responseAll= await ossmmasofApi.post<IRhAdministrativosResponseDto[]>('/RhAdministrativos/GetByPersona',filter);
       console.log('AdministrativosListTable >>>>>>>>',responseAll.data)

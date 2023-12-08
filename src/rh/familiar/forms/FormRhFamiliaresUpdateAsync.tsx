@@ -60,7 +60,6 @@ import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto'
 import { setRhFamiliaresSeleccionado, setVerRhFamiliaresActive } from 'src/store/apps/rh-familiares'
 import { IRhFamiliarDeleteDto } from 'src/interfaces/rh/RhFamiliarDeleteDto'
 import { IRhFamiliarUpdateDto } from 'src/interfaces/rh/RhFamiliarUpdateDto'
-import dayjs from 'dayjs'
 
 interface FormInputs {
 
@@ -551,11 +550,11 @@ const FormRhFamiliaresUpdateAsync = ({ popperPlacement }: { popperPlacement: Rea
                 aria-describedby="alert-dialog-description"
               >
                 <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos Administrativos?"}
+                  {"Esta Seguro de Eliminar estos Datos de Familiar?"}
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Se eliminaran los datos Administrativos
+                    Se eliminaran los datos de Familiar
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

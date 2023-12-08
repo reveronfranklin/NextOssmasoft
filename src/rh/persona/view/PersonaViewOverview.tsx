@@ -90,50 +90,59 @@ const PersonaViewOverview = () => {
       <Grid item xs={12}>
         <Card>
           <CardHeader title='Historico de Cargos' />
-          <CardContent>
-            <Timeline>
+          {personaSeleccionado.codigoPersona>0 ?
+              <CardContent>
+              <Timeline>
 
-            {data.map((item,i) =>  {
+              {data.map((item,i) =>  {
 
-              return(
-               <TimelineItem key={i}>
-                <TimelineSeparator>
-                  <TimelineDot color={roleColors[item.color]} />
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent>
-                  <Box
-                    sx={{
-                      mb: 2,
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <Typography variant='body2' sx={{ mr: 2, fontWeight: 600, color: 'text.primary' }}>
-                      {item.descripcionCargo}
-                    </Typography>
-                    <Typography variant='caption'>{item.tipoNomina}</Typography>
-                  </Box>
-                  <Typography variant='body2'>Desde:{item.desde} Hasta:{item.hasta}</Typography>
-                </TimelineContent>
-             </TimelineItem>
-              )
-              })}
+                return(
+                  <TimelineItem key={i}>
+                  <TimelineSeparator>
+                    <TimelineDot color={roleColors[item.color]} />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent>
+                    <Box
+                      sx={{
+                        mb: 2,
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <Typography variant='body2' sx={{ mr: 2, fontWeight: 600, color: 'text.primary' }}>
+                        {item.descripcionCargo}
+                      </Typography>
+                      <Typography variant='caption'>{item.tipoNomina}</Typography>
+                    </Box>
+                    <Typography variant='body2'>Desde:{item.desde} Hasta:{item.hasta}</Typography>
+                  </TimelineContent>
+                </TimelineItem>
+                )
+                })}
 
-            </Timeline>
-          </CardContent>
+              </Timeline>
+              </CardContent>
+              : <div></div>
+          }
+
+
         </Card>
       </Grid>
 
       <Grid item xs={12}>
-
+      {personaSeleccionado.codigoPersona>0 ?
         <AdministrativoList></AdministrativoList>
+        : <div></div>
+      }
       </Grid>
       <Grid item xs={12}>
-
+      {personaSeleccionado.codigoPersona>0 ?
         <PersonaHistoricoPagoListTable></PersonaHistoricoPagoListTable>
+        : <div></div>
+      }
       </Grid>
 
 

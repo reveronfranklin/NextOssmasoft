@@ -109,6 +109,8 @@ const PersonaViewLeft = () => {
   const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
+  //const router = useRouter();
+
   // Handle Edit dialog
   const handleEditClickOpen = () => {
     //setOpenEdit(true)
@@ -119,49 +121,24 @@ const PersonaViewLeft = () => {
 
 
   const handlerPersona= async (e: any,value:any)=>{
+    console.log('value en handler persona*****',value)
+
+
 
     if(value && value.codigoPersona>0){
 
       const filter={codigoPersona:value.codigoPersona}
       const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
-      console.log('handlerPersona',responseAll.data)
       dispatch(setPersonaSeleccionado(responseAll.data));
       dispatch(setPersonasDtoSeleccionado(responseAll.data));
     }else{
 
-      const personaDefault:IListSimplePersonaDto ={
-        apellido:'',
-        cedula:0,
-        codigoPersona:0,
-        nombre:'',
-        nombreCompleto:'',
-        avatar:'',
-        descripcionStatus:'',
-        nacionalidad:'',
-        sexo:'',
-        fechaNacimiento:'',
-        email:'',
-        paisNacimiento:'',
-        edad:0,
-        descripcionEstadoCivil:'',
-        paisNacimientoId:0,
-        estadoNacimientoId:0,
-        manoHabil:'',
-        status:'',
-        fechaGacetaNacional:'',
-        estadoCivilId:0,
-        estatura:0,
-        peso:0,
-        identificacionId:0,
-        numeroIdentificacion:0,
-        numeroGacetaNacional:0,
+      const filter={codigoPersona:0}
+      const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
+      dispatch(setPersonaSeleccionado(responseAll.data));
+      dispatch(setPersonasDtoSeleccionado(responseAll.data));
 
-      };
-
-      dispatch(setPersonaSeleccionado(personaDefault));
-
-    }
-
+  }
 
 
   }

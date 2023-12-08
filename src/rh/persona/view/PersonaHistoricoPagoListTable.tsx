@@ -109,8 +109,6 @@ const PersonaHistoricoPagoListTable = () => {
   useEffect(() => {
 
 
-
-
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
 
