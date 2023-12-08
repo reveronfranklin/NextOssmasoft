@@ -14,6 +14,9 @@ export const rhFamiliaresSlice = createSlice({
     verRhFamiliaresActive:false,
     operacionCrudRhFamiliares:0,
     rhParienteSeleccionado: {} as ISelectListDescriptiva,
+    rhNivelEducativoSeleccionado: {} as ISelectListDescriptiva,
+    listRhPariente: [] as ISelectListDescriptiva[],
+    listRhNivelEducativo: [] as ISelectListDescriptiva[],
 
   },
   reducers: {
@@ -32,7 +35,10 @@ export const rhFamiliaresSlice = createSlice({
 
       state.rhParienteSeleccionado=action.payload;
     },
+    setRhNivelEducativoSeleccionado:(state,action)=>{
 
+      state.rhNivelEducativoSeleccionado=action.payload;
+    },
 
     setVerRhFamiliaresActive:(state,action)=>{
 
@@ -40,7 +46,16 @@ export const rhFamiliaresSlice = createSlice({
     },
     setOperacionCrudRhFamiliares:(state,action)=>{
       state.operacionCrudRhFamiliares=action.payload;
-    }
+    },
+    setListRhPariente:(state,action)=>{
+
+      state.listRhPariente=action.payload;
+    },
+
+    setListRhNivelEducativo:(state,action)=>{
+
+      state.listRhNivelEducativo=action.payload;
+    },
 
   },
 
@@ -49,8 +64,11 @@ export const rhFamiliaresSlice = createSlice({
 export const {setRhFamiliaresSeleccionado,
               setListRhFamiliares,
               setRhParienteSeleccionado,
+              setRhNivelEducativoSeleccionado,
               setVerRhFamiliaresActive,
               setOperacionCrudRhFamiliares,
+              setListRhPariente,
+              setListRhNivelEducativo
 
 
               } = rhFamiliaresSlice.actions;

@@ -94,13 +94,14 @@ const FaovList = () => {
   const {fechaDesde,fechaHasta,tipoNominaSeleccionado={} as IListTipoNominaDto} = useSelector((state: RootState) => state.nomina)
 
 
-  /*const handleViewTable=()=>{
-    setViewTable(true);
 
-  }*/
   useEffect(() => {
 
     const getData = async () => {
+
+      console.log(tipoNominaSeleccionado.codigoTipoNomina);
+      if(tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina <= 0) return;
+
       setLoading(true);
       const filter:IFilterFechaTipoNomina={
         fechaDesde:dayjs(fechaDesde).format('DD/MM/YYYY') ,

@@ -100,6 +100,7 @@ const InceList = () => {
   useEffect(() => {
 
     const getData = async () => {
+      if(tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina<=0) return;
       setLoading(true);
       const filter:IFilterFechaTipoNomina={
         fechaDesde:dayjs(fechaDesde).format('DD/MM/YYYY') ,

@@ -35,12 +35,11 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 // ** Third Party Imports
 import { ReactDatePickerProps } from 'react-datepicker'
 
-
-import { IRhAdministrativosResponseDto } from 'src/interfaces/rh/i-rh-administrativos-response-dto'
-import { setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos'
 import { IFechaDto } from '../../../interfaces/fecha-dto';
 import FormRhFamiliaresCreateAsync from '../forms/FormRhFamiliaresCreateAsync'
 import FormRhFamiliaresUpdateAsync from '../forms/FormRhFamiliaresUpdateAsync'
+import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto'
+import { setRhFamiliaresSeleccionado, setVerRhFamiliaresActive } from 'src/store/apps/rh-familiares'
 
 
 // ** Custom Component Imports
@@ -60,7 +59,7 @@ const DialogRhFamiliaresInfo = ({ popperPlacement }: { popperPlacement: ReactDat
   // ** States
   const dispatch = useDispatch();
 
-  const {operacionCrudRhAdministrativas,verRhAdministrativasActive} = useSelector((state: RootState) => state.rhAdministrativos)
+  const {operacionCrudRhFamiliares,verRhFamiliaresActive} = useSelector((state: RootState) => state.rhFamiliares)
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
 
@@ -79,24 +78,29 @@ const DialogRhFamiliaresInfo = ({ popperPlacement }: { popperPlacement: ReactDat
 
     if(active==false){
 
-      const defaultValues:IRhAdministrativosResponseDto = {
-        codigoAdministrativo :0,
+
+      const defaultValues:IRhFamiliarResponseDto = {
+        codigoFamiliar :0,
         codigoPersona :personaSeleccionado.codigoPersona,
-        fechaIngreso:defaultDateString,
-        fechaIngresoObj:defaultDate,
-        tipoPago :'',
-        descripcionTipoPago:'',
-        bancoId :0,
-        descripcionBanco :'',
-        tipoCuentaId :0,
-        descripcionCuenta:'',
-        noCuenta:'',
+        cedulaFamiliar:0,
+        nombre:'',
+        apellido:'',
+        edad:'',
+        nacionalidad:'',
+        parienteId:0,
+        parienteDescripcion:'',
+        sexo:'',
+        nivelEducativo:0,
+        grado:0,
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
 
       }
-      dispatch(setRhAdministrativoSeleccionado(defaultValues));
+      dispatch(setRhFamiliaresSeleccionado(defaultValues));
 
     }
-    dispatch(setVerRhAdministrativasActive(active))
+    dispatch(setVerRhFamiliaresActive(active))
 
 
   }
@@ -112,7 +116,7 @@ const DialogRhFamiliaresInfo = ({ popperPlacement }: { popperPlacement: ReactDat
 
         <Dialog
           fullWidth
-          open={verRhAdministrativasActive}
+          open={verRhFamiliaresActive}
           maxWidth='md'
           scroll='body'
           onClose={() => handleSetShow(false)}
@@ -129,7 +133,7 @@ const DialogRhFamiliaresInfo = ({ popperPlacement }: { popperPlacement: ReactDat
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudRhAdministrativas===1
+              { operacionCrudRhFamiliares===1
               ?  <FormRhFamiliaresCreateAsync popperPlacement={popperPlacement}/>
                 :<FormRhFamiliaresUpdateAsync popperPlacement={popperPlacement} />
               }

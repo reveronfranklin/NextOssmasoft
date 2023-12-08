@@ -1,4 +1,3 @@
-import { IFechaDto } from "../fecha-dto";
 
 export interface IRhFamiliarUpdateDto{
 
@@ -8,10 +7,8 @@ export interface IRhFamiliarUpdateDto{
   nacionalidad :string;
   nombre :string;
   apellido :string;
-  fechaNacimiento:Date;
-  edad :string;
- fechaNacimientoObj:IFechaDto;
   fechaNacimientoString:string;
+  edad :string;
   parienteId:number;
   sexo :string;
   nivelEducativo:number;

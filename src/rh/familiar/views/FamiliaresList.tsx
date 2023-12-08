@@ -18,11 +18,11 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
-import { IRhAdministrativosResponseDto } from 'src/interfaces/rh/i-rh-administrativos-response-dto';
-import { setOperacionCrudRhAdministrativas, setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
 import DialogRhFamiliaresInfo from './DialogRhFamiliaresInfo';
 import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto';
+import { setListRhNivelEducativo, setListRhPariente, setOperacionCrudRhFamiliares, setRhFamiliaresSeleccionado, setVerRhFamiliaresActive } from 'src/store/apps/rh-familiares';
+import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 
 interface CellType {
   row: IRhFamiliarResponseDto
@@ -97,16 +97,14 @@ const FamiliaresList = () => {
 
 
   //IPreIndiceCategoriaProgramaticaGetDto
-  const handleView=  (row : IRhAdministrativosResponseDto)=>{
+  const handleView=  (row : IRhFamiliarResponseDto)=>{
 
     console.log(row)
-    dispatch(setRhAdministrativoSeleccionado(row))
+    dispatch(setRhFamiliaresSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudRhAdministrativas(2));
-    dispatch(setVerRhAdministrativasActive(true))
-
-
+    dispatch(setOperacionCrudRhFamiliares(2));
+    dispatch(setVerRhFamiliaresActive(true))
   }
 
 
@@ -116,30 +114,36 @@ const FamiliaresList = () => {
 
       handleView(row.row)
   }
+
   const handleAdd=  ()=>{
 
     //dispatch(setPresupuesto(row))
     // Operacion Crud 1 = Crear presupuesto
 
 
-      const defaultValues:IRhAdministrativosResponseDto = {
-        codigoAdministrativo :0,
+      const defaultValues:IRhFamiliarResponseDto = {
+        codigoFamiliar :0,
         codigoPersona :personaSeleccionado.codigoPersona,
-        fechaIngreso:defaultDateString,
-        fechaIngresoObj:defaultDate,
-        tipoPago :'',
-        descripcionTipoPago:'',
-        bancoId :0,
-        descripcionBanco :'',
-        tipoCuentaId :0,
-        descripcionCuenta:'',
-        noCuenta:''
+        cedulaFamiliar:0,
+        nombre:'',
+        apellido:'',
+        edad:'',
+        nacionalidad:'',
+        parienteId:0,
+        parienteDescripcion:'',
+        sexo:'',
+        nivelEducativo:0,
+        grado:0,
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
+
       }
 
 
-      dispatch(setRhAdministrativoSeleccionado(defaultValues));
-      dispatch(setOperacionCrudRhAdministrativas(1));
-      dispatch(setVerRhAdministrativasActive(true))
+      dispatch(setRhFamiliaresSeleccionado(defaultValues));
+      dispatch(setOperacionCrudRhFamiliares(1));
+      dispatch(setVerRhFamiliaresActive(true))
 
 
   }
@@ -168,17 +172,18 @@ const FamiliaresList = () => {
     const getData = async () => {
       setLoading(true);
       if(personaSeleccionado.codigoPersona>0){
-        //const filterBanco={descripcionId:0,tituloId:18}
-        //const responseBanco= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterBanco);
-        //dispatch(setListRhBancos(responseBanco.data))
+        const filterPariente={descripcionId:0,tituloId:7}
+        const responsePariente= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterPariente);
+        dispatch(setListRhPariente(responsePariente.data))
 
-        //const filterTipoCuenta={descripcionId:0,tituloId:19}
-         //const responseTipoCuenta= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterTipoCuenta);
-         //dispatch(setListRhTipoCuenta(responseTipoCuenta.data))
-      const filter={codigoPersona:personaSeleccionado.codigoPersona}
-      const responseAll= await ossmmasofApi.post<any>('/RhFamiliares/GetByPersona',filter);
-      console.log(responseAll.data)
-      setData(responseAll.data.data);
+        const filterNivelEducativo={descripcionId:0,tituloId:5}
+        const responseNivelEducativo= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterNivelEducativo);
+        dispatch(setListRhNivelEducativo(responseNivelEducativo.data))
+
+        const filter={codigoPersona:personaSeleccionado.codigoPersona}
+        const responseAll= await ossmmasofApi.post<any>('/RhFamiliares/GetByPersona',filter);
+        console.log(responseAll.data)
+        setData(responseAll.data.data);
       }
 
 
@@ -225,22 +230,7 @@ const FamiliaresList = () => {
 
         </CardActions>
 
-             {/*  {
-                loading
-                ?   <Spinner sx={{ height: '100%' }} />
-                :
-                <Box sx={{ height: 500 }}>
-                  <DataGrid
 
-                  getRowId={(row) => row.codigoIcp}
-                  columns={columns}
-                  rows={icp} />
-
-
-                </Box>
-
-
-              } */}
               {viewTable
               ?  <div></div>
               :

@@ -237,7 +237,6 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
     const  now = dayjs();
     const fechaIngreso=dayjs(data.fechaIngreso)
     const fechaPosterior = dayjs(fechaIngreso).isAfter(now );
-    console.log('Fecha Posterior',fechaIngreso,fechaPosterior)
     if(fechaPosterior==true){
       setErrorMessage('Fecha de Ingreso Invalida')
 
