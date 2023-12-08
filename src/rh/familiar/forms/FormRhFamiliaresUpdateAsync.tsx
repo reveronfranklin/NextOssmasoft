@@ -499,8 +499,8 @@ const FormRhFamiliaresUpdateAsync = ({ popperPlacement }: { popperPlacement: Rea
             </Grid>
 
 
-            {/* descripcion*/}
-            <Grid item sm={12} xs={12}>
+            {/* grado*/}
+            <Grid item sm={6} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='grado'
@@ -524,6 +524,31 @@ const FormRhFamiliaresUpdateAsync = ({ popperPlacement }: { popperPlacement: Rea
                 )}
               </FormControl>
             </Grid>
+            {/* edad*/}
+            <Grid item sm={6} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='edad'
+                    control={control}
+                    rules={{ minLength:1}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='Edad'
+                        onChange={onChange}
+                        placeholder='Edad'
+                        error={Boolean(errors.grado)}
+                        aria-describedby='validation-async-edad'
+                      />
+                    )}
+                  />
+                  {errors.edad && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-edad'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+                      </Grid>
 
 
             <Grid item xs={12}>
