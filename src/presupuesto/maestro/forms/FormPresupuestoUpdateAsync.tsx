@@ -38,7 +38,7 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
-import { setOnlyPresupuestos, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto'
+import { setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { IUpdatePrePresupuesto } from 'src/interfaces/Presupuesto/i-update-pre-presupuesto.dto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
@@ -162,7 +162,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   }
 
-  const getPresupuestos = async () => {
+  /*const getPresupuestos = async () => {
 
 
     const responseAll= await ossmmasofApi.get<any>('/PrePresupuesto/GetList');
@@ -171,7 +171,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     dispatch(setOnlyPresupuestos(data));
 
 
-  };
+  };*/
 
 
   const handleClickOpen = () => {
@@ -221,19 +221,24 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     const responseAll= await ossmmasofApi.post<any>('/PrePresupuesto/Update',updatePresupuesto);
 
     dispatch(setPresupuesto(responseAll.data.data))
-    await getPresupuestos();
+    dispatch(setVerPresupuestoActive(false))
+    dispatch(setPresupuesto({}))
+
+
+    //await getPresupuestos();
     setErrorMessage(responseAll.data.message)
 
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     //await sleep(2000)
 
     setLoading(false)
+    setOpen(false);
     toast.success('Form Submitted')
   }
 
   return (
     <Card>
-      <CardHeader title='Modificar Presupuesto....' />
+      <CardHeader title='Modificar Presupuesto' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>

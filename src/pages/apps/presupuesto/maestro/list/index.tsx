@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import dayjs from 'dayjs';
 import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo';
+import { IFechaDto } from 'src/interfaces/fecha-dto';
 
 
 
@@ -30,6 +31,16 @@ const PresupuestoList = () => {
   const theme = useTheme()
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
 
   const columns = [
 
@@ -96,7 +107,34 @@ console.log('presupuesto al hacer doble click',row)
 }
   const handleAdd=  ()=>{
 
-    //dispatch(setPresupuesto(row))
+
+    const defaultValues = {
+      codigoPresupuesto: 0,
+      denominacion:'',
+      descripcion:'',
+      ano:0,
+      numeroOrdenanza:'',
+      extra1:'',
+      extra2:'',
+      extra3:'',
+      fechaDesde:fechaActual,
+      fechaDesdeString:defaultDateString,
+      fechaDesdeObj:defaultDate,
+      fechaHasta:fechaActual,
+      fechaHastaString:defaultDateString,
+      fechaHastaObj :defaultDate,
+      fechaOrdenanza :fechaActual,
+      fechaOrdenanzaString :defaultDateString,
+      fechaOrdenanzaObj :defaultDate,
+      fechaAprobacion :fechaActual,
+      fechaAprobacionString :defaultDateString,
+      fechaAprobacionObj :defaultDate
+
+    }
+
+
+    dispatch(setPresupuesto(defaultValues));
+
     // Operacion Crud 1 = Crear presupuesto
     dispatch(setOperacionCrudPresupuesto(1));
     dispatch(setVerPresupuestoActive(true))

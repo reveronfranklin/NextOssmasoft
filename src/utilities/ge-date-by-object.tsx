@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+
 import { IFechaDto } from "src/interfaces/fecha-dto";
 
 export const getDateByObject=(dateObject:IFechaDto)=>{
@@ -9,12 +9,7 @@ if(dateObject !== undefined){
 
    const month = Number(dateObject.month);
    const day = Number(dateObject.day);
-   console.log(year,month,day)
-
-
-
-  const date = new Date(year, month-1, day);
-  console.log(date)
+   const date = new Date(year, month-1, day);
 
   return date;
 }else{

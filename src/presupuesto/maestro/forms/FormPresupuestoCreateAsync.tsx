@@ -37,6 +37,11 @@ import { IUpdatePrePresupuesto } from 'src/interfaces/Presupuesto/i-update-pre-p
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useState } from 'react'
 import { Box } from '@mui/material'
+import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
+import { getDateByObject } from 'src/utilities/ge-date-by-object'
 
 interface FormInputs {
   codigoPresupuesto:number
@@ -47,8 +52,18 @@ interface FormInputs {
   extra1:string
   extra2:string
   extra3:string
-  fechaDesde:string
-  fechaHasta:string
+  fechaDesde:Date;
+  fechaDesdeString:string;
+  fechaDesdeObj:IFechaDto;
+  fechaHasta:Date;
+  fechaHastaString:string;
+  fechaHastaObj :IFechaDto;
+  fechaOrdenanza :Date;
+  fechaOrdenanzaString :string;
+  fechaOrdenanzaObj :IFechaDto;
+  fechaAprobacion :Date;
+  fechaAprobacionString :string;
+  fechaAprobacionObj :IFechaDto;
 
 }
 
@@ -57,23 +72,13 @@ interface FormInputs {
 const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** States
   const dispatch = useDispatch();
+  const {presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
  // const {presupuestoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
-  const [fechaDesde, setFechaDesde] = useState<string>('')
-  const [fechaDesdeDate, setFechaDesdeDate] = useState<Date>()
-
-  const [fechaHasta, setFechaHasta] = useState<string>('')
-  const [fechaHastaDate, setFechaHastaDate] = useState<Date>()
-
-  const [fechaAprobacion, setFechaAprobacion] = useState<string>('')
-  const [fechaAprobacionDate, setFechaAprobacionDate] = useState<Date>()
-
-  const [fechaOrdenanza, setFechaOrdenanza] = useState<string>('')
-  const [fechaOrdenanzaDate, setFechaOrdenanzaDate] = useState<Date>()
 
   const [errorMessage, setErrorMessage] = useState<string>('')
 
@@ -86,9 +91,18 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
     extra1:'',
     extra2:'',
     extra3:'',
-    fechaDesde:fechaDesde,
-    fechaHasta:fechaHasta
-
+    fechaDesde:presupuestoSeleccionado.fechaDesde,
+    fechaDesdeString:presupuestoSeleccionado.fechaDesdeString,
+    fechaDesdeObj:presupuestoSeleccionado.fechaDesdeObj,
+    fechaHasta:presupuestoSeleccionado.fechaHasta,
+    fechaHastaString:presupuestoSeleccionado.fechaHastaString,
+    fechaHastaObj :presupuestoSeleccionado.fechaHastaObj,
+    fechaOrdenanza :presupuestoSeleccionado.fechaOrdenanza,
+    fechaOrdenanzaString :presupuestoSeleccionado.fechaOrdenanzaString,
+    fechaOrdenanzaObj :presupuestoSeleccionado.fechaOrdenanzaObj,
+    fechaAprobacion :presupuestoSeleccionado.fechaAprobacion,
+    fechaAprobacionString :presupuestoSeleccionado.fechaAprobacionString,
+    fechaAprobacionObj :presupuestoSeleccionado.fechaAprobacionObj
 
   }
 
@@ -103,43 +117,46 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
   const handlerDesde=(desde:Date)=>{
-
-   // const fechaObj:IFechaDto =fechaToFechaObj(desde);
-
-   setFechaDesde(desde.toISOString())
-   setFechaDesdeDate(desde);
-   setValue('fechaDesde', desde.toISOString());
-   setErrorMessage('')
-
-   // const presupuestoTmp= {...presupuestoSeleccionado,fechaDesde:desde.toISOString(),fechaDesdeObj:fechaObj};
-   // dispatch(setPresupuesto(presupuestoTmp))
-
+    const fechaObj:IFechaDto =fechaToFechaObj(desde);
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaDesde:desde,fechaDesdeString:desde.toISOString(),fechaDesdeObj:fechaObj};
+    setValue('fechaDesdeString',desde.toISOString());
+    setValue('fechaDesde',desde);
+    setValue('fechaDesdeObj',fechaObj);
+    dispatch(setPresupuesto(presupuestoTmp))
   }
+
   const handlerHasta=(hasta:Date)=>{
 
-    setFechaHasta(hasta.toISOString());
-    setFechaHastaDate(hasta)
-    setValue('fechaHasta', hasta.toISOString());
-    setErrorMessage('')
 
-    //const fechaObj:IFechaDto =fechaToFechaObj(hasta);
-
-    //const presupuestoTmp= {...presupuestoSeleccionado,fechaHasta:hasta.toISOString(),fechaHastaObj:fechaObj};
-    //dispatch(setPresupuesto(presupuestoTmp))
+    const fechaObj:IFechaDto =fechaToFechaObj(hasta);
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaHasta:hasta,fechaHastaString:hasta.toISOString(),fechaHastaObj:fechaObj};
+    setValue('fechaHastaString',hasta.toISOString());
+    setValue('fechaHasta',hasta);
+    setValue('fechaHastaObj',fechaObj);
+    dispatch(setPresupuesto(presupuestoTmp))
 
   }
 
   const handlerFechaAprobacion=(aprobacion:Date)=>{
 
-    setFechaAprobacion(aprobacion.toISOString())
-    setFechaAprobacionDate(aprobacion)
+
+    const fechaObj:IFechaDto =fechaToFechaObj(aprobacion);
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaAprobacion:aprobacion,fechaAprobacionString:aprobacion.toISOString(),fechaAprobacionObj:fechaObj};
+    setValue('fechaAprobacionString',aprobacion.toISOString());
+    setValue('fechaAprobacion',aprobacion);
+    setValue('fechaAprobacionObj',fechaObj);
+    dispatch(setPresupuesto(presupuestoTmp))
 
   }
-
   const handlerFechaOrdenanza=(fechaOrdenanza:Date)=>{
 
-    setFechaOrdenanza(fechaOrdenanza.toISOString())
-    setFechaOrdenanzaDate(fechaOrdenanza)
+
+    const fechaObj:IFechaDto =fechaToFechaObj(fechaOrdenanza);
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaOrdenanza:fechaOrdenanza,fechaOrdenanzaString:fechaOrdenanza.toISOString(),fechaOrdenanzaObj:fechaObj};
+    setValue('fechaOrdenanzaString',fechaOrdenanza.toISOString());
+    setValue('fechaOrdenanza',fechaOrdenanza);
+    setValue('fechaAprobacionObj',fechaObj);
+    dispatch(setPresupuesto(presupuestoTmp))
 
   }
 
@@ -151,12 +168,12 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   const onSubmit = async (data:FormInputs) => {
     setErrorMessage('')
-    if(fechaDesde.length<10){
+    if(data.fechaDesdeString.length<10){
       setErrorMessage('Indique la fecha desde del presupuesto')
 
       return;
     }
-    if(fechaHasta.length<10){
+    if(data.fechaHastaString.length<10){
       setErrorMessage('Indique la fecha hasta del presupuesto')
 
       return;
@@ -170,11 +187,11 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
       denominacion:data.denominacion,
       descripcion:data.descripcion,
       ano:Number(data.ano),
-      fechaDesde:fechaDesde,
-      fechaHasta:fechaHasta,
-      fechaAprobacion:fechaAprobacion,
+      fechaDesde:data.fechaDesdeString,
+      fechaHasta:data.fechaHastaString,
+      fechaAprobacion:data.fechaAprobacionString,
       numeroOrdenanza:(data.numeroOrdenanza === null || data.numeroOrdenanza === 'undefined') ? '' : data.numeroOrdenanza,
-      fechaOrdenanza:fechaOrdenanza,
+      fechaOrdenanza:data.fechaOrdenanzaString,
       extra1:(data.extra1 === null || data.extra1 === 'undefined') ? '' : data.extra1,
       extra2:(data.extra2 === null || data.extra2 === 'undefined') ? '' : data.extra2,
       extra3:(data.extra3 === null || data.extra3 === 'undefined') ? '' : data.extra3,
@@ -310,13 +327,14 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
             </Grid>
             <Grid item  sm={3} xs={12}>
                 <DatePicker
-                   selected={fechaDesdeDate}
-                  id='date-time-picker-desde'
-                  dateFormat="MM-DD-YYYY"
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerDesde(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Desde' />}
+                   selected={ getDateByObject(presupuestoSeleccionado.fechaDesdeObj!)}
+
+                    id='date-time-picker-desde'
+                    dateFormat="MM-DD-YYYY"
+                    popperPlacement={popperPlacement}
+                    onChange={(date: Date) => handlerDesde(date)}
+                    placeholderText='Click to select a date'
+                    customInput={<CustomInput label='Desde' />}
 
                 />
             </Grid>
@@ -324,7 +342,8 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
             <Grid item  sm={3} xs={12}>
                 <DatePicker
-                  selected={ fechaHastaDate}
+
+                  selected={ getDateByObject(presupuestoSeleccionado.fechaHastaObj!)}
                   id='date-time-picker-hasta'
                   dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
@@ -335,8 +354,8 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
             </Grid>
             <Grid item  sm={3} xs={12}>
                 <DatePicker
+                  selected={ getDateByObject(presupuestoSeleccionado.fechaAprobacionObj!)}
 
-                  selected={ fechaAprobacionDate}
                   id='date-time-picker-aprobacion'
                   dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
@@ -373,7 +392,8 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
             <Grid item  sm={3} xs={12}>
                 <DatePicker
-                  selected={ fechaOrdenanzaDate}
+                 selected={ getDateByObject(presupuestoSeleccionado.fechaOrdenanzaObj!)}
+
                   id='date-time-picker-ordenanza'
                   dateFormat="MM-DD-YYYY"
                   popperPlacement={popperPlacement}
