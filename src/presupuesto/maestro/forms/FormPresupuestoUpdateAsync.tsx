@@ -56,6 +56,18 @@ interface FormInputs {
   extra1:string
   extra2:string
   extra3:string
+  fechaDesde:Date;
+  fechaDesdeString:string;
+  fechaDesdeObj:IFechaDto;
+  fechaHasta:Date;
+  fechaHastaString:string;
+  fechaHastaObj :IFechaDto;
+  fechaOrdenanza :Date;
+  fechaOrdenanzaString :string;
+  fechaOrdenanzaObj :IFechaDto;
+  fechaAprobacion :Date;
+  fechaAprobacionString :string;
+  fechaAprobacionObj :IFechaDto;
 
 }
 
@@ -82,6 +94,18 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     extra1:presupuestoSeleccionado.extra1,
     extra2:presupuestoSeleccionado.extra2,
     extra3:presupuestoSeleccionado.extra3,
+    fechaDesde:presupuestoSeleccionado.fechaDesde,
+    fechaDesdeString:presupuestoSeleccionado.fechaDesdeString,
+    fechaDesdeObj:presupuestoSeleccionado.fechaDesdeObj,
+    fechaHasta:presupuestoSeleccionado.fechaHasta,
+    fechaHastaString:presupuestoSeleccionado.fechaHastaString,
+    fechaHastaObj :presupuestoSeleccionado.fechaHastaObj,
+    fechaOrdenanza :presupuestoSeleccionado.fechaOrdenanza,
+    fechaOrdenanzaString :presupuestoSeleccionado.fechaOrdenanzaString,
+    fechaOrdenanzaObj :presupuestoSeleccionado.fechaOrdenanzaObj,
+    fechaAprobacion :presupuestoSeleccionado.fechaAprobacion,
+    fechaAprobacionString :presupuestoSeleccionado.fechaAprobacionString,
+    fechaAprobacionObj :presupuestoSeleccionado.fechaAprobacionObj
 
   }
 
@@ -89,26 +113,28 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   const {
     control,
     handleSubmit,
-
+    setValue,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
 
   const handlerDesde=(desde:Date)=>{
-
-
     const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...presupuestoSeleccionado,fechaDesde:desde.toISOString(),fechaDesdeObj:fechaObj};
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaDesde:desde,fechaDesdeString:desde.toISOString(),fechaDesdeObj:fechaObj};
+    setValue('fechaDesdeString',desde.toISOString());
+    setValue('fechaDesde',desde);
+    setValue('fechaDesdeObj',fechaObj);
     dispatch(setPresupuesto(presupuestoTmp))
-
   }
 
   const handlerHasta=(hasta:Date)=>{
 
 
     const fechaObj:IFechaDto =fechaToFechaObj(hasta);
-
-    const presupuestoTmp= {...presupuestoSeleccionado,fechaHasta:hasta.toISOString(),fechaHastaObj:fechaObj};
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaHasta:hasta,fechaHastaString:hasta.toISOString(),fechaHastaObj:fechaObj};
+    setValue('fechaHastaString',hasta.toISOString());
+    setValue('fechaHasta',hasta);
+    setValue('fechaHastaObj',fechaObj);
     dispatch(setPresupuesto(presupuestoTmp))
 
   }
@@ -117,8 +143,10 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
     const fechaObj:IFechaDto =fechaToFechaObj(aprobacion);
-
-    const presupuestoTmp= {...presupuestoSeleccionado,fechaAprobacion:aprobacion.toISOString(),fechaAprobacionObj:fechaObj};
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaAprobacion:aprobacion,fechaAprobacionString:aprobacion.toISOString(),fechaAprobacionObj:fechaObj};
+    setValue('fechaAprobacionString',aprobacion.toISOString());
+    setValue('fechaAprobacion',aprobacion);
+    setValue('fechaAprobacionObj',fechaObj);
     dispatch(setPresupuesto(presupuestoTmp))
 
   }
@@ -126,8 +154,10 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
     const fechaObj:IFechaDto =fechaToFechaObj(fechaOrdenanza);
-
-    const presupuestoTmp= {...presupuestoSeleccionado,fechaOrdenanza:fechaOrdenanza.toISOString(),fechaOrdenanzaObj:fechaObj};
+    const presupuestoTmp= {...presupuestoSeleccionado,fechaOrdenanza:fechaOrdenanza,fechaOrdenanzaString:fechaOrdenanza.toISOString(),fechaOrdenanzaObj:fechaObj};
+    setValue('fechaOrdenanzaString',fechaOrdenanza.toISOString());
+    setValue('fechaOrdenanza',fechaOrdenanza);
+    setValue('fechaAprobacionObj',fechaObj);
     dispatch(setPresupuesto(presupuestoTmp))
 
   }
@@ -178,11 +208,11 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
       denominacion:data.denominacion,
       descripcion:data.descripcion,
       ano:Number(data.año),
-      fechaDesde:presupuestoSeleccionado.fechaDesde,
-      fechaHasta:presupuestoSeleccionado.fechaHasta,
-      fechaAprobacion:presupuestoSeleccionado.fechaAprobacion,
+      fechaDesde:presupuestoSeleccionado.fechaDesdeString,
+      fechaHasta:presupuestoSeleccionado.fechaHastaString,
+      fechaAprobacion:presupuestoSeleccionado.fechaAprobacionString,
       numeroOrdenanza:(data.numeroOrdenanza === null || data.numeroOrdenanza === 'undefined') ? '' : data.numeroOrdenanza,
-      fechaOrdenanza:presupuestoSeleccionado.fechaOrdenanza,
+      fechaOrdenanza:presupuestoSeleccionado.fechaOrdenanzaString,
       extra1:(data.extra1 === null || data.extra1 === 'undefined') ? '' : data.extra1,
       extra2:(data.extra2 === null || data.extra2 === 'undefined') ? '' : data.extra2,
       extra3:(data.extra3 === null || data.extra3 === 'undefined') ? '' : data.extra3,
@@ -203,7 +233,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   return (
     <Card>
-      <CardHeader title='Modificar Presupuesto' />
+      <CardHeader title='Modificar Presupuesto....' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -308,6 +338,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                 )}
               </FormControl>
             </Grid>
+
             <Grid item  sm={3} xs={12}>
                 <DatePicker
                   selected={ getDateByObject(presupuestoSeleccionado.fechaDesdeObj)}
@@ -316,7 +347,7 @@ const FormPresupuestoUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerDesde(date)}
                   placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Desde' />}
+                  customInput={<CustomInput label='Desde....' />}
                 />
             </Grid>
             <Grid item  sm={3} xs={12}>

@@ -14,13 +14,14 @@ import { useTheme } from '@mui/material/styles'
 import { useDispatch } from 'react-redux';
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto';
 import { setOperacionCrudPresupuesto, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto';
-import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo';
+
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import dayjs from 'dayjs';
+import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo';
 
 
 
@@ -80,7 +81,7 @@ const PresupuestoList = () => {
   ]
 
   const handleView=  (row : IPresupuesto)=>{
-
+console.log('presupuesto al hacer doble click',row)
     dispatch(setPresupuesto(row))
 
      // Operacion Crud 2 = Modificar presupuesto

@@ -8,19 +8,26 @@ export interface IPresupuesto{
     descripcion:string;
     ano:number;
     montoPresupuesto:number;
-    fechaDesde:string;
-    fechaHasta:string;
-    fechaAprobacion :string;
+    fechaDesde:Date;
+    fechaDesdeString:string;
+    fechaDesdeObj:IFechaDto;
+
+    fechaHasta:Date;
+    fechaHastaString:string;
+    fechaHastaObj :IFechaDto;
+
+    fechaOrdenanza :Date;
+    fechaOrdenanzaString :string;
+    fechaOrdenanzaObj :IFechaDto;
+
+    fechaAprobacion :Date;
+    fechaAprobacionString :string;
+    fechaAprobacionObj :IFechaDto;
+
     numeroOrdenanza :string;
-    fechaOrdenanza :string;
     extra1 :string;
     extra2 :string;
     extra3 :string;
-    fechaDesdeObj:IFechaDto;
-    fechaHastaObj :IFechaDto;
-    fechaAprobacionObj :IFechaDto;
-    fechaOrdenanzaObj :IFechaDto;
-
     preDenominacionPuc:IPreDenominacionPuc[];
     preDenominacionPucResumen:IPreDenominacionPucResumen[];
     preFinanciadoDto:IPreFinanciadoDto[];
