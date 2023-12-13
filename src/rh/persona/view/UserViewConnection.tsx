@@ -21,7 +21,7 @@ const UserViewConnection = () => {
         <Card>
           <CardContent>
             <Box sx={{ mb: 5 }}>
-              <Typography sx={{ fontWeight: 500 }}>Variacion</Typography>
+              <Typography sx={{ fontWeight: 500 }}>Variacion..</Typography>
 
             </Box>
 

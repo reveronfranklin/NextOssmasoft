@@ -42,7 +42,6 @@ import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 
 
 
-
 /*interface StatusObj {
   [key: number]: {
     title: string
@@ -268,6 +267,7 @@ const TableServerSideHistoricoIndividual = () => {
 
       setLinkData(responseAll.data.linkData)
       setLoading(false);
+      console.log('linkData desde movimiento de nomina',linkData)
 
       if( responseAll.data.data.length>0){
         setMensaje('')
@@ -352,6 +352,7 @@ const TableServerSideHistoricoIndividual = () => {
       {
         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
+
           <Button variant='contained' href={linkData} size='large' >
             Descargar Todo
           </Button>

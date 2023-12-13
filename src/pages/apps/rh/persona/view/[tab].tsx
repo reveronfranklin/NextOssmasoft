@@ -30,6 +30,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
   const res = await axios.get('/apps/invoice/invoices')
   const invoiceData: InvoiceType[] = res.data.allData
+  console.log(invoiceData)
 
   return {
     props: {

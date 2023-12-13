@@ -22,12 +22,12 @@ import UserViewBilling from './UserViewBilling'
 import PersonaViewOverview from './PersonaViewOverview'
 
 import UserViewConnection from './UserViewConnection'
-import UserViewNotification from './UserViewNotification'
+
 
 // ** Types
 import { InvoiceType } from 'src/types/apps/invoiceTypes'
 import UserViewSecurity from './UserViewSecurity'
-
+import UserViewNotification from './UserViewNotification'
 
 interface Props {
   tab: string
@@ -158,9 +158,10 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='billing-plan'>
               <UserViewBilling />
+
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='notification'>
-              <UserViewNotification />
+              <UserViewNotification  />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='connection'>
               <UserViewConnection />
