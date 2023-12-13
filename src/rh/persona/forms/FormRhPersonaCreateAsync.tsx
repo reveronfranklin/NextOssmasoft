@@ -84,17 +84,16 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const {rhAdministrativoSeleccionado,listRhBancos,listRhTipoCuenta} = useSelector((state: RootState) => state.rhAdministrativos)
 
   const listTipoPago =[{id:'D',descripcion:'Deposito'},{id:'E',descripcion:'Efectivo'}]
+  const fechaActual = new Date()
 
-  /*const  getTipoPersonal=(id:number)=>{
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
 
-    if(id==0) return defaultCargo;
-    const result = listTipoPersonal.filter((elemento)=>{
-
-      return elemento.descripcionId==id;
-    });
-
-    return result[0];
-  } */
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
 
   const  getTipoPago=(id:string)=>{
 
@@ -229,7 +228,9 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
         email:'',
         paisNacimiento:'',
         edad:0,

@@ -78,7 +78,9 @@ interface FormInputs {
   nacionalidad:string;
   sexo:string;
   edad:number;
-  fechaNacimiento:string;
+  fechaNacimiento:Date;
+  fechaNacimientoString:string;
+  fechaNacimientoObj:IFechaDto;
   paisNacimientoId:number;
   estadoNacimientoId:number;
   numeroGacetaNacional:string;
@@ -108,7 +110,16 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const listManoHabil =[{id:'D',descripcion:'Derecha'},{id:'I',descripcion:'Izquierda'}]
   const listStatus =[{id:'A',descripcion:'Activo'},{id:'E',descripcion:'Egresado'},{id:'S',descripcion:'Suspendido'}]
 
+  const fechaActual = new Date()
 
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
   const  getNacionalidad=(id:string)=>{
 
     const result = listNacionalidad?.filter((elemento)=>{
@@ -205,6 +216,8 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     sexo:personasDtoSeleccionado.sexo,
     edad:personasDtoSeleccionado.edad,
     fechaNacimiento:personasDtoSeleccionado.fechaNacimiento,
+    fechaNacimientoString:personasDtoSeleccionado.fechaNacimientoString,
+    fechaNacimientoObj:personasDtoSeleccionado.fechaNacimientoObj,
     paisNacimientoId:personasDtoSeleccionado.paisNacimientoId,
     estadoNacimientoId:personasDtoSeleccionado.estadoNacimientoId,
     numeroGacetaNacional:personasDtoSeleccionado.numeroGacetaNacional,
@@ -339,9 +352,11 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
 
     const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...personasDtoSeleccionado,fechaNacimiento:desde.toISOString(),fechaNacimientoObj:fechaObj};
+    const presupuestoTmp= {...personasDtoSeleccionado,fechaNacimientoString:desde.toISOString(),fechaNacimientoObj:fechaObj,fechaNacimiento:desde};
     dispatch(setPersonasDtoSeleccionado(presupuestoTmp))
-    setValue('fechaNacimiento',desde.toISOString());
+    setValue('fechaNacimiento',desde);
+    setValue('fechaNacimientoString',desde.toISOString());
+    setValue('fechaNacimientoObj',fechaObj);
   }
 
   /* handlerFechaGacetaNacional=(desde:Date)=>{
@@ -405,7 +420,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       nacionalidad:data.nacionalidad,
       sexo:data.sexo,
       edad:data.edad,
-      fechaNacimiento:data.fechaNacimiento,
+      fechaNacimiento:data.fechaNacimiento.toISOString(),
       paisNacimientoId:data.paisNacimientoId,
       estadoNacimientoId:data.estadoNacimientoId,
       numeroGacetaNacional:data.numeroGacetaNacional,
@@ -461,7 +476,9 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
         email:'',
         paisNacimiento:'',
         edad:0,

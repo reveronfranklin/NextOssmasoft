@@ -25,6 +25,7 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
+import { IFechaDto } from 'src/interfaces/fecha-dto'
 
 const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -33,6 +34,16 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
 
   const {fechaDesde,fechaHasta,tiposNomina,conceptos,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
 
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
 
   // ** States
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
@@ -158,7 +169,9 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
         email:'',
         paisNacimiento:'',
         edad:0,

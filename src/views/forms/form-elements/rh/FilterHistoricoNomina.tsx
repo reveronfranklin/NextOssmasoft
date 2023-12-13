@@ -24,6 +24,7 @@ import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
+import { IFechaDto } from 'src/interfaces/fecha-dto'
 
 const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -37,6 +38,19 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
   const [dateHasta, setDateHasta] = useState<DateType>(fechaHasta)
   const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
+
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+
+  const defaultDateString = fechaActual.toISOString();
+
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
     dispatch(setFechaDesde(desde));
@@ -122,7 +136,9 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
         email:'',
         paisNacimiento:'',
         edad:0,
@@ -133,11 +149,11 @@ const FilterHistoricoNomina = ({ popperPlacement }: { popperPlacement: ReactDate
         status:'',
         fechaGacetaNacional:'',
         estadoCivilId:0,
-  estatura:0,
-  peso:0,
-  identificacionId:0,
-  numeroIdentificacion:0,
-  numeroGacetaNacional:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
 
       };
 

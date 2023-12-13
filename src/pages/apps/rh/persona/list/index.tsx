@@ -47,6 +47,7 @@ import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { IFechaDto } from 'src/interfaces/fecha-dto';
 
 
 
@@ -92,9 +93,9 @@ const columns = [
     flex: 0.2,
     minWidth: 230,
     field: 'nombre',
-    headerName: 'User',
+    headerName: 'Nombre',
     renderCell: ({ row }: CellType) => {
-      const { apellido } = row
+      const {nombre} = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -102,10 +103,23 @@ const columns = [
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
            {/*  <StyledLink href='/apps/rh/persona/view/overview/'>{nombre}</StyledLink> */}
             <Typography noWrap variant='caption'>
-              {apellido}
+              {nombre}
             </Typography>
           </Box>
         </Box>
+      )
+    }
+  },
+  {
+    flex: 0.2,
+    minWidth: 250,
+    field: 'apellido',
+    headerName: 'Apellido',
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap variant='body2'>
+          {row.apellido}
+        </Typography>
       )
     }
   },
@@ -179,6 +193,17 @@ const UserList = () => {
   const store = useSelector((state: RootState) => state.nomina)
 
   const router = useRouter();
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
+
 
   const handlerPersona= async   (value:any)=>{
     console.log('value en handlerPersona en list',value.row)
@@ -207,7 +232,9 @@ const UserList = () => {
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
         email:'',
         paisNacimiento:'',
         edad:0,

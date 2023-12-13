@@ -60,6 +60,7 @@ import DialogRhPersonasInfo from './DialogRhPersonasInfo'
 //import QRCode from "react-qr-code";
 import toast from 'react-hot-toast';
 import Spinner from 'src/@core/components/spinner';
+import { IFechaDto } from 'src/interfaces/fecha-dto'
 
 interface ColorsType {
   [key: string]: ThemeColor
@@ -108,6 +109,16 @@ const PersonaViewLeft = () => {
   const dispatch = useDispatch();
   const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const defaultDateString = fechaActual.toISOString();
 
   //const router = useRouter();
 
@@ -150,6 +161,39 @@ const PersonaViewLeft = () => {
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
+      const personaDefault:IListSimplePersonaDto ={
+        apellido:'',
+        cedula:0,
+        codigoPersona:0,
+        nombre:'',
+        nombreCompleto:'',
+        avatar:'',
+        descripcionStatus:'',
+        nacionalidad:'',
+        sexo:'',
+        fechaNacimiento:fechaActual,
+        fechaNacimientoString:defaultDateString,
+        fechaNacimientoObj:defaultDate,
+        email:'',
+        paisNacimiento:'',
+        edad:0,
+        descripcionEstadoCivil:'',
+        paisNacimientoId:0,
+        estadoNacimientoId:0,
+        manoHabil:'',
+        status:'',
+        fechaGacetaNacional:'',
+        estadoCivilId:0,
+        estatura:0,
+        peso:0,
+        identificacionId:0,
+        numeroIdentificacion:0,
+        numeroGacetaNacional:0,
+
+      };
+      dispatch(setPersonaSeleccionado(personaDefault));
+      dispatch(setPersonasDtoSeleccionado(personaDefault));
+
       setLoading(true);
       const data= await fetchDataPersonasDto(dispatch);
 
@@ -230,6 +274,7 @@ const PersonaViewLeft = () => {
               value={String(personaSeleccionado.cedula)}
               viewBox={`0 0 128 128`}
               /> */}
+
             <Typography variant='h6' sx={{ mb: 4 }}>
               {personaSeleccionado.nombreCompleto}
             </Typography>
@@ -303,7 +348,7 @@ const PersonaViewLeft = () => {
               <Box sx={{ display: 'flex', mb: 2 }}>
                 <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Fecha Nacimiento:</Typography>
                 <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                  {personaSeleccionado.fechaNacimiento}
+                  {personaSeleccionado.fechaNacimientoObj?.day}/{personaSeleccionado.fechaNacimientoObj?.month}/{personaSeleccionado.fechaNacimientoObj?.year}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', mb: 2 }}>

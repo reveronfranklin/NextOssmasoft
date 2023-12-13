@@ -1,5 +1,6 @@
 import { ThemeColor } from "src/@core/layouts/types";
 import { ITiempoServicioResponseDto } from "./TiempoServicioResponseDto";
+import { IFechaDto } from "../fecha-dto";
 
 
 export interface IListSimplePersonaDto{
@@ -15,7 +16,10 @@ export interface IListSimplePersonaDto{
   descripcionStatus:string;
   nacionalidad:string;
   sexo:string;
-  fechaNacimiento:string;
+  fechaNacimiento:Date;
+  fechaNacimientoString:string;
+  fechaNacimientoObj:IFechaDto;
+
   edad:number
   paisNacimientoId:number;
   estadoNacimientoId:number;
