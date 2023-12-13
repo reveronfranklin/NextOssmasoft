@@ -101,7 +101,7 @@ const FaovList = () => {
 
       console.log(tipoNominaSeleccionado.codigoTipoNomina);
       if(tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina <= 0) return;
-
+      setData([]);
       setLoading(true);
       const filter:IFilterFechaTipoNomina={
         fechaDesde:dayjs(fechaDesde).format('DD/MM/YYYY') ,
@@ -110,10 +110,11 @@ const FaovList = () => {
 
       }
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesFaov/GetRetencionesFaov',filter);
-      console.log('responseAll',responseAll)
+
       setData(responseAll.data?.data);
       setLinkData(responseAll.data.linkData)
       SetLinkDataArlternative(responseAll.data.linkDataArlternative)
+      console.log('responseAll',data)
       setLoading(false);
     };
 

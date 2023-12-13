@@ -108,6 +108,7 @@ const CahList = () => {
         tipoNomina:tipoNominaSeleccionado.codigoTipoNomina,
 
       }
+      setData([]);
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesCah/GetRetencionesCah',filter);
       console.log('responseAll',responseAll)
       setData(responseAll.data?.data);

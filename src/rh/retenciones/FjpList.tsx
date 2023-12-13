@@ -108,6 +108,7 @@ const FjpList = () => {
         tipoNomina:tipoNominaSeleccionado.codigoTipoNomina,
 
       }
+      setData([]);
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesFjp/GetRetencionesFjp',filter);
       console.log('responseAll',responseAll)
       setData(responseAll.data?.data);

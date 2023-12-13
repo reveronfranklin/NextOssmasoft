@@ -109,6 +109,7 @@ const SindList = () => {
         tipoNomina:tipoNominaSeleccionado.codigoTipoNomina,
 
       }
+      setData([]);
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesSind/GetRetencionesSind',filter);
       console.log('responseAll',responseAll)
       setData(responseAll.data?.data);
