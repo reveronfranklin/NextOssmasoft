@@ -40,6 +40,7 @@ import FormRhEducacionCreateAsync from '../forms/FormRhEducacionCreateAsync'
 import FormRhEducacionUpdateAsync from '../forms/FormRhEducacionUpdateAsync'
 import { IRhEducacionResponseDto } from 'src/interfaces/rh/RhEducacionResponseDto'
 import { setRhEducacionSeleccionado, setVerRhEducacionActive } from 'src/store/apps/rh-educacion'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 
 // ** Custom Component Imports
@@ -67,7 +68,7 @@ const DialogRhEducacionInfo = ({ popperPlacement }: { popperPlacement: ReactDate
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

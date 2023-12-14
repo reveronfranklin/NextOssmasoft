@@ -52,7 +52,7 @@ import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva
 import { setListRhBancos, setListRhTipoCuenta } from 'src/store/apps/rh-administrativos'
 
 
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
+import { getDateByObject, monthByIndex } from 'src/utilities/ge-date-by-object'
 
 
 // ** Third Party Imports
@@ -114,7 +114,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();
@@ -204,6 +204,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const [estado,setEstado] = useState<any>(getEstado(personasDtoSeleccionado.estadoNacimientoId))
   const [pais,setPais] = useState<any>(getPais(personasDtoSeleccionado.paisNacimientoId))
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
+  const [base64String, setBase64String] = useState<any>('')
   const [inputValue, setInputValue] = useState<string>('')
   const [rowData, setRowData] = useState<ArrayBuffer>()
   const defaultValues = {
@@ -376,9 +377,13 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       reader.onload = () => {
 
         setImgSrc(reader.result as string);
+        console.log('imgSrc',imgSrc)
+        const base64 = imgSrc.split(',').pop();
+        setBase64String(base64);
         const rawTempData = reader.result as ArrayBuffer;
         setRowData(rawTempData);
-        console.log('rowData>>>',rowData)
+        console.log(rowData)
+
       }
       reader.readAsDataURL(files[0])
 
@@ -420,7 +425,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       nacionalidad:data.nacionalidad,
       sexo:data.sexo,
       edad:data.edad,
-      fechaNacimiento:data.fechaNacimiento.toISOString(),
+      fechaNacimiento:personasDtoSeleccionado.fechaNacimientoString,
       paisNacimientoId:data.paisNacimientoId,
       estadoNacimientoId:data.estadoNacimientoId,
       numeroGacetaNacional:data.numeroGacetaNacional,
@@ -431,8 +436,9 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       manoHabil :data.manoHabil,
       status :data.status,
       identificacionId :data.identificacionId,
-      numeroIdentificacion :data.numeroIdentificacion
-
+      numeroIdentificacion :data.numeroIdentificacion,
+      data:base64String,
+      nombreArchivo:inputValue
 
     };
     console.log('updatePersona',updatePersona)
@@ -547,7 +553,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                       hidden
                       type='file'
                       value={inputValue}
-                      accept='image/png, image/jpeg'
+                      accept='image/jpg'
                       onChange={handleInputImageChange}
                       id='account-settings-upload-image'
                     />

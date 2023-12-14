@@ -50,7 +50,7 @@ import { setListRhBancos, setListRhTipoCuenta, setRhAdministrativoSeleccionado, 
 import { IRhAdministrativosUpdateDto } from 'src/interfaces/rh/i-rh-administrativos-update-dto'
 
 
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
+import { getDateByObject, monthByIndex } from 'src/utilities/ge-date-by-object'
 
 
 // ** Third Party Imports
@@ -88,7 +88,7 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

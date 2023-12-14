@@ -23,6 +23,7 @@ import DialogRhFamiliaresInfo from './DialogRhFamiliaresInfo';
 import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto';
 import { setListRhNivelEducativo, setListRhPariente, setOperacionCrudRhFamiliares, setRhFamiliaresSeleccionado, setVerRhFamiliaresActive } from 'src/store/apps/rh-familiares';
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
+import { monthByIndex } from 'src/utilities/ge-date-by-object';
 
 interface CellType {
   row: IRhFamiliarResponseDto
@@ -38,7 +39,7 @@ const FamiliaresList = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

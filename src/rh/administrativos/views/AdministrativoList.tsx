@@ -25,6 +25,7 @@ import DialogRhAdministrativosInfo from './DialogRhAdministrativosInfo';
 import dayjs from 'dayjs';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
+import { monthByIndex } from 'src/utilities/ge-date-by-object';
 
 interface CellType {
   row: IRhAdministrativosResponseDto
@@ -40,7 +41,7 @@ const AdministrativoList = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

@@ -23,6 +23,7 @@ import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
 import DialogRhEducacionInfo from './DialogRhEducacionInfo';
 import { IRhEducacionResponseDto } from 'src/interfaces/rh/RhEducacionResponseDto';
 import { setListRhMencionEspecialidad, setListRhNivel, setListRhProfesion, setListRhTitulo, setOperacionCrudRhEducacion, setRhEducacionSeleccionado, setVerRhEducacionActive } from 'src/store/apps/rh-educacion';
+import { monthByIndex } from 'src/utilities/ge-date-by-object';
 
 interface CellType {
   row: IRhEducacionResponseDto
@@ -38,7 +39,7 @@ const EducacionList = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

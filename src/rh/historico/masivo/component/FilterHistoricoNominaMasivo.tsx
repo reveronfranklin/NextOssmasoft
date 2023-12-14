@@ -26,6 +26,7 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
@@ -38,7 +39,7 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

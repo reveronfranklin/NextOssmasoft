@@ -18,5 +18,7 @@ export interface IRhPersonaUpdateDto{
   status :string;
   identificacionId :number;
   numeroIdentificacion :number;
+  data?:string;
+  nombreArchivo?:string;
 
 }

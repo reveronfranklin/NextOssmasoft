@@ -48,6 +48,7 @@ import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/ap
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
+import { monthByIndex } from 'src/utilities/ge-date-by-object';
 
 
 
@@ -197,7 +198,7 @@ const UserList = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

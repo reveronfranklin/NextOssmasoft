@@ -48,6 +48,7 @@ import { IUpdateIcp } from 'src/interfaces/Presupuesto/i-update-pre-indice-categ
 import { IOssConfig } from 'src/interfaces/SIS/i-oss-config-get-dto'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 interface FormInputs {
   codigoIcp :number;
@@ -88,7 +89,7 @@ const FormIcpCreateAsync = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

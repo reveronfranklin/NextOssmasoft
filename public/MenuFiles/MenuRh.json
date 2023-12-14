@@ -15,7 +15,10 @@
         "title": "Historico Proceso",
         "path": "/apps/rh/proceso"
       },
-
+      {
+        "title": "BM1",
+        "path": "/apps/Bm/Bm1"
+      },
       {
         "title": "Personas",
         "icon": "mdi:account-outline",

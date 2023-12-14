@@ -61,6 +61,7 @@ import DialogRhPersonasInfo from './DialogRhPersonasInfo'
 import toast from 'react-hot-toast';
 import Spinner from 'src/@core/components/spinner';
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 interface ColorsType {
   [key: string]: ThemeColor
@@ -113,7 +114,7 @@ const PersonaViewLeft = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

@@ -330,7 +330,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
                    selected={ getDateByObject(presupuestoSeleccionado.fechaDesdeObj!)}
 
                     id='date-time-picker-desde'
-                    dateFormat="MM-DD-YYYY"
+                    dateFormat='dd/MM/yyyy'
                     popperPlacement={popperPlacement}
                     onChange={(date: Date) => handlerDesde(date)}
                     placeholderText='Click to select a date'
@@ -345,7 +345,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
                   selected={ getDateByObject(presupuestoSeleccionado.fechaHastaObj!)}
                   id='date-time-picker-hasta'
-                  dateFormat="MM-DD-YYYY"
+                  dateFormat='dd/MM/yyyy'
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerHasta(date)}
                   placeholderText='Click to select a date'
@@ -357,7 +357,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
                   selected={ getDateByObject(presupuestoSeleccionado.fechaAprobacionObj!)}
 
                   id='date-time-picker-aprobacion'
-                  dateFormat="MM-DD-YYYY"
+                  dateFormat='dd/MM/yyyy'
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerFechaAprobacion(date)}
                   placeholderText='Click to select a date'
@@ -395,7 +395,7 @@ const FormPresupuestoCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
                  selected={ getDateByObject(presupuestoSeleccionado.fechaOrdenanzaObj!)}
 
                   id='date-time-picker-ordenanza'
-                  dateFormat="MM-DD-YYYY"
+                  dateFormat='dd/MM/yyyy'
                   popperPlacement={popperPlacement}
                   onChange={(date: Date) => handlerFechaOrdenanza(date)}
                   customInput={<CustomInput label='Fecha Ordenanza' />}

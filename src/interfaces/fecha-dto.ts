@@ -5,5 +5,10 @@ export interface IFechaDto{
 
 }
 
+export interface IIndexMonth{
+  index:number;
+  month:number;
 
+
+}
 

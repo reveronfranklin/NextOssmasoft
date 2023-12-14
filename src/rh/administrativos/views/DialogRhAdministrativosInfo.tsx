@@ -40,6 +40,7 @@ import FormRhAdministrativoUpdateAsync from '../forms/FormRhAdministrativoUpdate
 import { IRhAdministrativosResponseDto } from 'src/interfaces/rh/i-rh-administrativos-response-dto'
 import { setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos'
 import { IFechaDto } from '../../../interfaces/fecha-dto';
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 
 // ** Custom Component Imports
@@ -67,7 +68,7 @@ const DialogRhAdministrativosInfo = ({ popperPlacement }: { popperPlacement: Rea
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

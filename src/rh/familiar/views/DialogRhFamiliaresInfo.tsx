@@ -40,6 +40,7 @@ import FormRhFamiliaresCreateAsync from '../forms/FormRhFamiliaresCreateAsync'
 import FormRhFamiliaresUpdateAsync from '../forms/FormRhFamiliaresUpdateAsync'
 import { IRhFamiliarResponseDto } from 'src/interfaces/rh/RhFamiliarResponseDto'
 import { setRhFamiliaresSeleccionado, setVerRhFamiliaresActive } from 'src/store/apps/rh-familiares'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 
 // ** Custom Component Imports
@@ -67,7 +68,7 @@ const DialogRhFamiliaresInfo = ({ popperPlacement }: { popperPlacement: ReactDat
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();

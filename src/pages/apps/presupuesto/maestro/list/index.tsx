@@ -23,6 +23,7 @@ import { RootState } from 'src/store';
 import dayjs from 'dayjs';
 import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
+import { monthByIndex } from 'src/utilities/ge-date-by-object';
 
 
 
@@ -35,12 +36,15 @@ const PresupuestoList = () => {
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + currentMonth.toString();
+
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
 
   const currentDay =new Date().getDate();
   const currentDayString = '00' + currentDay.toString();
   const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
   const defaultDateString = fechaActual.toISOString();
+
+  console.log(monthByIndex(currentMonth))
 
   const columns = [
 
@@ -92,7 +96,7 @@ const PresupuestoList = () => {
   ]
 
   const handleView=  (row : IPresupuesto)=>{
-console.log('presupuesto al hacer doble click',row)
+
     dispatch(setPresupuesto(row))
 
      // Operacion Crud 2 = Modificar presupuesto
