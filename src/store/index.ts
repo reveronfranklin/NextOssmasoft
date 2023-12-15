@@ -24,6 +24,7 @@ import { bmBm1Slice } from './apps/bm'
 import { rhComunicacionSlice } from './apps/rh-comunicacion'
 import { rhFamiliaresSlice } from './apps/rh-familiares'
 import { rhEducacionSlice } from './apps/rh-educacion'
+import { rhExperienciaSlice } from './apps/rh-experiencia'
 
 
 
@@ -50,7 +51,8 @@ export const store = configureStore({
     bmBm1:bmBm1Slice.reducer,
     rhComunicacion:rhComunicacionSlice.reducer,
     rhFamiliares:rhFamiliaresSlice.reducer,
-    rhEducacion:rhEducacionSlice.reducer
+    rhEducacion:rhEducacionSlice.reducer,
+    rhExperiencia:rhExperienciaSlice.reducer
 
     //nominas:nominaSlice.reducer,
   },

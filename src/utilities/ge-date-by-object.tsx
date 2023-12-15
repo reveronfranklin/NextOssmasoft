@@ -18,7 +18,7 @@ const indexMonth:IIndexMonth[]=[
 
 export const getDateByObject=(dateObject:IFechaDto)=>{
 
-if(dateObject !== undefined){
+if(dateObject && dateObject !== undefined){
 
    const year= Number(dateObject.year);
 

@@ -376,15 +376,18 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
       reader.onload = () => {
 
-        setImgSrc(reader.result as string);
-        console.log('imgSrc',imgSrc)
-        const base64 = imgSrc.split(',').pop();
-        setBase64String(base64);
-        const rawTempData = reader.result as ArrayBuffer;
-        setRowData(rawTempData);
-        console.log(rowData)
+
+          setImgSrc(reader.result as string);
+          const base64 = imgSrc.split(',').pop();
+          setBase64String(base64);
+          const rawTempData = reader.result as ArrayBuffer;
+          setRowData(rawTempData);
+          console.log(rowData)
+
+
 
       }
+
       reader.readAsDataURL(files[0])
 
       if (reader.result !== null) {
@@ -395,6 +398,9 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const handleInputImageReset = () => {
     setInputValue('')
     setImgSrc('/images/avatars/1.png')
+  }
+  const handleInputImageSend = () => {
+   console.log(base64String)
   }
 
   const handleDelete = async  () => {
@@ -548,7 +554,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 <ImgStyled src={imgSrc} alt='Profile Pic' />
                 <div>
                   <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                    Upload New Photo
+                    Cargar Nueva Foto
                     <input
                       hidden
                       type='file'
@@ -560,6 +566,9 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                   </ButtonStyled>
                   <ResetButtonStyled color='secondary' variant='outlined' onClick={handleInputImageReset}>
                     Reset
+                  </ResetButtonStyled>
+                  <ResetButtonStyled color='secondary' variant='outlined' onClick={handleInputImageSend}>
+                    Send
                   </ResetButtonStyled>
                   <Typography variant='caption' sx={{ mt: 4, display: 'block', color: 'text.disabled' }}>
                     Allowed PNG or JPEG. Max size of 800K.
