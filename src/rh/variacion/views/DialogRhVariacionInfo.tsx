@@ -32,14 +32,14 @@ import { useSelector } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-import { setRhRelacionCargoSeleccionado, setVerRhRelacionCargoActive } from 'src/store/apps/rh-relacion-cargo'
-import { IRhRelacionCargoDto } from 'src/interfaces/rh/i-rh-relacion-cargo-dto'
-import FormRhRelacionCargoCreateAsync from '../forms/FormRhRelacionCargoCreateAsync'
-import FormRhRelacionCargoUpdateAsync from '../forms/FormRhRelacionCargoUpdateAsync'
+// ** Third Party Imports
 import { ReactDatePickerProps } from 'react-datepicker'
-import { monthByIndex } from 'src/utilities/ge-date-by-object'
-import { IFechaDto } from 'src/interfaces/fecha-dto'
 
+
+import FormRhVariacionCreateAsync from '../forms/FormRhVariacionCreateAsync'
+import FormRhVariacionUpdateAsync from '../forms/FormRhVariacionUpdateAsync'
+import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
+import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
 
 
 // ** Custom Component Imports
@@ -53,16 +53,17 @@ const Transition = forwardRef(function Transition(
 
 
 
-const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
+const DialogRhVariacionInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
 
 
   // ** States
   const dispatch = useDispatch();
-  const {verRhRelacionCargoActive,operacionCrudRhRelacionCargo} = useSelector((state: RootState) => state.rhRelacionCargo)
+
+  const {operacionCrudRhPersonaMovCtr,verRhPersonaMovCtrActive} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
 
-
-  const fechaActual = new Date()
+/*   const fechaActual = new Date()
 
   const currentYear  = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
@@ -72,46 +73,33 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
   const currentDayString = '00' + currentDay.toString();
   const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
 
-  const defaultDateString = fechaActual.toISOString();
-
+  const defaultDateString = fechaActual.toISOString(); */
   const handleSetShow= (active:boolean)=>{
 
     if(active==false){
 
-      const defaultValues:IRhRelacionCargoDto = {
-        codigoRelacionCargo:0,
-        codigoCargo :0,
-        denominacionCargo :'',
-        codigoPersona :0,
-        nombre:'',
-        apellido :'',
-        cedula:0,
-        sueldo :0,
-        codigoRelacionCargoPre :0,
-        searchText:'',
 
-        fechaIni:fechaActual,
-        fechaFin:fechaActual,
-        fechaIniString:defaultDateString,
-        fechaFinString:defaultDateString,
-        fechaIniObj:defaultDate,
-        fechaFinObj:defaultDate,
-        tipoNomina:0,
-        codigoIcp:0
+      const defaultValues:IRhPersonasMovControlResponseDto = {
 
-      }
+        codigoPersonaMovCtrl:0,
+        codigoPersona :personaSeleccionado.codigoPersona,
+        codigoConcepto :0,
+        controlAplica :0,
+        descripcionControlAplica:'',
+        descripcionConcepto:''
 
-      dispatch(setRhRelacionCargoSeleccionado(defaultValues))
     }
-    dispatch(setVerRhRelacionCargoActive(active))
+
+
+      dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
+
+
+
+    }
+    dispatch(setVerRhPersonaMovCtrActive(active))
 
 
   }
-
-
-
-
-
 
 
     return (
@@ -119,16 +107,14 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
 
         <Dialog
           fullWidth
-          maxWidth='lg'
-          open={verRhRelacionCargoActive}
-
+          open={verRhPersonaMovCtrActive}
+          maxWidth='md'
           scroll='body'
           onClose={() => handleSetShow(false)}
           TransitionComponent={Transition}
           onBackdropClick={() => handleSetShow(false)}
-
         >
-          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }} style={{height:'700px'}}>
+          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
             <IconButton
               size='small'
               onClick={() => handleSetShow(false)}
@@ -138,9 +124,9 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudRhRelacionCargo===1
-              ?  <FormRhRelacionCargoCreateAsync popperPlacement={popperPlacement}/>
-                :<FormRhRelacionCargoUpdateAsync  popperPlacement={popperPlacement}/>
+              { operacionCrudRhPersonaMovCtr===1
+              ?  <FormRhVariacionCreateAsync popperPlacement={popperPlacement}/>
+                :<FormRhVariacionUpdateAsync popperPlacement={popperPlacement} />
               }
             </DatePickerWrapper>
 
@@ -160,4 +146,4 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
 
 }
 
-export default DialogRhRelacionCargoInfo
+export default DialogRhVariacionInfo

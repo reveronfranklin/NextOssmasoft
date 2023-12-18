@@ -12,8 +12,10 @@ export interface  IRhRelacionCargoDto{
   apellido :string;
   cedula:number;
   sueldo :number;
-  fechaIni? :string;
-  fechaFin? :string;
+  fechaIniString? :string;
+  fechaFinString? :string;
+  fechaIni? :Date;
+  fechaFin? :Date;
   fechaIniObj:IFechaDto;
   fechaFinObj :IFechaDto;
 

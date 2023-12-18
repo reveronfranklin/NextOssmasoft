@@ -25,6 +25,7 @@ import { rhComunicacionSlice } from './apps/rh-comunicacion'
 import { rhFamiliaresSlice } from './apps/rh-familiares'
 import { rhEducacionSlice } from './apps/rh-educacion'
 import { rhExperienciaSlice } from './apps/rh-experiencia'
+import { rhPersonaMovCtrlSlice } from './apps/rh-persona-mov-ctrl/index';
 
 
 
@@ -52,7 +53,8 @@ export const store = configureStore({
     rhComunicacion:rhComunicacionSlice.reducer,
     rhFamiliares:rhFamiliaresSlice.reducer,
     rhEducacion:rhEducacionSlice.reducer,
-    rhExperiencia:rhExperienciaSlice.reducer
+    rhExperiencia:rhExperienciaSlice.reducer,
+    rhPersonaMovCtrl:rhPersonaMovCtrlSlice.reducer
 
     //nominas:nominaSlice.reducer,
   },

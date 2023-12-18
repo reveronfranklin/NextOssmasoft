@@ -253,7 +253,7 @@ const TableServerSide = () => {
 
   const handleView=  (row : IPreRelacionCargosGetDto)=>{
 
-
+console.log('IPreRelacionCargosGetDto',row)
     dispatch(setPreRelacionCargoSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto

@@ -44,6 +44,8 @@ import { IRhRelacionCargoDto } from 'src/interfaces/rh/i-rh-relacion-cargo-dto'
 import { setOperacionCrudRhRelacionCargo, setRhRelacionCargoSeleccionado, setVerRhRelacionCargoActive } from 'src/store/apps/rh-relacion-cargo'
 import { IFilterByPreRelacionCargoDto } from 'src/interfaces/rh/i-filter-by-pre-relacion-cargo-dto'
 import { fetchDataPersonas, fetchDataTipoNomina } from 'src/store/apps/rh/thunks'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
+import { IFechaDto } from 'src/interfaces/fecha-dto'
 
 
 
@@ -116,6 +118,22 @@ const TableServerSideRhRelacionCargo = () => {
 
   const {preRelacionCargoSeleccionado} = useSelector((state: RootState) => state.preRelacionCargo)
   const {verRhRelacionCargoActive} = useSelector((state: RootState) => state.rhRelacionCargo)
+
+
+
+  const fechaActual = new Date()
+
+  const currentYear  = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
+
+  const currentDay =new Date().getDate();
+  const currentDayString = '00' + currentDay.toString();
+  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+
+  const defaultDateString = fechaActual.toISOString();
+
+
 
   const columns: any = [
     {
@@ -207,7 +225,7 @@ const TableServerSideRhRelacionCargo = () => {
 
   const handleView=  (row : IRhRelacionCargoDto)=>{
 
-
+    console.log('IRhRelacionCargoDto>>>>>',row)
     dispatch(setRhRelacionCargoSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
@@ -368,10 +386,12 @@ const TableServerSideRhRelacionCargo = () => {
         apellido :'',
         cedula:0,
         sueldo :0,
-        fechaFin:'1900-01-01',
-        fechaIni:'1900-01-01',
-        fechaIniObj:{year:'1900',month:'01',day:'01'},
-        fechaFinObj:{year:'1900',month:'01',day:'01'},
+        fechaFin:fechaActual,
+        fechaIni:fechaActual,
+        fechaIniObj:defaultDate,
+        fechaFinObj:defaultDate,
+        fechaIniString:defaultDateString,
+        fechaFinString:defaultDateString,
         codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
         searchText:'',
         tipoNomina:0,

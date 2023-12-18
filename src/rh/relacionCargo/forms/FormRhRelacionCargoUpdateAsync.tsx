@@ -69,8 +69,10 @@ interface FormInputs {
   denominacionCargo: string
   codigoPersona:number
   sueldo: number
-  fechaIni:string;
-  fechaFin: string;
+  fechaIni:Date;
+  fechaFin: Date;
+  fechaIniString:string;
+  fechaFinString: string;
 
 }
 
@@ -140,6 +142,8 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
     sueldo :rhRelacionCargoSeleccionado.sueldo,
     fechaIni:rhRelacionCargoSeleccionado.fechaIni,
     fechaFin:rhRelacionCargoSeleccionado.fechaFin,
+    fechaIniString:rhRelacionCargoSeleccionado.fechaIniString,
+    fechaFinString:rhRelacionCargoSeleccionado.fechaFinString,
     fechaIniObj:rhRelacionCargoSeleccionado.fechaIniObj,
     fechaFinObj :rhRelacionCargoSeleccionado.fechaFinObj,
     codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
@@ -161,19 +165,20 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
   const handlerInicio=(inicio:Date)=>{
 
     console.log(inicio)
-    setValue('fechaIni',inicio.toISOString())
+    setValue('fechaIniString',inicio.toISOString())
+    setValue('fechaIni',inicio)
     const fechaObj:IFechaDto =fechaToFechaObj(inicio);
-
-    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIni:inicio.toISOString(),fechaIniObj:fechaObj};
+    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIni:inicio,fechaIniString:inicio.toISOString(),fechaIniObj:fechaObj};
     dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
 
   }
   const handlerFin=(fin:Date)=>{
 
 
-    setValue('fechaFin',fin.toISOString())
+    setValue('fechaFinString',fin.toISOString())
+    setValue('fechaFin',fin)
     const fechaObj:IFechaDto =fechaToFechaObj(fin);
-    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIni:fin.toISOString(),fechaFinObj:fechaObj};
+    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaFin:fin,fechaFinString:fin.toISOString(),fechaFinObj:fechaObj};
     dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
 
   }
