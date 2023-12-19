@@ -45,39 +45,26 @@ import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentT
 
 
 
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-
 
 // ** Third Party Imports
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import  { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
-import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { IFechaDto } from 'src/interfaces/fecha-dto'
-import { IRhExpLaboralResponseDto } from 'src/interfaces/rh/RhExpLaboralResponseDto'
+
 import { setRhExperienciaSeleccionado, setVerRhExperienciaActive } from 'src/store/apps/rh-experiencia'
-import { IRhExpLaboralDeleteDto } from 'src/interfaces/rh/RhExpLaboralDeleteDto'
-import { IRhExpLaboralUpdateDto } from 'src/interfaces/rh/RhExpLaboralUpdateDto'
+
+import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
+import { IRhPersonasMovControlDeleteDto } from '../../../interfaces/rh/RhPersonasMovControlDeleteDto';
+import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
+import { IRhPersonasMovControlUpdateDto } from 'src/interfaces/rh/RhPersonasMovControlUpdateDto'
+import { setConceptoSeleccionado } from 'src/store/apps/rh'
 
 interface FormInputs {
 
-  codigoExpLaboral: number;
+  codigoPersonaMovCtrl:number
   codigoPersona :number;
-  nombreEmpresa :string;
-  tipoEmpresa :string;
-  cargo:string;
-  fechaDesde:Date;
-  fechaHasta :Date;
-  fechaDesdeString:string;
-  fechaHastaString:string;
-  fechaDesdeObj:IFechaDto;
-  fechaHastaObj :IFechaDto;
-  ultimoSueldo:number;
-  supervisor :string;
-  cargoSupervisor  :string;
-  telefono: string;
-  descripcion  :string;
+  codigoConcepto :number;
+  controlAplica :number;
 
 }
 
@@ -87,15 +74,28 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   // ** States
   const dispatch = useDispatch();
 
-  const listTipoEmpresa=[{id:'G',descripcion:'Gobierno'},{id:'P',descripcion:'Privado'}]
-  const {rhExperienciaSeleccionado} = useSelector((state: RootState) => state.rhExperiencia)
+  const listControlAplica=[{id:1,descripcion:'SI'},{id:0,descripcion:'NO'}]
+  const {rhPersonaMovCtrSeleccionado} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const {conceptos} = useSelector((state: RootState) => state.nomina)
 
 
-  const  getTipoEmpresa=(id:string)=>{
+  const  getControlAplica=(id:number)=>{
 
-    const result = listTipoEmpresa?.filter((elemento)=>{
+    console.log('control aplica',id,popperPlacement)
+    const result = listControlAplica?.filter((elemento)=>{
 
       return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+  const  getConcepto=(id:number)=>{
+
+console.log('Buscar concepto>>>>>>>>',rhPersonaMovCtrSeleccionado.codigoConcepto,conceptos,id)
+    const result = conceptos?.filter((elemento)=>{
+
+      return elemento.codigoConcepto==id;
     });
 
 
@@ -107,33 +107,22 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
 
-
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false);
-  const [tipoEmpresa,setTipoEmpresa] = useState<any>(getTipoEmpresa(rhExperienciaSeleccionado.tipoEmpresa))
+  const [controlAplica,setControlAplica] = useState<any>(getControlAplica(rhPersonaMovCtrSeleccionado.controlAplica))
+  const [concepto,setConcepto] = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto))
 
-  const defaultValues:IRhExpLaboralResponseDto = {
+  const defaultValues:IRhPersonasMovControlResponseDto = {
 
-    codigoExpLaboral:rhExperienciaSeleccionado.codigoExpLaboral,
-    codigoPersona :rhExperienciaSeleccionado.codigoPersona,
-    nombreEmpresa :rhExperienciaSeleccionado.nombreEmpresa,
-    tipoEmpresa :rhExperienciaSeleccionado.tipoEmpresa,
-    ramoId :rhExperienciaSeleccionado.ramoId,
-    cargo:rhExperienciaSeleccionado.cargo,
-    fechaDesde :rhExperienciaSeleccionado.fechaDesde,
-    fechaDesdeString :rhExperienciaSeleccionado.fechaDesdeString,
-    fechaHasta :rhExperienciaSeleccionado.fechaHasta,
-    fechaHastaString :rhExperienciaSeleccionado.fechaDesdeString,
-    fechaDesdeObj:rhExperienciaSeleccionado.fechaDesdeObj,
-    fechaHastaObj:rhExperienciaSeleccionado.fechaHastaObj,
-    ultimoSueldo:rhExperienciaSeleccionado.ultimoSueldo,
-    supervisor :rhExperienciaSeleccionado.supervisor,
-    cargoSupervisor  :rhExperienciaSeleccionado.cargoSupervisor,
-    telefono: rhExperienciaSeleccionado.telefono,
-    descripcion  :rhExperienciaSeleccionado.descripcion
+    codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl,
+    codigoPersona :rhPersonaMovCtrSeleccionado.codigoPersona,
+    codigoConcepto :rhPersonaMovCtrSeleccionado.codigoConcepto,
+    controlAplica :rhPersonaMovCtrSeleccionado.controlAplica,
+    descripcionControlAplica:rhPersonaMovCtrSeleccionado.descripcionControlAplica,
+    descripcionConcepto:rhPersonaMovCtrSeleccionado.descripcionConcepto
 
 
 }
@@ -150,18 +139,27 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
 
 
-  const handlerTipoEmpresa=async (e: any,value:any)=>{
+  const handlerControlAplica=async (e: any,value:any)=>{
 
     if(value!=null){
-      setValue('tipoEmpresa',value.id);
-      setTipoEmpresa(value);
+      setValue('controlAplica',value.id);
+      setControlAplica(value);
 
     }else{
-      setValue('tipoEmpresa','');
+      setValue('controlAplica',0);
 
     }
   }
+  const handlerConceptos =(e: any,value:any)=>{
+    console.log('conceptos',value)
+    if(value){
+      dispatch(setConceptoSeleccionado(value));
+      setConcepto(value);
+      setValue('codigoConcepto',value.codigoConcepto);
+    }
 
+
+  }
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -173,35 +171,19 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     dispatch(setRhExperienciaSeleccionado({}))
   };
 
-  const handlerFechaIni=(desde:Date)=>{
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const familiaresTmp= {...rhExperienciaSeleccionado,fechaDesde:desde,fechaDesdeString:desde.toISOString(),fechaDesdeObj:fechaObj};
-    dispatch(setRhExperienciaSeleccionado(familiaresTmp))
-    setValue('fechaDesde',desde);
-    setValue('fechaDesdeString',desde.toISOString());
-    setValue('fechaDesdeObj',fechaObj);
-  }
-  const handlerFechaFin=(desde:Date)=>{
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const educacionTmp= {...rhExperienciaSeleccionado,fechaHasta:desde,fechaDesdeString:desde.toISOString(),fechaDesdeObj:fechaObj};
-    dispatch(setRhExperienciaSeleccionado(educacionTmp))
-    setValue('fechaHasta',desde);
-    setValue('fechaHastaString',desde.toISOString());
-    setValue('fechaHastaObj',fechaObj);
-  }
 
   const handleDelete = async  () => {
 
     setOpen(false);
-    const deleteEducacion : IRhExpLaboralDeleteDto={
-      codigoExpLaboral:rhExperienciaSeleccionado.codigoExpLaboral
+    const deleteMovControl : IRhPersonasMovControlDeleteDto={
+      codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl
     }
-    const responseAll= await ossmmasofApi.post<any>('/RhExpLaboral/Delete',deleteEducacion);
+    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Delete',deleteMovControl);
     setErrorMessage(responseAll.data.message)
     if(responseAll.data.isValid){
 
-      dispatch(setVerRhExperienciaActive(false))
-      dispatch(setRhExperienciaSeleccionado({}))
+      dispatch(setVerRhPersonaMovCtrActive(false))
+      dispatch(setRhPersonaMovCtrSeleccionado({}))
     }
 
 
@@ -210,32 +192,20 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
-    const updateExperiencia:IRhExpLaboralUpdateDto ={
-            codigoExpLaboral:rhExperienciaSeleccionado.codigoExpLaboral,
-            codigoPersona :rhExperienciaSeleccionado.codigoPersona,
-            nombreEmpresa :data.nombreEmpresa,
-            tipoEmpresa :data.tipoEmpresa,
-            ramoId :0,
-            cargo:data.cargo,
-            fechaDesde :rhExperienciaSeleccionado.fechaDesde,
-            fechaDesdeString :rhExperienciaSeleccionado.fechaDesdeString,
-            fechaHasta :rhExperienciaSeleccionado.fechaHasta,
-            fechaHastaString :rhExperienciaSeleccionado.fechaDesdeString,
-            fechaDesdeObj:rhExperienciaSeleccionado.fechaDesdeObj,
-            fechaHastaObj:rhExperienciaSeleccionado.fechaHastaObj,
-            ultimoSueldo:rhExperienciaSeleccionado.ultimoSueldo,
-            supervisor :data.supervisor,
-            cargoSupervisor  :data.cargoSupervisor,
-            telefono: data.telefono,
-            descripcion  :data.descripcion
+    const updateMovControl:IRhPersonasMovControlUpdateDto ={
+      codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl,
+      codigoPersona :rhPersonaMovCtrSeleccionado.codigoPersona,
+      codigoConcepto :data.codigoConcepto,
+      controlAplica :data.controlAplica,
+
     };
 
-    console.log('updateEducacion',updateExperiencia)
-    const responseAll= await ossmmasofApi.post<any>('/RhExpLaboral/Update',updateExperiencia);
+    console.log('updateEducacion',updateMovControl)
+    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Update',updateMovControl);
 
     if(responseAll.data.isValid){
-      dispatch(setRhExperienciaSeleccionado(responseAll.data.data))
-      dispatch(setVerRhExperienciaActive(false))
+      dispatch(setRhPersonaMovCtrSeleccionado(responseAll.data.data))
+      dispatch(setVerRhPersonaMovCtrActive(false))
       toast.success('Form Submitted')
     }
 
@@ -275,7 +245,7 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   return (
     <Card>
-      <CardHeader title='RH - Modificar Variacion' />
+      <CardHeader title='RH - Modificar Variación' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -284,7 +254,7 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='codigoExpLaboral'
+                  name='codigoPersonaMovCtrl'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
@@ -293,240 +263,54 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                       label='Id'
                       onChange={onChange}
                       placeholder='0'
-                      error={Boolean(errors.codigoExpLaboral)}
-                      aria-describedby='validation-async-codigoExpLaboral'
+                      error={Boolean(errors.codigoPersonaMovCtrl)}
+                      aria-describedby='validation-async-codigoPersonaMovCtrl'
                       disabled
                     />
                   )}
                 />
-                {errors.codigoExpLaboral && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoExpLaboral'>
+                {errors.codigoPersonaMovCtrl && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoPersonaMovCtrl'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
-              {/* nombreInstituto*/}
-              <Grid item sm={6} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='nombreEmpresa'
-                    control={control}
-                    rules={{ minLength:5}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Instituto'
-                        onChange={onChange}
-                        placeholder='Instituto'
-                        error={Boolean(errors.nombreEmpresa)}
-                        aria-describedby='validation-async-instituto'
+
+            <Grid item sm={6} xs={12}>
+
+                  <Autocomplete
+
+                      sx={{ width: 350 }}
+                      options={conceptos}
+                      id='autocomplete-concepto'
+                      value={concepto}
+                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
+                      getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
+                      onChange={handlerConceptos}
+                      renderInput={params => <TextField {...params} label='Conceptos' />}
                       />
-                    )}
-                  />
-                  {errors.nombreEmpresa && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-nombreEmpresa'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-              {/* Tipo Empresa */}
+
+              </Grid>
+
+              {/* Control Aplica */}
               <Grid item sm={4} xs={12}>
 
                 <Autocomplete
 
-                  options={listTipoEmpresa}
-                  value={tipoEmpresa}
+                  options={listControlAplica}
+                  value={controlAplica}
                   id='autocomplete-graduado'
                   isOptionEqualToValue={(option, value) => option.id=== value.id}
                   getOptionLabel={option => option.id + '-' + option.descripcion }
-                  onChange={handlerTipoEmpresa}
-                  renderInput={params => <TextField {...params} label='Tipo Empresa' />}
+                  onChange={handlerControlAplica}
+                  renderInput={params => <TextField {...params} label='Control Aplica' />}
                 />
 
               </Grid>
 
-             {/* nombre*/}
-             <Grid item sm={8} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='cargo'
-                    control={control}
-                    rules={{ minLength:5}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Cargo'
-                        onChange={onChange}
-                        placeholder='Cargo'
-                        error={Boolean(errors.cargo)}
-                        aria-describedby='validation-async-cargo'
-                      />
-                    )}
-                  />
-                  {errors.cargo && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cargo'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
 
 
-
-
-             {/* ultimoSueldo*/}
-             <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='ultimoSueldo'
-                    control={control}
-                    rules={{ minLength:1}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Ultimo Sueldo'
-                        onChange={onChange}
-                        placeholder='ultimoSueldo '
-                        error={Boolean(errors.ultimoSueldo)}
-                        aria-describedby='validation-async-ultimoSueldo'
-                      />
-                    )}
-                  />
-                  {errors.ultimoSueldo && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-ultimoSueldo'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-            {/* supervisor*/}
-            <Grid item sm={6} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='supervisor'
-                    control={control}
-                    rules={{ minLength:1}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Supervisor'
-                        onChange={onChange}
-                        placeholder='supervisor '
-                        error={Boolean(errors.supervisor)}
-                        aria-describedby='validation-async-supervisor'
-                      />
-                    )}
-                  />
-                  {errors.supervisor && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-supervisor'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-               {/* supervisor*/}
-               <Grid item sm={6} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='cargoSupervisor'
-                    control={control}
-                    rules={{ minLength:1}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Cargo Supervisor'
-                        onChange={onChange}
-                        placeholder='Cargo Supervisor '
-                        error={Boolean(errors.cargoSupervisor)}
-                        aria-describedby='validation-async-supervisor'
-                      />
-                    )}
-                  />
-                  {errors.cargoSupervisor && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cargoSupervisor'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-            {/* telefono*/}
-            <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='telefono'
-                    control={control}
-                    rules={{ minLength:1}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Telefono'
-                        onChange={onChange}
-                        placeholder='Telefono'
-                        error={Boolean(errors.telefono)}
-                        aria-describedby='validation-async-telefono'
-                      />
-                    )}
-                  />
-                  {errors.telefono && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-telefono'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-            {/* descripcion*/}
-            <Grid item sm={8} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='descripcion'
-                    control={control}
-                    rules={{ minLength:1}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='Descripcion'
-                        onChange={onChange}
-                        placeholder='Descripcion'
-                        error={Boolean(errors.descripcion)}
-                        aria-describedby='validation-async-descripcion'
-                      />
-                    )}
-                  />
-                  {errors.descripcion && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-descripcion'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-            </Grid>
-
-
-          <Grid item  sm={6} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(rhExperienciaSeleccionado.fechaDesdeObj!)}
-                  id='date-time-picker-fin'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaIni(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha Desde' />}
-                />
-            </Grid>
-            <Grid item  sm={6} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(rhExperienciaSeleccionado.fechaHastaObj!)}
-                  id='date-time-picker-fin'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaFin(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha Hasta' />}
-                />
-            </Grid>
 
 
 
@@ -557,11 +341,11 @@ const FormRhVariacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                 aria-describedby="alert-dialog-description"
               >
                 <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos de Variacion?"}
+                  {"Esta Seguro de Eliminar estos Datos de Variación?"}
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Se eliminaran los datos de Variacion
+                    Se eliminaran los datos de Variación por lo tanto este concepto se considerará en las nominas de este trabajador.
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

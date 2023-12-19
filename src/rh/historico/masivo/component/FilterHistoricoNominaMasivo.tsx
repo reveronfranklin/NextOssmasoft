@@ -111,7 +111,7 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
     const {data} = responseAll;
 
     if(data){
-      console.log('responseAll conceptos por persona',data)
+
       dispatch(setConceptos(data));
 
     }

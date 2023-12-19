@@ -1,7 +1,7 @@
 // ** Redux Imports
 import { createSlice } from '@reduxjs/toolkit'
 
-import { IRhExpLaboralResponseDto } from 'src/interfaces/rh/RhExpLaboralResponseDto';
+import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
 
 
 
@@ -10,8 +10,8 @@ import { IRhExpLaboralResponseDto } from 'src/interfaces/rh/RhExpLaboralResponse
 export const rhPersonaMovCtrlSlice = createSlice({
   name: 'rhPersonaMovCtrl',
   initialState: {
-    rhPersonaMovCtrSeleccionado: {} as IRhExpLaboralResponseDto,
-    listRhPersonaMovCtr:[] as IRhExpLaboralResponseDto[],
+    rhPersonaMovCtrSeleccionado: {} as IRhPersonasMovControlResponseDto,
+    listRhPersonaMovCtr:[] as IRhPersonasMovControlResponseDto[],
     verRhPersonaMovCtrActive:false,
     operacionCrudRhPersonaMovCtr:0,
 

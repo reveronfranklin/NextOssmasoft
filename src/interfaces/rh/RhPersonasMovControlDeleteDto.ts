@@ -1,4 +1,4 @@
-export interface IRhPersonasMovControlUpdateDto{
+export interface IRhPersonasMovControlDeleteDto{
 
   codigoPersonaMovCtrl:number
 

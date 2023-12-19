@@ -21,6 +21,7 @@ import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
 import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setConceptos } from 'src/store/apps/rh';
 
 interface CellType {
   row: IRhPersonasMovControlResponseDto
@@ -131,7 +132,7 @@ const VariacionList = () => {
   const [data, setData] = useState<IRhPersonasMovControlResponseDto[]>([])
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
-
+  const fechaActual = new Date()
 
   /*const handleViewTable=()=>{
     setViewTable(true);
@@ -143,10 +144,21 @@ const VariacionList = () => {
       setLoading(true);
       if(personaSeleccionado.codigoPersona>0){
 
-        const filter={codigoPersona:personaSeleccionado.codigoPersona}
+        const filter={codigoPersona:personaSeleccionado.codigoPersona,desde:fechaActual,hasta:fechaActual}
         const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/GetByPersona',filter);
         console.log(responseAll.data)
         setData(responseAll.data);
+
+        const responseAllConceptos= await ossmmasofApi.get<any>('/RhConceptos/GetAll');
+
+
+        const {data} = responseAllConceptos;
+        console.log('data conceptos',data)
+        if(data){
+
+          dispatch(setConceptos(data));
+
+        }
       }
 
 
