@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, Grid, Typography} from '@mui/material'
+import { Box, Card, CardActions, Grid, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 // ** Icon Imports
 
 import { DataGrid  } from '@mui/x-data-grid';
-
+import Link from 'next/link';
 
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
@@ -137,13 +137,12 @@ const InceList = () => {
         <CardActions>
 
         <Box  m={2} pt={3}>
-          {linkData.length>0 ?
-           <Button variant='contained' href={linkData} size='large' >
-           Descargar Xls
-         </Button> : <div></div>
-        }
-
-        </Box>
+              {linkData.length>0 ?
+              <Link href={linkData}target='_blank' download={linkData} >
+              Descargar Xls
+              </Link>  : <div></div>
+            }
+            </Box>
 
         </CardActions>
 

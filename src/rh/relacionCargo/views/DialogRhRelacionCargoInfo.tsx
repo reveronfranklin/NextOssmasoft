@@ -138,7 +138,7 @@ const DialogRhRelacionCargoInfo = ({ popperPlacement }: { popperPlacement: React
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudRhRelacionCargo===1
+              { operacionCrudRhRelacionCargo===1 || operacionCrudRhRelacionCargo===3
               ?  <FormRhRelacionCargoCreateAsync popperPlacement={popperPlacement}/>
                 :<FormRhRelacionCargoUpdateAsync  popperPlacement={popperPlacement}/>
               }

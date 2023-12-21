@@ -243,7 +243,7 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
               <div>
                 <DatePicker
-
+                  dateFormat="dd/MM/yyyy"
                   selected={dateDesde}
                   id='basic-input-desde'
                   popperPlacement={popperPlacement}
@@ -254,6 +254,7 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
               </div>
               <div>
                 <DatePicker
+                dateFormat="dd/MM/yyyy"
                   selected={dateHasta}
                   id='basic-input-hasta'
                   popperPlacement={popperPlacement}

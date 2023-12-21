@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, Grid, Typography} from '@mui/material'
+import { Box, Card, CardActions, Grid, Typography} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -18,6 +18,7 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
 import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponomina';
 import dayjs from 'dayjs';
 import { RhTmpRetencionesFjpDto } from 'src/interfaces/rh/RhTmpRetencionesFjpDto';
+import Link from 'next/link';
 
 interface CellType {
   row: RhTmpRetencionesFjpDto
@@ -137,13 +138,12 @@ const FjpList = () => {
         <CardActions>
 
         <Box  m={2} pt={3}>
-          {linkData.length>0 ?
-           <Button variant='contained' href={linkData} size='large' >
-           Descargar Xls
-         </Button> : <div></div>
-        }
-
-        </Box>
+              {linkData.length>0 ?
+              <Link href={linkData}target='_blank' download={linkData} >
+              Descargar Xls
+              </Link>  : <div></div>
+            }
+            </Box>
 
         </CardActions>
 
