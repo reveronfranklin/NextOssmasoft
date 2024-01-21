@@ -112,8 +112,9 @@ const SsoList = () => {
 
       }
       setData([]);
+      setLinkData('');
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesSso/GetRetencionesSso',filter);
-      console.log('responseAll',responseAll)
+
       setData(responseAll.data?.data);
       setLinkData(responseAll.data.linkData)
       setLoading(false);

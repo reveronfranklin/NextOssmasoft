@@ -109,6 +109,7 @@ const InceList = () => {
 
       }
       setData([]);
+      setLinkData('');
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesInces/GetRetencionesInces',filter);
       console.log('responseAll',responseAll)
       setData(responseAll.data?.data);

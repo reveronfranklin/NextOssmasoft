@@ -110,6 +110,7 @@ const FjpList = () => {
 
       }
       setData([]);
+      setLinkData('');
       const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesFjp/GetRetencionesFjp',filter);
       console.log('responseAll',responseAll)
       setData(responseAll.data?.data);

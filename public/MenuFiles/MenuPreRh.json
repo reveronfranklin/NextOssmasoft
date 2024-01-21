@@ -70,6 +70,10 @@
         "path": "/apps/rh/proceso"
       },
       {
+        "title": "Tipo Nomina",
+        "path": "/apps/rh/tipoNomina"
+      },
+      {
         "title": "Personas",
         "icon": "mdi:account-outline",
         "children": [

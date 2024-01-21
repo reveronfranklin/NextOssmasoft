@@ -104,6 +104,7 @@ const FaovList = () => {
       if(tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina <= 0) return;
       setData([]);
       setLoading(true);
+      setLinkData('');
       const filter:IFilterFechaTipoNomina={
         fechaDesde:dayjs(fechaDesde).format('DD/MM/YYYY') ,
         fechaHasta:dayjs(fechaHasta).format('DD/MM/YYYY') ,
