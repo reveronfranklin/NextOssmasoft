@@ -83,17 +83,6 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
 
   const listTipoPago =[{id:'D',descripcion:'Deposito'},{id:'E',descripcion:'Efectivo'}]
 
-  /*const  getTipoPersonal=(id:number)=>{
-
-    if(id==0) return defaultCargo;
-    const result = listTipoPersonal.filter((elemento)=>{
-
-      return elemento.descripcionId==id;
-    });
-
-    return result[0];
-  } */
-
   const  getTipoPago=(id:string)=>{
 
     const result = listTipoPago?.filter((elemento)=>{
