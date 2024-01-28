@@ -88,9 +88,20 @@ const ConceptosList = () => {
 
 
   }
+
+  const handleSet=  (row : IRhConceptosResponseDto)=>{
+
+    console.log('concepto seleccionado',row)
+    dispatch(setRhConceptosSeleccionado(row))
+
+  }
   const handleDoubleClick=(row:any)=>{
 
     handleView(row.row)
+}
+const handleClick=(row:any)=>{
+
+  handleSet(row.row)
 }
   const handleAdd=  ()=>{
 
@@ -228,6 +239,7 @@ const ConceptosList = () => {
                   columns={columns}
                   rows={data}
                   onRowDoubleClick={(row) => handleDoubleClick(row)}
+                  onRowClick={(row) => handleClick(row)}
 
                   />
 

@@ -29,7 +29,7 @@ if(dateObject && dateObject !== undefined){
 
   return date;
 }else{
-  return new Date();;
+  return null;
 }
 
 

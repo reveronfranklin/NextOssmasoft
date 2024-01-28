@@ -40,7 +40,7 @@ import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
+import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Tab} from '@mui/material'
 
 
 
@@ -57,6 +57,8 @@ import { IRhTiposNominaDeleteDto } from 'src/interfaces/rh/TipoNomina/RhTiposNom
 import { IRhConceptosUpdateDto } from 'src/interfaces/rh/Conceptos/RhConceptosUpdateDto'
 import { setRhConceptosSeleccionado, setVerRhConceptosActive } from 'src/store/apps/rh-conceptos'
 import { IRhTiposNominaResponseDto } from 'src/interfaces/rh/TipoNomina/RhTiposNominaResponseDto'
+import { TabContext, TabList, TabPanel } from '@mui/lab'
+import ConceptosAcumuladoList from 'src/rh/conceptosAcumulado/views/ConceptosAcumuladoList'
 
 interface FormInputs {
   codigoConcepto:number,
@@ -191,6 +193,8 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   const [puc,setPuc] = useState<any>(getPuc(rhConceptosSeleccionado.codigoPuc));
   const [dedusible,setDedusible] = useState<any>(getSiNo(rhConceptosSeleccionado.dedusible));
   const [automatico,setAutomatico] = useState<any>(getSiNo(rhConceptosSeleccionado.automatico));
+
+  const [valueTab, setValueTab] = useState('1');
 
   const defaultValues = {
 
@@ -357,6 +361,11 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
   };
 
 
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValueTab(newValue);
+  };
+
   const onSubmit = async (data:FormInputs) => {
 
 
@@ -381,29 +390,27 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
     };
 
     console.log('updateDto',updateDto)
-    const responseAll= await ossmmasofApi.post<any>('/RhConceptos/Update',updateDto);
+    try {
+        const responseAll= await ossmmasofApi.post<any>('/RhConceptos/Update',updateDto);
 
-    if(responseAll.data.isValid){
-      dispatch(setRhConceptosSeleccionado(responseAll.data.data))
-      dispatch(setVerRhConceptosActive(false))
-    }
-    setErrorMessage(responseAll.data.message)
-    setLoading(false)
-    toast.success('Form Submitted')
+        if(responseAll.data.isValid){
+          dispatch(setRhConceptosSeleccionado(responseAll.data.data))
+          dispatch(setVerRhConceptosActive(false))
+        }
+        setErrorMessage(responseAll.data.message)
+        setLoading(false)
+        toast.success('Form Submitted')
+      } catch (error) {
+          console.log('error',error);
+          setLoading(false)
+      }
+
   }
   useEffect(() => {
 
     const getData = async () => {
       setLoading(true);
       console.log(popperPlacement);
-
-      /*const filterBanco={descripcionId:0,tituloId:18}
-      const responseBanco= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterBanco);
-      dispatch(setListRhBancos(responseBanco.data))
-
-      const filterTipoCuenta={descripcionId:0,tituloId:19}
-      const responseTipoCuenta= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterTipoCuenta);
-      dispatch(setListRhTipoCuenta(responseTipoCuenta.data))*/
 
       setLoading(false);
     };
@@ -742,6 +749,23 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
               {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
         </form>
+        <Divider   component="li" />
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={valueTab}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Acumulado" value="1" />
+            <Tab label="Formula" value="2" />
+
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+          <ConceptosAcumuladoList></ConceptosAcumuladoList>
+        </TabPanel>
+        <TabPanel value="2">Formula</TabPanel>
+
+      </TabContext>
+    </Box>
       </CardContent>
     </Card>
   )
