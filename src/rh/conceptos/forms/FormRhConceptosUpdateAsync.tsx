@@ -59,6 +59,8 @@ import { setRhConceptosSeleccionado, setVerRhConceptosActive } from 'src/store/a
 import { IRhTiposNominaResponseDto } from 'src/interfaces/rh/TipoNomina/RhTiposNominaResponseDto'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import ConceptosAcumuladoList from 'src/rh/conceptosAcumulado/views/ConceptosAcumuladoList'
+import ConceptosFormulaList from 'src/rh/conceptosFormula/views/ConceptosFormulaList'
+import ConceptosPUCList from 'src/rh/conceptosPUC/views/ConceptosPUCList'
 
 interface FormInputs {
   codigoConcepto:number,
@@ -756,13 +758,19 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <Tab label="Acumulado" value="1" />
             <Tab label="Formula" value="2" />
+            <Tab label="PUC" value="3" />
 
           </TabList>
         </Box>
         <TabPanel value="1">
           <ConceptosAcumuladoList></ConceptosAcumuladoList>
         </TabPanel>
-        <TabPanel value="2">Formula</TabPanel>
+        <TabPanel value="2">
+          <ConceptosFormulaList></ConceptosFormulaList>
+        </TabPanel>
+        <TabPanel value="3">
+          <ConceptosPUCList></ConceptosPUCList>
+        </TabPanel>
 
       </TabContext>
     </Box>

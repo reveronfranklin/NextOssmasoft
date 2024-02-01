@@ -197,6 +197,17 @@ const FormRhConceptosAcumulaCreateAsync = ({ popperPlacement }: { popperPlacemen
 
 
   }
+  const handlerFechaHasta=(hasta:Date)=>{
+
+    const dateIsValid = dayjs(hasta).isValid();
+    if(dateIsValid){
+      const fechaObj:IFechaDto =fechaToFechaObj(hasta);
+      const presupuestoTmp= {...rhConceptoAcumuladoSeleccionado,fechaHastaString:hasta.toISOString(),fechaHastaObj:fechaObj};
+      dispatch(setRhConceptosAcumuladoSeleccionado(presupuestoTmp))
+      setValue('fechaHastaString',hasta.toISOString());
+    }
+
+  }
   const handleClearDesde=()=>{
 
      setValue('fechaDesdeString','');
@@ -215,17 +226,7 @@ const FormRhConceptosAcumulaCreateAsync = ({ popperPlacement }: { popperPlacemen
  }
 
 
-  const handlerFechaHasta=(hasta:Date)=>{
 
-    const dateIsValid = dayjs(hasta).isValid();
-    if(dateIsValid){
-      const fechaObj:IFechaDto =fechaToFechaObj(hasta);
-      const presupuestoTmp= {...rhConceptoAcumuladoSeleccionado,fechaHastaString:hasta.toISOString(),fechaHastaObj:fechaObj};
-      dispatch(setRhConceptosAcumuladoSeleccionado(presupuestoTmp))
-      setValue('fechaHastaString',hasta.toISOString());
-    }
-
-  }
 
 
   const handleDelete = async  () => {
@@ -397,36 +398,28 @@ const FormRhConceptosAcumulaCreateAsync = ({ popperPlacement }: { popperPlacemen
           </Grid>
 
             <Grid item  sm={3} xs={12}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <DatePicker
+                    selected={ getDateByObject(rhConceptoAcumuladoSeleccionado.fechaDesdeObj!)}
+                    id='date-time-picker-desde'
+                    dateFormat='dd/MM/yyyy'
+                    popperPlacement={popperPlacement}
+                    onChange={(date: Date) => handlerFechaDesde(date)}
+                    placeholderText='Click to seleccionar Fecha'
+                    customInput={<CustomInput label='Fecha Desde' />}
+                    />
+                { rhConceptoAcumuladoSeleccionado.fechaDesdeObj
+                    ?
+                    <Tooltip title='Clear'>
+                      <IconButton  color='primary' size='small' onClick={() => handleClearDesde()}>
+                      <Icon icon='mdi:file-remove-outline' fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
 
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <DatePicker
-                  selected={ getDateByObject(rhConceptoAcumuladoSeleccionado.fechaDesdeObj!)}
-                  id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaDesde(date)}
-                  placeholderText='Click to seleccionar Fecha'
-                  customInput={<CustomInput label='Fecha Desde' />}
-                  />
-              { rhConceptoAcumuladoSeleccionado.fechaDesdeObj
-                  ?
-                  <Tooltip title='Clear'>
-                    <IconButton  color='primary' size='small' onClick={() => handleClearDesde()}>
-                    <Icon icon='mdi:file-remove-outline' fontSize={20} />
-                    </IconButton>
-                  </Tooltip>
-
-                    :<div></div>
-              }
-            </Box>
-
-
-
+                      :<div></div>
+                }
+              </Box>
             </Grid>
-
-
-
-
             <Grid item  sm={3} xs={12}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <DatePicker

@@ -29,6 +29,8 @@ import { rhPersonaMovCtrlSlice } from './apps/rh-persona-mov-ctrl/index';
 import { rhTipoNominaSlice } from './apps/rh-tipoNomina'
 import { rhConceptosSlice } from './apps/rh-conceptos'
 import { rhConceptosAcumuladoSlice } from './apps/rh-conceptos-acumulado'
+import { rhConceptosFormulaSlice } from './apps/rh-conceptos-formula'
+import { rhConceptosPUCSlice } from './apps/rh-conceptos-PUC'
 
 
 
@@ -60,7 +62,9 @@ export const store = configureStore({
     rhPersonaMovCtrl:rhPersonaMovCtrlSlice.reducer,
     rhTipoNomina:rhTipoNominaSlice.reducer,
     rhConceptos:rhConceptosSlice.reducer,
-    rhConceptosAcumulado:rhConceptosAcumuladoSlice.reducer
+    rhConceptosAcumulado:rhConceptosAcumuladoSlice.reducer,
+    rhConceptosFormula:rhConceptosFormulaSlice.reducer,
+    rhConceptosPUC:rhConceptosPUCSlice.reducer
 
   },
   middleware: getDefaultMiddleware =>

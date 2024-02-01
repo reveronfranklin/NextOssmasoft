@@ -35,9 +35,12 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 // ** Third Party Imports
 import { ReactDatePickerProps } from 'react-datepicker'
 
-import FormRhConceptosCreateAsync from '../forms/FormRhConceptosCreateAsync'
-import FormRhConceptosUpdateAsync from '../forms/FormRhConceptosUpdateAsync'
-import { setRhConceptosSeleccionado, setVerRhConceptosActive } from 'src/store/apps/rh-conceptos'
+
+import FormRhConceptosFormulaCreateAsync from '../forms/FormRhConceptosFormulaCreateAsync'
+import FormRhConceptosFormulaUpdateAsync from '../forms/FormRhConceptosFormulaUpdateAsync'
+
+import { setRhConceptosFormulaSeleccionado, setVerRhConceptosFormulaActive } from 'src/store/apps/rh-conceptos-formula'
+import { IRhConceptosFormulaResponseDto } from 'src/interfaces/rh/ConceptosFormula/RhConceptosFormulaResponseDto'
 
 
 // ** Custom Component Imports
@@ -51,41 +54,41 @@ const Transition = forwardRef(function Transition(
 
 
 
-const DialogRhConceptosInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
+const DialogRhConceptoFormulaInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
 
 
   // ** States
   const dispatch = useDispatch();
 
-  //const {operacionCrudRhAdministrativas,verRhAdministrativasActive} = useSelector((state: RootState) => state.rhAdministrativos)
+  const {operacionCrudRhConceptosFormula,verRhConceptosFormulaActive} = useSelector((state: RootState) => state.rhConceptosFormula)
+  const {rhConceptosSeleccionado} = useSelector((state: RootState) => state.rhConceptos)
 
-  const {operacionCrudRhConceptos,verRhConceptosActive} = useSelector((state: RootState) => state.rhConceptos)
+
   const handleSetShow= (active:boolean)=>{
 
     if(active==false){
 
+      const defaultValues:IRhConceptosFormulaResponseDto = {
 
-      const defaultValues = {
-
-
-        codigo :'',
-        codigoTipoNomina:0,
-        denominacion:'',
-        descripcion :'',
-        tipoConcepto:'',
-        moduloId :0,
-        codigoPuc:0,
-        status :'',
-        frecuenciaId :0,
-        dedusible :0,
-        automatico :0
-
+        codigoFormulaConcepto :0,
+        codigoConcepto:rhConceptosSeleccionado.codigoConcepto,
+        porcentaje:0,
+        montoTope:0,
+        porcentajePatronal:0,
+        tipoSueldo:'',
+        tipoSueldoDescripcion:'',
+        fechaDesde:null,
+        fechaDesdeString:'',
+        fechaDesdeObj:null,
+        fechaHasta:null,
+        fechaHastaString :'',
+        fechaHastaObj :null,
 
       }
-      dispatch(setRhConceptosSeleccionado(defaultValues));
+      dispatch(setRhConceptosFormulaSeleccionado(defaultValues));
 
     }
-    dispatch(setVerRhConceptosActive(active))
+    dispatch(setVerRhConceptosFormulaActive(active))
 
 
   }
@@ -101,7 +104,8 @@ const DialogRhConceptosInfo = ({ popperPlacement }: { popperPlacement: ReactDate
 
         <Dialog
           fullWidth
-          open={verRhConceptosActive}
+
+          open={verRhConceptosFormulaActive}
           maxWidth='lg'
           scroll='body'
           onClose={() => handleSetShow(false)}
@@ -118,9 +122,9 @@ const DialogRhConceptosInfo = ({ popperPlacement }: { popperPlacement: ReactDate
             </IconButton>
 
             <DatePickerWrapper>
-              { operacionCrudRhConceptos===1
-              ?  <FormRhConceptosCreateAsync popperPlacement={popperPlacement}/>
-                :<FormRhConceptosUpdateAsync popperPlacement={popperPlacement} />
+              { operacionCrudRhConceptosFormula===1
+              ?  <FormRhConceptosFormulaCreateAsync popperPlacement={popperPlacement}/>
+                :<FormRhConceptosFormulaUpdateAsync popperPlacement={popperPlacement} />
               }
             </DatePickerWrapper>
 
@@ -140,4 +144,4 @@ const DialogRhConceptosInfo = ({ popperPlacement }: { popperPlacement: ReactDate
 
 }
 
-export default DialogRhConceptosInfo
+export default DialogRhConceptoFormulaInfo
