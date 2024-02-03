@@ -39,7 +39,7 @@ import { ReactDatePickerProps } from 'react-datepicker'
 import { IFechaDto } from '../../../interfaces/fecha-dto';
 import FormRhPersonaUpdateAsync from '../forms/FormRhPersonaUpdateAsync'
 import FormRhPersonaCreateAsync from '../forms/FormRhPersonaCreateAsync'
-import { setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
+import { setPersonaSeleccionado, setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
@@ -122,7 +122,9 @@ const DialogRhPersonasInfo = ({ popperPlacement }: { popperPlacement: ReactDateP
 
 
 
-      dispatch(setPersonasDtoSeleccionado(defaultValues));
+     dispatch(setPersonasDtoSeleccionado(defaultValues));
+     dispatch(setPersonaSeleccionado(defaultValues));
+
 
     }
     dispatch(setVerRhPersonasActive(active))

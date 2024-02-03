@@ -32,6 +32,8 @@ export const nominaSlice = createSlice({
     operacionCrudRhPersonas:0,
     listPaises: [] as ISelectListDescriptiva[],
     listEstados: [] as ISelectListDescriptiva[],
+    listTipoIdentificacion: [] as ISelectListDescriptiva[],
+    listEstadoCivil: [] as ISelectListDescriptiva[],
 
   },
   reducers: {
@@ -117,6 +119,12 @@ export const nominaSlice = createSlice({
     setListEstados:(state,action)=>{
       state.listEstados=action.payload
     },
+    setListTipoIdentificacion:(state,action)=>{
+      state.listTipoIdentificacion=action.payload
+    },
+    setListEstadoCivil:(state,action)=>{
+      state.listEstadoCivil=action.payload
+    },
 
   },
 
@@ -141,5 +149,7 @@ export const {startLoadingNomina,
               setOperacionCrudRhPersonas,
               setListPaises,
               setListEstados,
-              setTipoNominaSeleccionado
+              setTipoNominaSeleccionado,
+              setListTipoIdentificacion,
+              setListEstadoCivil
             } = nominaSlice.actions;

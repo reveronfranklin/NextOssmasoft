@@ -13,8 +13,8 @@ export interface IPersonaDto{
   nacionalidad:string;
   sexo:string;
   edad:number;
-  fechaNacimiento:Date;
-  fechaNacimientoString:string;
+  fechaNacimiento?:Date;
+  fechaNacimientoString?:string;
   fechaNacimientoObj?:IFechaDto;
   paisNacimientoId :number;
   estadoNacimientoId:number;

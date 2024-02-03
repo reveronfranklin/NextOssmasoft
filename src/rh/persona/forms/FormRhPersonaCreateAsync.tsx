@@ -1,8 +1,10 @@
 // ** React Imports
+// ** React Imports
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
+
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
@@ -46,8 +48,7 @@ import { Autocomplete, Box} from '@mui/material'
 
 import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
 
-import { setListRhBancos, setListRhTipoCuenta, setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos'
-import { IRhAdministrativosUpdateDto } from 'src/interfaces/rh/i-rh-administrativos-update-dto'
+import { setListRhBancos, setListRhTipoCuenta } from 'src/store/apps/rh-administrativos'
 
 
 import { getDateByObject, monthByIndex } from 'src/utilities/ge-date-by-object'
@@ -60,17 +61,36 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { setListEstadoCivil, setListTipoIdentificacion, setPersonaSeleccionado, setPersonasDtoSeleccionado, setVerRhPersonasActive } from 'src/store/apps/rh'
+import { IRhPersonaUpdateDto } from 'src/interfaces/rh/RhPersonaUpdateDto'
+
+//import { styled } from '@mui/material/styles'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
-import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
 
 interface FormInputs {
-  codigoAdministrativo:number,
-  fechaIngreso:string,
-  tipoPago :string,
-  bancoId :number,
-  tipoCuentaId :number,
-  noCuenta :string,
+  codigoPersona :number;
+  cedula :number;
+  nombre:string;
+  apellido:string;
+  nacionalidad:string;
+  sexo:string;
+  edad:number;
+  fechaNacimiento:Date;
+  fechaNacimientoString:string;
+  fechaNacimientoObj:IFechaDto;
+  paisNacimientoId:number;
+  estadoNacimientoId:number;
+  numeroGacetaNacional:string;
+  fechaGacetaNacional:string;
+  estadoCivilId:number;
+  estatura:number;
+  peso:number;
+  manoHabil :string;
+  status :string;
+  identificacionId :number;
+  numeroIdentificacion :number;
 
 }
 
@@ -81,9 +101,14 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const dispatch = useDispatch();
 
 
-  const {rhAdministrativoSeleccionado,listRhBancos,listRhTipoCuenta} = useSelector((state: RootState) => state.rhAdministrativos)
+  const {personasDtoSeleccionado,listEstados,listPaises,listTipoIdentificacion,listEstadoCivil} = useSelector((state: RootState) => state.nomina)
 
-  const listTipoPago =[{id:'D',descripcion:'Deposito'},{id:'E',descripcion:'Efectivo'}]
+
+  const listNacionalidad =[{id:'V',descripcion:'Venezolado'},{id:'E',descripcion:'Extranjero'}]
+  const listSexo =[{id:'M',descripcion:'Masculino'},{id:'F',descripcion:'Femenino'}]
+  const listManoHabil =[{id:'D',descripcion:'Derecha'},{id:'I',descripcion:'Izquierda'}]
+  const listStatus =[{id:'A',descripcion:'Activo'},{id:'E',descripcion:'Egresado'},{id:'S',descripcion:'Suspendido'}]
+
   const fechaActual = new Date()
 
   const currentYear  = new Date().getFullYear();
@@ -94,21 +119,9 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const currentDayString = '00' + currentDay.toString();
   const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
   const defaultDateString = fechaActual.toISOString();
+  const  getNacionalidad=(id:string)=>{
 
-  const  getTipoPago=(id:string)=>{
-
-    const result = listTipoPago?.filter((elemento)=>{
-
-      return elemento.id==id;
-    });
-
-
-    return result[0];
-  }
-
-  const  getBanco=(id:number)=>{
-
-    const result = listRhBancos?.filter((elemento)=>{
+    const result = listNacionalidad?.filter((elemento)=>{
 
       return elemento.id==id;
     });
@@ -117,9 +130,76 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     return result[0];
   }
 
-  const  getTipoCuenta=(id:number)=>{
+  const  getSexo=(id:string)=>{
 
-    const result = listRhTipoCuenta?.filter((elemento)=>{
+    const result = listSexo?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+  const  getManoHabil=(id:string)=>{
+
+
+
+    const result = listManoHabil?.filter((elemento)=>{
+
+      return elemento.id==id;
+
+    });
+
+
+    return result[0];
+  }
+
+  const  getStatus=(id:string)=>{
+
+    const result = listStatus?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+  const  getEstado=(id:number)=>{
+
+    const result = listEstados?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+  const  getPais=(id:number)=>{
+
+    const result = listEstados?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+
+  const  getTipoIdentificacion=(id:number)=>{
+
+    const result = listTipoIdentificacion?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+
+
+  const  getEstadoCivil=(id:number)=>{
+
+    const result = listEstadoCivil?.filter((elemento)=>{
 
       return elemento.id==id;
     });
@@ -133,20 +213,51 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  const [banco,setBanco] = useState<ISelectListDescriptiva>(getBanco(rhAdministrativoSeleccionado.bancoId))
-  const [tipoCuenta,setTipoCuenta] = useState<ISelectListDescriptiva>(getTipoCuenta(rhAdministrativoSeleccionado.tipoCuentaId))
-  const [tipoPago,setTipoPago] = useState<any>(getTipoPago(rhAdministrativoSeleccionado.tipoPago))
+  const [nacionalidad,setNacionalidad] = useState<any>(getNacionalidad(personasDtoSeleccionado.nacionalidad));
+  const [sexo,setSexo] = useState<any>(getSexo(personasDtoSeleccionado.sexo))
+  const [manoHabil,setManoHabil] = useState<any>(getManoHabil(personasDtoSeleccionado.manoHabil))
+  const [status,setStatus] = useState<any>(getStatus(personasDtoSeleccionado.status))
+  const [estado,setEstado] = useState<any>(getEstado(personasDtoSeleccionado.estadoNacimientoId))
+  const [pais,setPais] = useState<any>(getPais(personasDtoSeleccionado.paisNacimientoId))
+  const [tipoIdentificacion,setTipoIdentificacion] = useState<any>(getTipoIdentificacion(personasDtoSeleccionado.identificacionId))
+  const [estadoCivil,setEstadoCivil] = useState<any>(getEstadoCivil(personasDtoSeleccionado.estadoCivilId))
 
+  //const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
+  //const [base64String, setBase64String] = useState<any>('')
+  //const [inputValue, setInputValue] = useState<string>('')
+
+  //const [rowData, setRowData] = useState<ArrayBuffer>()
   const defaultValues = {
-      codigoAdministrativo:rhAdministrativoSeleccionado.codigoAdministrativo,
-      fechaIngreso:rhAdministrativoSeleccionado.fechaIngreso,
-      tipoPago :rhAdministrativoSeleccionado.tipoPago,
-      bancoId :rhAdministrativoSeleccionado.bancoId,
-      tipoCuentaId :rhAdministrativoSeleccionado.tipoCuentaId,
-      noCuenta :rhAdministrativoSeleccionado.noCuenta,
+
+    codigoPersona :personasDtoSeleccionado.codigoPersona,
+    cedula :personasDtoSeleccionado.cedula,
+    nombre:personasDtoSeleccionado.nombre,
+    apellido:personasDtoSeleccionado.apellido,
+    nacionalidad:personasDtoSeleccionado.nacionalidad,
+    sexo:personasDtoSeleccionado.sexo,
+    edad:personasDtoSeleccionado.edad,
+    fechaNacimiento:personasDtoSeleccionado.fechaNacimiento,
+    fechaNacimientoString:personasDtoSeleccionado.fechaNacimientoString,
+    fechaNacimientoObj:personasDtoSeleccionado.fechaNacimientoObj,
+    paisNacimientoId:personasDtoSeleccionado.paisNacimientoId,
+    estadoNacimientoId:personasDtoSeleccionado.estadoNacimientoId,
+    numeroGacetaNacional:personasDtoSeleccionado.numeroGacetaNacional,
+    fechaGacetaNacional:personasDtoSeleccionado.fechaGacetaNacional,
+    estadoCivilId:personasDtoSeleccionado.estadoCivilId,
+    estatura:personasDtoSeleccionado.estatura,
+    peso:personasDtoSeleccionado.peso,
+    manoHabil :personasDtoSeleccionado.manoHabil,
+    status :personasDtoSeleccionado.status,
+    identificacionId :personasDtoSeleccionado.identificacionId,
+    numeroIdentificacion :personasDtoSeleccionado.numeroIdentificacion
 
 
   }
+
+
+
+
+
 
   // ** Hook
   const {
@@ -157,55 +268,162 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   } = useForm<FormInputs>({ defaultValues })
 
 
-
-  const handlerBanco=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setErrorMessage('');
-      setValue('bancoId',value.id);
-      setBanco(value);
-
-    }else{
-      setValue('bancoId',0);
-
-    }
-  }
-  const handlerTipoCuenta=async (e: any,value:any)=>{
+  const handlerTipoIdentificacion=async (e: any,value:any)=>{
 
     if(value!=null){
-      setErrorMessage('');
-      setValue('tipoCuentaId',value.id);
-      setTipoCuenta(value);
+      setValue('identificacionId',value.id);
+      setTipoIdentificacion(value);
+
     }else{
-      setValue('tipoCuentaId',0);
+      setValue('identificacionId',0);
 
     }
   }
 
-
-  const handlerTipoPago=async (e: any,value:any)=>{
+  const handlerNacionalidad=async (e: any,value:any)=>{
 
     if(value!=null){
-      setErrorMessage('');
-      setValue('tipoPago',value.id);
-      setTipoPago(value);
+      setValue('nacionalidad',value.id);
+      setNacionalidad(value);
+
     }else{
-      setValue('tipoPago','');
+      setValue('nacionalidad','');
+
+    }
+  }
+
+  const handlerSexo=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('sexo',value.id);
+      setSexo(value);
+
+    }else{
+      setValue('sexo','');
+
+    }
+  }
+
+  const handlerManoHabil=async (e: any,value:any)=>{
+   console.log(value.id)
+    if(value!=null){
+      setValue('manoHabil',value.id);
+      setManoHabil(value);
+
+    }else{
+      setValue('manoHabil','');
+
+    }
+  }
+  const handlerStatus=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('status',value.id);
+      setStatus(value);
+
+    }else{
+      setValue('status','');
+
+    }
+  }
+  const handlerEstado=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('estadoNacimientoId',value.id);
+      setEstado(value);
+
+    }else{
+      setValue('estadoNacimientoId',0);
+
+    }
+  }
+  const handlerPais=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('paisNacimientoId',value.id);
+      setPais(value);
+
+    }else{
+      setValue('paisNacimientoId',0);
 
     }
   }
 
 
+  const handlerEstadoCivil=async (e: any,value:any)=>{
 
+    if(value!=null){
+      setValue('estadoCivilId',value.id);
+      setEstadoCivil(value);
 
-  const handlerFechaDesde=(desde:Date)=>{
+    }else{
+      setValue('estadoCivilId',0);
+
+    }
+  }
+
+  const handlerFechaNacimiento=(desde:Date)=>{
 
 
     const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...rhAdministrativoSeleccionado,fechaIngreso:desde.toISOString(),fechaIngresoObj:fechaObj};
-    dispatch(setRhAdministrativoSeleccionado(presupuestoTmp))
-    setValue('fechaIngreso',desde.toISOString());
+    const presupuestoTmp= {...personasDtoSeleccionado,fechaNacimientoString:desde.toISOString(),fechaNacimientoObj:fechaObj,fechaNacimiento:desde};
+    dispatch(setPersonasDtoSeleccionado(presupuestoTmp))
+    setValue('fechaNacimiento',desde);
+    setValue('fechaNacimientoString',desde.toISOString());
+    setValue('fechaNacimientoObj',fechaObj);
   }
+
+
+
+
+
+  const onSubmit = async (data:FormInputs) => {
+    setLoading(true)
+
+    const updatePersona:IRhPersonaUpdateDto= {
+      codigoPersona :personasDtoSeleccionado.codigoPersona,
+      cedula :data.cedula,
+      nombre:data.nombre,
+      apellido:data.apellido,
+      nacionalidad:data.nacionalidad,
+      sexo:data.sexo,
+      edad:data.edad,
+      fechaNacimiento:personasDtoSeleccionado.fechaNacimientoString!,
+      paisNacimientoId:data.paisNacimientoId,
+      estadoNacimientoId:data.estadoNacimientoId,
+      numeroGacetaNacional:data.numeroGacetaNacional,
+      fechaGacetaNacional:data.fechaGacetaNacional,
+      estadoCivilId:data.estadoCivilId,
+      estatura:data.estatura,
+      peso:data.peso,
+      manoHabil :data.manoHabil,
+      status :data.status,
+      identificacionId :data.identificacionId,
+      numeroIdentificacion :data.numeroIdentificacion,
+      data:'',
+      nombreArchivo:''
+
+    };
+    console.log('updatePersona',updatePersona)
+    const responseAll= await ossmmasofApi.post<any>('/RhPersona/Create',updatePersona);
+
+    if(responseAll.data.isValid){
+      dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
+      dispatch(setVerRhPersonasActive(false))
+      handlerPersona(responseAll.data.data);
+      await fetchDataPersonasDto(dispatch);
+    }
+
+
+    setErrorMessage(responseAll.data.message)
+
+    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    //await sleep(2000)
+
+    setLoading(false)
+    toast.success('Form Submitted')
+  }
+
 
   const handlerPersona= async (value:any)=>{
 
@@ -258,63 +476,6 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
 
 
-  const onSubmit = async (data:FormInputs) => {
-
-
-    if(data.bancoId<=0){
-      setErrorMessage('Banco Invalido');
-
-      return;
-    }
-    if(data.tipoCuentaId<=0){
-      setErrorMessage('Tipo de Cuenta Invalida');
-
-      return;
-    }
-    const tipo =['D','E'];
-    if(!tipo.includes(data.tipoPago)){
-
-      setErrorMessage('Tipo de Pago Invalido');
-
-      return;
-    }
-    if(data.noCuenta.length!=20){
-      setErrorMessage('Cuenta Invalida(20 Digitos)');
-
-      return;
-    }
-
-    setLoading(true)
-
-    const updateAdministrativo:IRhAdministrativosUpdateDto= {
-      codigoAdministrativo :rhAdministrativoSeleccionado.codigoAdministrativo,
-      codigoPersona:rhAdministrativoSeleccionado.codigoPersona,
-      bancoId :data.bancoId,
-      tipoCuentaId:data.tipoCuentaId,
-      tipoPago :data.tipoPago,
-      noCuenta :data.noCuenta,
-      fechaIngreso :data.fechaIngreso,
-
-
-    };
-    console.log('updateAdministrativo',updateAdministrativo)
-    const responseAll= await ossmmasofApi.post<any>('/RhAdministrativos/Create',updateAdministrativo);
-
-    if(responseAll.data.isValid){
-      dispatch(setRhAdministrativoSeleccionado(responseAll.data.data))
-      dispatch(setVerRhAdministrativasActive(false))
-      handlerPersona(responseAll.data.data)
-    }
-
-
-    setErrorMessage(responseAll.data.message)
-
-    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-    //await sleep(2000)
-
-    setLoading(false)
-    toast.success('Form Submitted')
-  }
   useEffect(() => {
 
     const getData = async () => {
@@ -327,6 +488,15 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       const filterTipoCuenta={descripcionId:0,tituloId:19}
       const responseTipoCuenta= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterTipoCuenta);
       dispatch(setListRhTipoCuenta(responseTipoCuenta.data))
+
+      const filterTipoIdentificacion={descripcionId:0,tituloId:67}
+      const responseTipoIdentificacion= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterTipoIdentificacion);
+      dispatch(setListTipoIdentificacion(responseTipoIdentificacion.data))
+
+      const filterEstadoCivil={descripcionId:0,tituloId:17}
+      const responseEstadoCivil= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterEstadoCivil);
+      dispatch(setListEstadoCivil(responseEstadoCivil.data))
+
 
       setLoading(false);
     };
@@ -342,7 +512,7 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
   return (
     <Card>
-      <CardHeader title='RH - Modificar Banco' />
+      <CardHeader title='RH - Crear Persona' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -351,7 +521,7 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='codigoAdministrativo'
+                  name='codigoPersona'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
@@ -360,112 +530,309 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                       label='Id'
                       onChange={onChange}
                       placeholder='0'
-                      error={Boolean(errors.codigoAdministrativo)}
-                      aria-describedby='validation-async-codigoAdministrativo'
+                      error={Boolean(errors.codigoPersona)}
+                      aria-describedby='validation-async-codigoPersona'
                       disabled
                     />
                   )}
                 />
-                {errors.codigoAdministrativo && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoAdministrativo'>
+                {errors.codigoPersona && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoPersona'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
-           {/* Tipo de Pago */}
-           <Grid item sm={10} xs={12}>
+              {/* cedula*/}
+              <Grid item sm={4} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='cedula'
+                    control={control}
+                    rules={{ minLength:5}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='Cedula'
+                        onChange={onChange}
+                        placeholder='noCuenta'
+                        error={Boolean(errors.cedula)}
+                        aria-describedby='validation-async-cedula'
+                      />
+                    )}
+                  />
+                  {errors.cedula && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cedula'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+            </Grid>
+            {/* Tipo Identificacion */}
+            <Grid item sm={2} xs={12}>
+              <Autocomplete
+
+                options={listTipoIdentificacion}
+                value={tipoIdentificacion}
+                id='autocomplete-tipoIdentificacion'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option =>  option.descripcion }
+                onChange={handlerTipoIdentificacion}
+                renderInput={params => <TextField {...params} label='Identificacion' />}
+              />
+            </Grid>
+              {/* numeroIdentificacion*/}
+              <Grid item sm={4} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='numeroIdentificacion'
+                    control={control}
+                    rules={{ minLength:6}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='Rif'
+                        onChange={onChange}
+                        placeholder='Rif'
+                        error={Boolean(errors.numeroIdentificacion)}
+                        aria-describedby='validation-async-numeroIdentificacion'
+                      />
+                    )}
+                  />
+                  {errors.numeroIdentificacion && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-numeroIdentificacion'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+            </Grid>
+             {/* nombre*/}
+             <Grid item sm={6} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='nombre'
+                    control={control}
+                    rules={{ minLength:5}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='Nombre'
+                        onChange={onChange}
+                        placeholder='nombre'
+                        error={Boolean(errors.cedula)}
+                        aria-describedby='validation-async-nombre'
+                      />
+                    )}
+                  />
+                  {errors.nombre && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-nombre'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+            </Grid>
+             {/* apellido*/}
+             <Grid item sm={6} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='apellido'
+                    control={control}
+                    rules={{ minLength:5}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='apellido'
+                        onChange={onChange}
+                        placeholder='nombre'
+                        error={Boolean(errors.apellido)}
+                        aria-describedby='validation-async-apellido'
+                      />
+                    )}
+                  />
+                  {errors.apellido && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-apellido'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+            </Grid>
+
+           {/* Nacionalidad */}
+           <Grid item sm={4} xs={12}>
 
               <Autocomplete
 
-                    options={listTipoPago}
-                    value={tipoPago}
-                    id='autocomplete-padre'
+                    options={listNacionalidad}
+                    value={nacionalidad}
+                    id='autocomplete-nacionalidad'
                     isOptionEqualToValue={(option, value) => option.id=== value.id}
                     getOptionLabel={option => option.id + '-' + option.descripcion }
-                    onChange={handlerTipoPago}
-                    renderInput={params => <TextField {...params} label='Tipo Pago' />}
+                    onChange={handlerNacionalidad}
+                    renderInput={params => <TextField {...params} label='Nacionalidad' />}
                   />
 
           </Grid>
+          {/* Sexo */}
+          <Grid item sm={4} xs={12}>
 
-          {/* Banco */}
-          <Grid item sm={12} xs={12}>
+          <Autocomplete
+
+                options={listSexo}
+                value={sexo}
+                id='autocomplete-sexo'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion }
+                onChange={handlerSexo}
+                renderInput={params => <TextField {...params} label='Sexo' />}
+              />
+
+          </Grid>
+           {/* Estado Civil */}
+          <Grid item sm={4} xs={12}>
+
+              <Autocomplete
+
+              options={listEstadoCivil}
+              value={estadoCivil}
+              id='autocomplete-estadoCivil'
+              isOptionEqualToValue={(option, value) => option.id=== value.id}
+              getOptionLabel={option => option.id + '-' + option.descripcion }
+              onChange={handlerEstadoCivil}
+              renderInput={params => <TextField {...params} label='Estado Civil' />}
+              />
+
+          </Grid>
+           {/* Fecha Nacimiento */}
+          <Grid item  sm={4} xs={12}>
+                <DatePicker
+
+                  selected={ getDateByObject(personasDtoSeleccionado.fechaNacimientoObj!)}
+                  id='date-time-picker-nacimiento'
+                  dateFormat='dd/MM/yyyy'
+                  popperPlacement={popperPlacement}
+                  onChange={(date: Date) => handlerFechaNacimiento(date)}
+                  placeholderText='Click to select a date'
+                  customInput={<CustomInput label='Fecha Nacimiento' />}
+                />
+          </Grid>
+          {/* Pais */}
+          <Grid item sm={8} xs={12}>
 
 
           <Autocomplete
 
-              options={listRhBancos}
-              value={banco}
-              id='autocomplete-bancos'
+              options={listPaises}
+              value={pais}
+              id='autocomplete-pais'
               isOptionEqualToValue={(option, value) => option.id=== value.id}
               getOptionLabel={option => option.id + '-' + option.descripcion }
-              onChange={handlerBanco}
-              renderInput={params => <TextField {...params} label='Bancos' />}
+              onChange={handlerPais}
+              renderInput={params => <TextField {...params} label='Pais' />}
             />
 
 
           </Grid>
-
-
-
-          {/* Tipo Cuenta */}
-
-          <Grid item sm={12} xs={12}>
+          {/* Estado */}
+          <Grid item sm={4} xs={12}>
 
             <Autocomplete
 
-                  options={listRhTipoCuenta}
-                  value={tipoCuenta}
-                  id='autocomplete-padre'
+                  options={listEstados}
+                  value={estado}
+                  id='autocomplete-estado'
                   isOptionEqualToValue={(option, value) => option.id=== value.id}
                   getOptionLabel={option => option.id + '-' + option.descripcion }
-                  onChange={handlerTipoCuenta}
-                  renderInput={params => <TextField {...params} label='Tipo Cuenta' />}
+                  onChange={handlerEstado}
+                  renderInput={params => <TextField {...params} label='Estado' />}
                 />
 
           </Grid>
-          <Grid item  sm={3} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(rhAdministrativoSeleccionado.fechaIngresoObj!)}
-                  id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaDesde(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha Ingreso' />}
-                />
-            </Grid>
-
-
-
-            {/* descripcion*/}
-            <Grid item sm={12} xs={12}>
+            {/* estatura*/}
+            <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='noCuenta'
+                  name='estatura'
                   control={control}
-                  rules={{ maxLength:20,minLength:20}}
+                  rules={{ min:1}}
                   render={({ field: { value, onChange } }) => (
                     <TextField
-                      value={value || ''}
-                      label='noCuenta'
+                      value={value || 0}
+                      label='estatura'
                       onChange={onChange}
-                      placeholder='noCuenta'
-                      error={Boolean(errors.noCuenta)}
-                      aria-describedby='validation-async-noCuenta'
+                      placeholder='estatura'
+                      error={Boolean(errors.estatura)}
+                      aria-describedby='validation-async-estatura'
                     />
                   )}
                 />
-                {errors.noCuenta && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-noCuenta'>
+                {errors.estatura && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-estatura'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
+            {/* peso*/}
+            <Grid item sm={4} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='peso'
+                  control={control}
+                  rules={{ min:10}}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value || 0}
+                      label='peso'
+                      onChange={onChange}
+                      placeholder='peso'
+                      error={Boolean(errors.estatura)}
+                      aria-describedby='validation-async-peso'
+                    />
+                  )}
+                />
+                {errors.peso && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-peso'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* Mano Habil */}
+            <Grid item sm={4} xs={12}>
 
+
+            <Autocomplete
+
+                options={listManoHabil}
+                value={manoHabil}
+                id='autocomplete-manoHabil'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion }
+                onChange={handlerManoHabil}
+                renderInput={params => <TextField {...params} label='Mano Habil' />}
+              />
+
+
+            </Grid>
+
+            {/* Estatus */}
+            <Grid item sm={8} xs={12}>
+
+
+            <Autocomplete
+
+                options={listStatus}
+                value={status}
+                id='autocomplete-status'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion }
+                onChange={handlerStatus}
+                renderInput={params => <TextField {...params} label='Estatus' />}
+              />
+
+
+
+            </Grid>
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
@@ -481,6 +848,7 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 ) : null}
                 Guardar
               </Button>
+
 
             </Grid>
 

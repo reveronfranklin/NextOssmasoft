@@ -102,7 +102,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const dispatch = useDispatch();
 
 
-  const {personasDtoSeleccionado,listEstados,listPaises} = useSelector((state: RootState) => state.nomina)
+  const {personasDtoSeleccionado,listEstados,listPaises,listTipoIdentificacion,listEstadoCivil} = useSelector((state: RootState) => state.nomina)
 
 
   const listNacionalidad =[{id:'V',descripcion:'Venezolado'},{id:'E',descripcion:'Extranjero'}]
@@ -190,6 +190,29 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     return result[0];
   }
 
+  const  getTipoIdentificacion=(id:number)=>{
+
+    const result = listTipoIdentificacion?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+
+
+  const  getEstadoCivil=(id:number)=>{
+
+    const result = listEstadoCivil?.filter((elemento)=>{
+
+      return elemento.id==id;
+    });
+
+
+    return result[0];
+  }
+
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
@@ -207,6 +230,10 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const [base64String, setBase64String] = useState<any>('')
   const [inputValue, setInputValue] = useState<string>('')
   const [rowData, setRowData] = useState<ArrayBuffer>()
+  const [tipoIdentificacion,setTipoIdentificacion] = useState<any>(getTipoIdentificacion(personasDtoSeleccionado.identificacionId))
+  const [estadoCivil,setEstadoCivil] = useState<any>(getEstadoCivil(personasDtoSeleccionado.estadoCivilId))
+
+
   const defaultValues = {
 
     codigoPersona :personasDtoSeleccionado.codigoPersona,
@@ -339,6 +366,20 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
 
 
+  const handlerEstadoCivil=async (e: any,value:any)=>{
+
+    if(value!=null){
+      setValue('estadoCivilId',value.id);
+      setEstadoCivil(value);
+
+    }else{
+      setValue('estadoCivilId',0);
+
+    }
+  }
+
+
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -359,15 +400,19 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     setValue('fechaNacimientoString',desde.toISOString());
     setValue('fechaNacimientoObj',fechaObj);
   }
+  const handlerTipoIdentificacion=async (e: any,value:any)=>{
 
-  /* handlerFechaGacetaNacional=(desde:Date)=>{
+    if(value!=null){
+      setValue('identificacionId',value.id);
+      setTipoIdentificacion(value);
+
+    }else{
+      setValue('identificacionId',0);
+
+    }
+  }
 
 
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...personasDtoSeleccionado,fechaGacetaNacional:desde.toISOString(),fechaGacetaNacionalObj:fechaObj};
-    dispatch(setPersonasDtoSeleccionado(presupuestoTmp))
-    setValue('fechaGacetaNacional',desde.toISOString());
-  }*/
 
   const handleInputImageChange = async  (file: ChangeEvent) => {
     const reader = new FileReader()
@@ -423,6 +468,8 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
 
+
+
     const updatePersona:IRhPersonaUpdateDto= {
       codigoPersona :personasDtoSeleccionado.codigoPersona,
       cedula :data.cedula,
@@ -431,7 +478,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       nacionalidad:data.nacionalidad,
       sexo:data.sexo,
       edad:data.edad,
-      fechaNacimiento:personasDtoSeleccionado.fechaNacimientoString,
+      fechaNacimiento:personasDtoSeleccionado.fechaNacimientoString!,
       paisNacimientoId:data.paisNacimientoId,
       estadoNacimientoId:data.estadoNacimientoId,
       numeroGacetaNacional:data.numeroGacetaNacional,
@@ -510,6 +557,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       };
 
       dispatch(setPersonaSeleccionado(personaDefault));
+      dispatch(setPersonasDtoSeleccionado(personaDefault));
 
     }
 
@@ -603,7 +651,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
               </FormControl>
             </Grid>
               {/* cedula*/}
-              <Grid item sm={10} xs={12}>
+              <Grid item sm={4} xs={12}>
                 <FormControl fullWidth>
                   <Controller
                     name='cedula'
@@ -622,6 +670,44 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                   />
                   {errors.cedula && (
                     <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cedula'>
+                      This field is required
+                    </FormHelperText>
+                  )}
+                </FormControl>
+            </Grid>
+               {/* Tipo Identificacion */}
+               <Grid item sm={2} xs={12}>
+              <Autocomplete
+
+                options={listTipoIdentificacion}
+                value={tipoIdentificacion}
+                id='autocomplete-tipoIdentificacion'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option =>  option.descripcion }
+                onChange={handlerTipoIdentificacion}
+                renderInput={params => <TextField {...params} label='Identificacion' />}
+              />
+            </Grid>
+              {/* numeroIdentificacion*/}
+              <Grid item sm={4} xs={12}>
+                <FormControl fullWidth>
+                  <Controller
+                    name='numeroIdentificacion'
+                    control={control}
+                    rules={{ minLength:6}}
+                    render={({ field: { value, onChange } }) => (
+                      <TextField
+                        value={value || ''}
+                        label='Rif'
+                        onChange={onChange}
+                        placeholder='Rif'
+                        error={Boolean(errors.numeroIdentificacion)}
+                        aria-describedby='validation-async-numeroIdentificacion'
+                      />
+                    )}
+                  />
+                  {errors.numeroIdentificacion && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-numeroIdentificacion'>
                       This field is required
                     </FormHelperText>
                   )}
@@ -708,6 +794,21 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
               />
 
           </Grid>
+            {/* Estado Civil */}
+            <Grid item sm={4} xs={12}>
+
+              <Autocomplete
+
+              options={listEstadoCivil}
+              value={estadoCivil}
+              id='autocomplete-estadoCivil'
+              isOptionEqualToValue={(option, value) => option.id=== value.id}
+              getOptionLabel={option => option.id + '-' + option.descripcion }
+              onChange={handlerEstadoCivil}
+              renderInput={params => <TextField {...params} label='Estado Civil' />}
+              />
+
+            </Grid>
            {/* Fecha Nacimiento */}
           <Grid item  sm={4} xs={12}>
                 <DatePicker
@@ -831,7 +932,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
             </Grid>
 
             {/* Estatus */}
-            <Grid item sm={12} xs={12}>
+            <Grid item sm={8} xs={12}>
 
 
             <Autocomplete
@@ -842,7 +943,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 isOptionEqualToValue={(option, value) => option.id=== value.id}
                 getOptionLabel={option => option.id + '-' + option.descripcion }
                 onChange={handlerStatus}
-                renderInput={params => <TextField {...params} label='Staus' />}
+                renderInput={params => <TextField {...params} label='Estatus' />}
               />
 
 
@@ -863,7 +964,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                 ) : null}
                 Guardar
               </Button>
-              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
+              <Button disabled variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
                 Eliminar
               </Button>
               <Dialog

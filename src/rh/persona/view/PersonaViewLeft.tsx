@@ -129,6 +129,53 @@ const PersonaViewLeft = () => {
     dispatch(setVerRhPersonasActive(true));
     dispatch(setOperacionCrudRhPersonas(2));
   }
+  const handleEditClickOpenCreate = () => {
+    //setOpenEdit(true)
+    const defaultValues:IPersonaDto = {
+
+      codigoPersona :0,
+      cedula:0,
+      nombre:'',
+      apellido:'',
+      nombreCompleto:'',
+      nacionalidad:'',
+      sexo:'',
+      edad:0,
+      paisNacimientoId:0,
+      estadoNacimientoId:0,
+      numeroGacetaNacional:'',
+      estadoCivilId:0,
+      descripcionEstadoCivil:'',
+      estatura:0,
+      peso:0,
+      manoHabil:'',
+      extra1:'',
+      extra2:'',
+      extra3:'',
+      status:'',
+      descripcionStatus:'',
+      identificacionId:0,
+      numeroIdentificacion:0,
+      fechaNacimiento:undefined,
+      fechaNacimientoString:'',
+      fechaNacimientoObj:undefined,
+      codigoCargo:0,
+      descripcionCargo:'',
+      codigoIcp:0,
+      descripcionIcp:'',
+      avatar:'',
+      sueldo:0,
+      fechaGacetaNacional:defaultDateString,
+      fechaGacetaNacionalObj:defaultDate
+    }
+
+
+
+
+    dispatch(setPersonasDtoSeleccionado(defaultValues));
+    dispatch(setVerRhPersonasActive(true));
+    dispatch(setOperacionCrudRhPersonas(1));
+  }
   const handleEditClose = () => setOpenEdit(false)
 
 
@@ -394,11 +441,16 @@ const PersonaViewLeft = () => {
 
 
           <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-              Edit
-            </Button>
-            <Button color='error' variant='outlined' onClick={() => setSuspendDialogOpen(true)}>
-              Suspend
+              {personaSeleccionado && personaSeleccionado.cedula>0? (
+                  <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
+                  Editar
+                </Button>
+                ) : (
+                  <div></div>
+                )}
+
+            <Button  color="success" variant='contained'  sx={{ mr: 2 }} onClick={handleEditClickOpenCreate}>
+              Crear
             </Button>
           </CardActions>
 
