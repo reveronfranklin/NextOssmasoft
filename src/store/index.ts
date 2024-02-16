@@ -31,6 +31,8 @@ import { rhConceptosSlice } from './apps/rh-conceptos'
 import { rhConceptosAcumuladoSlice } from './apps/rh-conceptos-acumulado'
 import { rhConceptosFormulaSlice } from './apps/rh-conceptos-formula'
 import { rhConceptosPUCSlice } from './apps/rh-conceptos-PUC'
+import { rhProcesosSlice } from './apps/rh-procesos'
+import { rhProcesosDetalleSlice } from './apps/rh-procesosDetalle'
 
 
 
@@ -64,7 +66,9 @@ export const store = configureStore({
     rhConceptos:rhConceptosSlice.reducer,
     rhConceptosAcumulado:rhConceptosAcumuladoSlice.reducer,
     rhConceptosFormula:rhConceptosFormulaSlice.reducer,
-    rhConceptosPUC:rhConceptosPUCSlice.reducer
+    rhConceptosPUC:rhConceptosPUCSlice.reducer,
+    rhProceso:rhProcesosSlice.reducer,
+    rhProcesoDetalle:rhProcesosDetalleSlice.reducer
 
   },
   middleware: getDefaultMiddleware =>

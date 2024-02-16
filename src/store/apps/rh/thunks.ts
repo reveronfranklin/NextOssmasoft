@@ -105,15 +105,16 @@ export const fetchDataPersonasDto = async(dispatch:any) => {
 
 
     const {data,status} = responseAll;
+    console.log('fetchDataPersonasDto data>>>>>>>>>>>>>',data.data)
+    await dispatch(setPersonasDto(data.data));
 
-
-    if(data.isValid){
+    /*if(data.isValid){
 
       dispatch(setPersonasDto(data.data));
 
     }else{
       dispatch(setPersonasDto([]));
-    }
+    }*/
 
 
     return {data,status}

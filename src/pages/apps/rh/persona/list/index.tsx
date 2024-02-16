@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 //import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
@@ -35,20 +35,20 @@ import { getInitials } from 'src/@core/utils/get-initials'
 import axios from 'axios'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
 import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Table Components Imports
 
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
-import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
 import { monthByIndex } from 'src/utilities/ge-date-by-object';
+import Spinner from 'src/@core/components/spinner';
+import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks';
 
 
 
@@ -60,7 +60,7 @@ interface UserStatusType {
 
 
 interface CellType {
-  row: IPersonaDto
+  row: IListSimplePersonaDto
 }
 
 const personaStatusObj: UserStatusType = {
@@ -72,7 +72,7 @@ const personaStatusObj: UserStatusType = {
 
 
 // ** renders client column
-const renderClient = (row: IPersonaDto) => {
+const renderClient = (row: IListSimplePersonaDto) => {
   if (row.avatar.length) {
     return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 30, height: 30 }} />
   } else {
@@ -190,8 +190,7 @@ const UserList = () => {
   const [addUserOpen, setAddUserOpen] = useState<boolean>(false)
 
   // ** Hooks
-  const dispatch = useDispatch<AppDispatch>()
-  const store = useSelector((state: RootState) => state.nomina)
+
 
   const router = useRouter();
   const fechaActual = new Date()
@@ -204,7 +203,9 @@ const UserList = () => {
   const currentDayString = '00' + currentDay.toString();
   const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
   const defaultDateString = fechaActual.toISOString();
-
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
 
   const handlerPersona= async   (value:any)=>{
     console.log('value en handlerPersona en list',value.row)
@@ -265,12 +266,18 @@ const UserList = () => {
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
+      setLoading(true)
 
-      const data = await  fetchDataPersonasDto(dispatch);
+      const data= await fetchDataPersonasDto(dispatch);
+      console.log('data persona',data)
       if(data?.data.isValid===false){
         toast.error(data?.data.message)
+      }else{
+        setPersonas(data?.data.data)
+        console.log('personas',personas)
+        console.log('data persona',data?.data.data)
       }
-      console.log('fetchDataPersonasDto en list',store.personasDto)
+      setLoading(false)
 
     };
 
@@ -292,19 +299,29 @@ const UserList = () => {
           <CardHeader title='Personas' />
 
           <Divider />
-       {/*    <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} /> */}
-          <DataGrid
-            autoHeight
-            rows={store.personasDto}
-            getRowId={(row) => row.codigoPersona}
-            columns={columns}
-            checkboxSelection
-            pageSize={pageSize}
-            disableSelectionOnClick
-            onRowDoubleClick={(row) => handlerPersona(row)}
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
-          />
+
+          {
+                loading && personas && personas.length>0 ?   <Spinner sx={{ height: '100%' }} />
+                :
+                <Box sx={{ height: 500 }}>
+                <DataGrid
+                    autoHeight
+                    rows={personas}
+                    getRowId={(row) => row.codigoPersona!}
+                    columns={columns}
+                    checkboxSelection
+                    pageSize={pageSize}
+                    disableSelectionOnClick
+                    onRowDoubleClick={(row) => handlerPersona(row)}
+                    rowsPerPageOptions={[10, 25, 50]}
+                    onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
+                  />
+
+                </Box>
+
+              }
+
+
         </Card>
       </Grid>
 

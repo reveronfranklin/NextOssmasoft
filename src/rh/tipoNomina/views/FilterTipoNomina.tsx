@@ -26,7 +26,7 @@ const FilterTipoNomina = () => {
 
 
   const handleTiposNomina= (e: any,value:any)=>{
-    console.log('handler tipo nomina',value)
+
     if(value!=null){
       dispatch(setRhTipoNominaSeleccionado(value));
 

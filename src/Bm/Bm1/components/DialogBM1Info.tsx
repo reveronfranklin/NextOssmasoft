@@ -1,5 +1,5 @@
 // ** React Imports
-import { Ref, forwardRef, ReactElement} from 'react'
+import { Ref, forwardRef, ReactElement, useEffect, useState} from 'react'
 
 // ** MUI Imports
 
@@ -33,9 +33,15 @@ import { useSelector } from 'react-redux'
 // ** Third Party Imports
 
 
-import QRCode from "react-qr-code";
+//import QRCode from "react-qr-code";
+
 import { setBm1Seleccionado, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
-import { Typography } from '@mui/material'
+import { Divider, ImageListItemBar, Typography } from '@mui/material'
+
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { IBmBienesFotoResponseDto } from 'src/interfaces/Bm/BmBienesFoto/BmBienesFotoResponseDto'
 
 // ** Custom Component Imports
 
@@ -54,8 +60,7 @@ const DialogBm1Info = ()  => {
   // ** States
   const dispatch = useDispatch();
   const {verBmBm1Active,bmBm1Seleccionado} = useSelector((state: RootState) => state.bmBm1)
-
-
+  const [data, setData] = useState<IBmBienesFotoResponseDto[]>([])
   const handleSetShow= (active:boolean)=>{
 
     if(active==false){
@@ -69,6 +74,32 @@ const DialogBm1Info = ()  => {
 
   }
 
+  useEffect(() => {
+
+    const getData = async () => {
+
+      if(bmBm1Seleccionado.numeroPlaca != undefined){
+        console.log('INICIANDO GETDATA BMBIENESFOTOS POST')
+        console.log(bmBm1Seleccionado.numeroPlaca)
+        const filter={
+          numeroPlaca:bmBm1Seleccionado.numeroPlaca
+        }
+        const responseAll= await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca',filter);
+        console.log('data responseAll bienes foto>>>>',responseAll.data.data)
+
+        setData(responseAll.data.data)
+        console.log(data)
+
+      }
+
+
+    };
+
+    getData();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bmBm1Seleccionado]);
+
 
 
 
@@ -81,7 +112,7 @@ const DialogBm1Info = ()  => {
         <Dialog
           fullWidth
           open={verBmBm1Active}
-          maxWidth='md'
+          maxWidth='lg'
           scroll='body'
           onClose={() => handleSetShow(false)}
           TransitionComponent={Transition}
@@ -95,15 +126,36 @@ const DialogBm1Info = ()  => {
             >
               <Icon icon='mdi:close' />
             </IconButton>
-            { bmBm1Seleccionado.numeroPlaca
+            <Divider></Divider>
+            { bmBm1Seleccionado.numeroPlaca && data
               ?
                <>
-                <QRCode
+                  {/*                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "80%", width: "80%" }}
                   value={bmBm1Seleccionado.numeroPlaca + '-' + bmBm1Seleccionado.articulo + '-' + bmBm1Seleccionado.unidadTrabajo}
                   viewBox={`0 0 128 128`}
-                  />
+                  /> */}
+
+                  <ImageList sx={{ width: 700, height: 700 }} cols={2} rowHeight={164}>
+                        {data.map((item) => (
+                          <ImageListItem key={item.patch}>
+
+                            <img
+                               srcSet={`${item.patch}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                               src={`${item.patch}?w=164&h=164&fit=crop&auto=format`}
+                              alt={item.titulo}
+                              loading="lazy"
+                            />
+                            <ImageListItemBar
+                              title={item.titulo}
+                              subtitle={<span>{item.numeroPlaca}</span>}
+                              position="below"
+                            />
+
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
                   <Typography variant='body2' sx={{ color: 'text.primary' }}>
                   {bmBm1Seleccionado.numeroPlaca} - {bmBm1Seleccionado.articulo}- {bmBm1Seleccionado.unidadTrabajo}
                      </Typography>

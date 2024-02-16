@@ -79,7 +79,7 @@ const DialogRhPersonasInfo = ({ popperPlacement }: { popperPlacement: ReactDateP
   const defaultDateString = fechaActual.toISOString();
   const handleSetShow= (active:boolean)=>{
 
-    if(active==false){
+    if(active==false && operacionCrudRhPersonas==1){
 
       const defaultValues:IPersonaDto = {
 

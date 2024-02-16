@@ -1,12 +1,26 @@
 [
   {
-    "title": "Bienes Municipales",
+    "title": "Bienes",
     "icon": "mdi:file-document-outline",
     "children": [
       {
         "title": "BM1",
         "path": "/apps/Bm/Bm1"
+      },
+
+      {
+        "title": "Maestros",
+        "icon": "mdi:account-outline",
+        "children": [
+
+          {
+            "title": "Bienes",
+            "path": "/apps/Bm/Bm1"
+          }
+
+        ]
       }
+
     ]
   }
 ]

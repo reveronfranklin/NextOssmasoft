@@ -753,27 +753,27 @@ const FormRhConceptosUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
         </form>
         <Divider   component="li" />
         <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={valueTab}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Acumulado" value="1" />
-            <Tab label="Formula" value="2" />
-            <Tab label="PUC" value="3" />
+          <TabContext value={valueTab}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="Acumulado" value="1" />
+                <Tab label="Formula" value="2" />
+                <Tab label="PUC" value="3" />
 
-          </TabList>
+              </TabList>
+            </Box>
+            <TabPanel value="1">
+              <ConceptosAcumuladoList></ConceptosAcumuladoList>
+            </TabPanel>
+            <TabPanel value="2">
+              <ConceptosFormulaList></ConceptosFormulaList>
+            </TabPanel>
+            <TabPanel value="3">
+              <ConceptosPUCList></ConceptosPUCList>
+            </TabPanel>
+
+          </TabContext>
         </Box>
-        <TabPanel value="1">
-          <ConceptosAcumuladoList></ConceptosAcumuladoList>
-        </TabPanel>
-        <TabPanel value="2">
-          <ConceptosFormulaList></ConceptosFormulaList>
-        </TabPanel>
-        <TabPanel value="3">
-          <ConceptosPUCList></ConceptosPUCList>
-        </TabPanel>
-
-      </TabContext>
-    </Box>
       </CardContent>
     </Card>
   )

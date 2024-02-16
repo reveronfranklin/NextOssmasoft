@@ -60,8 +60,9 @@ import DialogRhPersonasInfo from './DialogRhPersonasInfo'
 //import QRCode from "react-qr-code";
 import toast from 'react-hot-toast';
 import Spinner from 'src/@core/components/spinner';
-import { IFechaDto } from 'src/interfaces/fecha-dto'
-import { monthByIndex } from 'src/utilities/ge-date-by-object'
+
+//import { IFechaDto } from 'src/interfaces/fecha-dto'
+//import { monthByIndex } from 'src/utilities/ge-date-by-object'
 
 interface ColorsType {
   [key: string]: ThemeColor
@@ -110,16 +111,17 @@ const PersonaViewLeft = () => {
   const dispatch = useDispatch();
   const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
-  const fechaActual = new Date()
 
-  const currentYear  = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
+  //const fechaActual = new Date()
 
-  const currentDay =new Date().getDate();
-  const currentDayString = '00' + currentDay.toString();
-  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
-  const defaultDateString = fechaActual.toISOString();
+  //const currentYear  = new Date().getFullYear();
+  //const currentMonth = new Date().getMonth();
+  //const currentMonthString ='00' + monthByIndex(currentMonth).toString();
+
+  //const currentDay =new Date().getDate();
+  //const currentDayString = '00' + currentDay.toString();
+  //const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  //const defaultDateString = fechaActual.toISOString();
 
   //const router = useRouter();
 
@@ -165,14 +167,15 @@ const PersonaViewLeft = () => {
       descripcionIcp:'',
       avatar:'',
       sueldo:0,
-      fechaGacetaNacional:defaultDateString,
-      fechaGacetaNacionalObj:defaultDate
+      fechaGacetaNacional:'',
+      fechaGacetaNacionalObj:undefined
     }
 
 
 
 
     dispatch(setPersonasDtoSeleccionado(defaultValues));
+    dispatch(setPersonaSeleccionado(defaultValues));
     dispatch(setVerRhPersonasActive(true));
     dispatch(setOperacionCrudRhPersonas(1));
   }
@@ -180,7 +183,7 @@ const PersonaViewLeft = () => {
 
 
   const handlerPersona= async (e: any,value:any)=>{
-    console.log('value en handler persona*****',value)
+
 
 
 
@@ -219,9 +222,9 @@ const PersonaViewLeft = () => {
         descripcionStatus:'',
         nacionalidad:'',
         sexo:'',
-        fechaNacimiento:fechaActual,
-        fechaNacimientoString:defaultDateString,
-        fechaNacimientoObj:defaultDate,
+        fechaNacimiento:undefined,
+        fechaNacimientoString:'',
+        fechaNacimientoObj:undefined,
         email:'',
         paisNacimiento:'',
         edad:0,
@@ -244,11 +247,13 @@ const PersonaViewLeft = () => {
 
       setLoading(true);
       const data= await fetchDataPersonasDto(dispatch);
-
+      console.log('data persona',data)
       if(data?.data.isValid===false){
         toast.error(data?.data.message)
       }else{
         setPersonas(data?.data.data)
+        console.log('personas',personas)
+        console.log('data persona',data?.data.data)
       }
 
       const filterClave={clave:''}
@@ -324,7 +329,7 @@ const PersonaViewLeft = () => {
               /> */}
 
             <Typography variant='h6' sx={{ mb: 4 }}>
-              {personaSeleccionado.nombreCompleto}
+              {personaSeleccionado.nombreCompleto} {personaSeleccionado.avatar}
             </Typography>
             <CustomChip
               skin='light'

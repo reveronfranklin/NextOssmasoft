@@ -387,7 +387,8 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const handleClose = () => {
     setOpen(false);
     dispatch(setVerRhPersonasActive(false))
-    dispatch(setPersonasDtoSeleccionado({}))
+
+   // dispatch(setPersonasDtoSeleccionado({}))
   };
 
   const handlerFechaNacimiento=(desde:Date)=>{

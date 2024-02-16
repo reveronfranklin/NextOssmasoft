@@ -26,6 +26,10 @@
           {
             "title": "Conceptos",
             "path": "/apps/rh/conceptos"
+          },
+          {
+            "title": "Procesos Nómina",
+            "path": "/apps/rh/procesos"
           }
 
         ]

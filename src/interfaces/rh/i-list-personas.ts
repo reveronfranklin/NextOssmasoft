@@ -16,9 +16,9 @@ export interface IListSimplePersonaDto{
   descripcionStatus:string;
   nacionalidad:string;
   sexo:string;
-  fechaNacimiento:Date;
-  fechaNacimientoString:string;
-  fechaNacimientoObj:IFechaDto;
+  fechaNacimiento?:Date;
+  fechaNacimientoString?:string;
+  fechaNacimientoObj?:IFechaDto;
 
   edad:number
   paisNacimientoId:number;

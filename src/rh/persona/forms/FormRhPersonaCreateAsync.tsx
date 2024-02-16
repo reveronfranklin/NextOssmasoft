@@ -101,7 +101,8 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const dispatch = useDispatch();
 
 
-  const {personasDtoSeleccionado,listEstados,listPaises,listTipoIdentificacion,listEstadoCivil} = useSelector((state: RootState) => state.nomina)
+  const {personasDtoSeleccionado,personaSeleccionado,listEstados,listPaises,listTipoIdentificacion,listEstadoCivil}
+  = useSelector((state: RootState) => state.nomina)
 
 
   const listNacionalidad =[{id:'V',descripcion:'Venezolado'},{id:'E',descripcion:'Extranjero'}]
@@ -409,9 +410,10 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
     if(responseAll.data.isValid){
       dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
-      dispatch(setVerRhPersonasActive(false))
-      handlerPersona(responseAll.data.data);
+
+      await handlerPersona(responseAll.data.data);
       await fetchDataPersonasDto(dispatch);
+      dispatch(setVerRhPersonasActive(false))
     }
 
 
@@ -431,9 +433,11 @@ const FormRhPersonaCreateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
       const filter={codigoPersona:value.codigoPersona}
       const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
-      console.log('handlerPersona',responseAll.data)
+
       dispatch(setPersonaSeleccionado(responseAll.data));
       dispatch(setPersonasDtoSeleccionado(responseAll.data));
+      console.log ('personasDtoSeleccionado',personasDtoSeleccionado)
+      console.log ('personaSeleccionado',personaSeleccionado)
     }else{
 
       const personaDefault:IListSimplePersonaDto ={
