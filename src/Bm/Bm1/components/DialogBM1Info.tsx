@@ -79,7 +79,7 @@ const DialogBm1Info = ()  => {
     const getData = async () => {
 
       if(bmBm1Seleccionado.numeroPlaca != undefined){
-        console.log('INICIANDO GETDATA BMBIENESFOTOS POST')
+        console.log('INICIANDO GETDATA BMBIENESFOTOS POST...')
         console.log(bmBm1Seleccionado.numeroPlaca)
         const filter={
           numeroPlaca:bmBm1Seleccionado.numeroPlaca

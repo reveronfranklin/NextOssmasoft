@@ -137,7 +137,7 @@ const TableServerSideBm1 = () => {
 
   const handleView=  (row : Bm1GetDto)=>{
 
-    console.log(row)
+
     dispatch(setBm1Seleccionado(row))
     dispatch(setVerBmBm1ActiveActive(true))
 
