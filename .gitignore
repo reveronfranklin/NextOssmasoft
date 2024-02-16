@@ -33,3 +33,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 /public/ExcelFiles/*.xlsx
+/public/BmFiles/*.*
+/public/BmFilesProceso/*.*
