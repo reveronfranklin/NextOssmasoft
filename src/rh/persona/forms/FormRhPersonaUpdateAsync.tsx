@@ -229,7 +229,8 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
   const [base64String, setBase64String] = useState<any>('')
   const [inputValue, setInputValue] = useState<string>('')
-  const [rowData, setRowData] = useState<ArrayBuffer>()
+
+  //const [rowData, setRowData] = useState<ArrayBuffer>()
   const [tipoIdentificacion,setTipoIdentificacion] = useState<any>(getTipoIdentificacion(personasDtoSeleccionado.identificacionId))
   const [estadoCivil,setEstadoCivil] = useState<any>(getEstadoCivil(personasDtoSeleccionado.estadoCivilId))
 
@@ -423,11 +424,14 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
           setInputValue(reader.result as string)
           setImgSrc(reader.result as string);
-          const base64 = imgSrc.split(',').pop();
+
+          //const base64 = imgSrc.split(',').pop();
+
           //setBase64String(base64);
           setBase64String(reader.result as string);
-          const rawTempData = reader.result as ArrayBuffer;
-          setRowData(rawTempData);
+
+          //const rawTempData = reader.result as ArrayBuffer;
+          //setRowData(rawTempData);
 
 
           /*const base64String = imgSrc
