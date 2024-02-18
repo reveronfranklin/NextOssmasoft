@@ -414,7 +414,6 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
 
 
-
   const handleInputImageChange = async  (file: ChangeEvent) => {
     const reader = new FileReader()
     const { files } = file.target as HTMLInputElement
@@ -422,22 +421,33 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
       reader.onload = () => {
 
-
+          setInputValue(reader.result as string)
           setImgSrc(reader.result as string);
           const base64 = imgSrc.split(',').pop();
-          setBase64String(base64);
+          //setBase64String(base64);
+          setBase64String(reader.result as string);
           const rawTempData = reader.result as ArrayBuffer;
           setRowData(rawTempData);
-          console.log(rowData)
+
+
+          /*const base64String = imgSrc
+                .replace('data:', '')
+                .replace(/^.+,/, '');*/
+
+
+                console.log('>>>>>>files[0]',files[0]);
 
 
 
       }
-
+      reader.onerror = function (error) {
+        console.log('Error: ', error);
+      };
       reader.readAsDataURL(files[0])
 
       if (reader.result !== null) {
         setInputValue(reader.result as string)
+
       }
     }
   }

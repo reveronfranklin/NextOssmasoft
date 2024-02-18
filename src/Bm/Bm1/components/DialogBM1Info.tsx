@@ -35,13 +35,14 @@ import { useSelector } from 'react-redux'
 
 //import QRCode from "react-qr-code";
 
-import { setBm1Seleccionado, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
+import { setBm1Seleccionado, setListBmBienesFotoResponseDto, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
 import { Divider, ImageListItemBar, Typography } from '@mui/material'
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IBmBienesFotoResponseDto } from 'src/interfaces/Bm/BmBienesFoto/BmBienesFotoResponseDto'
+import FormBmFotosBienesAsync from '../forms/FormBmFotosBienesAsync'
 
 // ** Custom Component Imports
 
@@ -59,7 +60,7 @@ const DialogBm1Info = ()  => {
 
   // ** States
   const dispatch = useDispatch();
-  const {verBmBm1Active,bmBm1Seleccionado} = useSelector((state: RootState) => state.bmBm1)
+  const {verBmBm1Active,bmBm1Seleccionado,listBmBienesFotoResponseDto} = useSelector((state: RootState) => state.bmBm1)
   const [data, setData] = useState<IBmBienesFotoResponseDto[]>([])
   const handleSetShow= (active:boolean)=>{
 
@@ -86,7 +87,7 @@ const DialogBm1Info = ()  => {
         }
         const responseAll= await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca',filter);
         console.log('data responseAll bienes foto>>>>',responseAll.data.data)
-
+        dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
         setData(responseAll.data.data)
         console.log(data)
 
@@ -127,7 +128,9 @@ const DialogBm1Info = ()  => {
               <Icon icon='mdi:close' />
             </IconButton>
             <Divider></Divider>
-            { bmBm1Seleccionado.numeroPlaca && data
+            <FormBmFotosBienesAsync></FormBmFotosBienesAsync>
+            <Divider></Divider>
+            { bmBm1Seleccionado.numeroPlaca && listBmBienesFotoResponseDto
               ?
                <>
                   {/*                 <QRCode
@@ -138,8 +141,8 @@ const DialogBm1Info = ()  => {
                   /> */}
 
                   <ImageList sx={{ width: 700, height: 700 }} cols={2} rowHeight={164}>
-                        {data.map((item) => (
-                          <ImageListItem key={item.patch}>
+                        {listBmBienesFotoResponseDto.map((item) => (
+                          <ImageListItem key={item.codigoBienFoto}>
 
                             <img
                                srcSet={`${item.patch}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}

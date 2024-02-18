@@ -15,4 +15,5 @@ export interface Bm1GetDto {
   linkData:string
   codigoBien :number
   codigoMovBien :number
+
 }
