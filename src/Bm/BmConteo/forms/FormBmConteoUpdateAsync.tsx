@@ -56,7 +56,7 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { IBmConteoUpdateDto } from 'src/interfaces/Bm/BmConteo/BmConteoUpdateDto'
-import { setBmConteoSeleccionado, setListBmConteoResponseDto, setVerBmConteoActive } from 'src/store/apps/bmConteo'
+import { setBmConteoSeleccionado, setListBmConteoDetalleResponseDto, setListBmConteoResponseDto, setVerBmConteoActive } from 'src/store/apps/bmConteo'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
@@ -251,6 +251,7 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
 
       dispatch(setVerBmConteoActive(false))
       dispatch(setBmConteoSeleccionado({}))
+      dispatch(setListBmConteoDetalleResponseDto([]))
     }
     setErrorMessage(responseAll.data.message)
     setLoading(false)

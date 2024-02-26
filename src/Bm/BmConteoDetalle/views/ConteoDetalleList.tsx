@@ -122,31 +122,7 @@ const handleClick=(row:any)=>{
 
   handleSet(row.row)
 }
-  const handleAdd=  ()=>{
 
-
-    const defaultValues = {
-
-        codigoBmConteo :0,
-        titulo :'',
-        codigoPersonaResponsable:0,
-        conteoId:0,
-        fecha : null,
-        fechaString :'',
-        fechaObj: null,
-        cantidad:0
-
-    }
-
-
-    dispatch(setBmConteoDetalleSeleccionado(defaultValues));
-
-    // Operacion Crud 1 = Crear presupuesto
-    dispatch(setOperacionCrudBmConteoDetalle(1));
-    dispatch(setVerBmConteoDetalleActive(true))
-
-
-  }
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
@@ -262,14 +238,7 @@ const handleClick=(row:any)=>{
         <CardHeader title='Detalle de Conteos en Proceso' />
 
         <CardActions>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='Agregar'>
-            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
-            <Icon icon='ci:add-row' fontSize={20} />
-            </IconButton>
-          </Tooltip>
 
-        </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Refrescar'>
@@ -285,13 +254,13 @@ const handleClick=(row:any)=>{
             {listBmConteoResponseDto ?
                 ( <Autocomplete
 
-                  sx={{ width: 350 }}
+                  sx={{ width: 550 }}
                   options={listBmConteoResponseDto}
-                  id='autocomplete-tipo-nomina'
+                  id='autocomplete-conteo'
                   isOptionEqualToValue={(option, value) => option.codigoBmConteo=== value.codigoBmConteo}
                   getOptionLabel={option => option.codigoBmConteo + '-'+option.titulo}
                   onChange={handleConteo}
-                  renderInput={params => <TextField {...params} label='Tipo Nomina' />}
+                  renderInput={params => <TextField {...params} label='Conteo' />}
                 /> ) : <div></div>
             }
             </div>

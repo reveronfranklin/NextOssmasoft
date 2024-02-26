@@ -20,6 +20,10 @@
           {
             "title": "Conteos Detalle",
             "path": "/apps/Bm/BmConteoDetalle"
+          },
+          {
+            "title": "Conteos Historico",
+            "path": "/apps/Bm/BmConteoHistorico"
           }
 
         ]
