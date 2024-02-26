@@ -33,6 +33,7 @@ import { rhConceptosFormulaSlice } from './apps/rh-conceptos-formula'
 import { rhConceptosPUCSlice } from './apps/rh-conceptos-PUC'
 import { rhProcesosSlice } from './apps/rh-procesos'
 import { rhProcesosDetalleSlice } from './apps/rh-procesosDetalle'
+import { bmBmConteoSlice } from './apps/bmConteo'
 
 
 
@@ -68,7 +69,8 @@ export const store = configureStore({
     rhConceptosFormula:rhConceptosFormulaSlice.reducer,
     rhConceptosPUC:rhConceptosPUCSlice.reducer,
     rhProceso:rhProcesosSlice.reducer,
-    rhProcesoDetalle:rhProcesosDetalleSlice.reducer
+    rhProcesoDetalle:rhProcesosDetalleSlice.reducer,
+    bmConteo:bmBmConteoSlice.reducer
 
   },
   middleware: getDefaultMiddleware =>

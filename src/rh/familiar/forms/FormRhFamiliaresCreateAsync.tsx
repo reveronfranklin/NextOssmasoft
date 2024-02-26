@@ -408,16 +408,16 @@ const FormRhFamiliaresCreateAsync = ({ popperPlacement }: { popperPlacement: Rea
             {/* Sexo */}
             <Grid item sm={6} xs={12}>
 
-            <Autocomplete
+              <Autocomplete
 
-              options={listSexo}
-              value={sexo}
-              id='autocomplete-sexo'
-              isOptionEqualToValue={(option, value) => option.id=== value.id}
-              getOptionLabel={option => option.id + '-' + option.descripcion }
-              onChange={handlerSexo}
-              renderInput={params => <TextField {...params} label='Sexo' />}
-            />
+                options={listSexo}
+                value={sexo}
+                id='autocomplete-sexo'
+                isOptionEqualToValue={(option, value) => option.id=== value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion }
+                onChange={handlerSexo}
+                renderInput={params => <TextField {...params} label='Sexo' />}
+              />
 
             </Grid>
 

@@ -291,7 +291,7 @@ const PersonaViewLeft = () => {
           <div>
               <Autocomplete
 
-                  sx={{ width: 400 }}
+                  sx={{ width: 380 ,ml:2,mr:2}}
                   options={personas}
                   id='autocomplete-persona'
                   isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}

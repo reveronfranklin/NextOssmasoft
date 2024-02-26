@@ -1,6 +1,6 @@
 // ** React Imports
 // ** React Imports
-import {  ElementType,ChangeEvent} from 'react'
+import {  ElementType} from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -95,7 +95,21 @@ interface FormInputs {
 
 }
 
+interface IFile {
 
+  name: string;
+
+  lastModified: number;
+
+  lastModifiedDate: Date;
+
+  webkitRelativePath: string;
+
+  size: number;
+
+  type: string;
+
+}
 
 const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** States
@@ -227,13 +241,14 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   const [estado,setEstado] = useState<any>(getEstado(personasDtoSeleccionado.estadoNacimientoId))
   const [pais,setPais] = useState<any>(getPais(personasDtoSeleccionado.paisNacimientoId))
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
-  const [base64String, setBase64String] = useState<any>('')
   const [inputValue, setInputValue] = useState<string>('')
 
   //const [rowData, setRowData] = useState<ArrayBuffer>()
   const [tipoIdentificacion,setTipoIdentificacion] = useState<any>(getTipoIdentificacion(personasDtoSeleccionado.identificacionId))
   const [estadoCivil,setEstadoCivil] = useState<any>(getEstadoCivil(personasDtoSeleccionado.estadoCivilId))
-
+  const [name, setName] = useState<string>('')
+  const [archivos, setArchivos] = useState<IFile[]>([])
+  const [archivosSend, setArchivosSend] = useState<any>([])
 
   const defaultValues = {
 
@@ -276,15 +291,6 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     }
   }))
 
-  const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
-    marginLeft: theme.spacing(4),
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      marginLeft: 0,
-      textAlign: 'center',
-      marginTop: theme.spacing(4)
-    }
-  }))
 
 
   // ** Hook
@@ -295,7 +301,20 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
+  const subirArchivos = (e:any)=>{
+    setArchivos(e);
+    setArchivosSend(e);
 
+    for (let index = 0; index < archivos.length; index++) {
+
+      setName(archivos[index].name as string)
+
+
+    }
+
+
+
+  }
 
   const handlerNacionalidad=async (e: any,value:any)=>{
 
@@ -415,7 +434,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
   }
 
 
-  const handleInputImageChange = async  (file: ChangeEvent) => {
+/*   const handleInputImageChange = async  (file: ChangeEvent) => {
     const reader = new FileReader()
     const { files } = file.target as HTMLInputElement
     if (files && files.length !== 0) {
@@ -425,23 +444,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
           setInputValue(reader.result as string)
           setImgSrc(reader.result as string);
 
-          //const base64 = imgSrc.split(',').pop();
-
-          //setBase64String(base64);
           setBase64String(reader.result as string);
-
-          //const rawTempData = reader.result as ArrayBuffer;
-          //setRowData(rawTempData);
-
-
-          /*const base64String = imgSrc
-                .replace('data:', '')
-                .replace(/^.+,/, '');*/
-
-
-                console.log('>>>>>>files[0]',files[0]);
-
-
 
       }
       reader.onerror = function (error) {
@@ -454,14 +457,14 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
       }
     }
-  }
+  } */
+
+
   const handleInputImageReset = () => {
     setInputValue('')
     setImgSrc('/images/avatars/1.png')
   }
-  const handleInputImageSend = () => {
-   console.log(base64String)
-  }
+
 
   const handleDelete = async  () => {
 
@@ -480,8 +483,37 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
   };
 
+
+
+
   const onSubmit = async (data:FormInputs) => {
     setLoading(true)
+
+    if(archivos.length>0){
+      console.log('data si tiene archivo cargado',data)
+      const form = new FormData();
+      for (let index = 0; index < archivosSend.length; index++) {
+
+        form.append("files",archivosSend[index])
+
+
+      }
+
+
+      const responseAllImage= await ossmmasofApi.post<any>('/RhPersona/AddImage/'+personasDtoSeleccionado.codigoPersona,form);
+
+      if(responseAllImage.data.isValid){
+        console.log(responseAllImage.data.data)
+        dispatch(setPersonaSeleccionado(responseAllImage.data));
+        dispatch(setPersonasDtoSeleccionado(responseAllImage.data));
+        handleInputImageReset();
+      }
+
+
+      setErrorMessage(responseAllImage.data.message)
+    }
+
+
 
 
 
@@ -505,8 +537,8 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       status :data.status,
       identificacionId :data.identificacionId,
       numeroIdentificacion :data.numeroIdentificacion,
-      data:base64String,
-      nombreArchivo:inputValue
+      data:'',
+      nombreArchivo:''
 
     };
     console.log('updatePersona',updatePersona)
@@ -514,6 +546,9 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
 
     if(responseAll.data.isValid){
       dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
+
+      dispatch(setPersonaSeleccionado(responseAll.data));
+
       dispatch(setVerRhPersonasActive(false))
       handlerPersona(responseAll.data.data);
     }
@@ -623,18 +658,30 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
                       type='file'
                       value={inputValue}
                       accept='image/jpg'
-                      onChange={handleInputImageChange}
+                      onChange={(e)=> subirArchivos(e.target.files)}
                       id='account-settings-upload-image'
                     />
                   </ButtonStyled>
-                  <ResetButtonStyled color='secondary' variant='outlined' onClick={handleInputImageReset}>
-                    Reset
-                  </ResetButtonStyled>
-                  <ResetButtonStyled color='secondary' variant='outlined' onClick={handleInputImageSend}>
-                    Send
-                  </ResetButtonStyled>
-                  <Typography variant='caption' sx={{ mt: 4, display: 'block', color: 'text.disabled' }}>
-                    Allowed PNG or JPEG. Max size of 800K.
+
+                       {archivos.length>0 ?(
+                      <ButtonStyled size='large' type='submit'  variant='outlined' sx={{ml:4}}>
+                      {loading ? (
+                        <CircularProgress
+                          sx={{
+
+                            color: 'common.blue',
+                            width: '20px !important',
+                            height: '20px !important',
+                            mr: theme => theme.spacing(2)
+                          }}
+                        />
+                      ) : null}
+                      Enviar
+                    </ButtonStyled>
+                  ):null}
+
+                 <Typography variant='caption' sx={{ mt: 4, display: 'block', color: 'text.disabled' }}>
+                    {archivos.length} Archivos {name}
                   </Typography>
                 </div>
               </Box>

@@ -9,13 +9,17 @@
       },
 
       {
-        "title": "Maestros",
+        "title": "Toma Física",
         "icon": "mdi:account-outline",
         "children": [
 
           {
-            "title": "Bienes",
-            "path": "/apps/Bm/Bm1"
+            "title": "Conteos",
+            "path": "/apps/Bm/BmConteo"
+          },
+          {
+            "title": "Conteos Detalle",
+            "path": "/apps/Bm/BmConteoDetalle"
           }
 
         ]

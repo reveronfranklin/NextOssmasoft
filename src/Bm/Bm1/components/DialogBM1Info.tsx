@@ -144,16 +144,21 @@ const DialogBm1Info = ()  => {
                         {listBmBienesFotoResponseDto.map((item) => (
                           <ImageListItem key={item.codigoBienFoto}>
 
-                            <img
-                               srcSet={`${item.patch}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                               src={`${item.patch}?w=164&h=164&fit=crop&auto=format`}
-                              alt={item.titulo}
-                              loading="lazy"
-                            />
+                                  <img
+                                  srcSet={`${item.patch}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                                  src={`${item.patch}?w=164&h=164&fit=crop&auto=format`}
+                                  alt={item.titulo}
+                                  loading="lazy"
+                                  />
+
+
+
+
                             <ImageListItemBar
                               title={item.titulo}
                               subtitle={<span>{item.numeroPlaca}</span>}
                               position="below"
+
                             />
 
                           </ImageListItem>
