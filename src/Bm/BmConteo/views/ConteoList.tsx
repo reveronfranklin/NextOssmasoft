@@ -23,7 +23,8 @@ import DialogBmConteoInfo from './DialogBmConteoInfo';
 import { IBmConteoResponseDto } from 'src/interfaces/Bm/BmConteo/BmConteoResponseDto';
 import { setBmConteoSeleccionado, setListBmConteoResponseDto, setListConteoDescriptiva, setListIcp, setListIcpSeleccionado, setOperacionCrudBmConteo, setVerBmConteoActive } from 'src/store/apps/bmConteo';
 import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks';
-import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto';
+
+//import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto';
 
 
 const ConteoList = () => {
@@ -195,11 +196,12 @@ const handleClick=(row:any)=>{
 
 
 
-      const icp: ICPGetDto[]=[{
+      /*const icp: ICPGetDto[]=[{
         codigoIcp: 0,
         unidadTrabajo :  ''
-      }]
-      dispatch(setListIcpSeleccionado(icp));
+      }]*/
+      const responseIcp= await ossmmasofApi.post<any>('/Bm1/GetListICP');
+      dispatch(setListIcpSeleccionado(responseIcp.data.data));
 
       await fetchDataPersonasDto(dispatch);
 
