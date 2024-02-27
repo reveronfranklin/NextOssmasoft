@@ -17,7 +17,6 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 
 
 
-import { IBmConteoDetalleResponseDto } from 'src/interfaces/Bm/BmConteoDetalle/BmConteoDetalleResponseDto';
 import DialogBmConteoHistoricoInfo from './DialogBmConteoHistoricoInfo';
 import { IBmConteoHistoricoResponseDto } from 'src/interfaces/Bm/BmConteoHistorico/BmConteoHistoricoResponseDto';
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo';
