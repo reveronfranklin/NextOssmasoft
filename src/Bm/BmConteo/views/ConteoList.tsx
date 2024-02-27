@@ -21,8 +21,7 @@ import { RootState } from 'src/store';
 
 import DialogBmConteoInfo from './DialogBmConteoInfo';
 import { IBmConteoResponseDto } from 'src/interfaces/Bm/BmConteo/BmConteoResponseDto';
-import { setBmConteoSeleccionado, setListBmConteoResponseDto, setListConteoDescriptiva, setListIcp, setListIcpSeleccionado, setOperacionCrudBmConteo, setVerBmConteoActive } from 'src/store/apps/bmConteo';
-import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks';
+import { setBmConteoSeleccionado, setListBmConteoResponseDto, setListConteoDescriptiva, setListIcp, setOperacionCrudBmConteo, setVerBmConteoActive } from 'src/store/apps/bmConteo';
 
 //import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto';
 
@@ -195,20 +194,16 @@ const handleClick=(row:any)=>{
 
 
 
-
-      /*const icp: ICPGetDto[]=[{
-        codigoIcp: 0,
-        unidadTrabajo :  ''
-      }]*/
-      const responseIcp= await ossmmasofApi.post<any>('/Bm1/GetListICP');
-      dispatch(setListIcpSeleccionado(responseIcp.data.data));
-
-      await fetchDataPersonasDto(dispatch);
-
       const filterConteo={descripcionId:0,tituloId:7}
       const responseConteos= await ossmmasofApi.post<any>('/BmDescriptivas/GetByTitulo',filterConteo);
       dispatch(setListConteoDescriptiva(responseConteos.data))
+
+      const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+      dispatch(setListIcp(responseIcps.data.data))
+      console.log('responseIcps.data',responseIcps.data.data)
+
       const responseAll= await ossmmasofApi.get<any>('/BmConteo/GetAll');
+      console.log(responseAll.data)
       const data = responseAll.data.data;
       if(responseAll.data.isValid && responseAll.data.data!=null){
         setData(responseAll.data.data);
