@@ -20,6 +20,10 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { IBmConteoDetalleResponseDto } from 'src/interfaces/Bm/BmConteoDetalle/BmConteoDetalleResponseDto';
 import DialogBmConteoHistoricoInfo from './DialogBmConteoHistoricoInfo';
 import { IBmConteoHistoricoResponseDto } from 'src/interfaces/Bm/BmConteoHistorico/BmConteoHistoricoResponseDto';
+import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo';
+
+import { setReportName, setVerReportViewActive } from 'src/store/apps/report';
+import { useDispatch } from 'react-redux';
 
 
 const ConteoHistoricoList = () => {
@@ -84,19 +88,37 @@ const ConteoHistoricoList = () => {
 
   ]
 
+  const dispatch = useDispatch();
 
 
-  const handleView=  (row : IBmConteoDetalleResponseDto)=>{
+  const getReport = async (row:IBmConteoHistoricoResponseDto) => {
+    setLoading(true);
+
+     const fileName = row.codigoBmConteo+".pdf";
+     console.log(fileName);
+
+    dispatch(setReportName("conteo.pdf"));
+
+    //dispatch(setReportName('report.pdf'));
+
+    dispatch(setVerReportViewActive(true))
+
+    setLoading(false);
+  };
+
+  const handleView=  (row : IBmConteoHistoricoResponseDto)=>{
     console.log('row>>>>',row)
 
 
 
   }
 
-  const handleSet=  (row : IBmConteoDetalleResponseDto)=>{
+  const handleSet=  (row : IBmConteoHistoricoResponseDto)=>{
 
 
    console.log(row)
+
+   getReport(row);
 
   }
   const handleDoubleClick=(row:any)=>{
@@ -115,7 +137,6 @@ const handleClick=(row:any)=>{
   const [listConteo, setListConteo] = useState<IBmConteoHistoricoResponseDto[]>([]);
 
   //const [conteo, setConteo] = useState<IBmConteoHistoricoResponseDto>({});
-
 
 
   const handleViewTree=()=>{
@@ -225,7 +246,7 @@ const handleClick=(row:any)=>{
 
 
         </Card>
-
+        <DialogReportInfo></DialogReportInfo>
         <DatePickerWrapper>
               <DialogBmConteoHistoricoInfo  popperPlacement={popperPlacement} />
         </DatePickerWrapper>
