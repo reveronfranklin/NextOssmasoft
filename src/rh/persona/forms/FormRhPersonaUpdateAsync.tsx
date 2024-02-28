@@ -545,7 +545,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     const responseAll= await ossmmasofApi.post<any>('/RhPersona/Update',updatePersona);
 
     if(responseAll.data.isValid){
-      console.log('responseAll.data al salvar',responseAll.data)
+      console.log('responseAll.data al salvar',responseAll.data.data)
       dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
 
       dispatch(setPersonaSeleccionado(responseAll.data.data));
