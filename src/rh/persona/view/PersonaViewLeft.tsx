@@ -193,6 +193,7 @@ const PersonaViewLeft = () => {
       const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
       dispatch(setPersonaSeleccionado(responseAll.data));
       dispatch(setPersonasDtoSeleccionado(responseAll.data));
+      console.log('responseAll.data persona',responseAll.data)
     }else{
 
       const filter={codigoPersona:0}
@@ -329,7 +330,7 @@ const PersonaViewLeft = () => {
               /> */}
 
             <Typography variant='h6' sx={{ mb: 4 }}>
-              {personaSeleccionado.nombreCompleto} {personaSeleccionado.avatar}
+              {personaSeleccionado.nombreCompleto} - {personaSeleccionado.avatar}
             </Typography>
             <CustomChip
               skin='light'

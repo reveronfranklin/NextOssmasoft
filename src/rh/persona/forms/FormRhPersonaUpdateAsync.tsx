@@ -503,7 +503,7 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
       const responseAllImage= await ossmmasofApi.post<any>('/RhPersona/AddImage/'+personasDtoSeleccionado.codigoPersona,form);
 
       if(responseAllImage.data.isValid){
-        console.log(responseAllImage.data.data)
+        console.log('response all image',responseAllImage.data.data)
         dispatch(setPersonaSeleccionado(responseAllImage.data));
         dispatch(setPersonasDtoSeleccionado(responseAllImage.data));
         handleInputImageReset();
@@ -545,9 +545,10 @@ const FormRhPersonaUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactD
     const responseAll= await ossmmasofApi.post<any>('/RhPersona/Update',updatePersona);
 
     if(responseAll.data.isValid){
+      console.log('responseAll.data al salvar',responseAll.data)
       dispatch(setPersonasDtoSeleccionado(responseAll.data.data))
 
-      dispatch(setPersonaSeleccionado(responseAll.data));
+      dispatch(setPersonaSeleccionado(responseAll.data.data));
 
       dispatch(setVerRhPersonasActive(false))
       handlerPersona(responseAll.data.data);
