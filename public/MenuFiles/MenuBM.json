@@ -22,6 +22,10 @@
             "path": "/apps/Bm/BmConteoDetalle"
           },
           {
+            "title": "Compara Conteos",
+            "path": "/apps/Bm/BmConteoDetalleCompare"
+          },
+          {
             "title": "Conteos Historico",
             "path": "/apps/Bm/BmConteoHistorico"
           }

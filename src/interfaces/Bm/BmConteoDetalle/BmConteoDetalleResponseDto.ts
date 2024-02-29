@@ -13,6 +13,7 @@ export interface IBmConteoDetalleResponseDto {
 		codigoPlaca :string;
     cantidad:number;
 		cantidadContada :number;
+    cantidadContadaOtroConteo:number;
 		diferencia :number;
 
 		codigoGrupo :string;
