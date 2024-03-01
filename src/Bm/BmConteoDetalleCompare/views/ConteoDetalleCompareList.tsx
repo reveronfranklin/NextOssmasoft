@@ -161,7 +161,7 @@ const handleClick=(row:any)=>{
   const refreshData = async () => {
     setLoading(true);
 
-
+    dispatch(setListBmConteoDetalleResponseDto([]));
     if(bmConteoSeleccionado && bmConteoSeleccionado.codigoBmConteo>0){
       const filter={codigoBmConteo:bmConteoSeleccionado.codigoBmConteo}
 
@@ -194,7 +194,7 @@ const handleClick=(row:any)=>{
     const getData = async () => {
       setLoading(true);
 
-
+      dispatch(setListBmConteoDetalleResponseDto([]));
 
       const responseAllConteo= await ossmmasofApi.get<any>('/BmConteo/GetAll');
       const dataConteo = responseAllConteo.data.data;
