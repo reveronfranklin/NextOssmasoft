@@ -161,9 +161,6 @@ const FormBmConteoCreateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
       dispatch(setListIcpSeleccionado(icp));
 
     }
-
-
-
   }
 
 

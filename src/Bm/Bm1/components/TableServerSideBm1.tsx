@@ -24,7 +24,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button } from '@mui/material'
+import { Autocomplete, Button, CircularProgress, Grid, TextField } from '@mui/material'
 
 
 // ** Types
@@ -35,6 +35,13 @@ import { Bm1GetDto } from 'src/interfaces/Bm/Bm1HetDto'
 import DialogBM1Info from './DialogBM1Info'
 import { setBm1Seleccionado, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
 import { useDispatch } from 'react-redux'
+import { setListIcp } from 'src/store/apps/ICP'
+import { setListIcpSeleccionado } from 'src/store/apps/bmConteo'
+import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
+import { RootState } from 'src/store'
+import { useSelector } from 'react-redux'
+import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
+import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
 
 
 /*interface StatusObj {
@@ -122,13 +129,14 @@ const TableServerSideBm1 = () => {
   const [allRows, setAllRows] = useState<Bm1GetDto[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const [icps, setIcps] = useState<ICPGetDto[]>([])
+  const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 
   const dispatch = useDispatch();
-
 
   function loadServerRows(currentPage: number, data: Bm1GetDto[]) {
     //if(currentPage<=0) currentPage=1;
@@ -152,8 +160,38 @@ const TableServerSideBm1 = () => {
 
       handleView(row.row)
   }
+  const handleIcp= (e: any,value:any)=>{
+    console.log('handler Icp',value)
+    if(value!=null){
+      setListIcpSeleccionadoLocal(value);
+      dispatch(setListIcpSeleccionado(value));
+
+    }else{
+      const icp: ICPGetDto[]=[{
+        codigoIcp: 0,
+        unidadTrabajo :  ''
+      }]
+      setListIcpSeleccionadoLocal(icp);
+      dispatch(setListIcpSeleccionado(icp));
+
+    }
+  }
+
+  const crearBarCode= async ()=>{
+
+
+   setLoading(true);
+
+   //const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',listIcpSeleccionado);
+   //console.log(responseAll)
+   dispatch(setReportName("placas.pdf"));
+   dispatch(setVerReportViewActive(true))
+   setLoading(false);
+
+  }
+
   const fetchTableData = useCallback(
-    async () => {
+    async (listIcpSelelected:ICPGetDto[]) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -167,7 +205,17 @@ const TableServerSideBm1 = () => {
 
 
 
-      const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
+
+      const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+      dispatch(setListIcp(responseIcps.data.data))
+      setIcps(responseIcps.data.data)
+
+
+      console.log('listIcpSeleccionadoen fecth table data',listIcpSelelected)
+
+
+
+      const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',listIcpSelelected);
       setAllRows(responseAll.data.data);
       setTotal(responseAll.data.data.length);
 
@@ -190,11 +238,11 @@ const TableServerSideBm1 = () => {
 
 
   useEffect(() => {
-    fetchTableData();
+    fetchTableData(listIcpSeleccionadoLocal);
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [listIcpSeleccionadoLocal])
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -258,12 +306,50 @@ const TableServerSideBm1 = () => {
       {
         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
-          <Button variant='contained' href={linkData} size='large' >
-            Descargar Todo
-          </Button>
-        </Box>
+            <Button variant='contained' href={linkData} size='large' >
+              Descargar Todo
+            </Button>
+            <Button size='large' onClick={crearBarCode}  variant='outlined' sx={{ml:4}}>
+                      {loading ? (
+                        <CircularProgress
+                          sx={{
+
+                            color: 'common.blue',
+                            width: '20px !important',
+                            height: '20px !important',
+                            mr: theme => theme.spacing(2)
+                          }}
+                        />
+                      ) : null}
+                      Ver Placas
+            </Button>
+
+          </Box>
+
         : <Typography>{mensaje}</Typography>
       }
+
+        <Grid item sm={12} xs={12}>
+
+            <div>
+
+              {icps && icps.length> 0?
+                  ( <Autocomplete
+                    sx={{ ml:2,mr:2,mt:2}}
+                    multiple={true}
+                    options={icps }
+                    id='autocomplete-list-icp'
+                    isOptionEqualToValue={(option, value) => option.codigoIcp=== value.codigoIcp}
+                    getOptionLabel={option => option.codigoIcp + '-'+option.unidadTrabajo}
+                    onChange={handleIcp}
+                    renderInput={params => <TextField {...params} label='ICP' />}
+                  /> ) : <div></div>
+              }
+              </div>
+
+
+        </Grid>
+
 
      { loading  ? (
        <Spinner sx={{ height: '100%' }} />
@@ -305,7 +391,7 @@ const TableServerSideBm1 = () => {
 
 
     </Card>
-
+              <DialogReportInfo></DialogReportInfo>
               <DialogBM1Info/>
     </>
 
