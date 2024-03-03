@@ -24,7 +24,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Autocomplete, Button, CircularProgress, Grid, TextField } from '@mui/material'
+import { Autocomplete, Button, CircularProgress, Divider, Grid, TextField } from '@mui/material'
 
 
 // ** Types
@@ -328,7 +328,7 @@ const TableServerSideBm1 = () => {
 
         : <Typography>{mensaje}</Typography>
       }
-
+        <Divider></Divider>
         <Grid item sm={12} xs={12}>
 
             <div>
