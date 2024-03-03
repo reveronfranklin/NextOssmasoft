@@ -97,9 +97,6 @@ const ConteoHistoricoList = () => {
      console.log(fileName);
 
     dispatch(setReportName("conteo.pdf"));
-
-    //dispatch(setReportName('report.pdf'));
-
     dispatch(setVerReportViewActive(true))
 
     setLoading(false);
