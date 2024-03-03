@@ -38,8 +38,6 @@ import { useDispatch } from 'react-redux'
 import { setListIcp } from 'src/store/apps/ICP'
 import { setListIcpSeleccionado } from 'src/store/apps/bmConteo'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
-import { RootState } from 'src/store'
-import { useSelector } from 'react-redux'
 import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
 
