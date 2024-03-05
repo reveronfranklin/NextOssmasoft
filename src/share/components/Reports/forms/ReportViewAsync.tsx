@@ -48,7 +48,7 @@ const ReportViewAsync = () => {
 
   return (
     <Card   sx={{ maxWidth: 800 }}>
-      <CardHeader title='Reporte==>>' />
+      <CardHeader title={` Reporte==>> /ExcelFiles/${reportName}`}/>
       <CardContent>
           <CardActions >
             <object data={`/ExcelFiles/${reportName}`}  type="application/pdf" width="100%" height="800px">
