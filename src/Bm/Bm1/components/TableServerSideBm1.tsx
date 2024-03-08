@@ -111,8 +111,8 @@ const columns: any = [
     )
   },
   {
-    flex: 0.125,
-    minWidth: 110,
+    flex: 0.050,
+    minWidth: 50,
     field: 'year',
     headerName: 'Año',
     editable: true,
@@ -123,8 +123,8 @@ const columns: any = [
     )
   },
   {
-    flex: 0.125,
-    minWidth: 110,
+    flex: 0.050,
+    minWidth: 50  ,
     field: 'month',
     headerName: 'Mes',
     editable: true,
@@ -281,6 +281,8 @@ const TableServerSideBm1 = () => {
       if(sortColumn==='unidadTrabajo' ||
          sortColumn==='numeroPlaca' ||
          sortColumn ==='articulo' ||
+         sortColumn ==='year' ||
+         sortColumn ==='month' ||
          sortColumn=== 'responsableBien')
       {
 
