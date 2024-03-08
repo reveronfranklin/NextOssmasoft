@@ -5,7 +5,8 @@ import { ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
-import { GridToolbarExport } from '@mui/x-data-grid'
+
+//import { GridToolbarExport } from '@mui/x-data-grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -28,7 +29,7 @@ const ServerSideToolbar = (props: Props) => {
         p: theme => theme.spacing(2, 5, 4, 5)
       }}
     >
-      <GridToolbarExport printOptions={{ disableToolbarButton: true }} />
+     {/*  <GridToolbarExport printOptions={{ disableToolbarButton: true }} /> */}
       <TextField
         size='small'
         value={props.value}
@@ -36,7 +37,7 @@ const ServerSideToolbar = (props: Props) => {
         placeholder='Search…'
         InputProps={{
           startAdornment: (
-            <Box sx={{ mr: 2, display: 'flex' }}>
+            <Box sx={{  ml: 2,mr: 2, display: 'flex' }}>
               <Icon icon='mdi:magnify' fontSize={20} />
             </Box>
           ),

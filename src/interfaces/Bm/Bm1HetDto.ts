@@ -15,5 +15,8 @@ export interface Bm1GetDto {
   linkData:string
   codigoBien :number
   codigoMovBien :number
+  fechaMovimiento : Date;
+  year :number
+  month : number;
 
 }

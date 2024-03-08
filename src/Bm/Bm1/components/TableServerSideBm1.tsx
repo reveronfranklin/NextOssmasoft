@@ -110,6 +110,30 @@ const columns: any = [
       </Typography>
     )
   },
+  {
+    flex: 0.125,
+    minWidth: 110,
+    field: 'year',
+    headerName: 'Año',
+    editable: true,
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.year}
+      </Typography>
+    )
+  },
+  {
+    flex: 0.125,
+    minWidth: 110,
+    field: 'month',
+    headerName: 'Mes',
+    editable: true,
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.month}
+      </Typography>
+    )
+  },
 
 
 
@@ -221,8 +245,9 @@ const TableServerSideBm1 = () => {
 
       setLinkData(responseAll.data.linkData)
       setLoading(false);
-
+      console.log('responseAll.data.data bm1)',responseAll.data.data)
       if( responseAll.data.data.length>0){
+
         setMensaje('')
       }else{
         setMensaje('')
@@ -333,7 +358,7 @@ const TableServerSideBm1 = () => {
 
               {icps && icps.length> 0?
                   ( <Autocomplete
-                    sx={{ ml:2,mr:2,mt:2}}
+                    sx={{ ml:5,mr:2,mt:2}}
                     multiple={true}
                     options={icps }
                     id='autocomplete-list-icp'
@@ -366,11 +391,9 @@ const TableServerSideBm1 = () => {
         paginationMode='server'
         onSortModelChange={handleSortModel}
 
-        //rowsPerPageOptions={[7, 10, 25, 50]}
         onPageChange={handlePageChange}
         onRowDoubleClick={(row) => handleDoubleClick(row)}
 
-        //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
         onPageSizeChange={newPageSize => setPageSize(newPageSize)}
         componentsProps={{
