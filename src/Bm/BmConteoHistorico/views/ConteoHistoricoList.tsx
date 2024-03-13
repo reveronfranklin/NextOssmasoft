@@ -96,7 +96,7 @@ const ConteoHistoricoList = () => {
      const fileName = row.codigoBmConteo+".pdf";
      console.log(fileName);
 
-    dispatch(setReportName("conteo.pdf"));
+    dispatch(setReportName(fileName));
     dispatch(setVerReportViewActive(true))
 
     setLoading(false);
