@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import  { ReactDatePickerProps } from 'react-datepicker'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
@@ -40,7 +41,12 @@ import { setListIcpSeleccionado } from 'src/store/apps/bmConteo'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
 import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
-
+import PickersDesdeHasta from 'src/rh/historico/individual/component/PickersDesdeHasta'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
+import { Bm1FilterDto } from '../../../interfaces/Bm/Bm1FilterDto';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 /*interface StatusObj {
   [key: number]: {
@@ -140,7 +146,7 @@ const columns: any = [
 
 ]
 
-const TableServerSideBm1 = () => {
+const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** State
   const [page, setPage] = useState(0)
   const [linkData, setLinkData] = useState('')
@@ -153,6 +159,7 @@ const TableServerSideBm1 = () => {
   const [loading, setLoading] = useState(false)
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
+  const {fechaDesde,fechaHasta} = useSelector((state: RootState) => state.nomina)
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
@@ -212,8 +219,71 @@ const TableServerSideBm1 = () => {
 
   }
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+
+    saveAs(blob, "data.xlsx");
+};
+  const refresh= async ()=>{
+
+
+    setLoading(true);
+
+    setMensaje('')
+      setLoading(true);
+      setAllRows([]);
+      setTotal(0);
+      setRows(loadServerRows(page, []))
+      setLinkData('')
+
+
+
+
+      const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+      dispatch(setListIcp(responseIcps.data.data))
+      setIcps(responseIcps.data.data)
+
+
+      console.log('listIcpSeleccionadoen fecth table data',listIcpSeleccionadoLocal)
+
+      const filter : Bm1FilterDto={
+        fechaDesde:fechaDesde,
+        fechaHasta:fechaHasta,
+        listIcpSeleccionado:listIcpSeleccionadoLocal
+
+      }
+
+      const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',filter);
+
+      //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
+      console.log('responseAll fecth table data',responseAll)
+      setAllRows(responseAll.data.data);
+      setTotal(responseAll.data.data.length);
+
+      setRows(loadServerRows(page, responseAll.data.data))
+
+      setLinkData(responseAll.data.linkData)
+      setLoading(false);
+      console.log('responseAll.data.data bm1)',responseAll.data.data)
+      if( responseAll.data.data.length>0){
+
+        setMensaje('')
+      }else{
+        setMensaje('')
+      }
+    setLoading(false);
+
+   }
+
+
   const fetchTableData = useCallback(
-    async (listIcpSelelected:ICPGetDto[]) => {
+    async (listIcpSelelected:ICPGetDto[],fechaDesde: Date,fechaHasta:Date) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -235,9 +305,17 @@ const TableServerSideBm1 = () => {
 
       console.log('listIcpSeleccionadoen fecth table data',listIcpSelelected)
 
+      const filter : Bm1FilterDto={
+        fechaDesde:fechaDesde,
+        fechaHasta:fechaHasta,
+        listIcpSeleccionado:listIcpSelelected
 
+      }
 
-      const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',listIcpSelelected);
+      const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',filter);
+
+      //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
+      console.log('responseAll fecth table data',responseAll)
       setAllRows(responseAll.data.data);
       setTotal(responseAll.data.data.length);
 
@@ -261,11 +339,11 @@ const TableServerSideBm1 = () => {
 
 
   useEffect(() => {
-    fetchTableData(listIcpSeleccionadoLocal);
+    fetchTableData(listIcpSeleccionadoLocal,fechaDesde,fechaHasta);
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listIcpSeleccionadoLocal])
+  }, [])
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -327,11 +405,15 @@ const TableServerSideBm1 = () => {
 
   return (
     <>
+      <PickersDesdeHasta popperPlacement={popperPlacement} />
      <Card>
       {
         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
-            <Button variant='contained' href={linkData} size='large' >
+           {/*  <Button variant='contained' href={linkData} size='large' >
+              Descargar Todo
+            </Button> */}
+            <Button variant='contained'  onClick={exportToExcel} size='large' >
               Descargar Todo
             </Button>
             <Button size='large' onClick={crearBarCode}  variant='outlined' sx={{ml:4}}>
@@ -348,12 +430,26 @@ const TableServerSideBm1 = () => {
                       ) : null}
                       Ver Placas
             </Button>
+            <Button size='large' onClick={refresh}  variant='outlined' sx={{ml:4}}>
+                      {loading ? (
+                        <CircularProgress
+                          sx={{
 
+                            color: 'common.blue',
+                            width: '20px !important',
+                            height: '20px !important',
+                            mr: theme => theme.spacing(2)
+                          }}
+                        />
+                      ) : null}
+                      Refrescar
+            </Button>
           </Box>
 
         : <Typography>{mensaje}</Typography>
       }
         <Divider></Divider>
+
         <Grid item sm={12} xs={12}>
 
             <div>

@@ -38,13 +38,15 @@ const PickersDesdeHasta = ({ popperPlacement }: { popperPlacement: ReactDatePick
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
     dispatch(setFechaHasta(hasta));
-
+    if(fechaDesde>fechaHasta){
+      handlerDesde(new Date(2010, 0, 1))
+    }
   }
 
   return (
     <Grid item xs={12}>
     <Card>
-      <CardHeader title='Filtrar Nomina' />
+      <CardHeader title='Filtrar' />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>

@@ -44,7 +44,7 @@ const PickersDesdeHasta = ({ popperPlacement }: { popperPlacement: ReactDatePick
   return (
     <Grid item xs={12}>
     <Card>
-      <CardHeader title='Filtrar Nomina' />
+      <CardHeader title='Filtrar..' />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>

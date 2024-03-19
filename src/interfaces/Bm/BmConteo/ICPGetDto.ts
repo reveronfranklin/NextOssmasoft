@@ -4,3 +4,10 @@ export interface ICPGetDto {
 
 
 }
+export interface Bm1Filter {
+  listIcpSeleccionado:ICPGetDto[];
+  fechaDesde:Date;
+ fechaHasta :Date;
+
+
+}

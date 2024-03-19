@@ -13,7 +13,7 @@ import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
 export const nominaSlice = createSlice({
   name: 'nomina',
   initialState: {
-    fechaDesde: new Date(new Date().getFullYear(), 0, 1),
+    fechaDesde: new Date(2010, 0, 1),
     fechaHasta:new Date(),
     filterHistorico:{} as IFilterHistoricoNomina,
     conceptoSeleccionado: [] as IListConceptosDto[],
