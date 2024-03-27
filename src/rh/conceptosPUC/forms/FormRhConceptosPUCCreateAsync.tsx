@@ -195,17 +195,14 @@ const FormRhConceptosPUCCreateAsync = ({ popperPlacement }: { popperPlacement: R
       setValue('codigoPUC',0);
       setPuc(null);
 
-
-
-
-
     }else{
 
       const presupuesto:IListPresupuestoDto ={
         ano:0,
         codigoPresupuesto:0,
         descripcion:'',
-        preFinanciadoDto:[]
+        preFinanciadoDto:[],
+        presupuestoEnEjecucion:false
 
       };
       setValue('codigoPresupuesto',0);

@@ -236,7 +236,8 @@ const FormRhConceptosPUCUpdateAsync = ({ popperPlacement }: { popperPlacement: R
         ano:0,
         codigoPresupuesto:0,
         descripcion:'',
-        preFinanciadoDto:[]
+        preFinanciadoDto:[],
+        presupuestoEnEjecucion:false
 
       };
       setValue('codigoPresupuesto',0);

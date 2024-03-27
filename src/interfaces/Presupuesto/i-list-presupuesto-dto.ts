@@ -5,4 +5,5 @@ export interface IListPresupuestoDto{
   descripcion:string;
   ano:number;
   preFinanciadoDto:IPreFinanciadoDto[];
+  presupuestoEnEjecucion:boolean;
 }

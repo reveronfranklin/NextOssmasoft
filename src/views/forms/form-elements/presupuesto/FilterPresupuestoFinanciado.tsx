@@ -66,7 +66,8 @@ const FilterPresupuestoFinanciado = () => {
         codigoPresupuesto:0,
         ano:0,
         descripcion:'',
-        preFinanciadoDto:[]
+        preFinanciadoDto:[],
+        presupuestoEnEjecucion:false
 
       };
 

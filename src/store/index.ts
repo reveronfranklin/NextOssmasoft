@@ -34,6 +34,8 @@ import { rhConceptosPUCSlice } from './apps/rh-conceptos-PUC'
 import { rhProcesosSlice } from './apps/rh-procesos'
 import { rhProcesosDetalleSlice } from './apps/rh-procesosDetalle'
 import { bmBmConteoSlice } from './apps/bmConteo'
+import { preAsignacionesSlice } from './apps/pre-asignaciones'
+import { preAsignacionesDetalleSlice } from './apps/pre-asignaciones-detalle'
 
 
 
@@ -70,7 +72,9 @@ export const store = configureStore({
     rhConceptosPUC:rhConceptosPUCSlice.reducer,
     rhProceso:rhProcesosSlice.reducer,
     rhProcesoDetalle:rhProcesosDetalleSlice.reducer,
-    bmConteo:bmBmConteoSlice.reducer
+    bmConteo:bmBmConteoSlice.reducer,
+    preAsignaciones:preAsignacionesSlice.reducer,
+    preAsignacionesDetalle:preAsignacionesDetalleSlice.reducer
 
   },
   middleware: getDefaultMiddleware =>

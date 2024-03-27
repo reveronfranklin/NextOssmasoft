@@ -13,6 +13,10 @@
         "path": "/apps/presupuesto/prevsaldo"
       },
       {
+        "title": "Creditos Presupuestarios",
+        "path": "/apps/presupuesto/asignaciones"
+      },
+      {
         "title": "Maestro Presupuesto",
         "path": "/apps/presupuesto/maestro/list"
       },

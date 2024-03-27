@@ -220,7 +220,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   }
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const worksheet = XLSX.utils.json_to_sheet(allRows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 

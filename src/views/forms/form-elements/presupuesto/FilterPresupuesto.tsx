@@ -58,6 +58,26 @@ const FilterPresupuesto = () => {
       const filter:FilterByPresupuestoDto ={
         codigoPresupuesto:value.codigoPresupuesto
       }
+      const denominacionPuc:IListPreMtrDenominacionPuc ={
+        id:0,
+        codigoPuc:0,
+        codigoPucConcat:'',
+        denominacionPuc:'',
+        dercripcion:''
+
+
+      };
+
+      dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc));
+      const unidadEjecutora:IListPreMtrUnidadEjecutora ={
+        id:0,
+        codigoIcp:0,
+        codigoIcpConcat:'',
+        unidadEjecutora:'',
+        dercripcion:''
+
+      };
+      dispatch(setPreMtrUnidadEjecutoraSeleccionado(unidadEjecutora));
 
       await fetchDataPreMtrDenominacionPuc(dispatch,filter);
       await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
@@ -68,7 +88,8 @@ const FilterPresupuesto = () => {
         ano:0,
         codigoPresupuesto:0,
         descripcion:'',
-        preFinanciadoDto:[]
+        preFinanciadoDto:[],
+        presupuestoEnEjecucion:false
       };
 
 
@@ -114,19 +135,12 @@ const FilterPresupuesto = () => {
 
       const unidadEjecutora:IListPreMtrUnidadEjecutora ={
         id:0,
-
         codigoIcp:0,
-
         codigoIcpConcat:'',
-
         unidadEjecutora:'',
-
         dercripcion:''
 
-
       };
-
-
       dispatch(setPreMtrUnidadEjecutoraSeleccionado(unidadEjecutora));
     }
 
@@ -153,7 +167,7 @@ const FilterPresupuesto = () => {
   return (
     <Grid item xs={12}>
     <Card>
-      <CardHeader title='Filtrar Saldo Presupuesto' />
+      <CardHeader title='Filtrar ' />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} >
@@ -194,7 +208,7 @@ const FilterPresupuesto = () => {
                       onChange={handlerDenominacionPuc}
                       renderInput={params => <TextField {...params} label='Puc' />}
                       />
-            </div>
+                </div>
 
 
 
