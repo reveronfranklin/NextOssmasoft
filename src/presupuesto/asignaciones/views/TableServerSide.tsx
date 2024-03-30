@@ -299,6 +299,7 @@ const exportToExcelPlantilla = () => {
 
 
     const plantilla:IPreAsignacionesPlantillaDto={
+      codigoAsignacion:item.codigoAsignacion,
       codigoIcpConcat:item.codigoIcpConcat,
       denominacionIcp:item.denominacionPuc,
       codigoPucConcat:item.codigoPucConcat,

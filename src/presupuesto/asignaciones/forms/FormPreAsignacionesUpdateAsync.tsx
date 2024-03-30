@@ -590,11 +590,11 @@ const FormPreAsignacionesUpdateAsync = ({ popperPlacement }: { popperPlacement: 
                 aria-describedby="alert-dialog-description"
               >
                 <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos Administrativos?"}
+                  {"Esta Seguro de Eliminar estos Datos De Creditos Presupuestarios"}
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Se eliminaran los datos Administrativos
+                    Se eliminaran los datos De Creditos Presupuestarios
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

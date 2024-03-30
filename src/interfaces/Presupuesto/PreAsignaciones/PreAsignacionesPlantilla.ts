@@ -1,5 +1,5 @@
 export interface IPreAsignacionesPlantillaDto {
-
+  codigoAsignacion:number;
   codigoIcpConcat:string;
   denominacionIcp:string;
   codigoPucConcat:string;

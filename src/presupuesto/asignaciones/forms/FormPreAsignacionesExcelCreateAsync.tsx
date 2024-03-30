@@ -138,14 +138,13 @@ const FormPreAsignacionesExcelCreateAsync = ({ popperPlacement }: { popperPlacem
 
     setLoading(true)
     setErrorMessage('');
-    const updateAsignacion:IPreAsignacionesExcelUpdateDto= {
-
-      codigoPresupuesto:data.codigoPresupuesto,
-
-    };
-
-    console.log('updateConceptoAcumulado',updateAsignacion)
-    const responseAll= await ossmmasofApi.post<any>('/PreAsignaciones/Create',updateAsignacion);
+    console.log(data)
+    const asignaciones : IPreAsignacionesExcelUpdateDto={
+      codigoPresupuesto:presupuesto.codigoPresupuesto,
+      asignaciones:listPreAsignacionesCreate
+    }
+    console.log('updateConceptoAcumulado',asignaciones)
+    const responseAll= await ossmmasofApi.post<any>('/PreAsignaciones/CreateListAsignaciones',asignaciones);
     if(responseAll.data.isValid){
       console.log('registro agregado',responseAll.data.data)
 

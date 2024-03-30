@@ -49,7 +49,8 @@ import { IPreAsignacionesDetalleFilterDto } from 'src/interfaces/Presupuesto/Pre
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DialogPreAsignacionesDetalleInfo from '../views/DialogPreAsignacionesDetalleInfo'
 import { ReactDatePickerProps } from 'react-datepicker'
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 /*interface StatusObj {
   [key: number]: {
@@ -103,7 +104,6 @@ const TableServerSide = () => {
 
   // ** State
   const [page, setPage] = useState(0)
-  const [linkData, setLinkData] = useState('')
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
@@ -200,6 +200,17 @@ const TableServerSide = () => {
 
   ]
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(allRows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+
+    saveAs(blob, "data.xlsx");
+};
   const handleView=  (row : IPreAsignacionesDetalleGetDto)=>{
 
     console.log('IPreAsignacionesDetalleGetDto',row)
@@ -231,16 +242,12 @@ const TableServerSide = () => {
         setRows(loadServerRows(page, responseAll.data.data))
         const suma = responseAll.data.data.reduce((anterior:any, actual:any) => anterior + (actual.monto), 0);
         dispatch(setTotalMonto(suma));
-
-        setLinkData(responseAll.data.linkData)
         setMensaje('')
       }else{
         setTotal(0)
         setAllRows([]);
         setRows([]);
         dispatch(setTotalMonto(0));
-
-        setLinkData('')
         setMensaje('')
       }
 
@@ -387,7 +394,7 @@ const TableServerSide = () => {
     <Card>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            Reembolsos
+            Desembolsos
           </Typography>
 
         </CardContent>
@@ -401,12 +408,13 @@ const TableServerSide = () => {
             <Icon icon='ci:add-row' fontSize={20} />
             </IconButton>
           </Tooltip>
-
           <Tooltip title='Descargar'  >
-            <IconButton  color='primary' size='small' href={linkData} >
+          <IconButton  color='primary' size='small' onClick={() => exportToExcel()}>
             <Icon icon='ci:download' fontSize={20} />
             </IconButton>
           </Tooltip>
+
+
 
 
           <NumericFormat
