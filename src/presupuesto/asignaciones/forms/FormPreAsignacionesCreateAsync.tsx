@@ -417,7 +417,7 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 <Controller
                   name='ordinario'
                   control={control}
-                  rules={{ min:0.001}}
+                  rules={{ min:0.00}}
 
                   render={({ field: { value, onChange } }) => (
 

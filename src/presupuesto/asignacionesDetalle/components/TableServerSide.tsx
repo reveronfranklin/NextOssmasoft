@@ -378,7 +378,9 @@ const TableServerSide = () => {
         fechaDesembolsoObj :null,
         monto:0,
         notas:'',
-        searchText:''
+        searchText:'',
+        codigoIcpConcat:'',
+        codigoPucConcat:''
 
       }
 
