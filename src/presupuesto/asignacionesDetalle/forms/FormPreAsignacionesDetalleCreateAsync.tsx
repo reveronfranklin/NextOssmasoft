@@ -15,7 +15,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Third Party Imports
-import toast from 'react-hot-toast'
+//import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 
 // ** Icon Imports
@@ -82,6 +82,7 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [successMessage, setSuccessMessage] = useState<string>('')
 
   const {preAsignacionesDetalleSeleccionado,totalMonto} = useSelector((state: RootState) => state.preAsignacionesDetalle)
   const {preAsignacionesSeleccionado} = useSelector((state: RootState) => state.preAsignaciones)
@@ -115,7 +116,9 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
 
   }
 
-
+  function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
   const onSubmit = async (data:FormInputs) => {
     const  now = dayjs();
@@ -143,6 +146,10 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
 
 
       dispatch(setTotalMonto(+data.monto + +totalMonto));
+      setSuccessMessage('Desembolso actualizado satisfactoriamente')
+      await delay(1500);
+      setSuccessMessage('')
+
 
       //dispatch(setPreAsignacionesDetalleSeleccionado(responseAll.data.data))
 
@@ -157,7 +164,7 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
     //await sleep(2000)
 
     setLoading(false)
-    toast.success('Form Submitted')
+
   }
   useEffect(() => {
 
@@ -320,6 +327,9 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
           </Grid>
           <Box>
               {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+          </Box>
+          <Box>
+              {successMessage.length>0 && <FormHelperText sx={{ color: 'success.main' ,fontSize: 20,mt:4 }}>{successMessage}</FormHelperText>}
           </Box>
         </form>
       </CardContent>

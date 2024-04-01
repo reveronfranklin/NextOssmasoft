@@ -82,7 +82,10 @@ const DialogPreAsignacionesDetalleInfo = ({ popperPlacement }: { popperPlacement
         fechaDesembolso:fechaActual,
         fechaDesembolsoObj:defaultDate,
         fechaDesembolsoString:defaultDateString,
-        searchText:''
+        searchText:'',
+        codigoIcpConcat:'',
+        codigoPucConcat:''
+
       }
 
       dispatch(setPreAsignacionesDetalleSeleccionado(defaultValues))
