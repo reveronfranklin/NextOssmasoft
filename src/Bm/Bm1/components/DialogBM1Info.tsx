@@ -165,8 +165,10 @@ const DialogBm1Info = ()  => {
                         ))}
                       </ImageList>
                   <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                  {bmBm1Seleccionado.numeroPlaca} - {bmBm1Seleccionado.articulo}- {bmBm1Seleccionado.unidadTrabajo}
+                  {bmBm1Seleccionado.numeroPlaca} - {bmBm1Seleccionado.articulo}- {bmBm1Seleccionado.unidadTrabajo}-{bmBm1Seleccionado.responsableBien}-{bmBm1Seleccionado.especificacion}
+
                      </Typography>
+
                </>
 
 

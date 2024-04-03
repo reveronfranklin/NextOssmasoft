@@ -8,7 +8,7 @@ export interface Bm1GetDto {
   numeroPlaca: string
   valorActual: number
   articulo: string
-  specification: string
+  especificacion: string
   servicio: string
   responsableBien: string
   searchText:string

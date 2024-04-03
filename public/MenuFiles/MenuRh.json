@@ -28,6 +28,10 @@
             "path": "/apps/rh/conceptos"
           },
           {
+            "title": "Periodos Nómina",
+            "path": "/apps/rh/periodos"
+          },
+          {
             "title": "Procesos Nómina",
             "path": "/apps/rh/procesos"
           }

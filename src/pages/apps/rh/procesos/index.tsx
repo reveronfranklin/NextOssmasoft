@@ -8,8 +8,7 @@ const Procesos = () => {
   return (
     <Grid item xs={12}>
 
-
-      <ProcesosList></ProcesosList>
+<ProcesosList></ProcesosList>
 
     </Grid>
 
