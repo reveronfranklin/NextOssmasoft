@@ -19,16 +19,16 @@ import Icon from 'src/@core/components/icon'
 
 // ** Custom Components
 //import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 
 // ** Types Imports
-import { ThemeColor } from 'src/@core/layouts/types'
+
 
 //import { DataGridRowType } from 'src/@fake-db/types'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
+
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Tooltip,IconButton, Grid, Toolbar, CardContent } from '@mui/material'
 
@@ -102,7 +102,6 @@ const TableServerSide = () => {
   }
   const dispatch = useDispatch();
   const {preAsignacionesSeleccionado} = useSelector((state: RootState) => state.preAsignaciones)
-  const {verPreAsignacionesDetalleActive} = useSelector((state: RootState) => state.preAsignacionesDetalle)
   const {rhTipoNominaSeleccionado} = useSelector((state: RootState) => state.rhTipoNomina)
   const columns: any = [
     {
@@ -167,8 +166,17 @@ const TableServerSide = () => {
          </Typography>
        )
      },
-
-
+{
+     flex: 0.05,
+     minWidth: 80,
+      headerName: 'Fecha Pre-Nomina',
+      field: 'fechaPrenominaString',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {dayjs(params.row.fechaPrenominaString).format('DD/MM/YYYY') }
+        </Typography>
+      )
+    },
 
 
 
@@ -280,7 +288,7 @@ const TableServerSide = () => {
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreAsignacionesDetalleActive,rhTipoNominaSeleccionado])
+  }, [rhTipoNominaSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -381,11 +389,11 @@ const TableServerSide = () => {
 
         <Grid m={2} pt={3}  item justifyContent="flex-end">
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
-          <Tooltip title='Agregar Desembolso'>
+         {/*  <Tooltip title='Agregar Desembolso'>
             <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
             <Icon icon='ci:add-row' fontSize={20} />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title='Descargar'  >
           <IconButton  color='primary' size='small' onClick={() => exportToExcel()}>
             <Icon icon='ci:download' fontSize={20} />
