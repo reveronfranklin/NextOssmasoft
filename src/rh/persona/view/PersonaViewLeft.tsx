@@ -213,7 +213,7 @@ const PersonaViewLeft = () => {
 
     const getData = async () => {
       //dispatch(setTiposNominaSeleccionado(tiposNomina[0]));
-      const personaDefault:IListSimplePersonaDto ={
+      /*const personaDefault:IListSimplePersonaDto ={
         apellido:'',
         cedula:0,
         codigoPersona:0,
@@ -244,7 +244,7 @@ const PersonaViewLeft = () => {
 
       };
       dispatch(setPersonaSeleccionado(personaDefault));
-      dispatch(setPersonasDtoSeleccionado(personaDefault));
+      dispatch(setPersonasDtoSeleccionado(personaDefault));*/
 
       setLoading(true);
       const data= await fetchDataPersonasDto(dispatch);

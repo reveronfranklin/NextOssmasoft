@@ -268,55 +268,21 @@ const renderClient = (row: IListSimplePersonaDto) => {
     saveAs(blob, "data.xlsx");
 };
 const handlerPersona= async   (value:any)=>{
-  console.log('value en handlerPersona en list',value.row)
-  if(value){
+  console.log('value en handlerPersona ++++++++',value.row)
 
-    dispatch(setPersonaSeleccionado({}));
 
-    dispatch(setPersonasDtoSeleccionado({}));
+  if(value && value.row.codigoPersona>0){
 
     const filter={codigoPersona:value.row.codigoPersona}
     const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
-    console.log('handlerPersona en list',responseAll.data)
+    console.log('responseAll.data persona',responseAll.data)
     dispatch(setPersonaSeleccionado(responseAll.data));
     dispatch(setPersonasDtoSeleccionado(responseAll.data));
+    console.log('responseAll.data persona',responseAll.data)
     router.replace("/apps/rh/persona/view/resumen/");
-
-  }else{
-
-    const personaDefault:IListSimplePersonaDto ={
-      apellido:'',
-      cedula:0,
-      codigoPersona:0,
-      nombre:'',
-      nombreCompleto:'',
-      avatar:'',
-      descripcionStatus:'',
-      nacionalidad:'',
-      sexo:'',
-      fechaNacimiento:fechaActual,
-      fechaNacimientoString:defaultDateString,
-      fechaNacimientoObj:defaultDate,
-      email:'',
-      paisNacimiento:'',
-      edad:0,
-      descripcionEstadoCivil:'',
-      paisNacimientoId:0,
-      estadoNacimientoId:0,
-      manoHabil:'',
-      status:'',
-      fechaGacetaNacional:'',
-      estadoCivilId:0,
-      estatura:0,
-      peso:0,
-      identificacionId:0,
-      numeroIdentificacion:0,
-      numeroGacetaNacional:0,
-
-    };
-
-    dispatch(setPersonaSeleccionado(personaDefault));
   }
+
+
 }
 
 
