@@ -41,4 +41,5 @@ export interface IListSimplePersonaDto{
   numeroIdentificacion:number;
   numeroGacetaNacional:number;
   tiempoServicio?:ITiempoServicioResponseDto;
+  searchText?:string;
 }

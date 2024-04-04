@@ -41,5 +41,6 @@ export interface IPersonaDto{
   sueldo:number;
   fechaGacetaNacional:string;
   fechaGacetaNacionalObj?:IFechaDto;
+  searchText?:string
 
 }
