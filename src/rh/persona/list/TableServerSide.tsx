@@ -49,10 +49,8 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
-import { monthByIndex } from 'src/utilities/ge-date-by-object';
 import { ThemeColor } from 'src/@core/layouts/types'
 import { useRouter } from 'next/router'
-import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
@@ -96,16 +94,6 @@ const TableServerSide = () => {
 
 
   const router = useRouter();
-  const fechaActual = new Date()
-
-  const currentYear  = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
-
-  const currentDay =new Date().getDate();
-  const currentDayString = '00' + currentDay.toString();
-  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
-  const defaultDateString = fechaActual.toISOString();
 
   // ** State
   const [page, setPage] = useState(0)
