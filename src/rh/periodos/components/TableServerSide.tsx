@@ -40,8 +40,7 @@ import { useSelector } from 'react-redux'
 import Spinner from 'src/@core/components/spinner';
 
 import { useDispatch } from 'react-redux'
-import { IPreAsignacionesDetalleGetDto } from 'src/interfaces/Presupuesto/PreAsignacionesDetalle/PreAsignacionesDetalleGetDto'
-import { setOperacionCrudPreAsignacionesDetalle, setPreAsignacionesDetalleSeleccionado, setTotalMonto, setVerPreAsignacionesDetalleActive } from 'src/store/apps/pre-asignaciones-detalle'
+
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DialogPreAsignacionesDetalleInfo from '../views/DialogPreAsignacionesDetalleInfo'
 import { ReactDatePickerProps } from 'react-datepicker'
@@ -101,7 +100,7 @@ const TableServerSide = () => {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   }
   const dispatch = useDispatch();
-  const {preAsignacionesSeleccionado} = useSelector((state: RootState) => state.preAsignaciones)
+
   const {rhTipoNominaSeleccionado} = useSelector((state: RootState) => state.rhTipoNomina)
   const columns: any = [
     {
@@ -259,7 +258,6 @@ const TableServerSide = () => {
         setTotal(0)
         setAllRows([]);
         setRows([]);
-        dispatch(setTotalMonto(0));
         setMensaje('')
       }
 
@@ -348,7 +346,7 @@ const TableServerSide = () => {
   }
 
 
-  const handleAdd=  ()=>{
+/*   const handleAdd=  ()=>{
 
 
     // Operacion Crud 1 = Crear titulo
@@ -374,7 +372,7 @@ const TableServerSide = () => {
       dispatch(setVerPreAsignacionesDetalleActive(true))
 
 
-  }
+  } */
 
   return (
     <Card>
