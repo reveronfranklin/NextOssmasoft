@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -29,14 +29,13 @@ import { ThemeColor } from 'src/@core/layouts/types'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Tooltip,IconButton, Grid, Toolbar } from '@mui/material'
-
+import { Tooltip, IconButton, Grid, Toolbar } from '@mui/material'
 
 // ** Types
 
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-import Spinner from 'src/@core/components/spinner';
+import Spinner from 'src/@core/components/spinner'
 
 import { useDispatch } from 'react-redux'
 
@@ -46,15 +45,19 @@ import { IPreAsignacionesGetDto } from 'src/interfaces/Presupuesto/PreAsignacion
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc'
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
-import { setOperacionCrudPreAsignaciones, setPreAsignacionesSeleccionado, setVerPreAsignacionesActive } from 'src/store/apps/pre-asignaciones'
+import {
+  setOperacionCrudPreAsignaciones,
+  setPreAsignacionesSeleccionado,
+  setVerPreAsignacionesActive
+} from 'src/store/apps/pre-asignaciones'
 import { IPreAsignacionesFilterDto } from 'src/interfaces/Presupuesto/PreAsignaciones/PreAsignacionesFilterDto'
 
 import DialogPreAsignacionesInfo from './DialogPreAsignacionesInfo'
 import { useTheme } from '@mui/material/styles'
 import { ReactDatePickerProps } from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 import { IPreAsignacionesPlantillaDto } from 'src/interfaces/Presupuesto/PreAsignaciones/PreAsignacionesPlantilla'
 
 /*interface StatusObj {
@@ -63,7 +66,6 @@ import { IPreAsignacionesPlantillaDto } from 'src/interfaces/Presupuesto/PreAsig
     color: ThemeColor
   }
 }*/
-
 
 type SortType = 'asc' | 'desc' | undefined | null
 
@@ -83,7 +85,7 @@ const renderClient = (params: GridRenderCellParams) => {
         color={color as ThemeColor}
         sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
       >
-        {getInitials(row.denominacionPuc? row.denominacionPuc : 'John Doe')}
+        {getInitials(row.denominacionPuc ? row.denominacionPuc : 'John Doe')}
       </CustomAvatar>
     )
   }
@@ -99,7 +101,6 @@ const renderClient = (params: GridRenderCellParams) => {
 interface CellType {
   row: IPreAsignacionesGetDto
 }
-
 
 const TableServerSide = () => {
   const theme = useTheme()
@@ -120,22 +121,20 @@ const TableServerSide = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-
   function loadServerRows(currentPage: number, data: IPreAsignacionesGetDto[]) {
     //if(currentPage<=0) currentPage=1;
 
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
+  const {
+    preMtrDenominacionPucSeleccionado = {} as IListPreMtrDenominacionPuc,
+    preMtrUnidadEjecutoraSeleccionado = {} as IListPreMtrUnidadEjecutora,
+    listpresupuestoDtoSeleccionado = {} as IListPresupuestoDto
+  } = useSelector((state: RootState) => state.presupuesto)
 
-  const {preMtrDenominacionPucSeleccionado={} as IListPreMtrDenominacionPuc,
-  preMtrUnidadEjecutoraSeleccionado={} as IListPreMtrUnidadEjecutora,
-  listpresupuestoDtoSeleccionado={} as IListPresupuestoDto} =
-  useSelector((state: RootState) => state.presupuesto)
-
-  const {verPreAsignacionesActive=false} = useSelector((state: RootState) => state.preAsignaciones)
-
+  const { verPreAsignacionesActive = false } = useSelector((state: RootState) => state.preAsignaciones)
 
   const columns: any = [
     {
@@ -148,11 +147,9 @@ const TableServerSide = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='View'>
             <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
+              <Icon icon='mdi:eye-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
-
-
         </Box>
       )
     },
@@ -176,15 +173,13 @@ const TableServerSide = () => {
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
 
-
         return (
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
-   {renderClient(params)}
+            {renderClient(params)}
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+              <Typography variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
                 {row.denominacionPuc}
-            </Typography>
-
+              </Typography>
             </Box>
           </Box>
         )
@@ -199,7 +194,7 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.presupuestado}
+          {new Intl.NumberFormat('de-DE').format(params.row.presupuestado)}
         </Typography>
       )
     },
@@ -211,7 +206,7 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.ordinario)}
+          {new Intl.NumberFormat('de-DE').format(params.row.ordinario)}
         </Typography>
       )
     },
@@ -223,7 +218,7 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.coordinado)}
+          {new Intl.NumberFormat('de-DE').format(params.row.coordinado)}
         </Typography>
       )
     },
@@ -235,7 +230,7 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.laee)}
+          {new Intl.NumberFormat('de-DE').format(params.row.laee)}
         </Typography>
       )
     },
@@ -247,7 +242,7 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.fides)}
+          {new Intl.NumberFormat('de-DE').format(params.row.fides)}
         </Typography>
       )
     },
@@ -259,7 +254,9 @@ const TableServerSide = () => {
       headerName: 'Total',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(+params.row.ordinario + +params.row.coordinado + +params.row.laee + +params.row.fides)}
+          {new Intl.NumberFormat('de-DE').format(
+            +params.row.ordinario + +params.row.coordinado + +params.row.laee + +params.row.fides
+          )}
         </Typography>
       )
     },
@@ -271,446 +268,365 @@ const TableServerSide = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.totalDesembolso)}
+          {new Intl.NumberFormat('de-DE').format(params.row.totalDesembolso)}
         </Typography>
       )
-    },
-
+    }
   ]
 
-
-
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(allRows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const worksheet = XLSX.utils.json_to_sheet(allRows)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 
     // Buffer to store the generated Excel file
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
 
-    saveAs(blob, "data.xlsx");
-};
-const exportToExcelPlantilla = () => {
+    saveAs(blob, 'data.xlsx')
+  }
+  const exportToExcelPlantilla = () => {
+    console.log('allRows', allRows)
 
-  console.log('allRows',allRows)
+    const newArray = allRows.map(function (item) {
+      const plantilla: IPreAsignacionesPlantillaDto = {
+        codigoAsignacion: item.codigoAsignacion,
+        codigoIcpConcat: item.codigoIcpConcat,
+        denominacionIcp: item.denominacionPuc,
+        codigoPucConcat: item.codigoPucConcat,
+        denominacionPuc: item.denominacionPuc,
+        presupuestado: item.presupuestado,
+        ordinario: item.ordinario,
+        coordinado: item.coordinado,
+        laee: item.laee,
+        fides: item.fides
+      }
 
-  const newArray  = allRows.map(function(item) {
+      return plantilla
+    })
+    console.log(newArray)
+    const worksheet = XLSX.utils.json_to_sheet(newArray)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
 
-    const plantilla:IPreAsignacionesPlantillaDto={
-      codigoAsignacion:item.codigoAsignacion,
-      codigoIcpConcat:item.codigoIcpConcat,
-      denominacionIcp:item.denominacionPuc,
-      codigoPucConcat:item.codigoPucConcat,
-      denominacionPuc:item.denominacionPuc,
-      presupuestado:item.presupuestado,
-      ordinario:item.ordinario,
-      coordinado:item.coordinado,
-      laee:item.laee,
-      fides:item.fides
-    }
+    saveAs(blob, 'data.xlsx')
+  }
 
-
-
-    return plantilla
-  })
-  console.log(newArray)
-  const worksheet = XLSX.utils.json_to_sheet(newArray);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-  // Buffer to store the generated Excel file
-  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-
-  saveAs(blob, "data.xlsx");
-};
-
-  const handleView=  (row : IPreAsignacionesGetDto)=>{
-
+  const handleView = (row: IPreAsignacionesGetDto) => {
     dispatch(setPreAsignacionesSeleccionado(row))
 
     // Operacion Crud 2 = Modificar presupuesto
-   dispatch(setOperacionCrudPreAsignaciones(2));
-   dispatch(setVerPreAsignacionesActive(true))
-
-
+    dispatch(setOperacionCrudPreAsignaciones(2))
+    dispatch(setVerPreAsignacionesActive(true))
   }
 
   const fetchTableData = useCallback(
-    async (filter:IPreAsignacionesFilterDto) => {
-
+    async (filter: IPreAsignacionesFilterDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
-
       setMensaje('')
-      setLoading(true);
+      setLoading(true)
 
-      const responseAll= await ossmmasofApi.post<any>('/PreAsignaciones/GetAll',filter);
+      const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/GetAll', filter)
       console.log(responseAll.data)
 
-      if(responseAll.data.data){
-        setAllRows(responseAll.data.data);
-        setTotal(responseAll.data.data.length);
+      if (responseAll.data.data) {
+        setAllRows(responseAll.data.data)
+        setTotal(responseAll.data.data.length)
         setRows(loadServerRows(page, responseAll.data.data))
 
         setMensaje('')
-      }else{
+      } else {
         setTotal(0)
-        setAllRows([]);
-        setRows([]);
+        setAllRows([])
+        setRows([])
         setMensaje('')
       }
 
-
-
-
-
-
-      setLoading(false);
-
-
+      setLoading(false)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
-
-
   useEffect(() => {
-    if(listpresupuestoDtoSeleccionado.codigoPresupuesto>0){
-
-
-      const filter:IPreAsignacionesFilterDto={
-        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
-        codigoIcp:preMtrUnidadEjecutoraSeleccionado.codigoIcp,
-        codigoPuc:preMtrDenominacionPucSeleccionado.codigoPuc,
-        codigoAsignacion:0
+    if (listpresupuestoDtoSeleccionado.codigoPresupuesto > 0) {
+      const filter: IPreAsignacionesFilterDto = {
+        codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto,
+        codigoIcp: preMtrUnidadEjecutoraSeleccionado.codigoIcp,
+        codigoPuc: preMtrDenominacionPucSeleccionado.codigoPuc,
+        codigoAsignacion: 0
       }
-      fetchTableData(filter);
-
+      fetchTableData(filter)
     }
 
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreAsignacionesActive,listpresupuestoDtoSeleccionado,preMtrUnidadEjecutoraSeleccionado])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verPreAsignacionesActive, listpresupuestoDtoSeleccionado, preMtrUnidadEjecutoraSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
-
-    const temp  = [... allRows];
+    const temp = [...allRows]
 
     if (newModel.length) {
-
-      setSort(newModel[0].sort);
-      setSortColumn(newModel[0].field);
+      setSort(newModel[0].sort)
+      setSortColumn(newModel[0].field)
 
       //const column: string=newModel[0].field.toString();
 
-      if(sortColumn==='codigoPucConcat' ||
-         sortColumn==='denominacionPuc' ||
-         sortColumn ==='presupuestado' ||
-         sortColumn==='ordinario')
-      {
-
-            const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
-            const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
-            setRows(loadServerRows(page, dataToFilter))
+      if (
+        sortColumn === 'codigoPucConcat' ||
+        sortColumn === 'denominacionPuc' ||
+        sortColumn === 'presupuestado' ||
+        sortColumn === 'ordinario'
+      ) {
+        const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
+        const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
+        setRows(loadServerRows(page, dataToFilter))
       }
 
-
-
       //fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
-
     } else {
       setSort('asc')
       setSortColumn('full_name')
     }
   }
 
-
-
   const handleSearch = (value: string) => {
-
-
     setSearchValue(value)
-    if(value=='') {
-      setRows(allRows);
-
-
-    }else{
-      const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
-      setRows(newRows);
-
-
+    if (value == '') {
+      setRows(allRows)
+    } else {
+      const newRows = allRows.filter(el => el.searchText.toLowerCase().includes(value.toLowerCase()))
+      setRows(newRows)
     }
 
     //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
-  const handlePageChange = (newPage:number) => {
-
+  const handlePageChange = (newPage: number) => {
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
-
   }
-  const handleOnCellEditCommit=async(row:any)=>{
-    const updateDto :IUpdateFieldDto={
-      id:row.id,
-      field:row.field,
-      value:row.value
+  const handleOnCellEditCommit = async (row: any) => {
+    const updateDto: IUpdateFieldDto = {
+      id: row.id,
+      field: row.field,
+      value: row.value
     }
 
-    if(listpresupuestoDtoSeleccionado.presupuestoEnEjecucion){
+    if (listpresupuestoDtoSeleccionado.presupuestoEnEjecucion) {
       toast.success('Presupuestado en ejecucion, no puede  ser modificado')
 
-      return;
-
+      return
     }
-    if(row.field=='presupuestado'){
-      if(row.value<=0){
+    if (row.field == 'presupuestado') {
+      if (row.value <= 0) {
         toast.success('Presupuestado debe ser mayor a cero(0)')
 
-        return;
+        return
       }
       for (const i of allRows) {
         if (i.codigoAsignacion == row.id) {
-         i.presupuestado = row.value;
+          i.presupuestado = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoAsignacion == row.id) {
-         i.presupuestado = row.value;
+          i.presupuestado = row.value
         }
-       }
-
+      }
     }
-    if(row.field=='ordinario'){
-      if(row.value<=0){
+    if (row.field == 'ordinario') {
+      if (row.value <= 0) {
         toast.success('Ordinario debe ser mayor a cero(0)')
 
-        return;
+        return
       }
       for (const i of allRows) {
         if (i.codigoAsignacion == row.id) {
-         i.ordinario = row.value;
+          i.ordinario = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoAsignacion == row.id) {
-         i.ordinario = row.value;
+          i.ordinario = row.value
         }
-       }
+      }
     }
-    if(row.field=='coordinado'){
-
+    if (row.field == 'coordinado') {
       for (const i of allRows) {
         if (i.codigoAsignacion == row.id) {
-         i.coordinado = row.value;
+          i.coordinado = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoAsignacion == row.id) {
-         i.coordinado = row.value;
+          i.coordinado = row.value
         }
-       }
+      }
     }
-    if(row.field=='fides'){
-
+    if (row.field == 'fides') {
       for (const i of allRows) {
         if (i.codigoAsignacion == row.id) {
-         i.fides = row.value;
+          i.fides = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoAsignacion == row.id) {
-         i.fides = row.value;
+          i.fides = row.value
         }
-       }
+      }
     }
-    if(row.field=='laee'){
-
+    if (row.field == 'laee') {
       for (const i of allRows) {
         if (i.codigoAsignacion == row.id) {
-         i.laee = row.value;
+          i.laee = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoAsignacion == row.id) {
-         i.laee = row.value;
+          i.laee = row.value
         }
-       }
+      }
     }
 
-
-    const responseAll= await ossmmasofApi.post<any>('/PreAsignaciones/UpdateField',updateDto);
-    console.log(responseAll);
+    const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/UpdateField', updateDto)
+    console.log(responseAll)
   }
 
-  const handleAdd=  ()=>{
-
-
+  const handleAdd = () => {
     // Operacion Crud 1 = Crear titulo
 
-
-    const defaultValues:IPreAsignacionesGetDto = {
-
-      codigoAsignacion :0,
-      codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
-      año :listpresupuestoDtoSeleccionado.ano,
-      escenario:0,
-      codigoIcp:0,
-      codigoIcpConcat:'',
-      DenominacionIcp:'',
-      codigoPuc:0,
-      codigoPucConcat:'',
-      denominacionPuc:'',
-      presupuestado:0,
-      ordinario:0,
-      coordinado:0,
-      laee:0,
-      fides:0,
-      totalDesembolso:0,
-      total:0,
-      searchText:''
-
+    const defaultValues: IPreAsignacionesGetDto = {
+      codigoAsignacion: 0,
+      codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto,
+      año: listpresupuestoDtoSeleccionado.ano,
+      escenario: 0,
+      codigoIcp: 0,
+      codigoIcpConcat: '',
+      DenominacionIcp: '',
+      codigoPuc: 0,
+      codigoPucConcat: '',
+      denominacionPuc: '',
+      presupuestado: 0,
+      ordinario: 0,
+      coordinado: 0,
+      laee: 0,
+      fides: 0,
+      totalDesembolso: 0,
+      total: 0,
+      searchText: ''
     }
 
-
-      dispatch(setPreAsignacionesSeleccionado(defaultValues));
-      dispatch(setOperacionCrudPreAsignaciones(1));
-      dispatch(setVerPreAsignacionesActive(true))
-
-
-
+    dispatch(setPreAsignacionesSeleccionado(defaultValues))
+    dispatch(setOperacionCrudPreAsignaciones(1))
+    dispatch(setVerPreAsignacionesActive(true))
   }
 
-  const handleAddExcel=  ()=>{
-
-
+  const handleAddExcel = () => {
     // Operacion Crud 1 = Crear titulo
 
-
-    const defaultValues:IPreAsignacionesGetDto = {
-
-      codigoAsignacion :0,
-      codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
-      año :listpresupuestoDtoSeleccionado.ano,
-      escenario:0,
-      codigoIcp:0,
-      codigoIcpConcat:'',
-      DenominacionIcp:'',
-      codigoPuc:0,
-      codigoPucConcat:'',
-      denominacionPuc:'',
-      presupuestado:0,
-      ordinario:0,
-      coordinado:0,
-      laee:0,
-      fides:0,
-      totalDesembolso:0,
-      total:0,
-      searchText:''
-
+    const defaultValues: IPreAsignacionesGetDto = {
+      codigoAsignacion: 0,
+      codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto,
+      año: listpresupuestoDtoSeleccionado.ano,
+      escenario: 0,
+      codigoIcp: 0,
+      codigoIcpConcat: '',
+      DenominacionIcp: '',
+      codigoPuc: 0,
+      codigoPucConcat: '',
+      denominacionPuc: '',
+      presupuestado: 0,
+      ordinario: 0,
+      coordinado: 0,
+      laee: 0,
+      fides: 0,
+      totalDesembolso: 0,
+      total: 0,
+      searchText: ''
     }
 
-
-      dispatch(setPreAsignacionesSeleccionado(defaultValues));
-      dispatch(setOperacionCrudPreAsignaciones(3));
-      dispatch(setVerPreAsignacionesActive(true))
-
-
-
+    dispatch(setPreAsignacionesSeleccionado(defaultValues))
+    dispatch(setOperacionCrudPreAsignaciones(3))
+    dispatch(setVerPreAsignacionesActive(true))
   }
 
   return (
     <Card>
-      {
-        !loading ?
-
-        <Grid m={2} pt={3}  item justifyContent="flex-end">
+      {!loading ? (
+        <Grid m={2} pt={3} item justifyContent='flex-end'>
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
-          <Tooltip title='Agregar'>
-            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
-            <Icon icon='ci:add-row' fontSize={20} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Agregar Excel'>
-            <IconButton  color='primary' size='small' onClick={() => handleAddExcel()}>
-            <Icon icon='ci:add-row' fontSize={20} />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title='Agregar'>
+              <IconButton color='primary' size='small' onClick={() => handleAdd()}>
+                <Icon icon='ci:add-row' fontSize={20} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='Agregar Excel'>
+              <IconButton color='primary' size='small' onClick={() => handleAddExcel()}>
+                <Icon icon='ci:add-row' fontSize={20} />
+              </IconButton>
+            </Tooltip>
 
-
-          <Tooltip title='Descargar'  >
-          <IconButton  color='primary' size='small' onClick={() => exportToExcel()}>
-            <Icon icon='ci:download' fontSize={20} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Descargar Plantilla'  >
-          <IconButton  color='primary' size='small' onClick={() => exportToExcelPlantilla()}>
-            <Icon icon='ci:download' fontSize={20} />
-            </IconButton>
-          </Tooltip>
-
-
+            <Tooltip title='Descargar'>
+              <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                <Icon icon='ci:download' fontSize={20} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='Descargar Plantilla'>
+              <IconButton color='primary' size='small' onClick={() => exportToExcelPlantilla()}>
+                <Icon icon='ci:download' fontSize={20} />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
-
         </Grid>
+      ) : (
+        <Typography>{mensaje}</Typography>
+      )}
 
-
-        : <Typography>{mensaje}</Typography>
-      }
-
-
-
-     { loading  ? (
-       <Spinner sx={{ height: '100%' }} />
+      {loading ? (
+        <Spinner sx={{ height: '100%' }} />
       ) : (
         <DataGrid
-
-        getRowHeight={() => 'auto'}
-        autoHeight
-        pagination
-        getRowId={(row) => row.codigoAsignacion}
-        rows={rows}
-        rowCount={total}
-        columns={columns}
-        pageSize={pageSize}
-        sortingMode='server'
-
-        paginationMode='server'
-        onSortModelChange={handleSortModel}
-
-        onPageChange={handlePageChange}
-        onCellEditCommit={row =>handleOnCellEditCommit(row)}
-
-
-        //onPageChange={newPage => setPage(newPage)}
-        components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-        componentsProps={{
-          baseButton: {
-            variant: 'outlined'
-          },
-          toolbar: {
-            printOptions: { disableToolbarButton: true },
-            value: searchValue,
-            clearSearch: () => handleSearch(''),
-            onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-          }
-        }}
-      />
-
-
+          getRowHeight={() => 'auto'}
+          autoHeight
+          pagination
+          getRowId={row => row.codigoAsignacion}
+          rows={rows}
+          rowCount={total}
+          columns={columns}
+          pageSize={pageSize}
+          sortingMode='server'
+          paginationMode='server'
+          onSortModelChange={handleSortModel}
+          onPageChange={handlePageChange}
+          onCellEditCommit={row => handleOnCellEditCommit(row)}
+          components={{ Toolbar: ServerSideToolbar }}
+          onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+          componentsProps={{
+            baseButton: {
+              variant: 'outlined'
+            },
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              value: searchValue,
+              clearSearch: () => handleSearch(''),
+              onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+            }
+          }}
+        />
       )}
-         <DatePickerWrapper>
-              <DialogPreAsignacionesInfo  popperPlacement={popperPlacement} />
-        </DatePickerWrapper>
-
+      <DatePickerWrapper>
+        <DialogPreAsignacionesInfo popperPlacement={popperPlacement} />
+      </DatePickerWrapper>
     </Card>
-
   )
 }
 

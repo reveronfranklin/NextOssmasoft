@@ -11,12 +11,9 @@ import PageHeader from 'src/@core/components/page-header'
 
 // ** Demo Components Imports
 
-
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import FilterDesdeHastaTipoNomina from 'src/rh/retenciones/FilterDesdeHastaTipoNomina'
-
-
 
 import SsoList from 'src/rh/retenciones/SsoList'
 
@@ -25,28 +22,18 @@ const DataGrid = () => {
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
-
   return (
     <Grid container spacing={6}>
-      <PageHeader
-        title={
-          <Typography variant='h5'>
-            SIND
-          </Typography>
-        }
-
-      />
+      <PageHeader title={<Typography variant='h5'>SSO</Typography>} />
       <Grid item xs={12}>
-
-        <CardContent     title='Desde-Hasta Nomina' >
-        <DatePickerWrapper >
-           <FilterDesdeHastaTipoNomina popperPlacement={popperPlacement} />
-        </DatePickerWrapper>
-
+        <CardContent title='Desde-Hasta Nomina'>
+          <DatePickerWrapper>
+            <FilterDesdeHastaTipoNomina popperPlacement={popperPlacement} />
+          </DatePickerWrapper>
         </CardContent>
       </Grid>
       <Grid item xs={12}>
-       <SsoList />
+        <SsoList />
       </Grid>
     </Grid>
   )

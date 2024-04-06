@@ -1,24 +1,26 @@
-import { Box, Card, CardActions, Grid, Typography} from '@mui/material'
+import { Box, Card, CardActions, Grid, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
 //import { ReactDatePickerProps } from 'react-datepicker'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 
 // ** Icon Imports
 
-import { DataGrid  } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid'
 
+import Spinner from 'src/@core/components/spinner'
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
-import Spinner from 'src/@core/components/spinner';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store';
+import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
+import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponomina'
+import dayjs from 'dayjs'
+import { RhTmpRetencionesFjpDto } from 'src/interfaces/rh/RhTmpRetencionesFjpDto'
 
-import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina';
-import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponomina';
-import dayjs from 'dayjs';
-import { RhTmpRetencionesFjpDto } from 'src/interfaces/rh/RhTmpRetencionesFjpDto';
-import Link from 'next/link';
+import Icon from 'src/@core/components/icon'
 
 interface CellType {
   row: RhTmpRetencionesFjpDto
@@ -27,19 +29,17 @@ interface CellType {
 const FjpList = () => {
   // ** State
 
-  const [linkData, setLinkData] = useState('')
-
-
   const columns = [
-
     {
       flex: 0.2,
       minWidth: 150,
       field: 'fechaNomina',
       headerName: 'Fecha ',
-      renderCell: ({ row }: CellType) =>  <Typography variant='body2' sx={{ color: 'text.primary' }}>
-      {dayjs(row.fechaNomina).format('DD/MM/YYYY') }
-    </Typography>
+      renderCell: ({ row }: CellType) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {dayjs(row.fechaNomina).format('DD/MM/YYYY')}
+        </Typography>
+      )
     },
     {
       flex: 0.2,
@@ -59,7 +59,6 @@ const FjpList = () => {
     {
       flex: 0.4,
       minWidth: 125,
-
 
       field: 'montoCahTrabajador',
       headerName: 'Trabajador',
@@ -81,98 +80,90 @@ const FjpList = () => {
       field: 'montoTotalRetencion',
       headerName: 'Total',
       renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoTotalRetencion}</Typography>
-    },
-
-
-
+    }
   ]
 
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const [data, setData] = useState<RhTmpRetencionesFjpDto[]>([])
-  const {fechaDesde,fechaHasta,tipoNominaSeleccionado={} as IListTipoNominaDto} = useSelector((state: RootState) => state.nomina)
+  const {
+    fechaDesde,
+    fechaHasta,
+    tipoNominaSeleccionado = {} as IListTipoNominaDto
+  } = useSelector((state: RootState) => state.nomina)
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(data)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 
-  /*const handleViewTable=()=>{
-    setViewTable(true);
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
 
-  }*/
+    saveAs(blob, 'data.xlsx')
+  }
+
   useEffect(() => {
-
     const getData = async () => {
-      if(tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina<=0) return;
-      setLoading(true);
-      const filter:IFilterFechaTipoNomina={
-        fechaDesde:dayjs(fechaDesde).format('DD/MM/YYYY') ,
-        fechaHasta:dayjs(fechaHasta).format('DD/MM/YYYY') ,
-        tipoNomina:tipoNominaSeleccionado.codigoTipoNomina,
+      console.log('tipoNominaSeleccionado******', tipoNominaSeleccionado)
 
+      setLoading(true)
+      const filter: IFilterFechaTipoNomina = {
+        fechaDesde: dayjs(fechaDesde).format('DD/MM/YYYY'),
+        fechaHasta: dayjs(fechaHasta).format('DD/MM/YYYY'),
+        tipoNomina: tipoNominaSeleccionado.codigoTipoNomina
       }
-      setData([]);
-      setLinkData('');
-      const responseAll= await ossmmasofApi.post<any>('/RhTmpRetencionesFjp/GetRetencionesFjp',filter);
-      console.log('responseAll',responseAll)
-      setData(responseAll.data?.data);
-      setLinkData(responseAll.data.linkData)
-      setLoading(false);
-    };
+      if (filter.tipoNomina > 0) {
+        setData([])
+        const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesFjp/GetRetencionesFjp', filter)
+        console.log('responseAll', responseAll)
+        setData(responseAll.data?.data)
+      }
 
+      setLoading(false)
+    }
 
+    getData()
 
-
-    getData();
-
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fechaDesde,fechaHasta,tipoNominaSeleccionado]);
-
-
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fechaDesde, fechaHasta, tipoNominaSeleccionado])
 
   return (
     <Grid item xs={12}>
-       <Card>
+      <Card>
         {/* <CardHeader title='Comunicaciones' /> */}
 
         <CardActions>
-
-        <Box  m={2} pt={3}>
-              {linkData.length>0 ?
-              <Link href={linkData}target='_blank' download={linkData} >
-              Descargar Xls
-              </Link>  : <div></div>
-            }
-            </Box>
-
+          <Box m={2} pt={3}>
+            <Grid m={2} pt={3} item justifyContent='flex-end'>
+              <Toolbar sx={{ justifyContent: 'flex-start' }}>
+                {/*  <Tooltip title='Agregar Desembolso'>
+            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
+            <Icon icon='ci:add-row' fontSize={20} />
+            </IconButton>
+          </Tooltip> */}
+                <Tooltip title='Descargar'>
+                  <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                    <Icon icon='ci:download' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </Grid>
+          </Box>
         </CardActions>
 
-
-                {loading ?   <Spinner sx={{ height: '100%' }} />
-                :
-                <Box sx={{ height: 450 }}>
-                <DataGrid
-                  getRowId={(row) => row.codigoRetencionAporte }
-
-                  columns={columns}
-                  rows={data}
-
-
-                  />
-
-
-                </Box>
-
-              }
-
-
-        </Card>
-
-
+        {loading ? (
+          <Spinner sx={{ height: '100%' }} />
+        ) : (
+          <Box sx={{ height: 450 }}>
+            <DataGrid getRowId={row => row.id} columns={columns} rows={data} />
+          </Box>
+        )}
+      </Card>
     </Grid>
-
-
   )
 }
 

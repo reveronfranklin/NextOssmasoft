@@ -1,7 +1,10 @@
-import { Box, Card, CardActions, Grid, Typography } from '@mui/material'
+import { Box, Card, CardActions, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Tooltip, IconButton, Toolbar } from '@mui/material'
-import Icon from 'src/@core/components/icon'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+
+//import { ReactDatePickerProps } from 'react-datepicker'
+//import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Icon Imports
 
@@ -15,22 +18,32 @@ import { RootState } from 'src/store'
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponomina'
 import dayjs from 'dayjs'
-
-import { RhTmpRetencionesSsoDto } from 'src/interfaces/rh/RhTmpRetencionesSsoDto'
-import * as XLSX from 'xlsx'
-import { saveAs } from 'file-saver'
+import { IRhTmpRetencionesCahDto } from 'src/interfaces/rh/RhTmpRetencionesCahDto'
+import { Tooltip, IconButton, Grid, Toolbar } from '@mui/material'
+import Icon from 'src/@core/components/icon'
 
 interface CellType {
-  row: RhTmpRetencionesSsoDto
+  row: IRhTmpRetencionesCahDto
 }
 
-const SsoList = () => {
+const CahList = () => {
   // ** State
 
   const columns = [
     {
+      flex: 0.1,
+      minWidth: 50,
+      field: 'id',
+      headerName: 'Id',
+      renderCell: ({ row }: CellType) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {row.id}
+        </Typography>
+      )
+    },
+    {
       flex: 0.2,
-      minWidth: 150,
+      minWidth: 95,
       field: 'fechaNomina',
       headerName: 'Fecha ',
       renderCell: ({ row }: CellType) => (
@@ -60,7 +73,7 @@ const SsoList = () => {
 
       field: 'montoCahTrabajador',
       headerName: 'Trabajador',
-      renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoSsoTrabajador}</Typography>
+      renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoCahTrabajador}</Typography>
     },
 
     {
@@ -69,7 +82,7 @@ const SsoList = () => {
 
       field: 'montoCahPatrono',
       headerName: 'Patrono',
-      renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoSsoPatrono}</Typography>
+      renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoCahPatrono}</Typography>
     },
     {
       flex: 0.4,
@@ -83,12 +96,17 @@ const SsoList = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const [data, setData] = useState<RhTmpRetencionesSsoDto[]>([])
+  const [data, setData] = useState<IRhTmpRetencionesCahDto[]>([])
   const {
     fechaDesde,
     fechaHasta,
     tipoNominaSeleccionado = {} as IListTipoNominaDto
   } = useSelector((state: RootState) => state.nomina)
+
+  /*const handleViewTable=()=>{
+    setViewTable(true);
+
+  }*/
 
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(data)
@@ -110,17 +128,14 @@ const SsoList = () => {
       const filter: IFilterFechaTipoNomina = {
         fechaDesde: dayjs(fechaDesde).format('DD/MM/YYYY'),
         fechaHasta: dayjs(fechaHasta).format('DD/MM/YYYY'),
+
         tipoNomina: tipoNominaSeleccionado.codigoTipoNomina
       }
       setData([])
-
-      const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesSso/GetRetencionesSso', filter)
-      if (responseAll.data?.data) {
+      const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesCah/GetRetencionesCah', filter)
+      if (responseAll.data?.data != null) {
         setData(responseAll.data?.data)
-      } else {
-        setData([])
       }
-
       setLoading(false)
     }
 
@@ -135,21 +150,24 @@ const SsoList = () => {
         {/* <CardHeader title='Comunicaciones' /> */}
 
         <CardActions>
-          <Grid m={2} pt={3} item justifyContent='flex-end'>
-            <Toolbar sx={{ justifyContent: 'flex-start' }}>
-              <Tooltip title='Descargar'>
-                <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
-                  <Icon icon='ci:download' fontSize={20} />
-                </IconButton>
-              </Tooltip>
-            </Toolbar>
-          </Grid>
+          <Box m={2} pt={3}>
+            <Grid m={2} pt={3} item justifyContent='flex-end'>
+              <Toolbar sx={{ justifyContent: 'flex-start' }}>
+                <Tooltip title='Descargar'>
+                  <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                    <Icon icon='ci:download' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </Grid>
+          </Box>
         </CardActions>
+
         {loading ? (
           <Spinner sx={{ height: '100%' }} />
         ) : (
-          <Box sx={{ height: 450 }}>
-            <DataGrid getRowId={row => row.codigoRetencionAporte} columns={columns} rows={data} />
+          <Box sx={{ height: 850 }}>
+            <DataGrid getRowId={row => row.id} columns={columns} rows={data} />
           </Box>
         )}
       </Card>
@@ -157,4 +175,4 @@ const SsoList = () => {
   )
 }
 
-export default SsoList
+export default CahList

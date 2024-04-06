@@ -18,152 +18,123 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { setFechaDesde, setFechaHasta, setTipoNominaSeleccionado, setTiposNomina } from 'src/store/apps/rh'
 
-
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 
-const FilterDesdeHastaTipoNomina = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+const FilterDesdeHastaTipoNomina = ({
+  popperPlacement
+}: {
+  popperPlacement: ReactDatePickerProps['popperPlacement']
+}) => {
+  const dispatch = useDispatch()
 
-
-  const dispatch = useDispatch();
-
-  const {fechaDesde,fechaHasta,tiposNomina} = useSelector((state: RootState) => state.nomina)
-
+  const { fechaDesde, fechaHasta, tiposNomina } = useSelector((state: RootState) => state.nomina)
+  const { tipoNominaSeleccionado = {} as IListTipoNominaDto } = useSelector((state: RootState) => state.nomina)
 
   // ** States
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
   const [dateHasta, setDateHasta] = useState<DateType>(fechaHasta)
 
-  const handlerDesde=(desde:Date)=>{
+  const handlerDesde = (desde: Date) => {
     setDateDesde(desde)
-    dispatch(setFechaDesde(desde));
-
-
+    dispatch(setFechaDesde(desde))
   }
-  const handlerHasta=(hasta:Date)=>{
+  const handlerHasta = (hasta: Date) => {
     setDateHasta(hasta)
-    dispatch(setFechaHasta(hasta));
-
+    dispatch(setFechaHasta(hasta))
   }
-  const handleTiposNomina= (e: any,value:any)=>{
-    console.log('handler tipo nomina',value)
-    if(value!=null){
-      dispatch(setTipoNominaSeleccionado(value));
-
-    }else{
-      const tipoNomina: IListTipoNominaDto={
+  const handleTiposNomina = (e: any, value: any) => {
+    console.log('handler tipo nomina', value)
+    if (value != null) {
+      dispatch(setTipoNominaSeleccionado(value))
+    } else {
+      const tipoNomina: IListTipoNominaDto = {
         codigoTipoNomina: 0,
-        descripcion :  ''
+        descripcion: ''
       }
-      dispatch(setTipoNominaSeleccionado(tipoNomina));
-
-
+      dispatch(setTipoNominaSeleccionado(tipoNomina))
     }
-
-
-
   }
 
-  const dataTipoNomina= async ()=>{
-/*     const filterTipoNomina:IPersonaFilterDto = {
+  const dataTipoNomina = async () => {
+    /*     const filterTipoNomina:IPersonaFilterDto = {
       codigoPersona:0,
       desde:fechaDesde,
       hasta:fechaHasta
     } */
 
     //const responseAllTipoNomina= await ossmmasofApi.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
-    const responseAllTipoNomina= await ossmmasofApi.get<any>('/RhTipoNomina/GetAll');
-    console.log('responseAll tipo nomona',responseAllTipoNomina)
-    const {data} = responseAllTipoNomina;
+    const responseAllTipoNomina = await ossmmasofApi.get<any>('/RhTipoNomina/GetAll')
+    console.log('responseAll tipo nomona', responseAllTipoNomina)
+    const { data } = responseAllTipoNomina
 
-    if(data){
-      console.log('responseAll tipo nomina por persona',dataTipoNomina)
-      dispatch(setTiposNomina(data));
-      dispatch(setTipoNominaSeleccionado(data[0]));
-
+    if (data) {
+      console.log('responseAll tipo nomina por persona', dataTipoNomina)
+      dispatch(setTiposNomina(data))
+      dispatch(setTipoNominaSeleccionado(data[0]))
     }
   }
 
-
-
-
-
-
   useEffect(() => {
-
-
-
     const getData = async () => {
+      await dataTipoNomina()
+    }
 
+    getData()
 
-
-     await  dataTipoNomina();
-
-
-
-    };
-
-    getData();
-
-
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Grid item xs={12}>
-    <Card>
-      <CardHeader title='Filtrar Desde-Hasta/Tipo Nomina' />
-      <CardContent>
-        <Grid container spacing={6}>
-          <Grid item xs={12} >
-          <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
-              <div>
-                <DatePicker
-                  dateFormat="dd/MM/yyyy"
-                  selected={dateDesde}
-                  id='basic-input-desde'
-                  popperPlacement={popperPlacement}
-                  onChange={(dateDesde: Date) => (handlerDesde(dateDesde))}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Desde' />}
-                />
-              </div>
-              <div>
-                <DatePicker
-                 dateFormat="dd/MM/yyyy"
-                  selected={dateHasta}
-                  id='basic-input-hasta'
-                  popperPlacement={popperPlacement}
-                  onChange={(dateHasta: Date) => (handlerHasta(dateHasta))}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Hasta' />}
-                />
-              </div>
+      <Card>
+        <CardHeader title='Filtrar Desde-Hasta/Tipo Nomina' />
+        <CardContent>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
+                <div>
+                  <DatePicker
+                    dateFormat='dd/MM/yyyy'
+                    selected={dateDesde}
+                    id='basic-input-desde'
+                    popperPlacement={popperPlacement}
+                    onChange={(dateDesde: Date) => handlerDesde(dateDesde)}
+                    placeholderText='Click to select a date'
+                    customInput={<CustomInput label='Desde' />}
+                  />
+                </div>
+                <div>
+                  <DatePicker
+                    dateFormat='dd/MM/yyyy'
+                    selected={dateHasta}
+                    id='basic-input-hasta'
+                    popperPlacement={popperPlacement}
+                    onChange={(dateHasta: Date) => handlerHasta(dateHasta)}
+                    placeholderText='Click to select a date'
+                    customInput={<CustomInput label='Hasta' />}
+                  />
+                </div>
 
-              <div>
-                <Autocomplete
+                <div>
+                  <Autocomplete
                     multiple={false}
                     sx={{ width: 350 }}
+                    value={tipoNominaSeleccionado}
                     options={tiposNomina}
                     id='autocomplete-tipo-nomina'
-                    isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
-                    getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
+                    isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
+                    getOptionLabel={option => option.codigoTipoNomina + '-' + option.descripcion}
                     onChange={handleTiposNomina}
                     renderInput={params => <TextField {...params} label='Tipo Nomina' />}
                   />
-              </div>
-
-
-          </Box>
-        </Grid>
-
-        </Grid>
-      </CardContent>
-    </Card>
-  </Grid>
-
+                </div>
+              </Box>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Grid>
   )
 }
 
