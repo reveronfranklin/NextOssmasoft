@@ -106,10 +106,13 @@ const FaovList = () => {
       }
       const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesFaov/GetRetencionesFaov', filter)
 
-      setData(responseAll.data?.data)
-      setLinkData(responseAll.data.linkData)
-      SetLinkDataArlternative(responseAll.data.linkDataArlternative)
-      console.log('responseAll', data)
+      if (responseAll.data?.data) {
+        setData(responseAll.data?.data)
+        setLinkData(responseAll.data.linkData)
+        SetLinkDataArlternative(responseAll.data.linkDataArlternative)
+      } else {
+        setData([])
+      }
       setLoading(false)
     }
 

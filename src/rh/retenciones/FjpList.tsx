@@ -120,7 +120,11 @@ const FjpList = () => {
         setData([])
         const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesFjp/GetRetencionesFjp', filter)
         console.log('responseAll', responseAll)
-        setData(responseAll.data?.data)
+        if (responseAll.data?.data) {
+          setData(responseAll.data?.data)
+        } else {
+          setData([])
+        }
       }
 
       setLoading(false)
