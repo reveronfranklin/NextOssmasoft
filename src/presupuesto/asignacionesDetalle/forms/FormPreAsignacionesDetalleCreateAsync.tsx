@@ -25,8 +25,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
-
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -35,17 +33,13 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import {  Box} from '@mui/material'
-
-
+import { Box } from '@mui/material'
 
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
-
 
 // ** Third Party Imports
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
@@ -55,28 +49,26 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import dayjs from 'dayjs'
-import { setPreAsignacionesDetalleSeleccionado, setTotalMonto } from 'src/store/apps/pre-asignaciones-detalle';
+import { setPreAsignacionesDetalleSeleccionado, setTotalMonto } from 'src/store/apps/pre-asignaciones-detalle'
 import { IPreAsignacionesDetalleUpdateDto } from 'src/interfaces/Presupuesto/PreAsignacionesDetalle/PreAsignacionesDetalleUpdateDto'
 import { NumericFormat } from 'react-number-format'
 
 interface FormInputs {
-  codigoAsignacionDetalle:number;
-	codigoAsignacion :number;
-  fechaDesembolsoString:string;
-  monto:number;
-  notas:string;
-  searchText:string;
-
+  codigoAsignacionDetalle: number
+  codigoAsignacion: number
+  fechaDesembolsoString: string
+  monto: number
+  notas: string
+  searchText: string
 }
 
-
-
-const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+const FormPreAsignacionesDetalleCreateAsync = ({
+  popperPlacement
+}: {
+  popperPlacement: ReactDatePickerProps['popperPlacement']
+}) => {
   // ** States
-  const dispatch = useDispatch();
-
-
-
+  const dispatch = useDispatch()
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
@@ -84,15 +76,16 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState<string>('')
 
-  const {preAsignacionesDetalleSeleccionado,totalMonto} = useSelector((state: RootState) => state.preAsignacionesDetalle)
-  const {preAsignacionesSeleccionado} = useSelector((state: RootState) => state.preAsignaciones)
+  const { preAsignacionesDetalleSeleccionado, totalMonto } = useSelector(
+    (state: RootState) => state.preAsignacionesDetalle
+  )
+  const { preAsignacionesSeleccionado } = useSelector((state: RootState) => state.preAsignaciones)
   const defaultValues = {
-      codigoAsignacionDetalle:0,
-      codigoAsignacion:preAsignacionesSeleccionado.codigoAsignacion,
-      monto :preAsignacionesDetalleSeleccionado.monto,
-      notas :preAsignacionesDetalleSeleccionado.notas,
-      fechaDesembolsoString:preAsignacionesDetalleSeleccionado.fechaDesembolsoString
-
+    codigoAsignacionDetalle: 0,
+    codigoAsignacion: preAsignacionesSeleccionado.codigoAsignacion,
+    monto: preAsignacionesDetalleSeleccionado.monto,
+    notas: preAsignacionesDetalleSeleccionado.notas,
+    fechaDesembolsoString: preAsignacionesDetalleSeleccionado.fechaDesembolsoString
   }
 
   // ** Hook
@@ -103,60 +96,58 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-  const handlerFechaDesde=(desde:Date)=>{
-
-    const dateIsValid = dayjs(desde).isValid();
-    if(dateIsValid){
-      const fechaObj:IFechaDto =fechaToFechaObj(desde);
-      const presupuestoTmp= {...setPreAsignacionesDetalleSeleccionado,fechaDesembolsoString:desde.toISOString(),fechaDesembolsoObj:fechaObj};
+  const handlerFechaDesde = (desde: Date) => {
+    const dateIsValid = dayjs(desde).isValid()
+    if (dateIsValid) {
+      const fechaObj: IFechaDto = fechaToFechaObj(desde)
+      const presupuestoTmp = {
+        ...setPreAsignacionesDetalleSeleccionado,
+        fechaDesembolsoString: desde.toISOString(),
+        fechaDesembolsoObj: fechaObj
+      }
       dispatch(setPreAsignacionesDetalleSeleccionado(presupuestoTmp))
-      setValue('fechaDesembolsoString',desde.toISOString());
+      setValue('fechaDesembolsoString', desde.toISOString())
     }
-
   }
 
   function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-}
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
 
-  const onSubmit = async (data:FormInputs) => {
-    const  now = dayjs();
-    const fechaIngreso=dayjs(data.fechaDesembolsoString)
-    const fechaPosterior = dayjs(fechaIngreso).isAfter(now );
-    if(fechaPosterior==true){
+  const onSubmit = async (data: FormInputs) => {
+    //const  now = dayjs();
+    //const fechaIngreso=dayjs(data.fechaDesembolsoString)
+
+    //const fechaPosterior = dayjs(fechaIngreso).isAfter(now );
+
+    /*if(fechaPosterior==true){
       setErrorMessage('Fecha de Ingreso Invalida')
 
       return;
-    }
+    }*/
+
     setLoading(true)
 
-    const update:IPreAsignacionesDetalleUpdateDto= {
-      codigoAsignacionDetalle:0,
-      codigoAsignacion:preAsignacionesSeleccionado.codigoAsignacion,
-      monto :data.monto,
-      notas :data.notas,
-      fechaDesembolsoString:preAsignacionesDetalleSeleccionado.fechaDesembolsoString,
+    const update: IPreAsignacionesDetalleUpdateDto = {
+      codigoAsignacionDetalle: 0,
+      codigoAsignacion: preAsignacionesSeleccionado.codigoAsignacion,
+      monto: data.monto,
+      notas: data.notas,
+      fechaDesembolsoString: preAsignacionesDetalleSeleccionado.fechaDesembolsoString
+    }
 
-    };
+    const responseAll = await ossmmasofApi.post<any>('/PreAsignacionesDetalle/Create', update)
 
-    const responseAll= await ossmmasofApi.post<any>('/PreAsignacionesDetalle/Create',update);
-
-    if(responseAll.data.isValid){
-
-
-      dispatch(setTotalMonto(+data.monto + +totalMonto));
+    if (responseAll.data.isValid) {
+      dispatch(setTotalMonto(+data.monto + +totalMonto))
       setSuccessMessage('Desembolso actualizado satisfactoriamente')
-      await delay(1500);
+      await delay(1500)
       setSuccessMessage('')
-
 
       //dispatch(setPreAsignacionesDetalleSeleccionado(responseAll.data.data))
 
       //dispatch(setVerPreAsignacionesDetalleActive(false));
-
     }
-
 
     setErrorMessage(responseAll.data.message)
 
@@ -164,25 +155,18 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
     //await sleep(2000)
 
     setLoading(false)
-
   }
   useEffect(() => {
-
     const getData = async () => {
-      setLoading(true);
+      setLoading(true)
 
+      setLoading(false)
+    }
 
-      setLoading(false);
-    };
+    getData()
 
-
-
-
-    getData();
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -190,7 +174,6 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-
             {/* descripcionId */}
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
@@ -218,35 +201,29 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
               </FormControl>
             </Grid>
 
-
-
-          <Grid item  sm={3} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(preAsignacionesDetalleSeleccionado.fechaDesembolsoObj!)}
-                  id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaDesde(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha Desembolso' />}
-                />
+            <Grid item sm={3} xs={12}>
+              <DatePicker
+                selected={getDateByObject(preAsignacionesDetalleSeleccionado.fechaDesembolsoObj!)}
+                id='date-time-picker-desde'
+                dateFormat='dd/MM/yyyy'
+                popperPlacement={popperPlacement}
+                onChange={(date: Date) => handlerFechaDesde(date)}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='Fecha Desembolso' />}
+              />
             </Grid>
 
-
-          {/* Presupuestado*/}
-          <Grid item sm={2} xs={12}>
+            {/* Presupuestado*/}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='monto'
                   control={control}
-                  rules={{ min:0.001}}
-
+                  rules={{ min: 0.001 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='Monto'
                       onChange={onChange}
                       placeholder='Monto'
@@ -268,7 +245,7 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
                 <Controller
                   name='notas'
                   control={control}
-                  rules={{ minLength:5}}
+                  rules={{ minLength: 5 }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
@@ -288,21 +265,27 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
               </FormControl>
             </Grid>
             <Grid item sm={6} xs={12}>
-                <NumericFormat
-                sx={{ml:2 ,typography: 'body1' }}
+              <NumericFormat
+                sx={{ ml: 2, typography: 'body1' }}
                 label='Total Desembolso:'
                 disabled
                 customInput={TextField}
-                value={totalMonto} decimalSeparator="," decimalScale={2} thousandSeparator="."
+                value={totalMonto}
+                decimalSeparator=','
+                decimalScale={2}
+                thousandSeparator='.'
               />
             </Grid>
             <Grid item sm={6} xs={12}>
-                <NumericFormat
-                sx={{ml:2 ,typography: 'body1' }}
+              <NumericFormat
+                sx={{ ml: 2, typography: 'body1' }}
                 label='Presupuestado:'
                 disabled
                 customInput={TextField}
-                value={preAsignacionesSeleccionado.presupuestado} decimalSeparator="," decimalScale={2} thousandSeparator="."
+                value={preAsignacionesSeleccionado.presupuestado}
+                decimalSeparator=','
+                decimalScale={2}
+                thousandSeparator='.'
               />
             </Grid>
 
@@ -320,23 +303,22 @@ const FormPreAsignacionesDetalleCreateAsync = ({ popperPlacement }: { popperPlac
                 ) : null}
                 Guardar
               </Button>
-
-
             </Grid>
-
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            {errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+            )}
           </Box>
           <Box>
-              {successMessage.length>0 && <FormHelperText sx={{ color: 'success.main' ,fontSize: 20,mt:4 }}>{successMessage}</FormHelperText>}
+            {successMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'success.main', fontSize: 20, mt: 4 }}>{successMessage}</FormHelperText>
+            )}
           </Box>
         </form>
       </CardContent>
     </Card>
   )
-
-
 }
 
 export default FormPreAsignacionesDetalleCreateAsync
