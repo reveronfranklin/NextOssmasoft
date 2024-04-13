@@ -121,8 +121,6 @@ const PresupuestoList = () => {
   }
 
   const reportView = async (row: IPresupuesto) => {
-    console.log('IPreAsignacionesDetalleGetDto', row)
-
     setLoading(true)
 
     const filter = {
