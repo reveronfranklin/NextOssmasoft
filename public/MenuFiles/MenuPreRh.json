@@ -1,5 +1,4 @@
 [
-
   {
     "title": "Presupuesto",
     "icon": "mdi:file-document-outline",
@@ -31,7 +30,8 @@
       {
         "title": "Relacion Cargo",
         "path": "/apps/presupuesto/relacionCargo"
-      }, {
+      },
+      {
         "title": "Cargos",
         "path": "/apps/presupuesto/cargo"
       },
@@ -43,7 +43,6 @@
         "title": "Descriptivas",
         "path": "/apps/presupuesto/descriptiva"
       }
-
     ]
   },
   {
@@ -54,7 +53,6 @@
         "title": "BM1",
         "path": "/apps/Bm/Bm1"
       }
-
     ]
   },
   {
@@ -76,6 +74,10 @@
       {
         "title": "Tipo Nomina",
         "path": "/apps/rh/tipoNomina"
+      },
+      {
+        "title": "Recibos",
+        "path": "/apps/rh/recibos"
       },
       {
         "title": "Personas",
@@ -135,15 +137,13 @@
           {
             "title": "SIND",
             "path": "/apps/rh/retenciones/sind"
-          } ,
-           {
+          },
+          {
             "title": "SSO",
             "path": "/apps/rh/retenciones/sso"
           }
-
         ]
       }
     ]
   }
-
 ]

@@ -16,6 +16,10 @@
         "path": "/apps/rh/proceso"
       },
       {
+        "title": "Recibos",
+        "path": "/apps/rh/recibos"
+      },
+      {
         "title": "Maestros",
         "icon": "mdi:account-outline",
         "children": [
@@ -35,7 +39,6 @@
             "title": "Procesos Nómina",
             "path": "/apps/rh/procesos"
           }
-
         ]
       },
       {
@@ -96,12 +99,11 @@
           {
             "title": "SIND",
             "path": "/apps/rh/retenciones/sind"
-          } ,
-           {
+          },
+          {
             "title": "SSO",
             "path": "/apps/rh/retenciones/sso"
           }
-
         ]
       }
     ]
