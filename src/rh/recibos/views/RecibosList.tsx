@@ -1,4 +1,15 @@
-import { Box, Card, CardActions, CardHeader, Grid, IconButton, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardActions,
+  CardHeader,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -15,12 +26,6 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { GridRenderCellParams } from '@mui/x-data-grid'
-import { IRhConceptosResponseDto } from 'src/interfaces/rh/Conceptos/RhConceptosResponseDto'
-import {
-  setOperacionCrudRhConceptos,
-  setRhConceptosSeleccionado,
-  setVerRhConceptosActive
-} from 'src/store/apps/rh-conceptos'
 
 import { RhReporteNominaResumenResponseDto } from 'src/interfaces/rh/Recibos/RhReporteNominaResponseDto'
 import dayjs from 'dayjs'
@@ -68,7 +73,8 @@ const RecibosList = () => {
       codigoTipoNomina: row.codigoTipoNomina,
       codigoPeriodo: row.codigoPeriodo,
       codigoIcp: row.codigoIcp,
-      codigoPersona: row.codigoPersona
+      codigoPersona: row.codigoPersona,
+      sendEmail: sendEmail
     }
     const responseAll = await ossmmasofApi.post<any>('/RhVReciboPago/GeneratePdf', filter)
     console.log('reporte', responseAll)
@@ -77,21 +83,16 @@ const RecibosList = () => {
     dispatch(setVerReportViewActive(true))
   }
 
-  const handleSet = (row: IRhConceptosResponseDto) => {
-    console.log('concepto seleccionado', row)
-    dispatch(setRhConceptosSeleccionado(row))
-  }
   const handleDoubleClick = (row: any) => {
     handleView(row.row)
   }
-  const handleClick = (row: any) => {
-    handleSet(row.row)
-  }
+
   const handleReport = async () => {
     const filter = {
       codigoTipoNomina: rhTipoNominaSeleccionado.codigoTipoNomina,
       codigoPeriodo: rhPeriodoSeleccionado.codigoPeriodo,
-      codigoIcp: rhListOficinaSeleccionado.codigoIcp
+      codigoIcp: rhListOficinaSeleccionado.codigoIcp,
+      sendEmail: sendEmail
     }
     if (filter.codigoTipoNomina == undefined) filter.codigoTipoNomina = 0
     if (filter.codigoPeriodo == undefined) filter.codigoPeriodo = 0
@@ -105,20 +106,17 @@ const RecibosList = () => {
   const dispatch = useDispatch()
 
   const [loading, setLoading] = useState(false)
-  const [viewTable, setViewTable] = useState(false)
+  const [viewTable] = useState(false)
   const [data, setData] = useState<RhReporteNominaResumenResponseDto[]>([])
 
   const { rhTipoNominaSeleccionado } = useSelector((state: RootState) => state.rhTipoNomina)
   const { rhPeriodoSeleccionado } = useSelector((state: RootState) => state.rhPeriodo)
   const { rhListOficinaSeleccionado } = useSelector((state: RootState) => state.rhListOficina)
-  const handleViewTree = () => {
-    setViewTable(false)
+  const [sendEmail, setSendEmail] = useState(false)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSendEmail(event.target.checked)
   }
-
-  /*const handleViewTable=()=>{
-    setViewTable(true);
-
-  }*/
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
@@ -165,6 +163,12 @@ const RecibosList = () => {
                 <Icon icon='fluent:table-24-regular' fontSize={20} />
               </IconButton>
             </Tooltip>
+            <FormControlLabel
+              control={
+                <Checkbox checked={sendEmail} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
+              }
+              label='Send Email'
+            />
           </Box>
         </CardActions>
 
@@ -179,7 +183,6 @@ const RecibosList = () => {
               columns={columns}
               rows={data}
               onRowDoubleClick={row => handleDoubleClick(row)}
-              onRowClick={row => handleClick(row)}
             />
           </Box>
         )}
