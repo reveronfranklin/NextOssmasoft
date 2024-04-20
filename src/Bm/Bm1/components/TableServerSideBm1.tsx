@@ -141,7 +141,7 @@ const columns: any = [
 const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** State
   const [page, setPage] = useState(0)
-  const [linkData, setLinkData] = useState('')
+
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
@@ -221,7 +221,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     setAllRows([])
     setTotal(0)
     setRows(loadServerRows(page, []))
-    setLinkData('')
 
     const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
     dispatch(setListIcp(responseIcps.data.data))
@@ -244,7 +243,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
 
       setRows(loadServerRows(page, responseAll.data.data))
 
-      setLinkData(responseAll.data.linkData)
       setLoading(false)
       console.log('responseAll.data.data bm1)', responseAll.data.data)
       if (responseAll.data.data.length > 0) {
@@ -266,7 +264,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       setAllRows([])
       setTotal(0)
       setRows(loadServerRows(page, []))
-      setLinkData('')
 
       const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
@@ -286,7 +283,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         setAllRows(responseAll.data.data)
         setTotal(responseAll.data.data.length)
         setRows(loadServerRows(page, responseAll.data.data))
-        setLinkData(responseAll.data.linkData)
+
         if (responseAll.data.data.length > 0) {
           setMensaje('')
         } else {
