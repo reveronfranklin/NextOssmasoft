@@ -8,6 +8,9 @@ import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
 import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(customParseFormat)
 
 // ** Icon Imports
 
@@ -40,13 +43,17 @@ import Spinner from 'src/@core/components/spinner'
 import { useDispatch } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import DialogPreAsignacionesDetalleInfo from '../views/DialogPreAsignacionesDetalleInfo'
 import { ReactDatePickerProps } from 'react-datepicker'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import { IRhPeriodosResponseDto } from 'src/interfaces/rh/Periodos/RhPeriodosResponseDto'
 import { IRhPeriodosFilterDto } from 'src/interfaces/rh/Periodos/RhPeriodosFilterDto'
 import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
+import DialogRhPeriodoInfo from '../views/DialogRhPeriodoInfo'
+import { setOperacionCrudRhPeriodo, setRhPeriodoSeleccionado, setVerRhPeriodoActive } from 'src/store/apps/rh-periodo'
+import { IRhPeriodosUpdate } from 'src/interfaces/rh/Periodos/RhPeriodosUpdate'
+import { IFechaDto } from 'src/interfaces/fecha-dto'
+import { monthByIndex } from 'src/utilities/ge-date-by-object'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
 
 /*interface StatusObj {
@@ -88,6 +95,22 @@ const TableServerSide = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
+  const fechaActual = new Date()
+
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+  const currentMonthString = '00' + monthByIndex(currentMonth).toString()
+
+  const currentDay = new Date().getDate()
+  const currentDayString = '00' + currentDay.toString()
+  const defaultDate: IFechaDto = {
+    year: currentYear.toString(),
+    month: currentMonthString.slice(-2),
+    day: currentDayString.slice(-2)
+  }
+
+  const defaultDateString = fechaActual.toISOString()
+
   function loadServerRows(currentPage: number, data: IRhPeriodosResponseDto[]) {
     //if(currentPage<=0) currentPage=1;
 
@@ -96,6 +119,7 @@ const TableServerSide = () => {
   const dispatch = useDispatch()
 
   const { rhTipoNominaSeleccionado } = useSelector((state: RootState) => state.rhTipoNomina)
+  const { verRhPeriodoActive } = useSelector((state: RootState) => state.rhPeriodo)
   const columns: any = [
     {
       flex: 0.02,
@@ -106,14 +130,24 @@ const TableServerSide = () => {
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Reporte Nomina'>
-            <IconButton size='small' onClick={() => handleView(row)}>
+            <IconButton size='small' onClick={() => handleReport(row)}>
               <Icon icon='mdi:eye-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
         </Box>
       )
     },
-
+    {
+      flex: 0.03,
+      minWidth: 50,
+      headerName: 'Id',
+      field: 'codigoPeriodo',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.codigoPeriodo}
+        </Typography>
+      )
+    },
     {
       flex: 0.05,
       minWidth: 80,
@@ -125,6 +159,7 @@ const TableServerSide = () => {
         </Typography>
       )
     },
+
     {
       flex: 0.1,
       minWidth: 80,
@@ -165,7 +200,20 @@ const TableServerSide = () => {
       field: 'fechaPrenominaString',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaPrenominaString).format('DD/MM/YYYY')}
+          {params.row.fechaPrenominaString.length == 0
+            ? ''
+            : dayjs(params.row.fechaPrenominaString).format('DD/MM/YYYY')}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.05,
+      minWidth: 80,
+      headerName: 'Fecha Cierre',
+      field: 'fechaCierreString',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.fechaCierreString.length == 0 ? '' : dayjs(params.row.fechaCierreString).format('DD/MM/YYYY')}
         </Typography>
       )
     }
@@ -200,21 +248,22 @@ const TableServerSide = () => {
 
     saveAs(blob, 'data.xlsx')
   }
-  const handleView = async (row: IRhPeriodosResponseDto) => {
+  const handleReport = async (row: IRhPeriodosResponseDto) => {
     console.log('IPreAsignacionesDetalleGetDto', row)
 
-    //setLoading(true);
+    setLoading(true)
+
     const filter = {
       CodigoTipoNomina: row.codigoTipoNomina,
       CodigoPeriodo: row.codigoPeriodo
     }
     const responseAll = await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf', filter)
-    console.log(responseAll)
+    console.log('handleReport HistoricoNomina', responseAll.data)
 
     dispatch(setReportName(responseAll.data))
     dispatch(setVerReportViewActive(true))
 
-    //setLoading(false);
+    setLoading(false)
 
     //dispatch(setPreAsignacionesDetalleSeleccionado(row))
 
@@ -259,7 +308,7 @@ const TableServerSide = () => {
     fetchTableData(filter)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rhTipoNominaSeleccionado])
+  }, [rhTipoNominaSeleccionado, verRhPeriodoActive])
 
   const handleSortModel = (newModel: GridSortModel) => {
     const temp = [...allRows]
@@ -300,6 +349,36 @@ const TableServerSide = () => {
     setRows(loadServerRows(newPage, allRows))
   }
 
+  const handleView = (row: IRhPeriodosResponseDto) => {
+    dispatch(setRhPeriodoSeleccionado(row))
+
+    // Operacion Crud 2 = Modificar presupuesto
+    dispatch(setOperacionCrudRhPeriodo(2))
+    dispatch(setVerRhPeriodoActive(true))
+  }
+  const handleDoubleClick = (row: any) => {
+    handleView(row.row)
+  }
+  const handleAdd = () => {
+    //dispatch(setPresupuesto(row))
+    // Operacion Crud 1 = Crear presupuesto
+
+    const defaultValues: IRhPeriodosUpdate = {
+      codigoPeriodo: 0,
+      descripcion: '',
+      codigoTipoNomina: 0,
+      fechaNomina: fechaActual,
+      fechaNominaString: defaultDateString,
+      fechaNominaObj: defaultDate,
+      periodo: 0,
+      tipoNomina: ''
+    }
+
+    dispatch(setRhPeriodoSeleccionado(defaultValues))
+    dispatch(setOperacionCrudRhPeriodo(1))
+    dispatch(setVerRhPeriodoActive(true))
+  }
+
   /*   const handleAdd=  ()=>{
 
 
@@ -338,11 +417,11 @@ const TableServerSide = () => {
       {!loading ? (
         <Grid m={2} pt={3} item justifyContent='flex-end'>
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
-            {/*  <Tooltip title='Agregar Desembolso'>
-            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
-            <Icon icon='ci:add-row' fontSize={20} />
-            </IconButton>
-          </Tooltip> */}
+            <Tooltip title='Agregar Periodo'>
+              <IconButton color='primary' size='small' onClick={() => handleAdd()}>
+                <Icon icon='ci:add-row' fontSize={20} />
+              </IconButton>
+            </Tooltip>
             <Tooltip title='Descargar'>
               <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
                 <Icon icon='ci:download' fontSize={20} />
@@ -372,6 +451,7 @@ const TableServerSide = () => {
           onPageChange={handlePageChange}
           components={{ Toolbar: ServerSideToolbar }}
           onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+          onRowDoubleClick={row => handleDoubleClick(row)}
           componentsProps={{
             baseButton: {
               variant: 'outlined'
@@ -388,7 +468,7 @@ const TableServerSide = () => {
 
       <DatePickerWrapper>
         <DialogReportInfo></DialogReportInfo>
-        <DialogPreAsignacionesDetalleInfo popperPlacement={popperPlacement} />
+        <DialogRhPeriodoInfo popperPlacement={popperPlacement} />
       </DatePickerWrapper>
     </Card>
   )
