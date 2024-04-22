@@ -275,20 +275,19 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         listIcpSeleccionado: listIcpSelelected
       }
       console.log('responseAll fecth table data filter', filter)
-      if (filter.listIcpSeleccionado.length > 0) {
-        const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
 
-        //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
-        console.log('responseAll fecth table data', responseAll)
-        setAllRows(responseAll.data.data)
-        setTotal(responseAll.data.data.length)
-        setRows(loadServerRows(page, responseAll.data.data))
+      const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
 
-        if (responseAll.data.data.length > 0) {
-          setMensaje('')
-        } else {
-          setMensaje('')
-        }
+      //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
+      console.log('responseAll fecth table data', responseAll)
+      setAllRows(responseAll.data.data)
+      setTotal(responseAll.data.data.length)
+      setRows(loadServerRows(page, responseAll.data.data))
+
+      if (responseAll.data.data.length > 0) {
+        setMensaje('')
+      } else {
+        setMensaje('')
       }
 
       setLoading(false)
