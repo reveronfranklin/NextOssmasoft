@@ -1,6 +1,4 @@
 [
-
-
   {
     "title": "Presupuesto",
     "icon": "mdi:file-document-outline",
@@ -18,6 +16,10 @@
         "path": "/apps/presupuesto/asignaciones"
       },
       {
+        "title": "Solicitud Modificación",
+        "path": "/apps/presupuesto/solicitudModificacion"
+      },
+      {
         "title": "Maestro Presupuesto",
         "path": "/apps/presupuesto/maestro/list"
       },
@@ -32,7 +34,8 @@
       {
         "title": "Relacion Cargo",
         "path": "/apps/presupuesto/relacionCargo"
-      }, {
+      },
+      {
         "title": "Cargos",
         "path": "/apps/presupuesto/cargo"
       },
@@ -44,11 +47,6 @@
         "title": "Descriptivas",
         "path": "/apps/presupuesto/descriptiva"
       }
-
-
-
-
     ]
   }
-
 ]

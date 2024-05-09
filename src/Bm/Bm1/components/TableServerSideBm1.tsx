@@ -67,6 +67,17 @@ type SortType = 'asc' | 'desc' | undefined | null
 
 const columns: any = [
   {
+    flex: 0.005,
+    minWidth: 80,
+    headerName: 'Id',
+    field: 'codigoBien',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.codigoBien}
+      </Typography>
+    )
+  },
+  {
     flex: 0.175,
     minWidth: 120,
     headerName: 'Unidad Trabajo',
@@ -174,7 +185,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     handleView(row.row)
   }
   const handleIcp = (e: any, value: any) => {
-    console.log('handler Icp', value)
     if (value != null) {
       setListIcpSeleccionadoLocal(value)
       dispatch(setListIcpSeleccionado(value))
@@ -226,8 +236,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     dispatch(setListIcp(responseIcps.data.data))
     setIcps(responseIcps.data.data)
 
-    console.log('listIcpSeleccionadoen fecth table data', listIcpSeleccionadoLocal)
-
     const filter: Bm1FilterDto = {
       fechaDesde: fechaDesde,
       fechaHasta: fechaHasta,
@@ -237,14 +245,14 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
 
       //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
-      console.log('responseAll fecth table data', responseAll)
+
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)
 
       setRows(loadServerRows(page, responseAll.data.data))
 
       setLoading(false)
-      console.log('responseAll.data.data bm1)', responseAll.data.data)
+
       if (responseAll.data.data.length > 0) {
         setMensaje('')
       } else {
@@ -274,12 +282,9 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         fechaHasta: fechaHasta,
         listIcpSeleccionado: listIcpSelelected
       }
-      console.log('responseAll fecth table data filter', filter)
 
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
 
-      //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
-      console.log('responseAll fecth table data', responseAll)
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)
       setRows(loadServerRows(page, responseAll.data.data))

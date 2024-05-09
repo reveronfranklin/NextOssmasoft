@@ -16,6 +16,10 @@
         "path": "/apps/presupuesto/asignaciones"
       },
       {
+        "title": "Solicitud Modificación",
+        "path": "/apps/presupuesto/solicitudModificacion"
+      },
+      {
         "title": "Maestro Presupuesto",
         "path": "/apps/presupuesto/maestro/list"
       },

@@ -24,8 +24,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
-
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -34,20 +32,23 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box} from '@mui/material'
+import { Autocomplete, Box } from '@mui/material'
 
 // ** Third Party Imports
-import  { ReactDatePickerProps } from 'react-datepicker'
+import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
-import { setListpresupuestoDtoSeleccionado, setPreMtrDenominacionPucSeleccionado, setPreMtrUnidadEjecutoraSeleccionado } from 'src/store/apps/presupuesto'
+import {
+  setListpresupuestoDtoSeleccionado,
+  setPreMtrDenominacionPucSeleccionado,
+  setPreMtrUnidadEjecutoraSeleccionado
+} from 'src/store/apps/presupuesto'
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc'
 import { IListPresupuestoDto } from 'src/interfaces/Presupuesto/i-list-presupuesto-dto'
 import { fetchDataPreMtrDenominacionPuc, fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
@@ -57,83 +58,75 @@ import TableServerSideCreate from '../views/TableServerSideCreate'
 import { setListPreAsignacionesCreate } from 'src/store/apps/pre-asignaciones'
 
 interface FormInputs {
-  codigoAsignacion :number;
-  codigoPresupuesto:number;
-  codigoIcp:number;
-  codigoPuc:number;
-  presupuestado:number;
-  ordinario:number;
-  coordinado:number;
-  laee:number;
-  fides:number;
-
+  codigoAsignacion: number
+  codigoPresupuesto: number
+  codigoIcp: number
+  codigoPuc: number
+  presupuestado: number
+  ordinario: number
+  coordinado: number
+  laee: number
+  fides: number
 }
 
-
-
-const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+const FormPreAsignacionesCreateAsync = ({
+  popperPlacement
+}: {
+  popperPlacement: ReactDatePickerProps['popperPlacement']
+}) => {
   // ** States
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
+  const { listpresupuestoDto, preMtrUnidadEjecutora, preMtrDenominacionPuc, listpresupuestoDtoSeleccionado } =
+    useSelector((state: RootState) => state.presupuesto)
+  const { preAsignacionesSeleccionado, listPreAsignacionesCreate } = useSelector(
+    (state: RootState) => state.preAsignaciones
+  )
 
-  const {listpresupuestoDto,preMtrUnidadEjecutora,preMtrDenominacionPuc,listpresupuestoDtoSeleccionado} = useSelector((state: RootState) => state.presupuesto)
-  const {preAsignacionesSeleccionado,listPreAsignacionesCreate} = useSelector((state: RootState) => state.preAsignaciones)
+  const getPresupuesto = (id: number) => {
+    const result = listpresupuestoDto?.filter(elemento => {
+      return elemento.codigoPresupuesto == id
+    })
 
-
-  const  getPresupuesto=(id:number)=>{
-
-    const result = listpresupuestoDto?.filter((elemento)=>{
-
-      return elemento.codigoPresupuesto==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
 
+  const getIcp = (id: number) => {
+    const result = preMtrUnidadEjecutora?.filter(elemento => {
+      return elemento.codigoIcp == id
+    })
 
-  const  getIcp=(id:number)=>{
-
-    const result = preMtrUnidadEjecutora?.filter((elemento)=>{
-
-      return elemento.codigoIcp==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
-  const  getPuc=(id:number)=>{
+  const getPuc = (id: number) => {
+    const result = preMtrDenominacionPuc?.filter(elemento => {
+      return elemento.codigoPuc == id
+    })
 
-    const result = preMtrDenominacionPuc?.filter((elemento)=>{
-
-      return elemento.codigoPuc==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
-
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  const [presupuesto,setPresupuesto] = useState<IListPresupuestoDto>(getPresupuesto(preAsignacionesSeleccionado.codigoPresupuesto));
-  const [icp,setIcp] = useState<IListPreMtrUnidadEjecutora>(getIcp(preAsignacionesSeleccionado.codigoIcp));
-  const [puc,setPuc] = useState<IListPreMtrDenominacionPuc>(getPuc(preAsignacionesSeleccionado.codigoPuc));
+  const [presupuesto, setPresupuesto] = useState<IListPresupuestoDto>(
+    getPresupuesto(preAsignacionesSeleccionado.codigoPresupuesto)
+  )
+  const [icp, setIcp] = useState<IListPreMtrUnidadEjecutora>(getIcp(preAsignacionesSeleccionado.codigoIcp))
+  const [puc, setPuc] = useState<IListPreMtrDenominacionPuc>(getPuc(preAsignacionesSeleccionado.codigoPuc))
 
   const defaultValues = {
-
-      codigoAsignacion :preAsignacionesSeleccionado.codigoAsignacion,
-      codigoPresupuesto:preAsignacionesSeleccionado.codigoPresupuesto,
-      codigoIcp:preAsignacionesSeleccionado.codigoIcp,
-      codigoPuc:preAsignacionesSeleccionado.codigoPuc,
-      presupuestado:preAsignacionesSeleccionado.presupuestado,
-      ordinario:preAsignacionesSeleccionado.ordinario,
-      coordinado:preAsignacionesSeleccionado.coordinado,
-      laee:preAsignacionesSeleccionado.laee,
-      fides:preAsignacionesSeleccionado.fides
+    codigoAsignacion: preAsignacionesSeleccionado.codigoAsignacion,
+    codigoPresupuesto: preAsignacionesSeleccionado.codigoPresupuesto,
+    codigoIcp: preAsignacionesSeleccionado.codigoIcp,
+    codigoPuc: preAsignacionesSeleccionado.codigoPuc,
+    presupuestado: preAsignacionesSeleccionado.presupuestado,
+    ordinario: preAsignacionesSeleccionado.ordinario,
+    coordinado: preAsignacionesSeleccionado.coordinado,
+    laee: preAsignacionesSeleccionado.laee,
+    fides: preAsignacionesSeleccionado.fides
   }
 
   // ** Hook
@@ -144,30 +137,28 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-  const onSubmit = async (data:FormInputs) => {
-
+  const onSubmit = async (data: FormInputs) => {
     setLoading(true)
-    setErrorMessage('');
-    const updateAsignacion:IPreAsignacionesUpdateDto= {
-      codigoAsignacion :preAsignacionesSeleccionado.codigoAsignacion,
-      codigoPresupuesto:data.codigoPresupuesto,
-      codigoIcp:data.codigoIcp,
-      codigoPuc:data.codigoPuc,
-      presupuestado:data.presupuestado,
-      ordinario:data.ordinario,
-      coordinado:data.coordinado,
-      laee:data.laee,
-      fides:data.fides
-    };
+    setErrorMessage('')
+    const updateAsignacion: IPreAsignacionesUpdateDto = {
+      codigoAsignacion: preAsignacionesSeleccionado.codigoAsignacion,
+      codigoPresupuesto: data.codigoPresupuesto,
+      codigoIcp: data.codigoIcp,
+      codigoPuc: data.codigoPuc,
+      presupuestado: data.presupuestado,
+      ordinario: data.ordinario,
+      coordinado: data.coordinado,
+      laee: data.laee,
+      fides: data.fides
+    }
 
-    console.log('updateConceptoAcumulado',updateAsignacion)
-    const responseAll= await ossmmasofApi.post<any>('/PreAsignaciones/Create',updateAsignacion);
-    if(responseAll.data.isValid){
-      console.log('registro agregado',responseAll.data.data)
+    console.log('updateConceptoAcumulado', updateAsignacion)
+    const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/Create', updateAsignacion)
+    if (responseAll.data.isValid) {
+      console.log('registro agregado', responseAll.data.data)
 
-      const copyAsignaciones = [...listPreAsignacionesCreate];
-      copyAsignaciones.push(responseAll.data.data);
+      const copyAsignaciones = [...listPreAsignacionesCreate]
+      copyAsignaciones.push(responseAll.data.data)
       dispatch(setListPreAsignacionesCreate(copyAsignaciones))
     }
     setErrorMessage(responseAll.data.message)
@@ -179,124 +170,92 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
     toast.success('Actualizado')
   }
 
-  const handlePresupuestos= async (e: any,value:any)=>{
-
-
-
-    if(value){
-
-
-
-      dispatch(setListpresupuestoDtoSeleccionado(value));
-      setValue('codigoPresupuesto',value.codigoPresupuesto);
-      setPresupuesto(value);
-      const filter:FilterByPresupuestoDto ={
-        codigoPresupuesto:value.codigoPresupuesto
+  const handlePresupuestos = async (e: any, value: any) => {
+    if (value) {
+      dispatch(setListpresupuestoDtoSeleccionado(value))
+      setValue('codigoPresupuesto', value.codigoPresupuesto)
+      setPresupuesto(value)
+      const filter: FilterByPresupuestoDto = {
+        codigoPresupuesto: value.codigoPresupuesto
       }
 
-      await fetchDataPreMtrDenominacionPuc(dispatch,filter);
-      await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
+      await fetchDataPreMtrDenominacionPuc(dispatch, filter)
+      await fetchDataPreMtrUnidadEjecutora(dispatch, filter)
+    } else {
+      const presupuesto: IListPresupuestoDto = {
+        ano: 0,
+        codigoPresupuesto: 0,
+        descripcion: '',
+        preFinanciadoDto: [],
+        presupuestoEnEjecucion: false
+      }
 
-    }else{
-
-      const presupuesto:IListPresupuestoDto ={
-        ano:0,
-        codigoPresupuesto:0,
-        descripcion:'',
-        preFinanciadoDto:[],
-        presupuestoEnEjecucion:false
-      };
-
-
-      dispatch(setListpresupuestoDtoSeleccionado(presupuesto));
+      dispatch(setListpresupuestoDtoSeleccionado(presupuesto))
     }
-
-
-  }
-  const handlerDenominacionPuc= (e: any,value:any)=>{
-
-
-    if(value){
-
-      dispatch(setPreMtrDenominacionPucSeleccionado(value));
-      setValue('codigoPuc',value.codigoPuc);
-      setPuc(value);
-    }else{
-
-      const denominacionPuc:IListPreMtrDenominacionPuc ={
-          id:0,
-          codigoPuc:0,
-          codigoPucConcat:'',
-          denominacionPuc:'',
-          dercripcion:''
-
-
-      };
-
-
-      dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc));
-    }
-
-
   }
 
+  const handlerDenominacionPuc = (e: any, value: any) => {
+    if (value) {
+      dispatch(setPreMtrDenominacionPucSeleccionado(value))
+      setValue('codigoPuc', value.codigoPuc)
+      setPuc(value)
+    } else {
+      const denominacionPuc: IListPreMtrDenominacionPuc = {
+        id: 0,
+        codigoPuc: 0,
+        codigoPucConcat: '',
+        denominacionPuc: '',
+        dercripcion: ''
+      }
 
-  const handlerUnidadEjecutora =(e: any,value:any)=>{
-
-
-    if(value){
-
-      dispatch(setPreMtrUnidadEjecutoraSeleccionado(value));
-      setValue('codigoIcp',value.codigoIcp);
-      setIcp(value);
-    }else{
-
-      const unidadEjecutora:IListPreMtrUnidadEjecutora ={
-        id:0,
-
-        codigoIcp:0,
-
-        codigoIcpConcat:'',
-
-        unidadEjecutora:'',
-
-        dercripcion:''
-
-
-      };
-
-
-      dispatch(setPreMtrUnidadEjecutoraSeleccionado(unidadEjecutora));
+      dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc))
     }
+  }
 
+  const handlerUnidadEjecutora = (e: any, value: any) => {
+    if (value) {
+      dispatch(setPreMtrUnidadEjecutoraSeleccionado(value))
+      setValue('codigoIcp', value.codigoIcp)
+      setIcp(value)
+    } else {
+      const unidadEjecutora: IListPreMtrUnidadEjecutora = {
+        id: 0,
 
+        codigoIcp: 0,
+
+        codigoIcpConcat: '',
+
+        unidadEjecutora: '',
+
+        dercripcion: ''
+      }
+
+      dispatch(setPreMtrUnidadEjecutoraSeleccionado(unidadEjecutora))
+    }
   }
 
   useEffect(() => {
-
     const getData = async () => {
-      setLoading(true);
+      setLoading(true)
 
-      const filter:FilterByPresupuestoDto ={
-        codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto
+      const filter: FilterByPresupuestoDto = {
+        codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto
       }
 
       //await fetchDataListPresupuestoDto(dispatch);
 
-      await fetchDataPreMtrDenominacionPuc(dispatch,filter);
-      await fetchDataPreMtrUnidadEjecutora(dispatch,filter);
+      await fetchDataPreMtrDenominacionPuc(dispatch, filter)
+      await fetchDataPreMtrUnidadEjecutora(dispatch, filter)
 
-      setLoading(false);
-    };
+      setLoading(false)
+    }
 
+    console.log(popperPlacement)
 
-    console.log(popperPlacement);
+    getData()
 
-    getData();
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -304,7 +263,6 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-
             {/* codigoConceptoAcumula */}
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
@@ -332,70 +290,55 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
               </FormControl>
             </Grid>
 
-
             {/* Concepto Presupuesto */}
             <Grid item sm={10} xs={12}>
+              <Autocomplete
+                options={listpresupuestoDto}
+                value={presupuesto}
+                id='autocomplete-concepto'
+                isOptionEqualToValue={(option, value) => option.codigoPresupuesto === value.codigoPresupuesto}
+                getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
+                onChange={handlePresupuestos}
+                renderInput={params => <TextField {...params} label='Presupuesto' />}
+              />
+            </Grid>
 
-
-                <Autocomplete
-
-                    options={listpresupuestoDto}
-                    value={presupuesto}
-                    id='autocomplete-concepto'
-                    isOptionEqualToValue={(option, value) => option.codigoPresupuesto === value.codigoPresupuesto}
-                    getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion }
-                    onChange={handlePresupuestos}
-                    renderInput={params => <TextField {...params} label='Presupuesto' />}
-                  />
-
-
-          </Grid>
-
-          {/* ICP */}
-          <Grid item sm={12} xs={12}>
-
-            <Autocomplete
-
+            {/* ICP */}
+            <Grid item sm={12} xs={12}>
+              <Autocomplete
                 options={preMtrUnidadEjecutora}
                 value={icp}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 id='autocomplete-concepto'
-                getOptionLabel={option => option.dercripcion  + '-' + option.id }
+                getOptionLabel={option => option.dercripcion + '-' + option.id}
                 onChange={handlerUnidadEjecutora}
                 renderInput={params => <TextField {...params} label='Unidad Ejecutora' />}
               />
+            </Grid>
 
-          </Grid>
-
-          {/* PUC */}
-          <Grid item sm={12} xs={12}>
-
+            {/* PUC */}
+            <Grid item sm={12} xs={12}>
               <Autocomplete
-
-
                 value={puc}
-                options={preMtrDenominacionPuc  }
+                options={preMtrDenominacionPuc}
                 id='autocomplete-preMtrDenominacionPuc'
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 getOptionLabel={option => option.dercripcion + '-' + option.id + '' + option.codigoPuc}
                 onChange={handlerDenominacionPuc}
                 renderInput={params => <TextField {...params} label='Puc' />}
               />
-
-          </Grid>
-          {/* Presupuestado*/}
-          <Grid item sm={2} xs={12}>
+            </Grid>
+            {/* Presupuestado*/}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='presupuestado'
                   control={control}
-                  rules={{ min:0.001}}
-
+                  rules={{ min: 0.001 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='Presupuestado'
                       onChange={onChange}
                       placeholder='Presupuestado'
@@ -417,13 +360,11 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 <Controller
                   name='ordinario'
                   control={control}
-                  rules={{ min:0.00}}
-
+                  rules={{ min: 0.0 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='Ordinario'
                       onChange={onChange}
                       placeholder='Ordinario'
@@ -439,19 +380,17 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 )}
               </FormControl>
             </Grid>
-              {/* coordinado*/}
-              <Grid item sm={2} xs={12}>
+            {/* coordinado*/}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='coordinado'
                   control={control}
-                  rules={{ min:0}}
-
+                  rules={{ min: 0 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='Coordinado'
                       onChange={onChange}
                       placeholder='Coordinado'
@@ -473,13 +412,11 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 <Controller
                   name='laee'
                   control={control}
-                  rules={{ min:0}}
-
+                  rules={{ min: 0 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='LAEE'
                       onChange={onChange}
                       placeholder='LAEE'
@@ -495,19 +432,17 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 )}
               </FormControl>
             </Grid>
-              {/* fides*/}
-              <Grid item sm={2} xs={12}>
+            {/* fides*/}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='fides'
                   control={control}
-                  rules={{ min:0}}
-
+                  rules={{ min: 0 }}
                   render={({ field: { value, onChange } }) => (
-
                     <TextField
                       value={value || 0}
-                      type="decimal"
+                      type='decimal'
                       label='FIDES'
                       onChange={onChange}
                       placeholder='FIDES'
@@ -524,7 +459,6 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
               </FormControl>
             </Grid>
 
-
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
                 {loading ? (
@@ -539,23 +473,19 @@ const FormPreAsignacionesCreateAsync = ({ popperPlacement }: { popperPlacement: 
                 ) : null}
                 Guardar
               </Button>
-
-
             </Grid>
-
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            {errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+            )}
           </Box>
         </form>
-
       </CardContent>
 
       <TableServerSideCreate></TableServerSideCreate>
     </Card>
   )
-
-
 }
 
 export default FormPreAsignacionesCreateAsync

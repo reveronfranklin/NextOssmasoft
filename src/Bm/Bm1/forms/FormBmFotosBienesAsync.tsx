@@ -1,6 +1,6 @@
 // ** React Imports
 // ** React Imports
-import {  ElementType} from 'react'
+import { ElementType } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -28,8 +28,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
-
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -38,16 +36,11 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import {  Box, Typography} from '@mui/material'
-
-
-
-
+import { Box, Typography } from '@mui/material'
 
 // ** Third Party Imports
 
@@ -55,31 +48,28 @@ import {  Box, Typography} from '@mui/material'
 
 import { styled } from '@mui/material/styles'
 import { IBmBienesFotoUpdateDto } from 'src/interfaces/Bm/BmBienesFoto/BmBienesFotoUpdateDto'
-import {  setListBmBienesFotoResponseDto } from 'src/store/apps/bm'
+import { setListBmBienesFotoResponseDto } from 'src/store/apps/bm'
 
 interface FormInputs {
-  codigoBien :number;
-  numeroPlaca :string;
-  titulo :string;
-  data:string;
-  nombreArchivo:string;
-
+  codigoBien: number
+  numeroPlaca: string
+  titulo: string
+  data: string
+  nombreArchivo: string
 }
 
 interface IFile {
+  name: string
 
-  name: string;
+  lastModified: number
 
-  lastModified: number;
+  lastModifiedDate: Date
 
-  lastModifiedDate: Date;
+  webkitRelativePath: string
 
-  webkitRelativePath: string;
+  size: number
 
-  size: number;
-
-  type: string;
-
+  type: string
 }
 
 //Subir Archivos
@@ -87,10 +77,9 @@ interface IFile {
 
 const FormBmFotosBienesAsync = () => {
   // ** States
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const {bmBm1Seleccionado} = useSelector((state: RootState) => state.bmBm1)
-
+  const { bmBm1Seleccionado } = useSelector((state: RootState) => state.bmBm1)
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
@@ -101,15 +90,12 @@ const FormBmFotosBienesAsync = () => {
   const [archivos, setArchivos] = useState<IFile[]>([])
   const [archivosSend, setArchivosSend] = useState<any>([])
 
-  const defaultValues:IBmBienesFotoUpdateDto = {
-
-   codigoBien:bmBm1Seleccionado.codigoBien,
+  const defaultValues: IBmBienesFotoUpdateDto = {
+    codigoBien: bmBm1Seleccionado.codigoBien,
     numeroPlaca: bmBm1Seleccionado.numeroPlaca,
     titulo: '',
     data: '',
     nombreArchivo: ''
-
-
   }
 
   const ImgStyled = styled('img')(({ theme }) => ({
@@ -127,8 +113,6 @@ const FormBmFotosBienesAsync = () => {
     }
   }))
 
-
-
   // ** Hook
   const {
     control,
@@ -137,64 +121,38 @@ const FormBmFotosBienesAsync = () => {
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-
-
-  const subirArchivos = (e:any)=>{
-    setArchivos(e);
-    setArchivosSend(e);
+  const subirArchivos = (e: any) => {
+    setArchivos(e)
+    setArchivosSend(e)
     for (let index = 0; index < archivos.length; index++) {
-
       setName(archivos[index].name as string)
-
-
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
   const handleInputImageReset = () => {
-
     setImgSrc('/images/avatars/1.png')
-    setValue('data','');
-    setValue('nombreArchivo','');
+    setValue('data', '')
+    setValue('nombreArchivo', '')
   }
 
-
-
-
-  const onSubmit = async (data:FormInputs) => {
+  const onSubmit = async (data: FormInputs) => {
     setLoading(true)
 
     console.log(data)
-    const f = new FormData();
+    const f = new FormData()
     for (let index = 0; index < archivosSend.length; index++) {
-
-      f.append("files",archivosSend[index])
-
-
+      f.append('files', archivosSend[index])
     }
 
-    f.append("numeroPlaca", bmBm1Seleccionado.numeroPlaca);
+    f.append('numeroPlaca', bmBm1Seleccionado.numeroPlaca)
 
-    const responseAll= await ossmmasofApi.post<any>('/BmBienesFotos/AddImage/'+bmBm1Seleccionado.codigoBien,f);
+    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/AddImage/' + bmBm1Seleccionado.codigoBien, f)
 
-    if(responseAll.data.isValid){
-      console.log(responseAll.data.data)
+    if (responseAll.data.isValid) {
       dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
 
-      handleInputImageReset();
+      handleInputImageReset()
     }
-
 
     setErrorMessage(responseAll.data.message)
 
@@ -202,27 +160,17 @@ const FormBmFotosBienesAsync = () => {
     toast.success('Form Submitted')
   }
 
-
-
-
   useEffect(() => {
-
     const getData = async () => {
-      setLoading(true);
+      setLoading(true)
 
+      setLoading(false)
+    }
 
+    getData()
 
-      setLoading(false);
-    };
-
-
-
-
-    getData();
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -239,20 +187,17 @@ const FormBmFotosBienesAsync = () => {
                     <input
                       hidden
                       type='file'
-
                       multiple
-                      onChange={(e)=> subirArchivos(e.target.files)}
+                      onChange={e => subirArchivos(e.target.files)}
                       id='account-settings-upload-image'
                     />
-
                   </ButtonStyled>
 
-                  {archivos.length>0 ?(
-                      <ButtonStyled size='large' type='submit'  variant='outlined' sx={{ml:4}}>
+                  {archivos.length > 0 ? (
+                    <ButtonStyled size='large' type='submit' variant='outlined' sx={{ ml: 4 }}>
                       {loading ? (
                         <CircularProgress
                           sx={{
-
                             color: 'common.blue',
                             width: '20px !important',
                             height: '20px !important',
@@ -262,15 +207,12 @@ const FormBmFotosBienesAsync = () => {
                       ) : null}
                       Enviar
                     </ButtonStyled>
-                  ):null}
-
-
+                  ) : null}
 
                   <Typography variant='caption' sx={{ mt: 4, display: 'block', color: 'text.disabled' }}>
                     {archivos.length} Archivos {name}
                   </Typography>
                 </div>
-
               </Box>
             </Grid>
             {/* descripcionId */}
@@ -299,36 +241,34 @@ const FormBmFotosBienesAsync = () => {
                 )}
               </FormControl>
             </Grid>
-              {/* cedula*/}
-              <Grid item sm={4} xs={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='numeroPlaca'
-                    control={control}
-                    rules={{ minLength:5}}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value || ''}
-                        label='numeroPlaca'
-                        onChange={onChange}
-                        placeholder='numeroPlaca'
-                        error={Boolean(errors.numeroPlaca)}
-                        aria-describedby='validation-async-numeroPlaca'
-                        disabled
-                      />
-                    )}
-                  />
-                  {errors.numeroPlaca && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-numeroPlaca'>
-                      This field is required
-                    </FormHelperText>
+            {/* cedula*/}
+            <Grid item sm={4} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='numeroPlaca'
+                  control={control}
+                  rules={{ minLength: 5 }}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value || ''}
+                      label='numeroPlaca'
+                      onChange={onChange}
+                      placeholder='numeroPlaca'
+                      error={Boolean(errors.numeroPlaca)}
+                      aria-describedby='validation-async-numeroPlaca'
+                      disabled
+                    />
                   )}
-                </FormControl>
+                />
+                {errors.numeroPlaca && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-numeroPlaca'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
             </Grid>
 
-
-
-         {/*    <Grid item xs={12}>
+            {/*    <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
                 {loading ? (
                   <CircularProgress
@@ -344,17 +284,16 @@ const FormBmFotosBienesAsync = () => {
               </Button>
 
             </Grid> */}
-
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            {errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+            )}
           </Box>
         </form>
       </CardContent>
     </Card>
   )
-
-
 }
 
 export default FormBmFotosBienesAsync

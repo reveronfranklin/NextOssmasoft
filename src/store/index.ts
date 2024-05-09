@@ -38,6 +38,9 @@ import { preAsignacionesSlice } from './apps/pre-asignaciones'
 import { preAsignacionesDetalleSlice } from './apps/pre-asignaciones-detalle'
 import { rhPeriodoSlice } from './apps/rh-periodo'
 import { rhListOficinaSlice } from './apps/rh-list-oficina'
+import { preSolModificacionSlice } from './apps/pre-sol-modificacion'
+import { prePucSolModificacionSlice } from './apps/pre-puc-sol-modificacion'
+import { preSaldoDisponibleSlice } from './apps/pre-saldo-disponible'
 
 export const store = configureStore({
   reducer: {
@@ -76,7 +79,10 @@ export const store = configureStore({
     preAsignaciones: preAsignacionesSlice.reducer,
     preAsignacionesDetalle: preAsignacionesDetalleSlice.reducer,
     rhPeriodo: rhPeriodoSlice.reducer,
-    rhListOficina: rhListOficinaSlice.reducer
+    rhListOficina: rhListOficinaSlice.reducer,
+    preSolModificacion: preSolModificacionSlice.reducer,
+    prePucSolModificacion: prePucSolModificacionSlice.reducer,
+    preSaldoDisponible: preSaldoDisponibleSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
