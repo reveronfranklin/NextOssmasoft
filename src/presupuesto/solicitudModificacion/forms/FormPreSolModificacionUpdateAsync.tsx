@@ -55,7 +55,6 @@ import { IPreSolModificacionDeleteDto } from 'src/interfaces/Presupuesto/PreSoli
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { setPreMtrUnidadEjecutoraSeleccionado } from 'src/store/apps/presupuesto'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
-import TableServerSide from 'src/presupuesto/pucSolicitudModificacion/components/TableServerSide'
 
 interface FormInputs {
   codigoSolModificacion: number
@@ -72,9 +71,6 @@ interface FormInputs {
   statusProceso: string
 }
 
-interface Props {
-  dePara: string
-}
 const FormPreSolModificacionUpdateAsync = ({
   popperPlacement
 }: {
@@ -103,7 +99,7 @@ const FormPreSolModificacionUpdateAsync = ({
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false)
-  const [aportar, setAportar] = useState<Props>({ dePara: 'D' })
+  const [openAprobar, setOpenAprobar] = useState(false)
 
   const { preSolModificacionSeleccionado, listTipoModificacion } = useSelector(
     (state: RootState) => state.preSolModificacion
@@ -187,8 +183,20 @@ const FormPreSolModificacionUpdateAsync = ({
 
   const handleClose = () => {
     setOpen(false)
-    dispatch(setVerPreSolModificacionActive(false))
-    dispatch(setPreSolModificacionSeleccionado({}))
+
+    //dispatch(setVerPreSolModificacionActive(false))
+    //(setPreSolModificacionSeleccionado({}))
+  }
+
+  const handleClickOpenAprobar = () => {
+    setOpenAprobar(true)
+  }
+
+  const handleCloseAprobar = () => {
+    setOpenAprobar(false)
+
+    //dispatch(setVerPreSolModificacionActive(false))
+    //dispatch(setPreSolModificacionSeleccionado({}))
   }
 
   const handleDelete = async () => {
@@ -203,6 +211,27 @@ const FormPreSolModificacionUpdateAsync = ({
       dispatch(setPreSolModificacionSeleccionado({}))
     }
   }
+
+  const handleAprobar = async () => {
+    setOpenAprobar(false)
+    const deleteSol: IPreSolModificacionDeleteDto = {
+      codigoSolModificacion: preSolModificacionSeleccionado.codigoSolModificacion
+    }
+    const responseAll = await ossmmasofApi.post<any>('/PreSolModificacion/Aprobar', deleteSol)
+    setErrorMessage(responseAll.data.message)
+    if (responseAll.data.isValid) {
+      dispatch(setVerPreSolModificacionActive(false))
+      dispatch(setPreSolModificacionSeleccionado({}))
+    }
+
+    setErrorMessage(responseAll.data.message)
+
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    await sleep(4000)
+    setErrorMessage('')
+    setLoading(false)
+  }
+
   const handlerTipoModificacion = async (e: any, value: any) => {
     if (value != null) {
       setValue('tipoModificacionId', value.id)
@@ -486,16 +515,41 @@ const FormPreSolModificacionUpdateAsync = ({
                 aria-describedby='alert-dialog-description'
               >
                 <DialogTitle id='alert-dialog-title'>
-                  {'Esta Seguro de Eliminar esta solicitud de modificacion?'}
+                  {'Esta Seguro de Eliminar esta solicitud de modificación?'}
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText id='alert-dialog-description'>
-                    Se eliminaran los datos de esta solicitud de modificacion solo si no existe en historico
+                    Se eliminaran los datos de esta solicitud de modificación solo si no existe en historico
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose}>No</Button>
                   <Button onClick={handleDelete} autoFocus>
+                    Si
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              <Button variant='outlined' size='large' color='success' onClick={handleClickOpenAprobar} sx={{ ml: 2 }}>
+                Aprobar
+              </Button>
+              <Dialog
+                open={openAprobar}
+                onClose={handleCloseAprobar}
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
+              >
+                <DialogTitle id='alert-dialog-title'>
+                  {'Esta Seguro de APROBAR esta solicitud de modificacion?'}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id='alert-dialog-description'>
+                    Se APROBARA esta solicitud de modificacion solo si esta PENDIENTE
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseAprobar}>No</Button>
+                  <Button onClick={handleAprobar} autoFocus>
                     Si
                   </Button>
                 </DialogActions>

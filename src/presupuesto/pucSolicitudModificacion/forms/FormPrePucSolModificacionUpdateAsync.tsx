@@ -117,9 +117,10 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const [open, setOpen] = useState(false)
+
   const { preSolModificacionSeleccionado } = useSelector((state: RootState) => state.preSolModificacion)
   const { preSaldoDisponibleSeleccionado } = useSelector((state: RootState) => state.preSaldoDisponible)
-  const [titulo, setTitulo] = useState<string>(
+  const [titulo] = useState<string>(
     'Pre - Modificar PUC-ICP Solicitud de Modificación' + (dePara == 'D' ? '(DESCONTAR)' : '(APORTAR)')
   )
   const { prePucSolModificacionSeleccionado, listFinanciado } = useSelector(
@@ -524,27 +525,6 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
             </Grid>
 
             <Grid item xs={12}>
-              {/*  <Button size='large' type='submit' variant='contained'>
-                {loading ? (
-                  <CircularProgress
-                    sx={{
-                      color: 'common.white',
-                      width: '20px !important',
-                      height: '20px !important',
-                      mr: theme => theme.spacing(2)
-                    }}
-                  />
-                ) : null}
-                Guardar
-              </Button>
-              <Button variant='outlined' size='large' onClick={handleChangeDePara} sx={{ ml: 2 }}>
-                Cambiar De(Descontar)-Para(Aportar)
-              </Button>
-              {deParaState === 'D' && (
-                <Button variant='contained' color='success' size='large' onClick={viewPreSaldoPendiente} sx={{ ml: 2 }}>
-                  VER SALDOS
-                </Button>
-              )} */}
               <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
                 {loading ? (
                   <CircularProgress

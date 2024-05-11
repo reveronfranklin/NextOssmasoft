@@ -281,6 +281,15 @@ const TableServerSide = () => {
     async (filter: IFilterPrePresupuestoDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
+      if (filter.codigoPresupuesto <= 0) {
+        setTotal(0)
+        setAllRows([])
+        setRows([])
+        setMensaje('')
+
+        return
+      }
+
       setMensaje('')
       setLoading(true)
 
@@ -322,7 +331,6 @@ const TableServerSide = () => {
     if (listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.codigoPresupuesto != null) {
       filter.codigoPresupuesto = listpresupuestoDtoSeleccionado.codigoPresupuesto
     }
-    console.log(filter)
 
     if (filter.codigoPresupuesto > 0) {
       fetchTableData(filter)
