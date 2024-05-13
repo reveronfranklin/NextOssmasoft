@@ -100,6 +100,7 @@ const FormPreSolModificacionUpdateAsync = ({
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false)
   const [openAprobar, setOpenAprobar] = useState(false)
+  const [openAnular, setOpenAnular] = useState(false)
 
   const { preSolModificacionSeleccionado, listTipoModificacion } = useSelector(
     (state: RootState) => state.preSolModificacion
@@ -183,9 +184,6 @@ const FormPreSolModificacionUpdateAsync = ({
 
   const handleClose = () => {
     setOpen(false)
-
-    //dispatch(setVerPreSolModificacionActive(false))
-    //(setPreSolModificacionSeleccionado({}))
   }
 
   const handleClickOpenAprobar = () => {
@@ -194,9 +192,14 @@ const FormPreSolModificacionUpdateAsync = ({
 
   const handleCloseAprobar = () => {
     setOpenAprobar(false)
+  }
 
-    //dispatch(setVerPreSolModificacionActive(false))
-    //dispatch(setPreSolModificacionSeleccionado({}))
+  const handleClickOpenAnular = () => {
+    setOpenAnular(true)
+  }
+
+  const handleCloseAnular = () => {
+    setOpenAnular(false)
   }
 
   const handleDelete = async () => {
@@ -218,6 +221,26 @@ const FormPreSolModificacionUpdateAsync = ({
       codigoSolModificacion: preSolModificacionSeleccionado.codigoSolModificacion
     }
     const responseAll = await ossmmasofApi.post<any>('/PreSolModificacion/Aprobar', deleteSol)
+    setErrorMessage(responseAll.data.message)
+    if (responseAll.data.isValid) {
+      dispatch(setVerPreSolModificacionActive(false))
+      dispatch(setPreSolModificacionSeleccionado({}))
+    }
+
+    setErrorMessage(responseAll.data.message)
+
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    await sleep(4000)
+    setErrorMessage('')
+    setLoading(false)
+  }
+
+  const handleAnular = async () => {
+    setOpenAnular(false)
+    const deleteSol: IPreSolModificacionDeleteDto = {
+      codigoSolModificacion: preSolModificacionSeleccionado.codigoSolModificacion
+    }
+    const responseAll = await ossmmasofApi.post<any>('/PreSolModificacion/Anular', deleteSol)
     setErrorMessage(responseAll.data.message)
     if (responseAll.data.isValid) {
       dispatch(setVerPreSolModificacionActive(false))
@@ -529,31 +552,76 @@ const FormPreSolModificacionUpdateAsync = ({
                   </Button>
                 </DialogActions>
               </Dialog>
-
-              <Button variant='outlined' size='large' color='success' onClick={handleClickOpenAprobar} sx={{ ml: 2 }}>
-                Aprobar
-              </Button>
-              <Dialog
-                open={openAprobar}
-                onClose={handleCloseAprobar}
-                aria-labelledby='alert-dialog-title'
-                aria-describedby='alert-dialog-description'
-              >
-                <DialogTitle id='alert-dialog-title'>
-                  {'Esta Seguro de APROBAR esta solicitud de modificacion?'}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id='alert-dialog-description'>
-                    Se APROBARA esta solicitud de modificacion solo si esta PENDIENTE
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseAprobar}>No</Button>
-                  <Button onClick={handleAprobar} autoFocus>
-                    Si
+              {/* Aprobar*/}
+              {preSolModificacionSeleccionado.status === 'PE' && (
+                <>
+                  <Button
+                    variant='outlined'
+                    size='large'
+                    color='success'
+                    onClick={handleClickOpenAprobar}
+                    sx={{ ml: 2 }}
+                  >
+                    Aprobar
                   </Button>
-                </DialogActions>
-              </Dialog>
+                  <Dialog
+                    open={openAprobar}
+                    onClose={handleCloseAprobar}
+                    aria-labelledby='alert-dialog-title'
+                    aria-describedby='alert-dialog-description'
+                  >
+                    <DialogTitle id='alert-dialog-title'>
+                      {'Esta Seguro de APROBAR esta solicitud de modificacion?'}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id='alert-dialog-description'>
+                        Se APROBARA esta solicitud de modificacion solo si esta PENDIENTE
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseAprobar}>No</Button>
+                      <Button onClick={handleAprobar} autoFocus>
+                        Si
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+              )}
+              {/* Anular*/}
+              {preSolModificacionSeleccionado.status === 'AP' && (
+                <>
+                  <Button
+                    variant='outlined'
+                    size='large'
+                    color='success'
+                    onClick={handleClickOpenAnular}
+                    sx={{ ml: 2 }}
+                  >
+                    Anular
+                  </Button>
+                  <Dialog
+                    open={openAnular}
+                    onClose={handleCloseAnular}
+                    aria-labelledby='alert-dialog-title'
+                    aria-describedby='alert-dialog-description'
+                  >
+                    <DialogTitle id='alert-dialog-title'>
+                      {'Esta Seguro de ANULAR esta solicitud de modificacion?'}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id='alert-dialog-description'>
+                        Se ANULARA esta solicitud de modificacion solo si esta APROBADA
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseAnular}>No</Button>
+                      <Button onClick={handleAnular} autoFocus>
+                        Si
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+              )}
             </Grid>
           </Grid>
           <Box>
