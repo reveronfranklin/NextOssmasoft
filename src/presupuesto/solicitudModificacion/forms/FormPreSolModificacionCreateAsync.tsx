@@ -206,12 +206,11 @@ const FormPreSolModificacionCreateAsync = ({
       codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto
     }
 
-    console.log('update a enviar', update)
     const responseAll = await ossmmasofApi.post<any>('/PreSolModificacion/Create', update)
 
     if (responseAll.data.isValid) {
       // dispatch(setPreAsignacionesDetalleSeleccionado(responseAll.data.data))
-      console.log(responseAll.data)
+
       dispatch(setVerPreSolModificacionActive(false))
     }
 
