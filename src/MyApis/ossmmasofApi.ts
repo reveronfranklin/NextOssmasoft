@@ -1,106 +1,71 @@
-
-// ** Axios Imports
 import axios from 'axios';
-
-// ** Config
 import authConfig from 'src/configs/auth'
 
-//Producction
-/*export const  ossmmasofApi = axios.create({
-  baseURL:'http://192.168.171.210:5000/api'
+const baseURLocal     = process.env.BASE_URL_API_NET
+const baseUProduction = process.env.BASE_URL_API_NET_PRODUCTION
 
-});*/
+const urlBase = process.env.NODE_ENV !== 'production' ? baseURLocal : baseUProduction
 
-//Development
+export const ossmmasofApi = axios.create({
+	baseURL: urlBase
+})
 
-export const  ossmmasofApi = axios.create({
-  baseURL:'http://localhost:5000/api'
-
-});
-export const  ossmmasofApiBlob = axios.create({
-  baseURL:'http://localhost:5000/api',
-  responseType: 'blob'
-
-});
 ossmmasofApi.interceptors.request.use(
+	config => {
+		const token = localStorage.getItem(authConfig.storageTokenKeyName);
 
-  config => {
-
-
-    const token = localStorage.getItem(authConfig.storageTokenKeyName);
-
-    if (token) {
-      // Configure this as per your backend requirements
-      config.headers!['Authorization'] = 'Bearer ' + token;
-    }
-
-      return config;
-
-  },
-  error => {
-
-
-    return Promise.reject(error);
-  }
+		if (token) {
+			// Configure this as per your backend requirements
+			config.headers!['Authorization'] = 'Bearer ' + token;
+		}
+		return config;
+	},
+	error => {
+		return Promise.reject(error);
+	}
 );
 
-
 ossmmasofApi.interceptors.response.use(
-  res => {
-    return res;
-  },
-  async err => {
+	res => {
+		return res;
+	},
+	async err => {
+		const originalConfig = err.config;
 
-    const originalConfig = err.config;
+		if (originalConfig && originalConfig.url !== '/login' && err.response) {
+			// Access Token was expired
+			if (err.response.status === 401 && !originalConfig._retry) {
+				originalConfig._retry = true;
 
-    if (originalConfig && originalConfig.url !== '/login' && err.response) {
+				try {
+					const rs = await axios.post(authConfig.refreshEndPoint,
+						{
+							headers: {
+								Authorization: 'Bearer' + localStorage.getItem(authConfig.storageTokenKeyName)!
+							}
+						});
 
-      // Access Token was expired
-      if (err.response.status === 401 && !originalConfig._retry) {
-        originalConfig._retry = true;
+					console.log('desde el interceptor de la repuesta para evaluar el token de las cookies rs.data.data', rs.data.data);
+					return ossmmasofApi(originalConfig);
+				} catch (_error) {
+					console.log('Session time out. Please login again.', { id: 'sessionTimeOut' });
 
-        try {
+					/*toast.error('Session time out. Please login again.', {
+						id: 'sessionTimeOut'
+					});*/
+					// Logging out the user by removing all the tokens from local
 
-          const rs = await axios.post(
-            authConfig.refreshEndPoint,
-            {
-              headers: {
-                Authorization: 'Bearer' + localStorage.getItem(authConfig.storageTokenKeyName)!
-              }
-            }
-          );
+					localStorage.removeItem(authConfig.storageTokenKeyName);
+					localStorage.removeItem(authConfig.onTokenExpiration);
+					// Redirecting the user to the landing page
+					window.location.href = window.location.origin;
 
-          console.log('desde el interceptor de la repuesta para evaluar el token de las cookies rs.data.data',rs.data.data);
-
-
-          return ossmmasofApi(originalConfig);
-        } catch (_error) {
-
-          console.log('Session time out. Please login again.', {
-            id: 'sessionTimeOut'
-          });
-
-          /*toast.error('Session time out. Please login again.', {
-            id: 'sessionTimeOut'
-          });*/
-
-          // Logging out the user by removing all the tokens from local
-
-          localStorage.removeItem(authConfig.storageTokenKeyName);
-          localStorage.removeItem(authConfig.onTokenExpiration);
-
-          // Redirecting the user to the landing page
-
-          window.location.href = window.location.origin;
-
-          return Promise.reject(_error);
-
-        }
-      }
-    }
-
-    return Promise.reject(err);
-  }
+					return Promise.reject(_error);
+				}
+			}
+		}
+		return Promise.reject(err);
+	}
 );
 
 
