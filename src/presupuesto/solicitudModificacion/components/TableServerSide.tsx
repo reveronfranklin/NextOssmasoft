@@ -93,6 +93,37 @@ const renderClient = (params: GridRenderCellParams) => {
     )
   }
 }
+const renderClientStatus = (params: GridRenderCellParams) => {
+  const { row } = params
+  let stateNum = Math.floor(Math.random() * 6)
+  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
+  if (row.status === 'PE') {
+    stateNum = 0
+  }
+
+  if (row.status === 'AP') {
+    stateNum = 3
+  }
+  if (row.status === 'AN') {
+    stateNum = 1
+  }
+  const color = states[stateNum]
+  console.log(row)
+
+  if (row.avatar && row.avatar.length) {
+    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
+  } else {
+    return (
+      <CustomAvatar
+        skin='light'
+        color={color as ThemeColor}
+        sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
+      >
+        {getInitials(row.descripcionEstatus ? row.descripcionEstatus : 'John Doe')}
+      </CustomAvatar>
+    )
+  }
+}
 
 /*const statusObj: StatusObj = {
   1: { title: 'current', color: 'primary' },
@@ -152,14 +183,14 @@ const TableServerSide = () => {
             </IconButton>
           </Tooltip>
 
-          {row.descontar && (
+          {row.descontar && row.status == 'PE' && (
             <Tooltip title='Descontar'>
               <IconButton size='small' onClick={() => handleAddPucSolicitud(row, 'D')}>
                 <Icon icon='mdi-alpha-d-circle' fontSize={20} />
               </IconButton>
             </Tooltip>
           )}
-          {row.aportar && (
+          {row.aportar && row.status == 'PE' && (
             <Tooltip title='Aportar'>
               <IconButton size='small' onClick={() => handleAddPucSolicitud(row, 'P')}>
                 <Icon icon='mdi-alpha-a-circle' fontSize={20} />
@@ -213,6 +244,48 @@ const TableServerSide = () => {
       }
     },
     {
+      flex: 0.055,
+      minWidth: 15,
+      headerName: 'Aportar',
+      field: 'totalAportar',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {new Intl.NumberFormat('de-DE').format(params.row.totalAportar)}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.055,
+      minWidth: 15,
+      headerName: 'Descontar',
+      field: 'totalDescontar',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {new Intl.NumberFormat('de-DE').format(params.row.totalDescontar)}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      minWidth: 80,
+      field: 'descripcionEstatus',
+      headerName: 'Estatus',
+      renderCell: (params: GridRenderCellParams) => {
+        const { row } = params
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'left' }}>
+            {renderClientStatus(params)}
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant='body2' sx={{ color: 'text.primary', fontWeight: 600 }}>
+                {row.descripcionEstatus}
+              </Typography>
+            </Box>
+          </Box>
+        )
+      }
+    },
+    /*  {
       flex: 0.045,
       minWidth: 15,
       headerName: 'Estatus',
@@ -222,7 +295,7 @@ const TableServerSide = () => {
           {params.row.descripcionEstatus}
         </Typography>
       )
-    },
+    }, */
     {
       flex: 0.075,
       minWidth: 15,
