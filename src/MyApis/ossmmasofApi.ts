@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import authConfig from 'src/configs/auth'
 
@@ -65,5 +66,4 @@ ossmmasofApi.interceptors.response.use(
 		return Promise.reject(err);
 	}
 );
-
 
