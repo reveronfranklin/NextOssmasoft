@@ -1,8 +1,11 @@
 import axios from 'axios';
 import authConfig from 'src/configs/auth'
 
+const urlProduction  = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION;
+const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET;
+
 export const ossmmasofApi = axios.create({
-	baseURL: !authConfig.isProduction ? process.env.NEXT_PUBLIC_BASE_URL_API_NET : process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+	baseURL: !authConfig.isProduction ? urlDevelopment : urlProduction
 })
 
 ossmmasofApi.interceptors.request.use(
