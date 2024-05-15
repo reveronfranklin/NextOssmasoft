@@ -5,6 +5,7 @@ const commonSetting = {
   registerEndpoint    : '/jwt/register',
   storageTokenKeyName : 'accessToken',
   onTokenExpiration   : 'refreshToken',
+  isProduction        : isProduction
 }
 
 const productionSetting = {
@@ -22,5 +23,6 @@ const developSetting = {
 }
 
 const authConfig = !isProduction ? developSetting : productionSetting
+console.log('authConfig', authConfig)
 
 export default authConfig
