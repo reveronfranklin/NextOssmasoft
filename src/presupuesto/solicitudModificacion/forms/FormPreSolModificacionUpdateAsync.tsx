@@ -515,46 +515,46 @@ const FormPreSolModificacionUpdateAsync = ({
             </Grid>
 
             <Grid item xs={12}>
-              <Button size='large' type='submit' variant='contained'>
-                {loading ? (
-                  <CircularProgress
-                    sx={{
-                      color: 'common.white',
-                      width: '20px !important',
-                      height: '20px !important',
-                      mr: theme => theme.spacing(2)
-                    }}
-                  />
-                ) : null}
-                Guardar
-              </Button>
-              <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
-                Eliminar
-              </Button>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby='alert-dialog-title'
-                aria-describedby='alert-dialog-description'
-              >
-                <DialogTitle id='alert-dialog-title'>
-                  {'Esta Seguro de Eliminar esta solicitud de modificación?'}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id='alert-dialog-description'>
-                    Se eliminaran los datos de esta solicitud de modificación solo si no existe en historico
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>No</Button>
-                  <Button onClick={handleDelete} autoFocus>
-                    Si
-                  </Button>
-                </DialogActions>
-              </Dialog>
               {/* Aprobar*/}
               {preSolModificacionSeleccionado.status === 'PE' && (
                 <>
+                  <Button size='large' type='submit' variant='contained'>
+                    {loading ? (
+                      <CircularProgress
+                        sx={{
+                          color: 'common.white',
+                          width: '20px !important',
+                          height: '20px !important',
+                          mr: theme => theme.spacing(2)
+                        }}
+                      />
+                    ) : null}
+                    Guardar
+                  </Button>
+                  <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
+                    Eliminar
+                  </Button>
+                  <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby='alert-dialog-title'
+                    aria-describedby='alert-dialog-description'
+                  >
+                    <DialogTitle id='alert-dialog-title'>
+                      {'Esta Seguro de Eliminar esta solicitud de modificación?'}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id='alert-dialog-description'>
+                        Se eliminaran los datos de esta solicitud de modificación solo si no existe en historico
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleClose}>No</Button>
+                      <Button onClick={handleDelete} autoFocus>
+                        Si
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                   <Button
                     variant='outlined'
                     size='large'
