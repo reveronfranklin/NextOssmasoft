@@ -23,6 +23,5 @@ const developSetting = {
 }
 
 const authConfig = !isProduction ? developSetting : productionSetting
-console.log('authConfig', authConfig)
 
 export default authConfig
