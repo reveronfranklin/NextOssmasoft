@@ -100,9 +100,9 @@ const DialogPrePucSolModificacionInfo = ({ dePara }: Props) => {
         open={verPrePucSolModificacionActive}
         maxWidth='lg'
         scroll='body'
-        onClose={() => handleSetShow(false)}
+        // onClose={() => handleSetShow(false)}
         TransitionComponent={Transition}
-        onBackdropClick={() => handleSetShow(false)}
+        //onBackdropClick={() => handleSetShow(true)}
       >
         <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
           <IconButton
@@ -117,7 +117,7 @@ const DialogPrePucSolModificacionInfo = ({ dePara }: Props) => {
             {operacionCrudPrePucSolModificacion === 1 ? (
               <FormPrePucSolModificacionCreateAsync dePara={dePara} />
             ) : (
-              <FormPrePucSolModificacionUpdateAsync />
+              <FormPrePucSolModificacionUpdateAsync dePara={dePara} />
             )}
           </DatePickerWrapper>
         </DialogContent>
