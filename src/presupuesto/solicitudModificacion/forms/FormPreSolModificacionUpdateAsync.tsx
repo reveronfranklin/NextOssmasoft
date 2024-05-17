@@ -593,9 +593,8 @@ const FormPreSolModificacionUpdateAsync = ({
                   <Button
                     variant='outlined'
                     size='large'
-                    color='success'
                     onClick={handleClickOpenAnular}
-                    sx={{ ml: 2 }}
+                    sx={{ color: 'error.main', ml: 2 }}
                   >
                     Anular
                   </Button>

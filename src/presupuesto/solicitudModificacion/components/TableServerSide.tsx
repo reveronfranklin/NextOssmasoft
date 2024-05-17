@@ -246,17 +246,6 @@ const TableServerSide = () => {
     {
       flex: 0.055,
       minWidth: 15,
-      headerName: 'Aportar',
-      field: 'totalAportar',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat('de-DE').format(params.row.totalAportar)}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.055,
-      minWidth: 15,
       headerName: 'Descontar',
       field: 'totalDescontar',
       renderCell: (params: GridRenderCellParams) => (
@@ -265,6 +254,18 @@ const TableServerSide = () => {
         </Typography>
       )
     },
+    {
+      flex: 0.055,
+      minWidth: 15,
+      headerName: 'Aportar',
+      field: 'totalAportar',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {new Intl.NumberFormat('de-DE').format(params.row.totalAportar)}
+        </Typography>
+      )
+    },
+
     {
       flex: 0.1,
       minWidth: 80,
@@ -353,13 +354,11 @@ const TableServerSide = () => {
   const fetchTableData = useCallback(
     async (filter: IFilterPrePresupuestoDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
-
+      setTotal(0)
+      setAllRows([])
+      setRows([])
+      setMensaje('')
       if (filter.codigoPresupuesto <= 0) {
-        setTotal(0)
-        setAllRows([])
-        setRows([])
-        setMensaje('')
-
         return
       }
 
