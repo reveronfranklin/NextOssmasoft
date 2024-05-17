@@ -479,7 +479,7 @@ const TableServerSide = () => {
     <Card>
       <CardContent>
         <Typography gutterBottom variant='h5' component='div'>
-          Solicitud de Modificación
+          Solicitud de Modificación Prespuestaria
         </Typography>
       </CardContent>
       {!loading ? (

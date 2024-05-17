@@ -211,12 +211,14 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
   }
 
   const onSubmit = async (data: FormInputs) => {
+    const totalAportarDef = totalAportar + +data.monto
+    console.log('totalAportarDef>>>>', totalAportarDef)
     if (
       deParaState === 'P' &&
       preSolModificacionSeleccionado.descontar == true &&
       preSolModificacionSeleccionado.aportar == true
     ) {
-      if (totalAportar + data.monto > totalDescontar) {
+      if (totalAportarDef > totalDescontar) {
         setErrorMessage('Total Aportar no puede superar a el Total Descontar')
         const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
         await sleep(2000)
