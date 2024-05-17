@@ -350,20 +350,20 @@ const PreSolModificacionTableServerSide = (dePara: Props) => {
             </Tooltip>
             <NumericFormat
               sx={{ ml: 2, typography: 'body1' }}
-              label='Total Aportar:'
+              label='Total Descontar:'
               disabled
               customInput={TextField}
-              value={totalAportar}
+              value={totalDescontar}
               decimalSeparator=','
               decimalScale={2}
               thousandSeparator='.'
             />
             <NumericFormat
               sx={{ ml: 2, typography: 'body1' }}
-              label='Total Descontar:'
+              label='Total Aportar:'
               disabled
               customInput={TextField}
-              value={totalDescontar}
+              value={totalAportar}
               decimalSeparator=','
               decimalScale={2}
               thousandSeparator='.'
