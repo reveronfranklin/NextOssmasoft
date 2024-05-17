@@ -102,6 +102,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
+  const { totalDescontar, totalAportar } = useSelector((state: RootState) => state.prePucSolModificacion)
   const { preSolModificacionSeleccionado } = useSelector((state: RootState) => state.preSolModificacion)
   const { preSaldoDisponibleSeleccionado } = useSelector((state: RootState) => state.preSaldoDisponible)
   const [titulo, setTitulo] = useState<string>(
@@ -210,10 +211,47 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
   }
 
   const onSubmit = async (data: FormInputs) => {
+    if (
+      deParaState === 'P' &&
+      preSolModificacionSeleccionado.descontar == true &&
+      preSolModificacionSeleccionado.aportar == true
+    ) {
+      if (totalAportar + data.monto > totalDescontar) {
+        setErrorMessage('Total Aportar no puede superar a el Total Descontar')
+        const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+        await sleep(2000)
+        setErrorMessage('')
+        setLoading(false)
+        return
+      }
+
+      if (data.financiadoId <= 0) {
+        setErrorMessage('Financiado Invalido')
+        const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+        await sleep(2000)
+        setErrorMessage('')
+        setLoading(false)
+        return
+      }
+      if (data.codigoIcp <= 0) {
+        setErrorMessage('ICP Invalido')
+        const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+        await sleep(2000)
+        setErrorMessage('')
+        setLoading(false)
+        return
+      }
+      if (data.codigoPuc <= 0) {
+        setErrorMessage('PUC Invalido')
+        const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+        await sleep(2000)
+        setErrorMessage('')
+        setLoading(false)
+        return
+      }
+    }
+
     setLoading(true)
-
-    console.log('deParaState', deParaState)
-
     const update: IPrePucSolModificacionUpdateDto = {
       codigoPucSolModificacion: 0,
       codigoSolModificacion: preSolModificacionSeleccionado.codigoSolModificacion,
