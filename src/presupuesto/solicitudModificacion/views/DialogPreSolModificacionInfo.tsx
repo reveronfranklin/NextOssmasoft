@@ -28,11 +28,6 @@ import { useSelector } from 'react-redux'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { ReactDatePickerProps } from 'react-datepicker'
 import { IPreSolModificacionUpdateDto } from 'src/interfaces/Presupuesto/PreSolicitudModificacion/PreSolModificacionUpdateDto'
-
-import {
-  setPrePucSolModificacionSeleccionado,
-  setVerPrePucSolModificacionActive
-} from 'src/store/apps/pre-puc-sol-modificacion'
 import FormPreSolModificacionUpdateAsync from '../forms/FormPreSolModificacionUpdateAsync'
 import FormPreSolModificacionCreateAsync from '../forms/FormPreSolModificacionCreateAsync'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
@@ -97,15 +92,7 @@ const DialogPreSolModificacionInfo = ({
 
   return (
     <Card>
-      <Dialog
-        fullWidth
-        open={verPreSolModificacionActive}
-        maxWidth='lg'
-        scroll='body'
-        onClose={() => handleSetShow(false)}
-        TransitionComponent={Transition}
-        onBackdropClick={() => handleSetShow(false)}
-      >
+      <Dialog fullWidth open={verPreSolModificacionActive} maxWidth='lg' scroll='body' TransitionComponent={Transition}>
         <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
           <IconButton
             size='small'

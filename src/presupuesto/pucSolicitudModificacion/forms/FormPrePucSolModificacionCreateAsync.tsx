@@ -152,9 +152,6 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
       setDeParaState('P')
       setTitulo('Pre - Agregar PUC-ICP Solicitud de Modificación' + '(APORTAR)')
     }
-
-    console.log(deParaState)
-    console.log(titulo)
   }
 
   const handlerUnidadEjecutora = (e: any, value: any) => {
@@ -212,7 +209,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
 
   const onSubmit = async (data: FormInputs) => {
     const totalAportarDef = totalAportar + +data.monto
-    console.log('totalAportarDef>>>>', totalAportarDef)
+
     if (
       deParaState === 'P' &&
       preSolModificacionSeleccionado.descontar == true &&
@@ -224,6 +221,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
         await sleep(2000)
         setErrorMessage('')
         setLoading(false)
+
         return
       }
 
@@ -233,6 +231,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
         await sleep(2000)
         setErrorMessage('')
         setLoading(false)
+
         return
       }
       if (data.codigoIcp <= 0) {
@@ -241,6 +240,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
         await sleep(2000)
         setErrorMessage('')
         setLoading(false)
+
         return
       }
       if (data.codigoPuc <= 0) {
@@ -249,6 +249,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
         await sleep(2000)
         setErrorMessage('')
         setLoading(false)
+
         return
       }
     }
@@ -275,7 +276,6 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
 
       return
     }
-    console.log('update a enviar', update)
 
     const responseAll = await ossmmasofApi.post<any>('/PrePucSolModificacion/Create', update)
 
