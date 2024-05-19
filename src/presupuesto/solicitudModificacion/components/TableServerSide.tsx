@@ -52,7 +52,7 @@ import {
   setVerPreSolModificacionActive
 } from 'src/store/apps/pre-sol-modificacion'
 import { IPreSolModificacionUpdateDto } from 'src/interfaces/Presupuesto/PreSolicitudModificacion/PreSolModificacionUpdateDto'
-import { fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
+import { fetchDataPreMtrDenominacionPuc, fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
 import DialogPreSolModificacionInfo from '../views/DialogPreSolModificacionInfo'
 import { IPrePucSolModificacionUpdateDto } from 'src/interfaces/Presupuesto/PrePucSolicitudModificacion/PreSolicitudModificacion/PrePucSolModificacionUpdateDto'
 import {
@@ -108,7 +108,6 @@ const renderClientStatus = (params: GridRenderCellParams) => {
     stateNum = 1
   }
   const color = states[stateNum]
-  console.log(row)
 
   if (row.avatar && row.avatar.length) {
     return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
@@ -286,17 +285,6 @@ const TableServerSide = () => {
         )
       }
     },
-    /*  {
-      flex: 0.045,
-      minWidth: 15,
-      headerName: 'Estatus',
-      field: 'descripcionEstatus',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.descripcionEstatus}
-        </Typography>
-      )
-    }, */
     {
       flex: 0.075,
       minWidth: 15,
@@ -366,13 +354,12 @@ const TableServerSide = () => {
       setLoading(true)
 
       const responseAll = await ossmmasofApi.post<any>('/PreSolModificacion/GetByPresupuesto', filter)
-      console.log(responseAll)
+
       if (responseAll.data.data) {
         setAllRows(responseAll.data.data)
         setTotal(responseAll.data.data.length)
         setRows(loadServerRows(page, responseAll.data.data))
         setMensaje('')
-        console.log(rows)
       } else {
         setTotal(0)
         setAllRows([])
@@ -380,6 +367,7 @@ const TableServerSide = () => {
         setMensaje('')
       }
       await fetchDataPreMtrUnidadEjecutora(dispatch, filter)
+      await fetchDataPreMtrDenominacionPuc(dispatch, filter)
 
       const filterTipo = { descripcionId: 0, tituloId: 8 }
       const responseTipoModificacion = await ossmmasofApi.post<any>('/PreDescriptivas/GetAllByTitulo', filterTipo)
@@ -479,7 +467,7 @@ const TableServerSide = () => {
     <Card>
       <CardContent>
         <Typography gutterBottom variant='h5' component='div'>
-          Solicitud de Modificación Prespuestaria
+          Solicitud de Modificación Presupuestaria
         </Typography>
       </CardContent>
       {!loading ? (
