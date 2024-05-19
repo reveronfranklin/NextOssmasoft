@@ -88,8 +88,6 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
   const dispatch = useDispatch()
 
   const getIcp = (id: number) => {
-    console.log('list icp', preMtrUnidadEjecutora)
-    console.log(preMtrUnidadEjecutora)
     const result = preMtrUnidadEjecutora?.filter(elemento => {
       return elemento.codigoIcp == id
     })
@@ -154,24 +152,6 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  /* const viewPreSaldoPendiente = () => {
-    dispatch(setVerPreSaldoDisponibleActive(true))
-  }
-
-  const handleChangeDePara = () => {
-    if (deParaState === 'P') {
-      setDeParaState('D')
-      setTitulo('Pre - Modificar PUC-ICP Solicitud de Modificación' + '(DESCONTAR)')
-    }
-    if (deParaState === 'D') {
-      setDeParaState('P')
-      setTitulo('Pre - Modificar PUC-ICP Solicitud de Modificación' + '(APORTAR)')
-    }
-
-    console.log(deParaState)
-    console.log(titulo)
-  }
- */
   const handleClickOpen = () => {
     setOpen(true)
   }
@@ -303,13 +283,11 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
 
       return
     }
-    console.log('update a enviar', update)
 
     const responseAll = await ossmmasofApi.post<any>('/PrePucSolModificacion/Update', update)
 
     if (responseAll.data.isValid) {
       // dispatch(setPreAsignacionesDetalleSeleccionado(responseAll.data.data))
-      console.log(responseAll.data)
 
       const defaultValues: IPrePucSolModificacionUpdateDto = {
         codigoPucSolModificacion: 0,
@@ -358,15 +336,11 @@ const FormPrePucSolModificacionUpdateAsync = ({ dePara }: Props) => {
         codigoPresupuesto: preSolModificacionSeleccionado.codigoPresupuesto,
         codigoSaldo: prePucSolModificacionSeleccionado.codigoSaldo
       }
-      console.log(filter)
-      const responseAll = await ossmmasofApi.post<any>('/PreVSaldos/GetListIcpPucConDisponibleByCodigoSaldo', filter)
 
-      console.log(responseAll.data.data)
+      const responseAll = await ossmmasofApi.post<any>('/PreVSaldos/GetListIcpPucConDisponibleByCodigoSaldo', filter)
 
       dispatch(setPreSaldoDisponibleSeleccionado(responseAll.data.data))
 
-      console.log(preSaldoDisponibleSeleccionado)
-      console.log(deParaState)
       dispatch(setVerPreSaldoDisponibleActive(false))
 
       setLoading(false)
