@@ -384,6 +384,7 @@ const TableServerSide = () => {
   )
 
   useEffect(() => {
+    console.log('useEffect', listpresupuestoDtoSeleccionado)
     const filter: IFilterPrePresupuestoDto = {
       codigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto
     }
