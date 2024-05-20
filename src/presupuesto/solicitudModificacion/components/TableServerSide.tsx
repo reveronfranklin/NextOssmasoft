@@ -167,6 +167,8 @@ const TableServerSide = () => {
 
   const { listpresupuestoDtoSeleccionado } = useSelector((state: RootState) => state.presupuesto)
   const { verPreSolModificacionActive } = useSelector((state: RootState) => state.preSolModificacion)
+  const { verPrePucSolModificacionActive } = useSelector((state: RootState) => state.prePucSolModificacion)
+
   const columns: any = [
     {
       flex: 0.05,
@@ -398,7 +400,7 @@ const TableServerSide = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreSolModificacionActive, listpresupuestoDtoSeleccionado])
+  }, [verPreSolModificacionActive, verPrePucSolModificacionActive, listpresupuestoDtoSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
     const temp = [...allRows]
