@@ -117,15 +117,16 @@ const PreSolModificacionTableServerSide = (dePara: Props) => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='View'>
-            <IconButton size='small' onClick={() => handleView(row)}>
-              <Icon icon='mdi:eye-outline' fontSize={20} />
-            </IconButton>
-          </Tooltip>
+          {row.status != 'AN' && (
+            <Tooltip title='View'>
+              <IconButton size='small' onClick={() => handleView(row)}>
+                <Icon icon='mdi:eye-outline' fontSize={20} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       )
     },
-
     {
       flex: 0.045,
       minWidth: 15,
