@@ -60,6 +60,7 @@ interface FormInputs {
   codigoSolModificacion: number
   codigoSaldo: number
   statusProceso: string
+  status: string
   financiadoId: number
   codigoIcp: number
   codigoPuc: number
@@ -123,6 +124,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
     codigoSaldo: prePucSolModificacionSeleccionado.codigoSaldo,
     codigoSolModificacion: preSolModificacionSeleccionado.codigoSolModificacion,
     codigoPucSolModificacion: prePucSolModificacionSeleccionado.codigoPucSolModificacion,
+    status: preSolModificacionSeleccionado.descripcionEstatus,
     statusProceso: preSolModificacionSeleccionado.statusProceso,
     financiadoId: prePucSolModificacionSeleccionado.financiadoId,
     codigoIcp: prePucSolModificacionSeleccionado.codigoIcp,
@@ -375,7 +377,32 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
               </FormControl>
             </Grid>
             {/* statusProceso */}
-            <Grid item sm={10} xs={12}>
+            <Grid item sm={2} xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name='status'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      value={value || ''}
+                      label='Estatus'
+                      onChange={onChange}
+                      placeholder='0'
+                      error={Boolean(errors.status)}
+                      aria-describedby='validation-async-status'
+                      disabled
+                    />
+                  )}
+                />
+                {errors.status && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-status'>
+                    This field is required
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* statusProceso */}
+            <Grid item sm={8} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='statusProceso'
@@ -383,7 +410,7 @@ const FormPrePucSolModificacionCreateAsync = ({ dePara }: Props) => {
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
-                      label='Estatus'
+                      label='Estatus Proceso'
                       onChange={onChange}
                       placeholder='0'
                       error={Boolean(errors.statusProceso)}

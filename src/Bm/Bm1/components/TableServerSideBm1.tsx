@@ -7,6 +7,7 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { ReactDatePickerProps } from 'react-datepicker'
+import GetAppIcon from '@mui/icons-material/GetApp'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
@@ -25,7 +26,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Autocomplete, Button, CircularProgress, Divider, Grid, TextField } from '@mui/material'
+import { Autocomplete, Button, CircularProgress, Divider, Grid, Link, TextField } from '@mui/material'
 
 // ** Types
 
@@ -37,7 +38,6 @@ import { useDispatch } from 'react-redux'
 import { setListIcp } from 'src/store/apps/ICP'
 import { setListIcpSeleccionado } from 'src/store/apps/bmConteo'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
-import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
 import PickersDesdeHasta from 'src/rh/historico/individual/component/PickersDesdeHasta'
 import { useSelector } from 'react-redux'
@@ -200,16 +200,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     }
   }
 
-  const crearBarCode = async () => {
-    setLoading(true)
-
-    //const responseAll= await ossmmasofApi.post<any>('/Bm1/GetByListIcp',listIcpSeleccionado);
-    //console.log(responseAll)
-    dispatch(setReportName('placas.pdf'))
-    dispatch(setVerReportViewActive(true))
-    setLoading(false)
-  }
-
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(allRows)
     const workbook = XLSX.utils.book_new()
@@ -284,7 +274,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       }
 
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
-
+      console.log('responseAll  BM1', responseAll)
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)
       setRows(loadServerRows(page, responseAll.data.data))
@@ -365,19 +355,21 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
             <Button variant='contained' onClick={exportToExcel} size='large'>
               Descargar Todo
             </Button>
-            <Button size='large' onClick={crearBarCode} variant='outlined' sx={{ ml: 4 }}>
-              {loading ? (
-                <CircularProgress
-                  sx={{
-                    color: 'common.blue',
-                    width: '20px !important',
-                    height: '20px !important',
-                    mr: theme => theme.spacing(2)
-                  }}
-                />
-              ) : null}
-              Ver Placas
+
+            <Button
+              sx={{
+                ml: theme => theme.spacing(2)
+              }}
+              variant='contained'
+              size='large'
+              startIcon={<GetAppIcon />}
+              component={Link}
+              href='/ExcelFiles/placas.pdf'
+              download='placas.pdf'
+            >
+              Descargar Placas
             </Button>
+
             <Button size='large' onClick={refresh} variant='outlined' sx={{ ml: 4 }}>
               {loading ? (
                 <CircularProgress
