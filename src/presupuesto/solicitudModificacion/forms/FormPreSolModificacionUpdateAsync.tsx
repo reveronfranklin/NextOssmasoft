@@ -55,6 +55,7 @@ import { IPreSolModificacionDeleteDto } from 'src/interfaces/Presupuesto/PreSoli
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 import { setPreMtrUnidadEjecutoraSeleccionado } from 'src/store/apps/presupuesto'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva'
+import PreSolModificacionTableServerSide from 'src/presupuesto/pucSolicitudModificacion/components/PreSolModificacionTableServerSide'
 
 interface FormInputs {
   codigoSolModificacion: number
@@ -630,6 +631,7 @@ const FormPreSolModificacionUpdateAsync = ({
           </Box>
         </form>
       </CardContent>
+      <PreSolModificacionTableServerSide dePara='D'></PreSolModificacionTableServerSide>
     </Card>
   )
 }

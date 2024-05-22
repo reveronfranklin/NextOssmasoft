@@ -18,4 +18,5 @@ export interface IPrePucSolModificacionResponseDto {
   montoModificado: number
   montoAnulado: number
   searchText: string
+  status: string
 }
