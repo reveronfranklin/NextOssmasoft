@@ -11,12 +11,12 @@ export interface Bm1GetDto {
   especificacion: string
   servicio: string
   responsableBien: string
-  searchText:string
-  linkData:string
-  codigoBien :number
-  codigoMovBien :number
-  fechaMovimiento : Date;
-  year :number
-  month : number;
-
+  searchText: string
+  linkData: string
+  codigoBien: number
+  codigoMovBien: number
+  fechaMovimiento: Date
+  year: number
+  month: number
+  nroPlaca: string
 }
