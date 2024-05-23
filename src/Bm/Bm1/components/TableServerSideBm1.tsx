@@ -114,6 +114,18 @@ const columns: any = [
     )
   },
   {
+    flex: 0.08,
+    minWidth: 15,
+    headerName: 'Placa',
+    field: 'nroPlaca',
+    renderCell: (params: GridRenderCellParams) => (
+      <Typography variant='body2' sx={{ color: 'text.primary' }}>
+        {params.row.nroPlaca}
+      </Typography>
+    )
+  },
+
+  {
     flex: 0.125,
     minWidth: 110,
     field: 'articulo',
@@ -232,6 +244,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       fechaHasta: fechaHasta,
       listIcpSeleccionado: listIcpSeleccionadoLocal
     }
+    console.log('filter bm1', filter)
     if (filter.listIcpSeleccionado.length > 0) {
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
 
