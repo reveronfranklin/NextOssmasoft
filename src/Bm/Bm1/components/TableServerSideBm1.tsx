@@ -46,6 +46,8 @@ import { Bm1FilterDto } from '../../../interfaces/Bm/Bm1FilterDto'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 
+import authConfig from 'src/configs/auth'
+
 /*interface StatusObj {
   [key: number]: {
     title: string
@@ -163,8 +165,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
   const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
-
-  //const [rows, setRows] = useState<DataGridRowType[]>([])
+  const [download, setDownload] = useState('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 
@@ -292,6 +293,11 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   )
 
   useEffect(() => {
+    const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_DOWNLOAD_PRODUCTION
+    const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_DOWNLOAD
+    const url: string = !authConfig.isProduction ? urlDevelopment! : urlProduction!
+    setDownload(`${url}/placas.pdf`)
+
     fetchTableData(listIcpSeleccionadoLocal, fechaDesde, fechaHasta)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -355,7 +361,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
             <Button variant='contained' onClick={exportToExcel} size='large'>
               Descargar Todo
             </Button>
-
             <Button
               sx={{
                 ml: theme => theme.spacing(2)
@@ -364,7 +369,8 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
               size='large'
               startIcon={<GetAppIcon />}
               component={Link}
-              href='/ExcelFiles/placas.pdf'
+              target='_blank'
+              href={download}
               download='placas.pdf'
             >
               Descargar Placas
