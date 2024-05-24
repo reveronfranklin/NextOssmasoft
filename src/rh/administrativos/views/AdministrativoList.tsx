@@ -12,7 +12,6 @@ import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles'
 import { useDispatch } from 'react-redux';
 
-
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
@@ -107,7 +106,6 @@ const AdministrativoList = () => {
   //IPreIndiceCategoriaProgramaticaGetDto
   const handleView=  (row : IRhAdministrativosResponseDto)=>{
 
-    console.log(row)
     dispatch(setRhAdministrativoSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
