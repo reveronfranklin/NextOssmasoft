@@ -41,6 +41,7 @@ import { rhListOficinaSlice } from './apps/rh-list-oficina'
 import { preSolModificacionSlice } from './apps/pre-sol-modificacion'
 import { prePucSolModificacionSlice } from './apps/pre-puc-sol-modificacion'
 import { preSaldoDisponibleSlice } from './apps/pre-saldo-disponible'
+import { admSolicitudCompromisoSlice } from './apps/adm'
 
 export const store = configureStore({
   reducer: {
@@ -82,7 +83,8 @@ export const store = configureStore({
     rhListOficina: rhListOficinaSlice.reducer,
     preSolModificacion: preSolModificacionSlice.reducer,
     prePucSolModificacion: prePucSolModificacionSlice.reducer,
-    preSaldoDisponible: preSaldoDisponibleSlice.reducer
+    preSaldoDisponible: preSaldoDisponibleSlice.reducer,
+    admSolicitudCompromiso: admSolicitudCompromisoSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
