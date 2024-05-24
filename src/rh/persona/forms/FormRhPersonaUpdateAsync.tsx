@@ -203,7 +203,7 @@ const FormRhPersonaUpdateAsync = ({
     return result[0]
   }
   const getPais = (id: number) => {
-    const result = listEstados?.filter(elemento => {
+    const result = listPaises?.filter(elemento => {
       return elemento.id == id
     })
 
