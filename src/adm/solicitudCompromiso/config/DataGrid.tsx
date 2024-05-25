@@ -14,7 +14,7 @@ import {
     setOperacionCrudAdmSolCompromiso,
     setSolicitudCompromisoSeleccionado } from "src/store/apps/adm"
 
-const columns = () => {
+function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
@@ -113,4 +113,5 @@ const columns = () => {
     ]
 }
 
-export default columns
+
+export default ColumnsDataGrid
