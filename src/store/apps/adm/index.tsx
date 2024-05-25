@@ -6,7 +6,7 @@ export const admSolicitudCompromisoSlice = createSlice({
     initialState: {
         verSolicitudCompromisosActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
-        solicitudCompromisoSeleccionado: {}
+        solicitudCompromisoSeleccionado: { } as any
     },
     reducers: {
         setVerSolicitudCompromisosActive: (state, action) => {
