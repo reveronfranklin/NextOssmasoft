@@ -1,8 +1,8 @@
 import { useState, ChangeEvent, useEffect  } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Filters } from '../interfaces/filters.interfaces'
-import columns from './../config/DataGrid'
-import services from '../services/services'
+import ColumnsDataGrid from './../config/DataGrid'
+import useServices from '../services/services'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
 
@@ -18,9 +18,9 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState(5);
     const [searchText, setSearchText] = useState('');
     const [filters, setFilters] = useState({ CodigoPresupuesto: 17, pageSize, pageNumber, searchText } as Filters)
-    const [route, setRoute] = useState('/AdmSolicitudes/GetByPresupuesto')
+    const [route] = useState('/AdmSolicitudes/GetByPresupuesto')
 
-    const { rows, loading, total, fetchTableData } = services()
+    const { rows, loading, total, fetchTableData } = useServices()
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -39,12 +39,12 @@ const DataGridComponent = () => {
 
     useEffect(() => {
         fetchTableData(route, filters)
-    }, [pageNumber, pageSize, searchText])
+    }, [pageNumber, pageSize, searchText, route, filters, fetchTableData])
 
     return (
         <DataGrid
             rows={rows}
-            columns={columns()}
+            columns={ColumnsDataGrid()}
             rowCount={total}
             loading={loading}
             paginationMode='server'

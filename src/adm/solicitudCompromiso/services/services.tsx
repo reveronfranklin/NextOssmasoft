@@ -3,14 +3,14 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Filters } from '../interfaces/filters.interfaces'
 import { IsolicitudCompromiso } from '../interfaces/solicitudCompromiso.interfaces'
 
-const services = (initialFilters: Filters = {}) => {
+const useServices = (initialFilters: Filters = {}) => {
     const [rows, setRows]         = useState<any[]>([])
     const [total, setTotal]       = useState<number>(0)
     const [error, setError]       = useState(null);
     const [mensaje, setMensaje]   = useState<string>('')
     const [loading, setIsLoading] = useState(false);
 
-    const fetchTableData = useCallback(async (route: string = ' ', filters = initialFilters) => {
+    const fetchTableData = useCallback(async (route = '', filters = initialFilters) => {
         setError(null)
         setIsLoading(true)
 
@@ -45,4 +45,4 @@ const services = (initialFilters: Filters = {}) => {
     }
 }
 
-export default services
+export default useServices

@@ -10,6 +10,7 @@ import dataGrid from './DataGrid'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogAdmSolCompromisoInfo from './../views/DialogAdmSolCompromisoInfo'
 import { CrudOperation } from './../enums/CrudOperations.enum'
+import { Dispatch, AnyAction } from "@reduxjs/toolkit"
 
 const handleAdd = (dispatch: any) => {
     dispatch(setVerSolicitudCompromisosActive(true))
@@ -22,11 +23,12 @@ const exportToExcel = () => {
 
 const LayoutSolicitudCompromiso = () => {
     const { loading, mensaje } = services()
+    const dispatch = useDispatch()
 
     return (
         <Card>
             {
-                !loading ? headerDetail() : <Typography>{mensaje}</Typography>
+                !loading ? headerDetail(dispatch) : <Typography>{mensaje}</Typography>
             }
             {
                 loading ? <Spinner sx={{ height: '100%' }} /> : dataGrid()
@@ -38,9 +40,7 @@ const LayoutSolicitudCompromiso = () => {
     )
 }
 
-const headerDetail = () => {
-    const dispatch = useDispatch()
-
+const headerDetail = (dispatch: Dispatch<AnyAction>) => {
     return (
         <Box>
             <CardContent>
