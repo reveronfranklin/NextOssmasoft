@@ -286,7 +286,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         fechaHasta: fechaHasta,
         listIcpSeleccionado: listIcpSelelected
       }
-
+      console.log('filter bm1', filter)
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
       console.log('responseAll  BM1', responseAll)
       setAllRows(responseAll.data.data)

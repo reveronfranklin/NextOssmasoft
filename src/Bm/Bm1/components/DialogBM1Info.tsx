@@ -30,7 +30,7 @@ import { useSelector } from 'react-redux'
 //import QRCode from "react-qr-code";
 
 import { setBm1Seleccionado, setListBmBienesFotoResponseDto, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
-import { Divider, ImageListItemBar, Typography } from '@mui/material'
+import { CardContent, Divider, ImageListItemBar, Menu, MenuItem, Typography } from '@mui/material'
 
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
@@ -54,12 +54,84 @@ const DialogBm1Info = () => {
     (state: RootState) => state.bmBm1
   )
   const [data, setData] = useState<IBmBienesFotoResponseDto[]>([])
+  const [open, setOpen] = useState<boolean>(false)
+  const [indexElement, setIndexElement] = useState<any>(null)
+  const [contextMenu, setContextMenu] = useState<{
+    item: any
+    mouseX: number
+    mouseY: number
+  } | null>(null)
+
   const handleSetShow = (active: boolean) => {
     if (active == false) {
       const defaultValues = {}
       dispatch(setBm1Seleccionado(defaultValues))
     }
     dispatch(setVerBmBm1ActiveActive(active))
+  }
+
+  //const handleContextMenu = (event: React.MouseEvent) => {
+
+  const handleContextMenu = (item: any) => (event: React.MouseEvent) => {
+    event.preventDefault()
+    setContextMenu(
+      contextMenu === null
+        ? {
+            item,
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6
+          }
+        : null
+    )
+  }
+
+  const editItem = async () => {
+    console.log('item seleccionado', contextMenu!.item!)
+    setContextMenu(null)
+    const deleteFoto = {
+      codigoBienFoto: contextMenu!.item!.codigoBienFoto
+    }
+    console.log('dto ', deleteFoto)
+
+    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/Delete', deleteFoto)
+    if (responseAll.data.isValid) {
+      const filter = {
+        numeroPlaca: bmBm1Seleccionado.numeroPlaca
+      }
+      const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
+
+      dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
+      setData(responseAll.data.data)
+    }
+  }
+
+  const handleClose = () => {
+    setContextMenu(null)
+  }
+
+  const handleOpenMenu = (event: React.MouseEvent, item: any) => {
+    handleContextMenu(event)
+  }
+
+  const handlerDelete = async () => {
+    setContextMenu(null)
+    //const item: IBmBienesFotoResponseDto = {}
+    console.log(contextMenu)
+    /*const deleteFoto = {
+      CodigoBienFoto: item.codigoBienFoto
+    }*/
+    const deleteFoto = ''
+    return
+    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/Delete', deleteFoto)
+    if (responseAll.data.isValid) {
+      const filter = {
+        numeroPlaca: bmBm1Seleccionado.numeroPlaca
+      }
+      const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
+
+      dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
+      setData(responseAll.data.data)
+    }
   }
 
   useEffect(() => {
@@ -72,7 +144,6 @@ const DialogBm1Info = () => {
 
         dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
         setData(responseAll.data.data)
-        console.log(data)
       }
     }
 
@@ -103,34 +174,34 @@ const DialogBm1Info = () => {
           <Divider></Divider>
           <FormBmFotosBienesAsync></FormBmFotosBienesAsync>
           <Divider></Divider>
+          <Typography variant='body2' sx={{ color: 'text.primary' }}>
+            {bmBm1Seleccionado.numeroPlaca} - {bmBm1Seleccionado.articulo}- {bmBm1Seleccionado.unidadTrabajo}-
+            {bmBm1Seleccionado.responsableBien}-{bmBm1Seleccionado.especificacion}
+          </Typography>
           {bmBm1Seleccionado.numeroPlaca && listBmBienesFotoResponseDto ? (
             <>
-              {/*                 <QRCode
-                  size={256}
-                  style={{ height: "auto", maxWidth: "80%", width: "80%" }}
-                  value={bmBm1Seleccionado.numeroPlaca + '-' + bmBm1Seleccionado.articulo + '-' + bmBm1Seleccionado.unidadTrabajo}
-                  viewBox={`0 0 128 128`}
-                  /> */}
-
               <ImageList sx={{ width: 700, height: 700 }} cols={2} rowHeight={164}>
-                {listBmBienesFotoResponseDto.map(item => (
-                  <ImageListItem key={item.codigoBienFoto}>
-                    <img srcSet={`${item.patch}`} src={`${item.patch}`} alt={item.titulo} loading='lazy' />
-                    {/*  <img
-                                  srcSet={`${item.patch}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                                  src={`${item.patch}?w=164&h=164&fit=crop&auto=format`}
-                                  alt={item.titulo}
-                                  loading="lazy"
-                                  /> */}
-
-                    <ImageListItemBar title={item.titulo} subtitle={<span>{item.numeroPlaca}</span>} position='below' />
-                  </ImageListItem>
+                {listBmBienesFotoResponseDto.map(i => (
+                  <div key={i.codigoBienFoto} onContextMenu={handleContextMenu(i)} style={{ cursor: 'context-menu' }}>
+                    <Card>
+                      <CardContent>
+                        <img srcSet={`${i.patch}`} src={`${i.patch}`} alt={`${i.titulo}`} loading='lazy' />
+                      </CardContent>
+                    </Card>
+                  </div>
                 ))}
+
+                <Menu
+                  open={contextMenu != null}
+                  onClose={() => setContextMenu(null)}
+                  anchorReference='anchorPosition'
+                  anchorPosition={
+                    contextMenu != null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined
+                  }
+                >
+                  <MenuItem onClick={editItem}>Borrar</MenuItem>
+                </Menu>
               </ImageList>
-              <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                {bmBm1Seleccionado.numeroPlaca} - {bmBm1Seleccionado.articulo}- {bmBm1Seleccionado.unidadTrabajo}-
-                {bmBm1Seleccionado.responsableBien}-{bmBm1Seleccionado.especificacion}
-              </Typography>
             </>
           ) : (
             <Typography variant='body2' sx={{ color: 'text.primary' }}>

@@ -174,7 +174,7 @@ const FormBmFotosBienesAsync = () => {
 
   return (
     <Card>
-      <CardHeader title='RH - Fotos Bienes' />
+      <CardHeader title='BM - Fotos Bienes' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -251,7 +251,7 @@ const FormBmFotosBienesAsync = () => {
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
-                      label='numeroPlaca'
+                      label='Placa'
                       onChange={onChange}
                       placeholder='numeroPlaca'
                       error={Boolean(errors.numeroPlaca)}
