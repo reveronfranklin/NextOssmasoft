@@ -25,8 +25,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
-
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -35,23 +33,23 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
-
-
+import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 
 import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
 import { IRhAdministrativosDeleteDto } from 'src/interfaces/rh/i-rh-administrativos-delete-dto'
-import { setListRhBancos, setListRhTipoCuenta, setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos'
+import {
+  setListRhBancos,
+  setListRhTipoCuenta,
+  setRhAdministrativoSeleccionado,
+  setVerRhAdministrativasActive
+} from 'src/store/apps/rh-administrativos'
 import { IRhAdministrativosUpdateDto } from 'src/interfaces/rh/i-rh-administrativos-update-dto'
 
-
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
-
 
 // ** Third Party Imports
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
@@ -62,25 +60,30 @@ import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 
 interface FormInputs {
-  codigoAdministrativo:number,
-  fechaIngreso:string,
-  tipoPago :string,
-  bancoId :number,
-  tipoCuentaId :number,
-  noCuenta :string,
-
+  codigoAdministrativo: number
+  fechaIngreso: string
+  tipoPago: string
+  bancoId: number
+  tipoCuentaId: number
+  noCuenta: string
 }
 
-
-
-const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+const FormRhAdministrativoUpdateAsync = ({
+  popperPlacement
+}: {
+  popperPlacement: ReactDatePickerProps['popperPlacement']
+}) => {
   // ** States
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
+  const { rhAdministrativoSeleccionado, listRhBancos, listRhTipoCuenta } = useSelector(
+    (state: RootState) => state.rhAdministrativos
+  )
 
-  const {rhAdministrativoSeleccionado,listRhBancos,listRhTipoCuenta} = useSelector((state: RootState) => state.rhAdministrativos)
-
-  const listTipoPago =[{id:'D',descripcion:'Deposito'},{id:'E',descripcion:'Efectivo'}]
+  const listTipoPago = [
+    { id: 'D', descripcion: 'Deposito' },
+    { id: 'E', descripcion: 'Efectivo' }
+  ]
 
   /*const  getTipoPersonal=(id:number)=>{
 
@@ -93,58 +96,49 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
     return result[0];
   } */
 
-  const  getTipoPago=(id:string)=>{
+  const getTipoPago = (id: string) => {
+    const result = listTipoPago?.filter(elemento => {
+      return elemento.id == id
+    })
 
-    const result = listTipoPago?.filter((elemento)=>{
-
-      return elemento.id==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
 
-  const  getBanco=(id:number)=>{
+  const getBanco = (id: number) => {
+    const result = listRhBancos?.filter(elemento => {
+      return elemento.id == id
+    })
 
-    const result = listRhBancos?.filter((elemento)=>{
-
-      return elemento.id==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
 
-  const  getTipoCuenta=(id:number)=>{
+  const getTipoCuenta = (id: number) => {
+    const result = listRhTipoCuenta?.filter(elemento => {
+      return elemento.id == id
+    })
 
-    const result = listRhTipoCuenta?.filter((elemento)=>{
-
-      return elemento.id==id;
-    });
-
-
-    return result[0];
+    return result[0]
   }
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
-  const [banco,setBanco] = useState<ISelectListDescriptiva>(getBanco(rhAdministrativoSeleccionado.bancoId))
-  const [tipoCuenta,setTipoCuenta] = useState<ISelectListDescriptiva>(getTipoCuenta(rhAdministrativoSeleccionado.tipoCuentaId))
-  const [tipoPago,setTipoPago] = useState<any>(getTipoPago(rhAdministrativoSeleccionado.tipoPago))
+  const [banco, setBanco] = useState<ISelectListDescriptiva>(getBanco(rhAdministrativoSeleccionado.bancoId))
+  const [tipoCuenta, setTipoCuenta] = useState<ISelectListDescriptiva>(
+    getTipoCuenta(rhAdministrativoSeleccionado.tipoCuentaId)
+  )
+  const [tipoPago, setTipoPago] = useState<any>(getTipoPago(rhAdministrativoSeleccionado.tipoPago))
 
   const defaultValues = {
-      codigoAdministrativo:rhAdministrativoSeleccionado.codigoAdministrativo,
-      fechaIngreso:rhAdministrativoSeleccionado.fechaIngreso,
-      tipoPago :rhAdministrativoSeleccionado.tipoPago,
-      bancoId :rhAdministrativoSeleccionado.bancoId,
-      tipoCuentaId :rhAdministrativoSeleccionado.tipoCuentaId,
-      noCuenta :rhAdministrativoSeleccionado.noCuenta,
-
-
+    codigoAdministrativo: rhAdministrativoSeleccionado.codigoAdministrativo,
+    fechaIngreso: rhAdministrativoSeleccionado.fechaIngreso,
+    tipoPago: rhAdministrativoSeleccionado.tipoPago,
+    bancoId: rhAdministrativoSeleccionado.bancoId,
+    tipoCuentaId: rhAdministrativoSeleccionado.tipoCuentaId,
+    noCuenta: rhAdministrativoSeleccionado.noCuenta
   }
 
   // ** Hook
@@ -155,102 +149,85 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-
-  const handlerBanco=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setValue('bancoId',value.id);
-      setBanco(value);
-
-    }else{
-      setValue('bancoId',0);
-
+  const handlerBanco = async (e: any, value: any) => {
+    if (value != null) {
+      setValue('bancoId', value.id)
+      setBanco(value)
+    } else {
+      setValue('bancoId', 0)
     }
   }
-  const handlerTipoCuenta=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setValue('tipoCuentaId',value.id);
-      setTipoCuenta(value);
-    }else{
-      setValue('tipoCuentaId',0);
-
+  const handlerTipoCuenta = async (e: any, value: any) => {
+    if (value != null) {
+      setValue('tipoCuentaId', value.id)
+      setTipoCuenta(value)
+    } else {
+      setValue('tipoCuentaId', 0)
     }
   }
 
-
-  const handlerTipoPago=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setValue('tipoPago',value.id);
-      setTipoPago(value);
-    }else{
-      setValue('tipoPago','');
-
+  const handlerTipoPago = async (e: any, value: any) => {
+    if (value != null) {
+      setValue('tipoPago', value.id)
+      setTipoPago(value)
+    } else {
+      setValue('tipoPago', '')
     }
   }
-
 
   const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    dispatch(setVerRhAdministrativasActive(false))
-    dispatch(setRhAdministrativoSeleccionado({}))
-  };
-
-  const handlerFechaDesde=(desde:Date)=>{
-
-
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const presupuestoTmp= {...rhAdministrativoSeleccionado,fechaIngreso:desde.toISOString(),fechaIngresoObj:fechaObj};
-    dispatch(setRhAdministrativoSeleccionado(presupuestoTmp))
-    setValue('fechaIngreso',desde.toISOString());
+    setOpen(true)
   }
 
+  const handleClose = () => {
+    setOpen(false)
+    dispatch(setVerRhAdministrativasActive(false))
+    dispatch(setRhAdministrativoSeleccionado({}))
+  }
 
-  const handleDelete = async  () => {
-
-    setOpen(false);
-    const deleteAdministrativo : IRhAdministrativosDeleteDto={
-      codigoAdministrativo:rhAdministrativoSeleccionado.codigoAdministrativo
+  const handlerFechaDesde = (desde: Date) => {
+    const fechaObj: IFechaDto = fechaToFechaObj(desde)
+    const presupuestoTmp = {
+      ...rhAdministrativoSeleccionado,
+      fechaIngreso: desde.toISOString(),
+      fechaIngresoObj: fechaObj
     }
-    const responseAll= await ossmmasofApi.post<any>('/RhAdministrativos/Delete',deleteAdministrativo);
-    setErrorMessage(responseAll.data.message)
-    if(responseAll.data.isValid){
+    dispatch(setRhAdministrativoSeleccionado(presupuestoTmp))
+    setValue('fechaIngreso', desde.toISOString())
+  }
 
+  const handleDelete = async () => {
+    setOpen(false)
+    const deleteAdministrativo: IRhAdministrativosDeleteDto = {
+      codigoAdministrativo: rhAdministrativoSeleccionado.codigoAdministrativo
+    }
+    const responseAll = await ossmmasofApi.post<any>('/RhAdministrativos/Delete', deleteAdministrativo)
+    setErrorMessage(responseAll.data.message)
+    if (responseAll.data.isValid) {
       dispatch(setVerRhAdministrativasActive(false))
       dispatch(setRhAdministrativoSeleccionado({}))
     }
+  }
 
-
-  };
-
-  const onSubmit = async (data:FormInputs) => {
+  const onSubmit = async (data: FormInputs) => {
     setLoading(true)
 
-    const updateAdministrativo:IRhAdministrativosUpdateDto= {
-      codigoAdministrativo :rhAdministrativoSeleccionado.codigoAdministrativo,
-      codigoPersona:rhAdministrativoSeleccionado.codigoPersona,
-      bancoId :data.bancoId,
-      tipoCuentaId:data.tipoCuentaId,
-      tipoPago :data.tipoPago,
-      noCuenta :data.noCuenta,
-      fechaIngreso :data.fechaIngreso,
+    const updateAdministrativo: IRhAdministrativosUpdateDto = {
+      codigoAdministrativo: rhAdministrativoSeleccionado.codigoAdministrativo,
+      codigoPersona: rhAdministrativoSeleccionado.codigoPersona,
+      bancoId: data.bancoId,
+      tipoCuentaId: data.tipoCuentaId,
+      tipoPago: data.tipoPago,
+      noCuenta: data.noCuenta,
+      fechaIngreso: data.fechaIngreso
+    }
 
+    const responseAll = await ossmmasofApi.post<any>('/RhAdministrativos/Update', updateAdministrativo)
 
-    };
-
-    const responseAll= await ossmmasofApi.post<any>('/RhAdministrativos/Update',updateAdministrativo);
-
-    if(responseAll.data.isValid){
+    if (responseAll.data.isValid) {
       dispatch(setRhAdministrativoSeleccionado(responseAll.data.data))
       dispatch(setVerRhAdministrativasActive(false))
     }
-
 
     setErrorMessage(responseAll.data.message)
 
@@ -261,29 +238,30 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
     toast.success('Form Submitted')
   }
   useEffect(() => {
-
     const getData = async () => {
-      setLoading(true);
+      setLoading(true)
 
-      const filterBanco={descripcionId:0,tituloId:18}
-      const responseBanco= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterBanco);
+      const filterBanco = { descripcionId: 0, tituloId: 18 }
+      const responseBanco = await ossmmasofApi.post<ISelectListDescriptiva[]>(
+        '/RhDescriptivas/GetByTitulo',
+        filterBanco
+      )
       dispatch(setListRhBancos(responseBanco.data))
 
-      const filterTipoCuenta={descripcionId:0,tituloId:19}
-      const responseTipoCuenta= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterTipoCuenta);
+      const filterTipoCuenta = { descripcionId: 0, tituloId: 19 }
+      const responseTipoCuenta = await ossmmasofApi.post<ISelectListDescriptiva[]>(
+        '/RhDescriptivas/GetByTitulo',
+        filterTipoCuenta
+      )
       dispatch(setListRhTipoCuenta(responseTipoCuenta.data))
 
-      setLoading(false);
-    };
+      setLoading(false)
+    }
 
+    getData()
 
-
-
-    getData();
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -291,7 +269,6 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-
             {/* descripcionId */}
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
@@ -318,72 +295,56 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
                 )}
               </FormControl>
             </Grid>
-           {/* Tipo de Pago */}
-           <Grid item sm={10} xs={12}>
-
+            {/* Tipo de Pago */}
+            <Grid item sm={10} xs={12}>
               <Autocomplete
-
-                    options={listTipoPago}
-                    value={tipoPago}
-                    id='autocomplete-padre'
-                    isOptionEqualToValue={(option, value) => option.id=== value.id}
-                    getOptionLabel={option => option.id + '-' + option.descripcion }
-                    onChange={handlerTipoPago}
-                    renderInput={params => <TextField {...params} label='Tipo Pago' />}
-                  />
-
-          </Grid>
-
-          {/* Banco */}
-          <Grid item sm={12} xs={12}>
-
-
-          <Autocomplete
-
-              options={listRhBancos}
-              value={banco}
-              id='autocomplete-bancos'
-              isOptionEqualToValue={(option, value) => option.id=== value.id}
-              getOptionLabel={option => option.id + '-' + option.descripcion }
-              onChange={handlerBanco}
-              renderInput={params => <TextField {...params} label='Bancos' />}
-            />
-
-
-          </Grid>
-
-
-
-          {/* Tipo Cuenta */}
-
-          <Grid item sm={12} xs={12}>
-
-            <Autocomplete
-
-                  options={listRhTipoCuenta}
-                  value={tipoCuenta}
-                  id='autocomplete-padre'
-                  isOptionEqualToValue={(option, value) => option.id=== value.id}
-                  getOptionLabel={option => option.id + '-' + option.descripcion }
-                  onChange={handlerTipoCuenta}
-                  renderInput={params => <TextField {...params} label='Tipo Cuenta' />}
-                />
-
-          </Grid>
-          <Grid item  sm={3} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(rhAdministrativoSeleccionado.fechaIngresoObj!)}
-                  id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaDesde(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha Ingreso' />}
-                />
+                options={listTipoPago}
+                value={tipoPago}
+                id='autocomplete-padre'
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion}
+                onChange={handlerTipoPago}
+                renderInput={params => <TextField {...params} label='Tipo Pago' />}
+              />
             </Grid>
 
+            {/* Banco */}
+            <Grid item sm={12} xs={12}>
+              <Autocomplete
+                options={listRhBancos}
+                value={banco}
+                id='autocomplete-bancos'
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion}
+                onChange={handlerBanco}
+                renderInput={params => <TextField {...params} label='Bancos' />}
+              />
+            </Grid>
 
+            {/* Tipo Cuenta */}
+
+            <Grid item sm={12} xs={12}>
+              <Autocomplete
+                options={listRhTipoCuenta}
+                value={tipoCuenta}
+                id='autocomplete-padre'
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={option => option.id + '-' + option.descripcion}
+                onChange={handlerTipoCuenta}
+                renderInput={params => <TextField {...params} label='Tipo Cuenta' />}
+              />
+            </Grid>
+            <Grid item sm={3} xs={12}>
+              <DatePicker
+                selected={getDateByObject(rhAdministrativoSeleccionado.fechaIngresoObj!)}
+                id='date-time-picker-desde'
+                dateFormat='dd/MM/yyyy'
+                popperPlacement={popperPlacement}
+                onChange={(date: Date) => handlerFechaDesde(date)}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='Fecha Ingreso' />}
+              />
+            </Grid>
 
             {/* descripcion*/}
             <Grid item sm={12} xs={12}>
@@ -391,7 +352,7 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
                 <Controller
                   name='noCuenta'
                   control={control}
-                  rules={{ maxLength:20,minLength:20}}
+                  rules={{ maxLength: 20, minLength: 20 }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
@@ -411,7 +372,6 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
               </FormControl>
             </Grid>
 
-
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
                 {loading ? (
@@ -426,20 +386,20 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
                 ) : null}
                 Guardar
               </Button>
-              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
+              <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
                 Eliminar
               </Button>
               <Dialog
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
-                <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos Administrativos?"}
+                <DialogTitle id='alert-dialog-title'>
+                  {'Esta Seguro de Eliminar estos Datos Administrativos?'}
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                  <DialogContentText id='alert-dialog-description'>
                     Se eliminaran los datos Administrativos
                   </DialogContentText>
                 </DialogContent>
@@ -450,19 +410,17 @@ const FormRhAdministrativoUpdateAsync = ({ popperPlacement }: { popperPlacement:
                   </Button>
                 </DialogActions>
               </Dialog>
-
             </Grid>
-
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            {errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+            )}
           </Box>
         </form>
       </CardContent>
     </Card>
   )
-
-
 }
 
 export default FormRhAdministrativoUpdateAsync
