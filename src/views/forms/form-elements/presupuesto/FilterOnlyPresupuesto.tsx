@@ -57,7 +57,7 @@ const FilterOnlyPresupuesto = () => {
   }, [dispatch])
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} paddingBottom={5}>
       <Card>
         <CardHeader title='Filtrar Presupuesto' />
         <CardContent>
