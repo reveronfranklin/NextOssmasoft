@@ -5,7 +5,7 @@ import Icon from 'src/@core/components/icon'
 
 import { setVerSolicitudCompromisosActive, setOperacionCrudAdmSolCompromiso } from "src/store/apps/adm"
 
-import services from '../services/services'
+import useServices from '../services/useServices'
 import dataGrid from './DataGrid'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogAdmSolCompromisoInfo from './../views/DialogAdmSolCompromisoInfo'
@@ -22,7 +22,8 @@ const exportToExcel = () => {
 }
 
 const LayoutSolicitudCompromiso = () => {
-    const { loading, mensaje } = services()
+    const { loading, mensaje } = useServices()
+
     const dispatch = useDispatch()
 
     return (
@@ -48,7 +49,7 @@ const headerDetail = (dispatch: Dispatch<AnyAction>) => {
                     Solicitud de compromiso
                 </Typography>
             </CardContent>
-            <Grid m={2} pt={3} item justifyContent='flex-end'>
+            <Grid item justifyContent='flex-end'>
                 <Toolbar sx={{ justifyContent: 'flex-start' }}>
                     <Tooltip title='Agregar Solicitud'>
                         <IconButton color='primary' size='small' onClick={() => handleAdd(dispatch)}>
