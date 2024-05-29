@@ -30,12 +30,10 @@ import { useSelector } from 'react-redux'
 //import QRCode from "react-qr-code";
 
 import { setBm1Seleccionado, setListBmBienesFotoResponseDto, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
-import { CardContent, Divider, ImageListItemBar, Menu, MenuItem, Typography } from '@mui/material'
+import { CardContent, Divider, Menu, MenuItem, Typography } from '@mui/material'
 
 import ImageList from '@mui/material/ImageList'
-import ImageListItem from '@mui/material/ImageListItem'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { IBmBienesFotoResponseDto } from 'src/interfaces/Bm/BmBienesFoto/BmBienesFotoResponseDto'
 import FormBmFotosBienesAsync from '../forms/FormBmFotosBienesAsync'
 
 // ** Custom Component Imports
@@ -53,9 +51,7 @@ const DialogBm1Info = () => {
   const { verBmBm1Active, bmBm1Seleccionado, listBmBienesFotoResponseDto } = useSelector(
     (state: RootState) => state.bmBm1
   )
-  const [data, setData] = useState<IBmBienesFotoResponseDto[]>([])
-  const [open, setOpen] = useState<boolean>(false)
-  const [indexElement, setIndexElement] = useState<any>(null)
+
   const [contextMenu, setContextMenu] = useState<{
     item: any
     mouseX: number
@@ -85,8 +81,7 @@ const DialogBm1Info = () => {
     )
   }
 
-  const editItem = async () => {
-    console.log('item seleccionado', contextMenu!.item!)
+  const handlerDelete = async () => {
     setContextMenu(null)
     const deleteFoto = {
       codigoBienFoto: contextMenu!.item!.codigoBienFoto
@@ -101,36 +96,6 @@ const DialogBm1Info = () => {
       const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
 
       dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
-      setData(responseAll.data.data)
-    }
-  }
-
-  const handleClose = () => {
-    setContextMenu(null)
-  }
-
-  const handleOpenMenu = (event: React.MouseEvent, item: any) => {
-    handleContextMenu(event)
-  }
-
-  const handlerDelete = async () => {
-    setContextMenu(null)
-    //const item: IBmBienesFotoResponseDto = {}
-    console.log(contextMenu)
-    /*const deleteFoto = {
-      CodigoBienFoto: item.codigoBienFoto
-    }*/
-    const deleteFoto = ''
-    return
-    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/Delete', deleteFoto)
-    if (responseAll.data.isValid) {
-      const filter = {
-        numeroPlaca: bmBm1Seleccionado.numeroPlaca
-      }
-      const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
-
-      dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
-      setData(responseAll.data.data)
     }
   }
 
@@ -143,7 +108,6 @@ const DialogBm1Info = () => {
         const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
 
         dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
-        setData(responseAll.data.data)
       }
     }
 
@@ -199,7 +163,7 @@ const DialogBm1Info = () => {
                     contextMenu != null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined
                   }
                 >
-                  <MenuItem onClick={editItem}>Borrar</MenuItem>
+                  <MenuItem onClick={handlerDelete}>Borrar</MenuItem>
                 </Menu>
               </ImageList>
             </>
