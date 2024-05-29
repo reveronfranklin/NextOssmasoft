@@ -14,7 +14,7 @@ interface ITipoSolicitud {
 }
 
 const useServices = (initialFilters: Filters = {}) => {
-    const dispatch = useDispatch() 
+    const dispatch = useDispatch()
 
     const [rows, setRows]         = useState<any[]>([])
     const [total, setTotal]       = useState<number>(0)
@@ -31,7 +31,6 @@ const useServices = (initialFilters: Filters = {}) => {
             // filters.CodigoPresupuesto = presupuestoSeleccionado.codigoPresupuesto
             filters.CodigoPresupuesto = 17
             if (route) {
-                console.log('filters', filters)
                 const fetchData = await ossmmasofApi.post<IsolicitudCompromiso>(route, filters)
                 const response = fetchData.data
 
@@ -55,7 +54,7 @@ const useServices = (initialFilters: Filters = {}) => {
 
         const response = await ossmmasofApi.post<any>(route, filter)
         if (response.data.isValid) {
-            dispatch(setListTipoDeSolicitud(response.data.data))
+            dispatch(setListTipoDeSolicitud(response.data.data as ITipoSolicitud[]))
         }
     }, [])
 
