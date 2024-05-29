@@ -1,5 +1,5 @@
 import { Ref, forwardRef, ReactElement } from 'react'
-import { Button, Card, Dialog, DialogActions, DialogContent } from "@mui/material"
+import { Card, Dialog, DialogActions, DialogContent } from "@mui/material"
 import Fade, { FadeProps } from '@mui/material/Fade'
 import { setVerSolicitudCompromisosActive, setOperacionCrudAdmSolCompromiso } from 'src/store/apps/adm'
 
@@ -44,14 +44,14 @@ const DialogAdmSolCompromisoInfo = () => {
                 <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
                     <DatePickerWrapper>
                         {
-                            operacionCrudAdmSolCompromiso === CrudOperation.CREATE ? <FormCreateSolCompromiso /> : <FormUpdateSolCompromiso />
+                            operacionCrudAdmSolCompromiso === CrudOperation.CREATE ? <FormCreateSolCompromiso popperPlacement={undefined} /> : <FormUpdateSolCompromiso popperPlacement={undefined} />
                         }
                     </DatePickerWrapper>
                 </DialogContent>
                 <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'end' }}>
-                    <Button variant='outlined' color='secondary' onClick={() => handleClose(dispatch)}>
+                    {/* <Button variant='outlined' color='secondary' onClick={() => handleClose(dispatch)}>
                         Cerrar
-                    </Button>
+                    </Button> */}
                 </DialogActions>
             </Dialog>
         </Card>
