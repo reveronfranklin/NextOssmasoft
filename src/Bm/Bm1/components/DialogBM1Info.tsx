@@ -30,7 +30,7 @@ import { useSelector } from 'react-redux'
 //import QRCode from "react-qr-code";
 
 import { setBm1Seleccionado, setListBmBienesFotoResponseDto, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
-import { CardContent, Divider, ImageListItem, Menu, MenuItem, Typography } from '@mui/material'
+import { Divider, ImageListItem, Menu, MenuItem, Typography } from '@mui/material'
 
 import ImageList from '@mui/material/ImageList'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
@@ -150,11 +150,6 @@ const DialogBm1Info = () => {
                     <ImageListItem key={i.codigoBienFoto}>
                       <img srcSet={`${i.patch}`} src={`${i.patch}`} alt={`${i.titulo}`} loading='lazy' />
                     </ImageListItem>
-                    {/*  <Card>
-                      <CardContent>
-                        <img srcSet={`${i.patch}`} src={`${i.patch}`} alt={`${i.titulo}`} loading='lazy' />
-                      </CardContent>
-                    </Card> */}
                   </div>
                 ))}
 
