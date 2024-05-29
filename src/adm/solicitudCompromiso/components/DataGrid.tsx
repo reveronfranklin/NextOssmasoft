@@ -17,7 +17,7 @@ const DataGridComponent = () => {
     const [pageNumber, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(5);
     const [searchText, setSearchText] = useState('');
-    const [filters, setFilters] = useState({ pageSize, pageNumber, searchText } as Filters)
+    const [filters, setFilters] = useState({ CodigoPresupuesto: 17, pageSize, pageNumber, searchText } as Filters)
     const [route] = useState('/AdmSolicitudes/GetByPresupuesto')
 
     const { rows, loading, total, fetchTableData } = useServices()
