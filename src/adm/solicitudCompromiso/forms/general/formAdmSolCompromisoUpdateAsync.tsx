@@ -23,8 +23,9 @@ import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interf
 import useServices from '../../services/useServices'
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
-    const { loading, updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
+    const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
     const [errorMessage, setErrorMessage] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
 
     const {
         codigoSolicitud,
@@ -84,10 +85,13 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 CodigoPresupuesto: dataForm.codigoPresupuesto
             }
 
+            setLoading(true)
             await updateSolicitudCompromiso(update)
         } catch (e: any) {
             setErrorMessage(e.message)
             console.log(e)
+        } finally {
+            setLoading(false)
         }
     }
 

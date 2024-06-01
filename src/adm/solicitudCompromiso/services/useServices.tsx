@@ -19,13 +19,15 @@ const useServices = (initialFilters: Filters = {}) => {
     const [total, setTotal]       = useState<number>(0)
     const [error, setError]       = useState(null)
     const [mensaje, setMensaje]   = useState<string>('')
+    
     const [loading, setIsLoading] = useState(false)
+    const [loadingDataGrid, setLoadingDataGrid] = useState(false)
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         setError(null)
-        setIsLoading(true)
+        setLoadingDataGrid(true)
         try {
             // filters.CodigoPresupuesto = presupuestoSeleccionado.codigoPresupuesto
             const fetchData = await ossmmasofApi.post<IsolicitudCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
@@ -34,13 +36,12 @@ const useServices = (initialFilters: Filters = {}) => {
             if (response.isValid ) {
                 setRows(response.data)
                 setTotal(response.cantidadRegistros )
+                setLoadingDataGrid(false)
             }
 
             setMensaje(response.message)
         } catch (e: any) {
             setError(e)
-        } finally {
-            setIsLoading(false)
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
@@ -125,6 +126,7 @@ const useServices = (initialFilters: Filters = {}) => {
         error,
         mensaje,
         loading,
+        loadingDataGrid,
         fetchTableData,
         updateSolicitudCompromiso,
         eliminarSolicitudCompromiso,
