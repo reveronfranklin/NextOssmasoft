@@ -5,6 +5,7 @@ import ColumnsDataGrid from './../config/DataGrid'
 import useServices from '../services/useServices'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
+import Spinner from 'src/@core/components/spinner'
 
 const StyledDataGridContainer = styled(Box)(({ theme }) => ({
     height: 450,
@@ -18,9 +19,8 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState(5);
     const [searchText, setSearchText] = useState('');
     const [filters, setFilters] = useState({ CodigoPresupuesto: 17, pageSize, pageNumber, searchText } as Filters)
-    const [route] = useState('/AdmSolicitudes/GetByPresupuesto')
 
-    const { rows, loading, total, fetchTableData } = useServices()
+    const { rows, total, fetchTableData, loadingDataGrid } = useServices()
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -38,37 +38,42 @@ const DataGridComponent = () => {
     }
 
     useEffect(() => {
-        fetchTableData(route, filters)
-    }, [pageNumber, pageSize, searchText, route, filters, fetchTableData])
+        fetchTableData(filters)
+    }, [pageNumber, pageSize, searchText, filters, fetchTableData])
 
     return (
-        <DataGrid
-            rows={rows}
-            columns={ColumnsDataGrid()}
-            rowCount={total}
-            loading={loading}
-            paginationMode='server'
-            pageSize={pageSize}
-            rowsPerPageOptions={[5, 10, 50]}
-            onPageSizeChange={handleSizeChange}
-            onPageChange={handlePageChange}
-            getRowId={row => row.codigoSolicitud}
-            sortingMode='server'
-            autoHeight
-            pagination
-            components={{ Toolbar: ServerSideToolbar }}
-            componentsProps={{
-                baseButton: {
-                    variant: 'outlined'
-                },
-                toolbar: {
-                    printOptions: { disableToolbarButton: true },
-                    value: searchText,
-                    clearSearch: () => handleSearch(''),
-                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-                }
-            }}
-        />
+        <>
+            {
+                loadingDataGrid ? ( <Spinner sx={{ height: '100%' }} /> ) : (
+                    <DataGrid
+                        autoHeight
+                        pagination
+                        getRowId={row => row.codigoSolicitud}
+                        rows={rows}
+                        rowCount={total}
+                        columns={ColumnsDataGrid()}
+                        pageSize={pageSize}
+                        sortingMode='server'
+                        paginationMode='server'
+                        rowsPerPageOptions={[5, 10, 50]}
+                        onPageSizeChange={handleSizeChange}
+                        onPageChange={handlePageChange}
+                        components={{ Toolbar: ServerSideToolbar }}
+                        componentsProps={{
+                            baseButton: {
+                                variant: 'outlined'
+                            },
+                            toolbar: {
+                                printOptions: { disableToolbarButton: true },
+                                value: searchText,
+                                clearSearch: () => handleSearch(''),
+                                onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                            }
+                        }}
+                    />
+                )
+            }
+        </>
     )
 }
 
