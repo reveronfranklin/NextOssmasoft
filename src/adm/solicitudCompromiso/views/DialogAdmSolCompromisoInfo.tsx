@@ -48,7 +48,7 @@ const DialogAdmSolCompromisoInfo = () => {
                         }
                     </DatePickerWrapper>
                 </DialogContent>
-                <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'end' }}>
+                <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'start' }}>
                     {/* <Button variant='outlined' color='secondary' onClick={() => handleClose(dispatch)}>
                         Cerrar
                     </Button> */}

@@ -1,17 +1,16 @@
 import { useCallback, useState, useEffect } from "react"
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Filters } from '../interfaces/filters.interfaces'
-import { IsolicitudCompromiso } from '../interfaces/solicitudCompromiso.interfaces'
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
+import { UrlServices } from '../enums/UrlServices.enum'
 
 import { useDispatch } from 'react-redux'
-import { setListTipoDeSolicitud } from "src/store/apps/adm"
+import { setListTipoDeSolicitud, setListProveedores } from "src/store/apps/adm"
 
-interface ITipoSolicitud {
-    id: number
-    descripcion: string
-}
+import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
+import { IsolicitudCompromiso } from '../interfaces/ISolicitudCompromiso.interfaces'
+import { SolicitudCompromiso } from '../interfaces/SolicitudCompromiso.interfaces'
 
 const useServices = (initialFilters: Filters = {}) => {
     const dispatch = useDispatch()
@@ -20,50 +19,105 @@ const useServices = (initialFilters: Filters = {}) => {
     const [total, setTotal]       = useState<number>(0)
     const [error, setError]       = useState(null)
     const [mensaje, setMensaje]   = useState<string>('')
+    
     const [loading, setIsLoading] = useState(false)
+    const [loadingDataGrid, setLoadingDataGrid] = useState(false)
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-    const fetchTableData = useCallback(async (route: string | null = null, filters = initialFilters) => {
+    const fetchTableData = useCallback(async (filters = initialFilters) => {
         setError(null)
-        setIsLoading(true)
+        setLoadingDataGrid(true)
         try {
             // filters.CodigoPresupuesto = presupuestoSeleccionado.codigoPresupuesto
-            filters.CodigoPresupuesto = 17
-            if (route) {
-                const fetchData = await ossmmasofApi.post<IsolicitudCompromiso>(route, filters)
-                const response = fetchData.data
+            const fetchData = await ossmmasofApi.post<IsolicitudCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
+            const response = fetchData.data
 
-                if (response.isValid ) {
-                    setRows(response.data)
-                    setTotal(response.cantidadRegistros )
-                }
-
-                setMensaje(response.message)
+            if (response.isValid ) {
+                setRows(response.data)
+                setTotal(response.cantidadRegistros )
+                setLoadingDataGrid(false)
             }
+
+            setMensaje(response.message)
         } catch (e: any) {
             setError(e)
-        } finally {
-            setIsLoading(false)
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
     const fetchSolicitudCompromiso = useCallback(async () => {
-        const filter = { tituloId: 35 }
-        const route = '/AdmDescriptivas/GetSelectDescriptiva'
-
-        const response = await ossmmasofApi.post<any>(route, filter)
-        if (response.data.isValid) {
-            dispatch(setListTipoDeSolicitud(response.data.data as ITipoSolicitud[]))
+        try {
+            const filter = { tituloId: 35 }
+            const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+            if (response.data.isValid) {
+                dispatch(setListTipoDeSolicitud(response.data.data as ITipoSolicitud[]))
+            }
+        } catch (e) {
+            console.log(e)
         }
     }, [])
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchTableData(),
-            await fetchSolicitudCompromiso()
+    const fetchProveedores = useCallback(async () => {
+        try {
+            const response = await ossmmasofApi.get<any>(UrlServices.PROVEEDORES)
+
+            if (response.data.isValid) {
+                dispatch(setListProveedores(response.data.data))
+            }
+        } catch (e) {
+            console.error(e)
         }
-        fetchData().then()
+    }, [])
+
+    const updateSolicitudCompromiso = async (data: SolicitudCompromiso) => {
+        try {
+            setIsLoading(true)
+            const response = await ossmmasofApi.post<any>(UrlServices.UPDATE, data)
+            if (response.data.isValid) {
+                fetchTableData()
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const eliminarSolicitudCompromiso = async (id: number) => {
+        try {
+            setIsLoading(true)
+            const response = await ossmmasofApi.post<any>(UrlServices.DELETE, { CodigoSolicitud : id })
+            if (response.data.isValid) {
+                fetchTableData()
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const crearSolicitudCompromiso = async (data: SolicitudCompromiso) => {
+        try {
+            setIsLoading(true)
+            const response = await ossmmasofApi.post<any>(UrlServices.CREATE, data)
+            if (response.data.isValid) {
+                fetchTableData()
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = () => {
+            fetchTableData(),
+            fetchSolicitudCompromiso()
+            fetchProveedores()
+        }
+        fetchData()
     }, [])
 
     return {
@@ -72,7 +126,11 @@ const useServices = (initialFilters: Filters = {}) => {
         error,
         mensaje,
         loading,
-        fetchTableData
+        loadingDataGrid,
+        fetchTableData,
+        updateSolicitudCompromiso,
+        eliminarSolicitudCompromiso,
+        crearSolicitudCompromiso
     }
 }
 

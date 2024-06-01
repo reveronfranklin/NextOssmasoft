@@ -9,11 +9,11 @@ interface ITipoSolicitud {
 }
 
 const TipoSolicitud = (props: any) => {
-    const list = useSelector((state: RootState) => state.admSolicitudCompromiso.listTipoDeSolicitud)
+    const listTipoSolicitud = useSelector((state: RootState) => state.admSolicitudCompromiso.listTipoDeSolicitud)
 
     const [isLoading] = useState(false)
-    const [listTipo]  = useState<ITipoSolicitud[]>(list)
-    const [tipo]      = useState<ITipoSolicitud>(list.filter(elemento => elemento.id == props.id)[0])
+    const [listTipo] = useState<ITipoSolicitud[]>(listTipoSolicitud)
+    const [tipo] = useState<ITipoSolicitud>(listTipoSolicitud.filter(item => item.id == props.id)[0])
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
