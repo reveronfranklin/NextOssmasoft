@@ -18,7 +18,6 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState(5);
     const [searchText, setSearchText] = useState('');
     const [filters, setFilters] = useState({ CodigoPresupuesto: 17, pageSize, pageNumber, searchText } as Filters)
-    const [route] = useState('/AdmSolicitudes/GetByPresupuesto')
 
     const { rows, loading, total, fetchTableData } = useServices()
 
@@ -38,8 +37,8 @@ const DataGridComponent = () => {
     }
 
     useEffect(() => {
-        fetchTableData(route, filters)
-    }, [pageNumber, pageSize, searchText, route, filters, fetchTableData])
+        fetchTableData(filters)
+    }, [pageNumber, pageSize, searchText, filters, fetchTableData])
 
     return (
         <DataGrid

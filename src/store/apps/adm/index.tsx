@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CrudOperation } from 'src/adm/solicitudCompromiso/enums/CrudOperations.enum'
-
-interface ITipoSolicitud {
-    id: number
-    descripcion: string
-}
+import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
 
 export const admSolicitudCompromisoSlice = createSlice({
     name: 'admSolicitudCompromiso',
@@ -12,7 +8,8 @@ export const admSolicitudCompromisoSlice = createSlice({
         verSolicitudCompromisosActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
-        listTipoDeSolicitud: {} as ITipoSolicitud[]
+        listTipoDeSolicitud: {} as ITipoSolicitud[],
+        listProveedores: {} as any[]
     },
     reducers: {
         setVerSolicitudCompromisosActive: (state, action) => {
@@ -26,6 +23,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setListTipoDeSolicitud: (state, action) => {
             state.listTipoDeSolicitud = action.payload
+        },
+        setListProveedores: (state, action) => {
+            state.listProveedores = action.payload
         }
     }
 })
@@ -33,5 +33,5 @@ export const {
     setVerSolicitudCompromisosActive,
     setOperacionCrudAdmSolCompromiso,
     setSolicitudCompromisoSeleccionado,
-    setListTipoDeSolicitud
-} = admSolicitudCompromisoSlice.actions
+    setListTipoDeSolicitud,
+    setListProveedores } = admSolicitudCompromisoSlice.actions
