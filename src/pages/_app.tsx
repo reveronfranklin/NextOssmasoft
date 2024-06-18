@@ -64,6 +64,8 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+//**react-query
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -121,43 +123,47 @@ const App = (props: ExtendedAppProps) => {
 
   const aclAbilities = Component.acl ?? defaultACLObj
 
-  return (
-    <Provider store={store}>
-      <CacheProvider value={emotionCache}>
-        <Head>
-          <title>{`${themeConfig.templateName}-Ossmmasoft`}</title>
-          <meta
-            name='description'
-            content={`${themeConfig.templateName}-Ossmmasoft`}
-          />
-          <meta name='keywords' content='Ossmmasoft' />
-          <meta name='viewport' content='initial-scale=1, width=device-width' />
-        </Head>
+  const queryClient = new QueryClient()
 
-        <AuthProvider>
-          <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-            <SettingsConsumer>
-              {({ settings }) => {
-                return (
-                  <ThemeComponent settings={settings}>
-                    <WindowWrapper>
-                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                          {getLayout(<Component {...pageProps} />)}
-                        </AclGuard>
-                      </Guard>
-                    </WindowWrapper>
-                    <ReactHotToast>
-                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                    </ReactHotToast>
-                  </ThemeComponent>
-                )
-              }}
-            </SettingsConsumer>
-          </SettingsProvider>
-        </AuthProvider>
-      </CacheProvider>
-    </Provider>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <title>{`${themeConfig.templateName}-Ossmmasoft`}</title>
+            <meta
+              name='description'
+              content={`${themeConfig.templateName}-Ossmmasoft`}
+            />
+            <meta name='keywords' content='Ossmmasoft' />
+            <meta name='viewport' content='initial-scale=1, width=device-width' />
+          </Head>
+
+          <AuthProvider>
+            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+              <SettingsConsumer>
+                {({ settings }) => {
+                  return (
+                    <ThemeComponent settings={settings}>
+                      <WindowWrapper>
+                        <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                          <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                            {getLayout(<Component {...pageProps} />)}
+                          </AclGuard>
+                        </Guard>
+                      </WindowWrapper>
+                      <ReactHotToast>
+                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                      </ReactHotToast>
+                    </ThemeComponent>
+                  )
+                }}
+              </SettingsConsumer>
+            </SettingsProvider>
+          </AuthProvider>
+        </CacheProvider>
+      </Provider>
+    </QueryClientProvider>
   )
 }
 

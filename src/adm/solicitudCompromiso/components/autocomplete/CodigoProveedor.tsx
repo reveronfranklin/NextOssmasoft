@@ -1,14 +1,23 @@
 import { Autocomplete, TextField } from "@mui/material"
-import { useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "src/store"
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
+import useServices from '../../services/useServices'
+import { Skeleton } from "@mui/material";
 
 const CodigoProveedor = (props: any) => {
-    const listProveedores = useSelector((state: RootState) => state.admSolicitudCompromiso.listProveedores)
+    const { fetchProveedores } = useServices()
+    const qc: QueryClient = useQueryClient()
 
-    const [isLoading] = useState(false)
-    const [listProveedor] = useState<any[]>(listProveedores)
-    const [proveedor] = useState<any>(listProveedores.filter(item => item.codigoProveedor === props.id)[0])
+    const query = useQuery({
+        queryKey: ['proveedores'],
+        queryFn: () => fetchProveedores(),
+        initialData: () => {
+            return qc.getQueryData(['proveedores'])
+        },
+        staleTime: 5000 * 60 * 60,
+    }, qc)
+
+    const listProveedor = query.data?.data ?? []
+    const proveedor = listProveedor.filter((item: { codigoProveedor: string }) => item?.codigoProveedor === props.id)[0]
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
@@ -17,15 +26,32 @@ const CodigoProveedor = (props: any) => {
     }
 
     return (
-        <Autocomplete
-            loading={isLoading}
-            options={listProveedor}
-            defaultValue={proveedor}
-            id='autocomplete-CodigoProveedor'
-            getOptionLabel={(option) => option.codigoProveedor + '-' + option.nombreProveedor}
-            onChange={handleChange}
-            renderInput={(params) => <TextField {...params} label="Código de Proveedor" />}
-        />
+        <>
+            {
+                query.isLoading ? (
+                    <Skeleton
+                        width={423}
+                        height={70}
+                        style={{
+                            border: '1px solid #ccc',
+                            backgroundColor: '#fff',
+                            borderRadius: 10,
+                            padding: 0,
+                        }}
+                    />
+                ) : (
+                    <Autocomplete
+                        loading={query.isLoading}
+                        options={listProveedor}
+                        defaultValue={proveedor}
+                        id='autocomplete-CodigoProveedor'
+                        getOptionLabel={(option) => option.codigoProveedor + '-' + option.nombreProveedor}
+                        onChange={handleChange}
+                        renderInput={(params) => <TextField {...params} label="Código de Proveedor" />}
+                    />
+                )
+            }
+        </>
     )
 }
 

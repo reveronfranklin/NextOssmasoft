@@ -1,4 +1,4 @@
-export interface FormInputs {
+export interface Create {
     codigoSolicitud: number
     numeroSolicitud: string
     fechaSolicitud: Date
@@ -8,7 +8,5 @@ export interface FormInputs {
     motivo: string
     nota: string
     status: string
-    codigoPresupuesto: number,
-    fechaSolicitudString: string,
-    descripcionStatus: string,
+    codigoPresupuesto: number
 }

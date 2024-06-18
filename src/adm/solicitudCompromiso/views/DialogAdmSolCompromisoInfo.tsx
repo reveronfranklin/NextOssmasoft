@@ -1,5 +1,5 @@
 import { Ref, forwardRef, ReactElement } from 'react'
-import { Card, Dialog, DialogActions, DialogContent } from "@mui/material"
+import { Card, Dialog, DialogContent } from "@mui/material"
 import Fade, { FadeProps } from '@mui/material/Fade'
 import { setVerSolicitudCompromisosActive, setOperacionCrudAdmSolCompromiso } from 'src/store/apps/adm'
 
@@ -12,6 +12,8 @@ import FormUpdateSolCompromiso from "./../forms/general/formAdmSolCompromisoUpda
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 import { CrudOperation } from './../enums/CrudOperations.enum'
+import Icon from 'src/@core/components/icon'
+import IconButton from '@mui/material/IconButton'
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -33,7 +35,7 @@ const DialogAdmSolCompromisoInfo = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth='md'
+                maxWidth='lg'
                 scroll='body'
                 open={verSolicitudCompromisosActive}
                 TransitionComponent={Transition}
@@ -42,17 +44,21 @@ const DialogAdmSolCompromisoInfo = () => {
                 aria-describedby='modal-modal-description'
             >
                 <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
+                    <IconButton
+                        size='small'
+                        onClick={() => handleClose(dispatch)}
+                        sx={{ position: 'absolute', right: '1rem', top: '1rem' }}
+                    >
+                        <Icon icon='mdi:close' />
+                    </IconButton>
                     <DatePickerWrapper>
                         {
-                            operacionCrudAdmSolCompromiso === CrudOperation.CREATE ? <FormCreateSolCompromiso popperPlacement={undefined} /> : <FormUpdateSolCompromiso popperPlacement={undefined} />
+                            operacionCrudAdmSolCompromiso === CrudOperation.CREATE ?
+                            <FormCreateSolCompromiso popperPlacement={undefined} /> :
+                            <FormUpdateSolCompromiso popperPlacement={undefined} />
                         }
                     </DatePickerWrapper>
                 </DialogContent>
-                <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'start' }}>
-                    {/* <Button variant='outlined' color='secondary' onClick={() => handleClose(dispatch)}>
-                        Cerrar
-                    </Button> */}
-                </DialogActions>
             </Dialog>
         </Card>
     )

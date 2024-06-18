@@ -154,7 +154,6 @@ export const fetchDataMenu = async() => {
 
 export const fetchDataPreMtrUnidadEjecutora= async(dispatch:any,filter:FilterByPresupuestoDto) => {
 
-
   const {data} = await ossmmasofApi.post<IListPreMtrUnidadEjecutora[]>('/PreMtrUnidadEjecutora/GetByPresupuesto',filter);
 
   dispatch(setPreMtrUnidadEjecutora(data));
