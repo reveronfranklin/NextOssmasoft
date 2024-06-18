@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from "@mui/material"
-import { useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "src/store"
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
+import { Skeleton } from "@mui/material";
+import useServices from '../../services/useServices'
 
 interface ITipoSolicitud {
     id: number
@@ -9,11 +9,17 @@ interface ITipoSolicitud {
 }
 
 const TipoSolicitud = (props: any) => {
-    const listTipoSolicitud = useSelector((state: RootState) => state.admSolicitudCompromiso.listTipoDeSolicitud)
+    const { fetchSolicitudCompromiso } = useServices()
+    const qc: QueryClient = useQueryClient()
 
-    const [isLoading] = useState(false)
-    const [listTipo] = useState<ITipoSolicitud[]>(listTipoSolicitud)
-    const [tipo] = useState<ITipoSolicitud>(listTipoSolicitud.filter(item => item.id == props.id)[0])
+    const query = useQuery({
+        queryKey: ['data'],
+        queryFn: () => fetchSolicitudCompromiso(),
+        retry: 3,
+    }, qc)
+
+    const listTipo: ITipoSolicitud [] = query.data?.data ?? []
+    const tipo = listTipo.filter((item: { id: number }) => item?.id == props.id)[0]
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
@@ -22,15 +28,31 @@ const TipoSolicitud = (props: any) => {
     }
 
     return (
-        <Autocomplete
-            loading={isLoading}
-            options={listTipo}
-            defaultValue={tipo}
-            id='autocomplete-TipoSolicitud'
-            getOptionLabel={(option) => option.id + '-' + option.descripcion}
-            onChange={handleChange}
-            renderInput={(params) => <TextField {...params} label="Tipo de Solicitud" />}
-        />
+        <>
+            {
+                query.isLoading ? (
+                    <Skeleton
+                        width={300}
+                        height={70}
+                        style={{
+                            border: '1px solid #ccc',
+                            backgroundColor: '#fff',
+                            borderRadius: 10,
+                            padding: 0,
+                        }}
+                    />
+                ) : (
+                    <Autocomplete
+                        options={listTipo}
+                        defaultValue={tipo}
+                        id='autocomplete-TipoSolicitud'
+                        getOptionLabel={(option) => option.id + '-' + option.descripcion}
+                        onChange={handleChange}
+                        renderInput={(params) => <TextField {...params} label="Tipo de Solicitud" />}
+                    />
+                )
+            }
+        </>
     )
 }
 

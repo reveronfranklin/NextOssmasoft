@@ -1,4 +1,4 @@
-export interface IsolicitudCompromiso {
+export interface IsolicitudesCompromiso {
     data: solicitudCompromiso[]
     isValid: boolean
     linkData: any

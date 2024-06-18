@@ -1,58 +1,104 @@
-import { useState, ChangeEvent, useEffect } from 'react'
+import { useState, ChangeEvent, useEffect, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Filters } from '../interfaces/filters.interfaces'
 import ColumnsDataGrid from './../config/DataGrid'
-import useServices from '../services/useServices'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 
-const StyledDataGridContainer = styled(Box)(({ theme }) => ({
+import useServices from '../services/useServices'
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+
+const StyledDataGridContainer = styled(Box)(() => ({
     height: 450,
     overflowY: 'auto',
-    border: `1px solid ${theme.palette.divider}`,
-    borderRadius: theme.shape.borderRadius,
-}));
+}))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(5);
-    const [searchText, setSearchText] = useState('');
-    const [filters, setFilters] = useState({ CodigoPresupuesto: 17, pageSize, pageNumber, searchText } as Filters)
+    const [pageNumber, setPage] = useState(0)
+    const [pageSize, setPageSize] = useState(5)
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState(false)
+    const [searchText, setSearchText] = useState('')
+    const [buffer, setBuffer] = useState('')
 
-    const { rows, total, fetchTableData, loadingDataGrid } = useServices()
+    const debounceTimeoutRef = useRef<any>(null)
+
+    const { fetchTableData, presupuestoSeleccionado } = useServices()
+    const qc: QueryClient = useQueryClient()
+
+    const filter: Filters = {
+        pageSize,
+        pageNumber,
+        searchText,
+        CodigoSolicitud: 0,
+        CodigoPresupuesto: 0,
+    }
+
+    const query = useQuery({
+        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText],
+        queryFn: () => fetchTableData({ ...filter, pageSize, pageNumber, searchText }),
+        initialData: () => {
+            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText])
+        },
+        staleTime: 1000 * 60 * 60,
+        retry: 3,
+        enabled: isPresupuestoSeleccionado
+    }, qc)
+
+    const rows = query?.data?.data || []
+    const rowCount = query?.data?.cantidadRegistros || 0
+
+    useEffect(() => {
+        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
+            setIsPresupuestoSeleccionado(true)
+        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
+            setIsPresupuestoSeleccionado(false)
+        }
+    }, [presupuestoSeleccionado]);
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
-        setFilters({ ...filters, pageNumber: newPage })
     }
 
     const handleSizeChange = (newPageSize: number) => {
+        setPage(0)
         setPageSize(newPageSize)
-        setFilters({ ...filters, pageSize: newPageSize })
     }
 
     const handleSearch = (value: string) => {
-        setSearchText(value)
-        setFilters({ ...filters, searchText: value })
+        if (value === '') {
+            setSearchText('')
+            setBuffer('')
+
+            return
+        }
+
+        const newBuffer = buffer + value
+        setBuffer(newBuffer)
+        debouncedSearch()
     }
 
-    useEffect(() => {
-        fetchTableData(filters)
-    }, [pageNumber, pageSize, searchText, filters, fetchTableData])
+    const debouncedSearch = () => {
+        clearTimeout(debounceTimeoutRef.current)
+
+        debounceTimeoutRef.current = setTimeout(() => {
+            setSearchText(buffer)
+        }, 2500)
+    }
 
     return (
         <>
             {
-                loadingDataGrid ? ( <Spinner sx={{ height: '100%' }} /> ) : (
+                query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <DataGrid
                         autoHeight
                         pagination
-                        getRowId={row => row.codigoSolicitud}
+                        getRowId={(row) => row.codigoSolicitud}
                         rows={rows}
-                        rowCount={total}
-                        columns={ColumnsDataGrid()}
+                        rowCount={rowCount}
+                        columns={ColumnsDataGrid() as any}
                         pageSize={pageSize}
+                        page={pageNumber}
                         sortingMode='server'
                         paginationMode='server'
                         rowsPerPageOptions={[5, 10, 50]}
@@ -65,7 +111,7 @@ const DataGridComponent = () => {
                             },
                             toolbar: {
                                 printOptions: { disableToolbarButton: true },
-                                value: searchText,
+                                value: buffer,
                                 clearSearch: () => handleSearch(''),
                                 onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
                             }
