@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Card, CardActions, CardContent, CardHeader, CircularProgress, FormControl, FormHelperText, Grid, TextField } from '@mui/material';
+import { Box, Card, CardActions, CardContent, CardHeader, CircularProgress, DialogContent, FormControl, FormHelperText, Grid, TextField, Dialog, DialogActions, DialogContentText, DialogTitle } from '@mui/material';
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { Controller, useForm } from 'react-hook-form'
@@ -19,14 +19,30 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import dayjs from 'dayjs'
 
-import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
+// import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import useServices from '../../services/useServices'
+
+import { Update } from '../../interfaces/update.interfaces'
+import { Delete } from '../../interfaces/delete.interfaces'
+
+import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+
+import { setSolicitudCompromisoSeleccionado } from "src/store/apps/adm"
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [open, setOpen] = useState(false)
 
+    const dispatch = useDispatch()
+    const solicitudCompromisoData = useSelector(
+        (state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado
+    )
+
+    console.log(solicitudCompromisoData)
     const {
         codigoSolicitud,
         numeroSolicitud,
@@ -34,11 +50,13 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         codigoSolicitante,
         tipoSolicitudId,
         codigoProveedor,
+        descripcionStatus,
         motivo,
         nota,
         status,
         codigoPresupuesto,
         fechaSolicitudObj,
+        fechaSolicitudString,
     } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
 
     const defaultValues: FormInputs = {
@@ -51,10 +69,16 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         motivo,
         nota,
         status,
-        codigoPresupuesto
+        descripcionStatus,
+        codigoPresupuesto,
+        fechaSolicitudString
     }
 
-    const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({ defaultValues })
+    const { control, handleSubmit, setValue, formState: { errors }} = useForm<FormInputs>({ defaultValues })
+
+    const handleCodigoSolicitanteChange = (codigoSolicitante: number) => {
+        setValue('codigoSolicitante', codigoSolicitante)
+    }
 
     const handleTipoSolicitudChange = (tipoSolicitudId: number) => {
         setValue('tipoSolicitudId', tipoSolicitudId)
@@ -66,29 +90,47 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     const handleFechaSolicitudChange = (fechaSolicitud: Date) => {
         if (dayjs(fechaSolicitud).isValid()) {
-            // setValue('fechaSolicitud', fechaSolicitud.toISOString())
+            const fechaObj: any = fechaToFechaObj(fechaSolicitud)
+
+            const solCompromiso = {
+                ...solicitudCompromisoData,
+                fechaSolicitud: fechaSolicitud,
+                fechaSolicitudString: fechaSolicitud.toISOString(),
+                fechaSolicitudObj: fechaObj
+            }
+
+            dispatch(setSolicitudCompromisoSeleccionado(solCompromiso))
+            setValue('fechaSolicitudString', fechaSolicitud.toISOString())
         }
     }
 
     const onSubmit = async (dataForm: FormInputs) => {
         try {
-            const update: SolicitudCompromiso = {
-                CodigoSolicitud: dataForm.codigoSolicitud,
-                NumeroSolicitud: dataForm.numeroSolicitud,
-                FechaSolicitud: dataForm.fechaSolicitud,
-                CodigoSolicitante: dataForm.codigoSolicitante,
-                TipoSolicitudId: dataForm.tipoSolicitudId,
-                CodigoProveedor: dataForm.codigoProveedor,
-                Motivo: dataForm.motivo,
-                Nota: dataForm.nota,
-                Status: dataForm.status,
-                CodigoPresupuesto: dataForm.codigoPresupuesto
+            setLoading(true)
+            const solicitudCompromisoUpdate: Update = {
+                codigoSolicitud: dataForm.codigoSolicitud,
+                numeroSolicitud: dataForm.numeroSolicitud,
+                fechaSolicitud: dataForm.fechaSolicitud,
+                codigoSolicitante: dataForm.codigoSolicitante,
+                tipoSolicitudId: dataForm.tipoSolicitudId,
+                codigoProveedor: dataForm.codigoProveedor,
+                motivo: dataForm.motivo,
+                nota: dataForm.nota,
+                status: dataForm.status,
+                codigoPresupuesto: dataForm.codigoPresupuesto,
+                fechaSolicitudString: dataForm.fechaSolicitudString,
+                descripcionStatus: dataForm.descripcionStatus,
             }
 
-            setLoading(true)
-            await updateSolicitudCompromiso(update)
+            const responseUpdate = await updateSolicitudCompromiso(solicitudCompromisoUpdate)
+
+            if (responseUpdate?.data?.isValid) {
+                toast.success('Form Submitted')
+                handleClose()
+            }
+
+            setErrorMessage(responseUpdate?.data.message)
         } catch (e: any) {
-            setErrorMessage(e.message)
             console.log(e)
         } finally {
             setLoading(false)
@@ -97,11 +139,27 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     const handleDelete = async () => {
         try {
-            await eliminarSolicitudCompromiso(codigoSolicitud)
+            const data: Delete = {
+                codigoSolicitud: codigoSolicitud,
+            }
+            const responseDelete = await eliminarSolicitudCompromiso(data)
+
+            if (!responseDelete?.data.isValid) {
+                setErrorMessage(responseDelete?.data.message)
+            } else {
+                handleClose()
+            }
         } catch (e: any) {
-            setErrorMessage(e.message)
             console.log(e)
         }
+    }
+
+    const handleDialogOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
     }
 
     return (
@@ -115,22 +173,34 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 <Controller
                                     name='codigoSolicitud'
                                     control={control}
+                                    rules={{
+                                        required: true,
+                                        min: 1,
+                                        validate: (value) => value >= 0
+                                    }}
                                     render={({ field: {value, onChange} }) => (
                                         <TextField
                                             value={value || ''}
                                             label="Codigo de Solicitud"
                                             onChange={onChange}
-                                            placeholder='0'
+                                            placeholder='Codigo de Solicitud'
+                                            error={Boolean(errors.codigoSolicitud )}
+                                            aria-describedby='validation-async-codigoSolicitud'
                                             disabled
                                         />
                                     )}
                                 />
+                                {errors.codigoSolicitud && (
+                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoSolicitud'>
+                                        This field is required
+                                    </FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid item sm={6} xs={12}>
                             <FormControl fullWidth>
                                 <Controller
-                                    name='status'
+                                    name='descripcionStatus'
                                     control={control}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
@@ -187,7 +257,10 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             </FormControl>
                         </Grid>
                         <Grid item sm={7} xs={12}>
-                            <UnidadSolicitante id={codigoSolicitante}/>
+                            <UnidadSolicitante
+                                id={codigoSolicitante}
+                                onSelectionChange={handleCodigoSolicitanteChange}
+                            />
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
@@ -210,17 +283,27 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 <Controller
                                     name='motivo'
                                     control={control}
+                                    rules={{
+                                        required: false,
+                                        maxLength: 1500,
+                                    }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
+                                            helperText="Caracteres máximo 1500"
                                             value={value || ''}
                                             label="Motivo"
                                             onChange={onChange}
                                             placeholder='Motivo'
+                                            error={Boolean(errors.motivo)}
+                                            aria-describedby='validation-async-motivo'
                                             multiline
                                             rows={4}
                                         />
                                     )}
                                 />
+                                {errors.motivo && (
+                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-motivo'></FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid item sm={12} xs={12}>
@@ -228,21 +311,32 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 <Controller
                                     name='nota'
                                     control={control}
+                                    rules={{
+                                        required: false,
+                                        maxLength: 1500,
+                                    }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
+                                            helperText="Caracteres máximo 1500"
                                             value={value || ''}
                                             label="Nota"
                                             onChange={onChange}
                                             placeholder='Nota'
                                             multiline
                                             rows={4}
+                                            error={Boolean(errors.nota)}
+                                            aria-describedby='validation-async-nota'
                                         />
                                     )}
                                 />
+                                {errors.nota && (
+                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-nota'></FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
+                        {/* <Button size='large' type='submit' variant='contained' disabled={descripcionStatus === 'APROBADA'}> */}
                         <Button size='large' type='submit' variant='contained'>
                             {loading ? (
                                 <CircularProgress
@@ -256,10 +350,33 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             ) : null}
                             Guardar
                         </Button>
-                        <Button variant='outlined' size='large' onClick={handleDelete}>Eliminar</Button>
+                        <Button variant='outlined' size='large' onClick={handleDialogOpen}>
+                            Eliminar
+                        </Button>
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby='alert-dialog-title'
+                            aria-describedby='alert-dialog-description'
+                        >
+                            <DialogTitle id='alert-dialog-title'>
+                                {'Esta Seguro de Eliminar esta solicitud de Compromiso?'}
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id='alert-dialog-description'>
+                                    Se eliminaran los datos de esta solicitud de compromiso
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose}>No</Button>
+                                <Button onClick={handleDelete} autoFocus>
+                                    Si
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </CardActions>
                     <Box>
-                        {errorMessage.length > 0 && (
+                        { errorMessage.length > 0 && (
                             <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
                         )}
                     </Box>

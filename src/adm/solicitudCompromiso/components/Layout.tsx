@@ -22,7 +22,7 @@ const exportToExcel = () => {
 }
 
 const LayoutSolicitudCompromiso = () => {
-    const { loading, mensaje } = useServices()
+    const { mensaje, loading } = useServices()
     const dispatch = useDispatch()
 
     return (

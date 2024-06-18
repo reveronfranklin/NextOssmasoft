@@ -1,4 +1,4 @@
-export interface FormInputs {
+export interface Update {
     codigoSolicitud: number
     numeroSolicitud: string
     fechaSolicitud: Date
