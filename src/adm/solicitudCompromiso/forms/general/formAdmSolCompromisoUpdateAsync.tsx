@@ -29,7 +29,7 @@ import { Delete } from '../../interfaces/delete.interfaces'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 
-import { setSolicitudCompromisoSeleccionado } from "src/store/apps/adm"
+import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
@@ -42,7 +42,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         (state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado
     )
 
-    console.log(solicitudCompromisoData)
     const {
         codigoSolicitud,
         numeroSolicitud,
@@ -126,7 +125,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
             if (responseUpdate?.data?.isValid) {
                 toast.success('Form Submitted')
-                handleClose()
+                dispatch(setVerSolicitudCompromisosActive(false))
             }
 
             setErrorMessage(responseUpdate?.data.message)
@@ -173,11 +172,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 <Controller
                                     name='codigoSolicitud'
                                     control={control}
-                                    rules={{
-                                        required: true,
-                                        min: 1,
-                                        validate: (value) => value >= 0
-                                    }}
                                     render={({ field: {value, onChange} }) => (
                                         <TextField
                                             value={value || ''}
@@ -210,6 +204,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                             placeholder='Estado de la Solicitud'
                                             error={Boolean(errors.status)}
                                             aria-describedby='validation-async-statusProceso'
+                                            disabled
                                         />
                                     )}
                                 />
@@ -246,6 +241,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                             placeholder='Numero de Solicitud'
                                             error={Boolean(errors.numeroSolicitud)}
                                             aria-describedby='validation-async-numeroSolicitud'
+                                            disabled
                                         />
                                     )}
                                 />
@@ -285,11 +281,11 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     control={control}
                                     rules={{
                                         required: false,
-                                        maxLength: 1500,
+                                        maxLength: 1150,
                                     }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
-                                            helperText="Caracteres máximo 1500"
+                                            helperText="Caracteres máximo 1150"
                                             value={value || ''}
                                             label="Motivo"
                                             onChange={onChange}
@@ -313,11 +309,11 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     control={control}
                                     rules={{
                                         required: false,
-                                        maxLength: 1500,
+                                        maxLength: 1000,
                                     }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
-                                            helperText="Caracteres máximo 1500"
+                                            helperText="Caracteres máximo 1000"
                                             value={value || ''}
                                             label="Nota"
                                             onChange={onChange}
@@ -336,7 +332,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                         </Grid>
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
-                        {/* <Button size='large' type='submit' variant='contained' disabled={descripcionStatus === 'APROBADA'}> */}
                         <Button size='large' type='submit' variant='contained'>
                             {loading ? (
                                 <CircularProgress
