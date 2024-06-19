@@ -21,7 +21,7 @@ const UnidadSolicitante = (props: any) => {
 
     const handlerUnidadEjecutora = (event: any, newValue: any) => {
         if (newValue) {
-            props.onSelectionChange()
+            props.onSelectionChange(newValue.codigoIcp)
         }
     }
 
