@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CircularProgress, FormControl, FormHelperText, Grid, TextField } from "@mui/material"
+import { Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, FormControl, FormHelperText, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from 'react-hook-form'
 import { FormInputs } from './../../interfaces/formImputs.interfaces'
 
@@ -20,10 +20,16 @@ import useServices from '../../services/useServices'
 import { Create } from '../../interfaces/create.interfaces'
 import { useState } from "react"
 import { IFechaDto } from "src/interfaces/fecha-dto";
+import { useDispatch } from "react-redux"
+
+import { setVerSolicitudCompromisosActive } from 'src/store/apps/adm'
 
 const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDatePickerProps['popperPlacement']}) => {
+    const dispatch = useDispatch()
+
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
     const { loading, crearSolicitudCompromiso } = useServices()
+    const [errorMessage, setErrorMessage] = useState<string>('')
     const [fecha, setFecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
@@ -42,7 +48,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
         status: '',
         codigoPresupuesto: 0,
         fechaSolicitudString: '',
-        descripcionStatus: '',
+        descripcionStatus: 'Pendiente',
     }
 
     const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({ defaultValues })
@@ -74,7 +80,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
             const solicitudCompromisoCreate: Create = {
                 codigoSolicitud: dataForm.codigoSolicitud,
                 numeroSolicitud: dataForm.numeroSolicitud,
-                fechaSolicitud: new Date(dataForm.fechaSolicitudString),
+                fechaSolicitud: dataForm.fechaSolicitud,
                 codigoSolicitante: dataForm.codigoSolicitante,
                 tipoSolicitudId: dataForm.tipoSolicitudId,
                 codigoProveedor: dataForm.codigoProveedor,
@@ -87,8 +93,10 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
             const responseCreate = await crearSolicitudCompromiso(solicitudCompromisoCreate)
 
             if (responseCreate?.data.isValid) {
-                console.log('Solicitud de Compromiso Creada')
+                dispatch(setVerSolicitudCompromisosActive(false))
             }
+
+            setErrorMessage(responseCreate?.data.message)
         } catch (e) {
             console.log(e)
         }
@@ -105,11 +113,6 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                 <Controller
                                     name='codigoSolicitud'
                                     control={control}
-                                    rules={{
-                                        required: true,
-                                        min: 1,
-                                        validate: (value) => value >= 0
-                                    }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
                                             type='number'
@@ -120,6 +123,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                             error={Boolean(errors.codigoSolicitud )}
                                             aria-describedby='validation-async-codigoSolicitud'
                                             inputProps={{ min: 0 }}
+                                            disabled
                                         />
                                     )}
                                 />
@@ -141,6 +145,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                             label="Estado de la Solicitud"
                                             onChange={onChange}
                                             placeholder='Estado de la Solicitud'
+                                            disabled
                                         />
                                     )}
                                 />
@@ -202,8 +207,13 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                 <Controller
                                     name='motivo'
                                     control={control}
+                                    rules={{
+                                        required: false,
+                                        maxLength: 1150,
+                                    }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
+                                            helperText="Caracteres máximo 1150"
                                             value={value || ''}
                                             label="Motivo"
                                             onChange={onChange}
@@ -220,8 +230,13 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                 <Controller
                                     name='nota'
                                     control={control}
+                                    rules={{
+                                        required: false,
+                                        maxLength: 1000,
+                                    }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
+                                            helperText="Caracteres máximo 1000"
                                             value={value || ''}
                                             label="Nota"
                                             onChange={onChange}
@@ -249,6 +264,11 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                             Guardar
                         </Button>
                     </CardActions>
+                    <Box>
+                        {errorMessage && (
+                            <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+                        )}
+                    </Box>
                 </form>
             </CardContent>
         </Card>

@@ -40,7 +40,7 @@ const DataGridComponent = () => {
         initialData: () => {
             return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText])
         },
-        staleTime: 1000 * 60 * 60,
+        staleTime: 1000 * 60,
         retry: 3,
         enabled: isPresupuestoSeleccionado
     }, qc)
