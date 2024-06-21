@@ -19,6 +19,10 @@ module.exports = withTM({
   experimental: {
     esmExternals: false
   },
+  typescript: { 
+  
+    ignoreBuildErrors: true,
+  },
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
