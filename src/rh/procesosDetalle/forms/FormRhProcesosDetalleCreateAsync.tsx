@@ -318,9 +318,9 @@ const FormRhProcesosDetalleCreateAsync = ({ popperPlacement }: { popperPlacement
                     value={concepto}
                     id='autocomplete-tipo-nomina'
                     isOptionEqualToValue={(option, value) => option.codigoConcepto === value.codigoConcepto}
-                    getOptionLabel={option => option.codigoTipoNomina +'-'+ option.codigoConcepto + '-' + option.denominacion}
+                    getOptionLabel={option => option.codigoTipoNomina +'-'+ option.tipoConcepto +''+option.codigoConcepto + '-' + option.denominacion}
                     onChange={handleConceptos}
-                    renderInput={params => <TextField {...params} label='Tipo Nomina' />}
+                    renderInput={params => <TextField {...params} label='Conceptos' />}
                   /> ) : <div></div>
               }
               </div>
