@@ -1,12 +1,12 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-import { Filters } from '../interfaces/filters.interfaces'
-import ColumnsDataGrid from './../config/DataGrid'
+import { Filters } from '../../interfaces/filters.interfaces'
+import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 
-import useServices from '../services/useServices'
+import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -42,7 +42,7 @@ const DataGridComponent = () => {
         },
         staleTime: 1000 * 60,
         retry: 3,
-        enabled: isPresupuestoSeleccionado
+        // enabled: isPresupuestoSeleccionado
     }, qc)
 
     const rows = query?.data?.data || []

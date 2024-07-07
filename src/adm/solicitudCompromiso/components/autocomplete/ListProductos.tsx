@@ -3,23 +3,20 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { Skeleton } from "@mui/material";
 import useServices from '../../services/useServices'
 
-interface ITipoSolicitud {
-    id: number
-    descripcion: string
-}
-
-const TipoSolicitud = (props: any) => {
-    const { fetchSolicitudCompromiso } = useServices()
+const ListProducts = (props: any) => {
+    const { getListProducts } = useServices()
     const qc: QueryClient = useQueryClient()
 
     const query = useQuery({
-        queryKey: ['tipoSolicitud'],
-        queryFn: () => fetchSolicitudCompromiso(),
-        retry: 3,
+        queryKey: ['getListProducts'],
+        queryFn: () => getListProducts(),
+        initialData: () => {
+            return qc.getQueryData(['getListProducts'])
+        },
+        staleTime: 5000 * 60 * 60,
     }, qc)
 
-    const listTipo: ITipoSolicitud [] = query.data?.data ?? []
-    const tipo = listTipo.filter((item: { id: number }) => item?.id == props.id)[0]
+    const listProducts = query.data?.data ?? []
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
@@ -43,12 +40,11 @@ const TipoSolicitud = (props: any) => {
                     />
                 ) : (
                     <Autocomplete
-                        options={listTipo}
-                        defaultValue={tipo}
-                        id='autocomplete-TipoSolicitud'
-                        getOptionLabel={(option) => option.id + '-' + option.descripcion}
+                        options={listProducts}
+                        id='autocomplete-ListProducts'
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label="Tipo de Solicitud" />}
+                        getOptionLabel={(option : any) => option.codigo + '-' + option.descripcion}
+                        renderInput={(params) => <TextField {...params} label="Productos" />}
                     />
                 )
             }
@@ -56,4 +52,4 @@ const TipoSolicitud = (props: any) => {
     )
 }
 
-export default TipoSolicitud
+export default ListProducts

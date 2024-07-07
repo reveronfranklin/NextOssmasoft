@@ -5,4 +5,9 @@ export enum UrlServices {
     PROVEEDORES      = '/AdmProveedores/GetAll',
     GETBYPRESUPUESTO = '/AdmSolicitudes/GetByPresupuesto',
     DESCRIPTIVAS     = '/AdmDescriptivas/GetSelectDescriptiva',
+    DETALLESOLICITUD = '/AdmDetalleSolicitud/GetByCodigoSolicitud',
+    DETALLEUPDATE    = '/AdmDetalleSolicitud/Update',
+    DETALLECREATE    = '/AdmDetalleSolicitud/Create',
+    DETALLEDELETE    = '/AdmDetalleSolicitud/Delete',
+    GETLISTPRODUCTOS = '/AdmProductos/GetAllPaginate',
 }

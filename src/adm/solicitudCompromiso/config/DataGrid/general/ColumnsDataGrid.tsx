@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux'
 
-import { CrudOperation } from './../enums/CrudOperations.enum'
+import { CrudOperation } from '../../../enums/CrudOperations.enum'
 import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
-import { CellType } from './../interfaces/cellType.interfaces'
+import { CellType } from '../../../interfaces/cellType.interfaces'
 
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
@@ -12,7 +12,8 @@ import dayjs from 'dayjs'
 import {
     setVerSolicitudCompromisosActive,
     setOperacionCrudAdmSolCompromiso,
-    setSolicitudCompromisoSeleccionado } from "src/store/apps/adm"
+    setSolicitudCompromisoSeleccionado
+} from "src/store/apps/adm"
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()

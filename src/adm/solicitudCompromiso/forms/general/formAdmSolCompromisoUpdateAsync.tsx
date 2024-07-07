@@ -30,6 +30,7 @@ import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 
 import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
+import IndexDetalleSolicitudCompromiso from '../detalle/formAdmSolCompromisoIndexAsync'
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
@@ -121,6 +122,8 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 descripcionStatus: dataForm.descripcionStatus,
             }
 
+            console.log(solicitudCompromisoUpdate)
+            return
             const responseUpdate = await updateSolicitudCompromiso(solicitudCompromisoUpdate)
 
             if (responseUpdate?.data?.isValid) {
@@ -135,6 +138,43 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             setLoading(false)
         }
     }
+
+    // const handleGeneralSubmit = async (event: any) => {
+    //     try {
+    //         setLoading(true)
+    //         event.preventDefault()
+
+    //         console.log('handleGeneralSubmit')
+    //         console.log(event)
+    //         // const solicitudCompromisoUpdate: Update = {
+    //         //     codigoSolicitud: dataForm.codigoSolicitud,
+    //         //     numeroSolicitud: dataForm.numeroSolicitud,
+    //         //     fechaSolicitud: dataForm.fechaSolicitud,
+    //         //     codigoSolicitante: dataForm.codigoSolicitante,
+    //         //     tipoSolicitudId: dataForm.tipoSolicitudId,
+    //         //     codigoProveedor: dataForm.codigoProveedor,
+    //         //     motivo: dataForm.motivo,
+    //         //     nota: dataForm.nota,
+    //         //     status: dataForm.status,
+    //         //     codigoPresupuesto: dataForm.codigoPresupuesto,
+    //         //     fechaSolicitudString: dataForm.fechaSolicitudString,
+    //         //     descripcionStatus: dataForm.descripcionStatus,
+    //         // }
+
+    //         //const responseUpdate = await updateSolicitudCompromiso(solicitudCompromisoUpdate)
+
+    //         // if (responseUpdate?.data?.isValid) {
+    //         //     toast.success('Form Submitted')
+    //         //     dispatch(setVerSolicitudCompromisosActive(false))
+    //         // }
+
+    //         //setErrorMessage(responseUpdate?.data.message)
+    //     } catch (e: any) {
+    //         console.log(e)
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     const handleDelete = async () => {
         try {
@@ -293,7 +333,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                             error={Boolean(errors.motivo)}
                                             aria-describedby='validation-async-motivo'
                                             multiline
-                                            rows={4}
+                                            rows={5}
                                         />
                                     )}
                                 />
@@ -375,6 +415,11 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
                         )}
                     </Box>
+                    <Grid container spacing={5} paddingTop={0}>
+                        <Grid item sm={12} xs={12}>
+                            <IndexDetalleSolicitudCompromiso codigoSolicitud={codigoSolicitud} />
+                        </Grid>
+                    </Grid>
                 </form>
             </CardContent>
         </Card>
