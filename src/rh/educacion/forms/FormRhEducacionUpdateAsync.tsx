@@ -394,7 +394,7 @@ const FormRhEducacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                   <Controller
                     name='nombreInstituto'
                     control={control}
-                    rules={{ minLength:5}}
+                    rules={{ minLength:5,maxLength:150}}
                     render={({ field: { value, onChange } }) => (
                       <TextField
                         value={value || ''}
@@ -402,7 +402,7 @@ const FormRhEducacionUpdateAsync = ({ popperPlacement }: { popperPlacement: Reac
                         onChange={onChange}
                         placeholder='Instituto'
                         error={Boolean(errors.nombreInstituto)}
-                        aria-describedby='validation-async-instituto'
+                        aria-describedby='validation-async-nombreInstituto'
                       />
                     )}
                   />

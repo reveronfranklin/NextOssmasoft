@@ -27,4 +27,5 @@ export interface IRhPeriodosResponseDto{
         descripcion :string;
         searchText:string;
         year:number;
+        fileName:string;
 }

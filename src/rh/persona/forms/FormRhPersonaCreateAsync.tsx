@@ -705,6 +705,9 @@ const FormRhPersonaCreateAsync = ({
                       label='peso'
                       onChange={onChange}
                       placeholder='peso'
+                      inputProps={{
+                        inputMode: 'decimal', // Asegura que el teclado numérico se muestre en dispositivos móviles
+                      }}
                       error={Boolean(errors.estatura)}
                       aria-describedby='validation-async-peso'
                     />

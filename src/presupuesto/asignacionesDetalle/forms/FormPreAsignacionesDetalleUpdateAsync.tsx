@@ -148,6 +148,12 @@ const FormPreAsignacionesDetalleUpdateAsync = ({ popperPlacement }: { popperPlac
 
   };
 
+  const handlerMonto = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('monto', valueInt)
+  }
+
   const onSubmit = async (data:FormInputs) => {
     const  now = dayjs();
     const fechaIngreso=dayjs(data.fechaDesembolsoString)
@@ -257,30 +263,42 @@ const FormPreAsignacionesDetalleUpdateAsync = ({ popperPlacement }: { popperPlac
 
           {/* Presupuestado*/}
           <Grid item sm={2} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='monto'
-                  control={control}
-                  rules={{ min:0.001}}
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-                      value={value || 0}
-                      type="decimal"
-                      label='Monto'
-                      onChange={onChange}
-                      placeholder='Monto'
-                      error={Boolean(errors.monto)}
-                      aria-describedby='validation-async-sueldo'
-                    />
-                  )}
-                />
-                {errors.monto && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-monto'>
-                    This field is required
-                  </FormHelperText>
-                )}
+          <FormControl fullWidth>
+                                  <Controller
+                                      name='monto'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Monto"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerMonto(value)
+                                              }}
+                                              placeholder='Fides'
+                                              error={Boolean(errors.monto)}
+                                              aria-describedby='validation-async-monto'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.monto && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-monto'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
             {/* descripcion*/}

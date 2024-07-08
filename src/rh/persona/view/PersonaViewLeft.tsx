@@ -283,7 +283,7 @@ const PersonaViewLeft = () => {
                     src={personaSeleccionado.avatar}
                     variant='rounded'
                     alt={personaSeleccionado.nombreCompleto}
-                    sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
+                    sx={{ width: 260, height: 320, fontWeight: 600, mb: 4, fontSize: '3rem' }}
                   />
                 ) : (
                   <CustomAvatar

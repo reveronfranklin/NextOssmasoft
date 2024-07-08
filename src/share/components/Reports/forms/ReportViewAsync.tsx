@@ -19,15 +19,23 @@ import { useEffect } from 'react'
 import { CardActions } from '@mui/material'
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
+import authConfig from 'src/configs/auth'
 
 const ReportViewAsync = () => {
   // ** States
 
   const { reportName } = useSelector((state: RootState) => state.reportView)
 
+const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
+
+const baseURL= !authConfig.isProduction ? urlDevelopment : urlProduction
+
+
+
   useEffect(() => {
     console.log(reportName)
-
+console.log(baseURL);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

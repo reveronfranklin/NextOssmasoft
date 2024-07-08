@@ -18,17 +18,17 @@ const indexMonth:IIndexMonth[]=[
 
 export const getDateByObject=(dateObject:IFechaDto)=>{
 
-if(dateObject && dateObject !== undefined){
+if(dateObject ){
 
    const year= Number(dateObject.year);
-
    const month = Number(dateObject.month);
    const day = Number(dateObject.day);
-   const indice= indexMonth.filter((num) => num.month === month)
-   const date = new Date(year, indice[0].index, day);
+  const date = new Date(year,month-1, day);
 
   return date;
+
 }else{
+
   return null;
 }
 

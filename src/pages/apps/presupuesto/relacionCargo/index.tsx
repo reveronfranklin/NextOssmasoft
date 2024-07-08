@@ -16,7 +16,6 @@ import TableServerSide from 'src/presupuesto/relacionCargo/components/TableServe
 
 import DialogPreRelacionCargoInfo from 'src/presupuesto/relacionCargo/views/DialogPreRelacionCargoInfo'
 
-
 const TableEditable = () => {
 
 
@@ -45,5 +44,6 @@ const TableEditable = () => {
 
   )
 }
+
 
 export default TableEditable
