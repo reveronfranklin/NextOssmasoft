@@ -241,9 +241,9 @@ const TableServerSideRhRelacionCargo = () => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
 
+      if (filter.codigoRelacionCargoPre==0) return
       setMensaje('')
       setLoading(true);
-
 
 
       const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo',filter);

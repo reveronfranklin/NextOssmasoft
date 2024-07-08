@@ -1751,6 +1751,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-devtools@npm:5.50.1":
+  version: 5.50.1
+  resolution: "@tanstack/query-devtools@npm:5.50.1"
+  checksum: 0f08b1d2d4fb8f78150bb286fd1bcdce341aac7c9e53334979c3c34719a1a2b45ac73332fab18d87512d3c97954a41d5cf8430bac992b21e72b925f1c9ec8f4e
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.50.1":
+  version: 5.50.1
+  resolution: "@tanstack/react-query-devtools@npm:5.50.1"
+  dependencies:
+    "@tanstack/query-devtools": 5.50.1
+  peerDependencies:
+    "@tanstack/react-query": ^5.50.1
+    react: ^18 || ^19
+  checksum: 14d5b848a10035dc3ad77b61a7bf9f276981e2dc90ef1f9f73cc189f255849b2b33d6ec0d7a2c2d0083aba442001bf94da41a0a4d3c26d222f6d4f5b00516ad6
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.40.1":
   version: 5.45.1
   resolution: "@tanstack/react-query@npm:5.45.1"
@@ -5407,6 +5426,7 @@ __metadata:
     "@popperjs/core": 2.11.6
     "@reduxjs/toolkit": 1.8.6
     "@tanstack/react-query": ^5.40.1
+    "@tanstack/react-query-devtools": ^5.50.1
     "@types/cleave.js": 1.4.7
     "@types/draft-js": 0.11.9
     "@types/file-saver": ^2.0.7
@@ -5450,6 +5470,7 @@ __metadata:
     next-transpile-modules: 9.1.0
     notistack: ^3.0.1
     nprogress: 0.2.0
+    numeral: ^2.0.6
     payment: 2.4.6
     prettier: 2.7.1
     prismjs: 1.29.0
@@ -5464,7 +5485,7 @@ __metadata:
     react-hook-form: 7.38.0
     react-hot-toast: 2.4.0
     react-i18next: 12.0.0
-    react-number-format: ^5.2.2
+    react-number-format: ^5.4.0
     react-pdf: ^7.3.3
     react-perfect-scrollbar: 1.5.8
     react-popper: 2.3.0
@@ -5913,6 +5934,13 @@ __metadata:
   dependencies:
     boolbase: ^1.0.0
   checksum: 5afc3dafcd1573b08877ca8e6148c52abd565f1d06b1eb08caf982e3fa289a82f2cae697ffb55b5021e146d60443f1590a5d6b944844e944714a5b549675bcd3
+  languageName: node
+  linkType: hard
+
+"numeral@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "numeral@npm:2.0.6"
+  checksum: 89f011116539692bf53fde380adeb0579623d00f782703c71c0062d4a8686770c404a041ff4eef454de53925a9f75bba1fa52726057b13d40473f707730b07c2
   languageName: node
   linkType: hard
 
@@ -6590,15 +6618,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-number-format@npm:^5.2.2":
-  version: 5.2.2
-  resolution: "react-number-format@npm:5.2.2"
+"react-number-format@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "react-number-format@npm:5.4.0"
   dependencies:
     prop-types: ^15.7.2
   peerDependencies:
     react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: ae788b550b759f3f3e475e5805f7c650472f3d06fe633a046288f62cf5deedbfa597cb8fea08f29538b04931d7453ffbbe653bdd50cfca6ac43e12397502fec3
+  checksum: 7ddfc7a3a01336234c6417ee2ee0660aef342ed0505abc5dd5b378c2c10182ed8afc74ce9be5aa60c4793f95039448ac1feac34dca0bbf5bd2c1a8235aa07b61
   languageName: node
   linkType: hard
 

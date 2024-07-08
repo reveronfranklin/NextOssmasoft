@@ -376,7 +376,7 @@ const FormRhAdministrativoCreateAsync = ({ popperPlacement }: { popperPlacement:
           <Grid item  sm={3} xs={12}>
                 <DatePicker
 
-                  selected={ getDateByObject(rhAdministrativoSeleccionado.fechaIngresoObj!)}
+                  selected={ getDateByObject(rhAdministrativoSeleccionado.fechaIngresoObj)}
                   id='date-time-picker-desde'
                   dateFormat='dd/MM/yyyy'
                   popperPlacement={popperPlacement}

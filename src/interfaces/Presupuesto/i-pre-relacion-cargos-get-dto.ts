@@ -21,4 +21,5 @@ export interface IPreRelacionCargosGetDto {
   totalAnual: string
   icpConcat:string
   searchText:string
+  page?: number
 }

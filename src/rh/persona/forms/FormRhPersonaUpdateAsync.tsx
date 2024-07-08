@@ -10,6 +10,7 @@ import Button, { ButtonProps } from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 
+
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 
@@ -77,6 +78,7 @@ import { IRhPersonaUpdateDto } from 'src/interfaces/rh/RhPersonaUpdateDto'
 import { styled } from '@mui/material/styles'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
+import { NumericFormat } from 'react-number-format'
 
 interface FormInputs {
   codigoPersona: number
@@ -358,6 +360,7 @@ const FormRhPersonaUpdateAsync = ({
   }
 
   const handlerEstadoCivil = async (e: any, value: any) => {
+ 
     if (value != null) {
       setValue('estadoCivilId', value.id)
       setEstadoCivil(value)
@@ -365,6 +368,8 @@ const FormRhPersonaUpdateAsync = ({
       setValue('estadoCivilId', 0)
     }
   }
+
+
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -554,10 +559,24 @@ const FormRhPersonaUpdateAsync = ({
       dispatch(setPersonasDtoSeleccionado(personaDefault))
     }
   }
+  const handlerPeso = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
 
+    setValue('peso', valueInt)
+  }
+  const handlerEstatura = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('estatura', valueInt)
+  }
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
+
+
+      await ossmmasofApi.get<any>(
+        '/RhPersona/CopiarArchivos'
+      )
 
       const filterBanco = { descripcionId: 0, tituloId: 18 }
       const responseBanco = await ossmmasofApi.post<ISelectListDescriptiva[]>(
@@ -611,7 +630,7 @@ const FormRhPersonaUpdateAsync = ({
                       hidden
                       type='file'
                       value={inputValue}
-                      accept='image/jpg'
+                      accept='image/png, image/gif, image/jpeg'
                       onChange={e => subirArchivos(e.target.files)}
                       id='account-settings-upload-image'
                     />
@@ -856,52 +875,84 @@ const FormRhPersonaUpdateAsync = ({
 
             {/* estatura*/}
             <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='estatura'
-                  control={control}
-                  rules={{ min: 1 }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || 0}
-                      label='estatura'
-                      onChange={onChange}
-                      placeholder='estatura'
-                      error={Boolean(errors.estatura)}
-                      aria-describedby='validation-async-estatura'
-                    />
-                  )}
-                />
-                {errors.estatura && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-estatura'>
-                    This field is required
-                  </FormHelperText>
-                )}
+            <FormControl fullWidth>
+                                  <Controller
+                                      name='estatura'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Estatura"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerEstatura(value)
+                                              }}
+                                              placeholder='Peso'
+                                              error={Boolean(errors.peso)}
+                                              aria-describedby='validation-async-estatura'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.estatura && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-estatura'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
+
+
             {/* peso*/}
             <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='peso'
-                  control={control}
-                  rules={{ min: 10 }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || 0}
-                      label='peso'
-                      onChange={onChange}
-                      placeholder='peso'
-                      error={Boolean(errors.estatura)}
-                      aria-describedby='validation-async-peso'
-                    />
-                  )}
-                />
-                {errors.peso && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-peso'>
-                    This field is required
-                  </FormHelperText>
-                )}
+            <FormControl fullWidth>
+                                  <Controller
+                                      name='peso'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Peso"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerPeso(value)
+                                              }}
+                                              placeholder='Peso'
+                                              error={Boolean(errors.peso)}
+                                              aria-describedby='validation-async-peso'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.peso && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-peso'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
             {/* Mano Habil */}

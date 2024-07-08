@@ -47,6 +47,7 @@ import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dt
 import { IPreRelacionCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-relacion-cargos-update-dto'
 import { setPreRelacionCargoSeleccionado, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
 import { IPreIndiceCategoriaProgramaticaGetDto } from '../../../interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
+import { NumericFormat } from 'react-number-format'
 
 interface FormInputs {
   codigoRelacionCargo: number
@@ -175,6 +176,29 @@ const FormPreRelacionCargoCreateAsync = () => {
   }
 
 
+  const handlerCantidad = (cantidad: string) => {
+    const cantidadInt = cantidad === '' ? 0 : parseFloat(cantidad)
+    setValue('cantidad', cantidadInt)
+  }
+  const handlerSueldo = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+    setValue('sueldo', valueInt)
+  }
+  const handlerCompensacion = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('compensacion', valueInt)
+  }
+  const handlerPrima = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('prima', valueInt)
+  }
+  const handlerOtro = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('otro', valueInt)
+  }
 
 
   const onSubmit = async (data:FormInputs) => {
@@ -401,154 +425,209 @@ const FormPreRelacionCargoCreateAsync = () => {
                 </FormControl>
             </Grid>
 
- {/* cantidad*/}
- <Grid item sm={2} xs={12}>
+
+            {/* cantidad*/}
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
-                <Controller
-                  name='cantidad'
-                  control={control}
-                  rules={{ min:1}}
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="number"
-                      label='Cantidad'
-                      onChange={onChange}
-                      placeholder='Cantidad'
-                      error={Boolean(errors.cantidad)}
-                      aria-describedby='validation-async-Cantidad'
-                    />
-                  )}
-                />
-                {errors.escenario && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cantidad'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                <Controller
+                                    name='cantidad'
+                                    control={control}
+                                    rules={{
+                                        required: false,
+                                        min: 0,
+                                    }}
+                                    render={({ field: { value } }) => (
+                                        <NumericFormat
+                                            value={value}
+                                            customInput={TextField}
+                                            thousandSeparator="."
+                                            decimalSeparator=","
+                                            allowNegative={false}
+                                            decimalScale={0}
+                                            fixedDecimalScale={true}
+                                            label="Cantidad"
+                                            onValueChange={(values: any) => {
+                                                const { value } = values
+                                                handlerCantidad(value)
+                                            }}
+                                            placeholder='Cantidad'
+                                            error={Boolean(errors.cantidad)}
+                                            aria-describedby='validation-async-cantidad'
+                                            inputProps={{
+                                                type: 'text',
+                                            }}
+                                        />
+                                    )}
+                                />
+                                {errors.cantidad && (
+                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cantidad'>
+                                        This field is required
+                                    </FormHelperText>
+                                )}
               </FormControl>
             </Grid>
-
             {/* sueldo*/}
             <Grid item sm={3} xs={12}>
               <FormControl fullWidth>
-                <Controller
-                  name='sueldo'
-                  control={control}
-                  rules={{ min:0.001}}
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Sueldo'
-                      onChange={onChange}
-                      placeholder='Sueldo'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-sueldo'
-                    />
-                  )}
-                />
-                {errors.sueldo && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                  <Controller
+                                      name='sueldo'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Sueldo"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerSueldo(value)
+                                              }}
+                                              placeholder='Sueldo'
+                                              error={Boolean(errors.sueldo)}
+                                              aria-describedby='validation-async-sueldo'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.sueldo && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
 
             {/* compensacion*/}
             <Grid item sm={3} xs={12}>
               <FormControl fullWidth>
-                <Controller
-                  name='compensacion'
-                  control={control}
-
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Compensacion'
-                      onChange={onChange}
-                      placeholder='Compensacion'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-compensacion'
-                    />
-                  )}
-                />
-                {errors.compensacion && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-compensacion'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                    <Controller
+                                        name='compensacion'
+                                        control={control}
+                                        rules={{
+                                            required: false,
+                                            min: 0,
+                                        }}
+                                        render={({ field: { value } }) => (
+                                            <NumericFormat
+                                                value={value}
+                                                customInput={TextField}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                allowNegative={false}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                label="Compensacion"
+                                                onValueChange={(values: any) => {
+                                                    const { value } = values
+                                                    handlerCompensacion(value)
+                                                }}
+                                                placeholder='Compensacion'
+                                                error={Boolean(errors.compensacion)}
+                                                aria-describedby='validation-async-compensacion'
+                                                inputProps={{
+                                                    type: 'text',
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                    {errors.compensacion && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='validation-async-compensacion'>
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
               </FormControl>
             </Grid>
             {/* prima*/}
             <Grid item sm={2} xs={12}>
+             
               <FormControl fullWidth>
-                <Controller
-                  name='prima'
-                  control={control}
-
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Prima'
-                      onChange={onChange}
-                      placeholder='Prima'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-prima'
-                    />
-                  )}
-                />
-                {errors.prima && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-prima'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                    <Controller
+                                        name='prima'
+                                        control={control}
+                                        rules={{
+                                            required: false,
+                                            min: 0,
+                                        }}
+                                        render={({ field: { value } }) => (
+                                            <NumericFormat
+                                                value={value}
+                                                customInput={TextField}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                allowNegative={false}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                label="Prima"
+                                                onValueChange={(values: any) => {
+                                                    const { value } = values
+                                                    handlerPrima(value)
+                                                }}
+                                                placeholder='Prima'
+                                                error={Boolean(errors.prima)}
+                                                aria-describedby='validation-async-prima'
+                                                inputProps={{
+                                                    type: 'text',
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                    {errors.prima && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='validation-async-prima'>
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
               </FormControl>
             </Grid>
             {/* otro*/}
             <Grid item sm={2} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='otro'
-                  control={control}
-
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Otro'
-                      onChange={onChange}
-                      placeholder='Otro'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-otro'
-                    />
-                  )}
-                />
-                {errors.otro && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-otro'>
-                    This field is required
-                  </FormHelperText>
-                )}
+            <FormControl fullWidth>
+                                    <Controller
+                                        name='otro'
+                                        control={control}
+                                        rules={{
+                                            required: false,
+                                            min: 0,
+                                        }}
+                                        render={({ field: { value } }) => (
+                                            <NumericFormat
+                                                value={value}
+                                                customInput={TextField}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                allowNegative={false}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                label="Otro"
+                                                onValueChange={(values: any) => {
+                                                    const { value } = values
+                                                    handlerOtro(value)
+                                                }}
+                                                placeholder='Prima'
+                                                error={Boolean(errors.otro)}
+                                                aria-describedby='validation-async-otro'
+                                                inputProps={{
+                                                    type: 'text',
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                    {errors.otro && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='validation-async-otro'>
+                                            This field is required
+                                        </FormHelperText>
+                                    )}
               </FormControl>
             </Grid>
-
 
 
             {/* extra1*/}
