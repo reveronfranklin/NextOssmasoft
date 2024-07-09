@@ -47,18 +47,6 @@ import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto'
 import { setOperacionCrudPreRelacionCargo, setPreRelacionCargoSeleccionado, setTotalSueldo, setTotalSueldoAnual, setVerPreRelacionCargoActive } from 'src/store/apps/pre-relacion-cargo'
 import { NumericFormat } from 'react-number-format'
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
-import { IPreIndiceCategoriaProgramaticaGetDto } from 'src/interfaces/Presupuesto/i-pre-indice-categoria-programatica-get-dto';
-import { rows } from '../../../@fake-db/table/static-data';
-
-
-
-
-/*interface StatusObj {
-  [key: number]: {
-    title: string
-    color: ThemeColor
-  }
-}*/
 
 
 type SortType = 'asc' | 'desc' | undefined | null
@@ -95,25 +83,21 @@ const TableServerSide = () => {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState<number>(20)
   const [searchValue, setSearchValue] = useState<string>('')
-  //const [rowCount, setRowCount] = useState(0)
-  const [reload, setReload] = useState(false)
 
-  const [linkData, setLinkData] = useState('')
-  const [total, setTotal] = useState<number>(0)
+  const [linkData] = useState('')
+
   const [sort, setSort] = useState<SortType>('asc')
 
 
-  const [allRows, setAllRows] = useState<IPreRelacionCargosGetDto[]>([])
-  const [mensaje, setMensaje] = useState<string>('')
-
-  //const [rows, setRows] = useState<DataGridRowType[]>([])
+  const [allRows ] = useState<IPreRelacionCargosGetDto[]>([])
+  const [mensaje] = useState<string>('')
 
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
   const dispatch = useDispatch();
   const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
   const {icpSeleccionado} = useSelector((state: RootState) => state.icp)
-  const {verPreRelacionCargoActive,totalSueldo,totalSueldoAnual} = useSelector((state: RootState) => state.preRelacionCargo)
+  const {totalSueldo,totalSueldoAnual} = useSelector((state: RootState) => state.preRelacionCargo)
 
 
   const qc: QueryClient = useQueryClient()
@@ -173,11 +157,11 @@ const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
   return response.data;
 }
 
-  function loadServerRows(currentPage: number, data: IPreRelacionCargosGetDto[]) {
+/*   function loadServerRows(currentPage: number, data: IPreRelacionCargosGetDto[]) {
     //if(currentPage<=0) currentPage=1;
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
-  }
+  } */
 
   const columns: any = [
     {
@@ -332,7 +316,8 @@ const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
     console.log('registro seleccionado',row)
     console.log(updateField(row,'page',page))
     dispatch(setPreRelacionCargoSeleccionado(updateField(row,'page',page)))
-     // Operacion Crud 2 = Modificar presupuesto
+    
+    // Operacion Crud 2 = Modificar presupuesto
     dispatch(setOperacionCrudPreRelacionCargo(2));
     dispatch(setVerPreRelacionCargoActive(true))
 
@@ -367,10 +352,7 @@ const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listpresupuestoDtoSeleccionado]) 
 
-  useEffect(() => {
-   setReload(true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreRelacionCargoActive]) 
+
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -391,6 +373,8 @@ const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
 
             const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
             const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
+            console.log(dataToFilter)
+
             //setRows(loadServerRows(page, dataToFilter))
       }
 
@@ -411,11 +395,14 @@ const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
 
     setSearchValue(value)
     if(value=='') {
+      
       //setRows(allRows);
 
 
     }else{
       const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
+      console.log(newRows)
+      
       //setRows(newRows);
 
 
@@ -485,7 +472,7 @@ const handleSizeChange = (newPageSize: number) => {
     }
 
 
-    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/UpdateField',updateDto);
+    await ossmmasofApi.post<any>('/PreRelacionCargos/UpdateField',updateDto);
    
   }
 
