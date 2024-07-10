@@ -11,5 +11,7 @@ export interface IPreCargosGetDto{
     extra2 :string;
     extra3  :string;
     codigoPresupuesto:number;
+    page?:number;
+    searchText?:string;
 
 }

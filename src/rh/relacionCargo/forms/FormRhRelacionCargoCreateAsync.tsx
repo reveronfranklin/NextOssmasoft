@@ -55,6 +55,7 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
+import { NumericFormat } from 'react-number-format'
 
 
 
@@ -191,6 +192,10 @@ const defaultValues:IRhRelacionCargoDto = {
     }
   }
 
+  const handlerSueldo = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+    setValue('sueldo', valueInt)
+  }
   const onSubmit = async (data:FormInputs) => {
 
     if(rhRelacionCargoSeleccionado.fechaIniObj.year=='1900'){
@@ -243,7 +248,7 @@ const defaultValues:IRhRelacionCargoDto = {
 
   return (
     <Card style={{height:'400px'}}>
-      <CardHeader title='RH - Crear Relacion Cargo' />
+      <CardHeader title='RH - Crear Relacion Cargo.' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -336,33 +341,44 @@ const defaultValues:IRhRelacionCargoDto = {
 
                 </FormControl>
             </Grid>
-            {/* sueldo*/}
-            <Grid item sm={4} xs={12}>
+             {/* sueldo*/}
+             <Grid item sm={4} xs={12}>
               <FormControl fullWidth>
-                <Controller
-                  name='sueldo'
-                  control={control}
-                  rules={{ min:0.001}}
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Sueldo'
-                      onChange={onChange}
-                      placeholder='Sueldo'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-sueldo'
-                    />
-                  )}
-                />
-                {errors.sueldo && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                  <Controller
+                                      name='sueldo'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Sueldo"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerSueldo(value)
+                                              }}
+                                              placeholder='Sueldo'
+                                              error={Boolean(errors.sueldo)}
+                                              aria-describedby='validation-async-sueldo'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.sueldo && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
 
