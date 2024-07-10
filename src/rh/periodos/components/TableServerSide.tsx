@@ -48,7 +48,6 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import { IRhPeriodosResponseDto } from 'src/interfaces/rh/Periodos/RhPeriodosResponseDto'
 import { IRhPeriodosFilterDto } from 'src/interfaces/rh/Periodos/RhPeriodosFilterDto'
-import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 import DialogRhPeriodoInfo from '../views/DialogRhPeriodoInfo'
 import { setOperacionCrudRhPeriodo, setRhPeriodoSeleccionado, setVerRhPeriodoActive } from 'src/store/apps/rh-periodo'
 import { IRhPeriodosUpdate } from 'src/interfaces/rh/Periodos/RhPeriodosUpdate'
@@ -116,6 +115,22 @@ const TableServerSide = () => {
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
+
+
+    const onDownload = async (row: IRhPeriodosResponseDto) => {
+      
+      const filter = {
+        CodigoTipoNomina: row.codigoTipoNomina,
+        CodigoPeriodo: row.codigoPeriodo
+      }
+      await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf', filter)
+
+
+    const link = document.createElement("a");
+    link.download = `download.txt`;
+    link.href = row.fileName;
+    link.click();
+  };
   const dispatch = useDispatch()
 
   const { rhTipoNominaSeleccionado } = useSelector((state: RootState) => state.rhTipoNomina)
@@ -130,7 +145,10 @@ const TableServerSide = () => {
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Reporte Nomina'>
-            <IconButton size='small' onClick={() => handleReport(row)}>
+            <IconButton  
+        
+            size='small' onClick={() => 
+              onDownload(row)}>
               <Icon icon='mdi:eye-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
@@ -248,7 +266,9 @@ const TableServerSide = () => {
 
     saveAs(blob, 'data.xlsx')
   }
-  const handleReport = async (row: IRhPeriodosResponseDto) => {
+
+
+/*   const handleReport = async (row: IRhPeriodosResponseDto) => {
     console.log('IPreAsignacionesDetalleGetDto', row)
 
     setLoading(true)
@@ -259,9 +279,9 @@ const TableServerSide = () => {
     }
     const responseAll = await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf', filter)
     console.log('handleReport HistoricoNomina', responseAll.data)
-
-    dispatch(setReportName(responseAll.data))
-    dispatch(setVerReportViewActive(true))
+    const response = await ossmmasofApi.get <any>(`/Files/GetPdfFiles/${responseAll.data}`)
+    //dispatch(setReportName(responseAll.data))
+    //dispatch(setVerReportViewActive(true))
 
     setLoading(false)
 
@@ -271,7 +291,7 @@ const TableServerSide = () => {
     //dispatch(setOperacionCrudPreAsignacionesDetalle(2));
     //dispatch(setVerPreAsignacionesDetalleActive(true))
   }
-
+ */
   const fetchTableData = useCallback(
     async (filter: IRhPeriodosFilterDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}

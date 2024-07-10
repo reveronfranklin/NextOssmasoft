@@ -5,7 +5,7 @@ export interface IRhAdministrativosResponseDto{
         codigoAdministrativo :number;
         codigoPersona :number;
         fechaIngreso:string;
-        fechaIngresoObj?:IFechaDto;
+        fechaIngresoObj:IFechaDto;
         tipoPago :string;
         descripcionTipoPago:string;
         bancoId :number;

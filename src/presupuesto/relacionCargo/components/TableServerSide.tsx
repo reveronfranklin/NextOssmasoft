@@ -1,5 +1,6 @@
 // ** React Imports
 import { useEffect, useState, useCallback, ChangeEvent } from 'react'
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -48,16 +49,6 @@ import { NumericFormat } from 'react-number-format'
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 
 
-
-
-/*interface StatusObj {
-  [key: number]: {
-    title: string
-    color: ThemeColor
-  }
-}*/
-
-
 type SortType = 'asc' | 'desc' | undefined | null
 
 // ** renders client column
@@ -82,13 +73,6 @@ const renderClient = (params: GridRenderCellParams) => {
   }
 }
 
-/*const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}*/
 interface CellType {
   row: IPreRelacionCargosGetDto
 }
@@ -97,29 +81,87 @@ interface CellType {
 const TableServerSide = () => {
   // ** State
   const [page, setPage] = useState(0)
-  const [linkData, setLinkData] = useState('')
-  const [total, setTotal] = useState<number>(0)
-  const [sort, setSort] = useState<SortType>('asc')
-  const [pageSize, setPageSize] = useState<number>(100)
-  const [rows, setRows] = useState<IPreRelacionCargosGetDto[]>([])
-  const [allRows, setAllRows] = useState<IPreRelacionCargosGetDto[]>([])
-  const [mensaje, setMensaje] = useState<string>('')
-  const [loading, setLoading] = useState(false)
-
-  //const [rows, setRows] = useState<DataGridRowType[]>([])
+  const [pageSize, setPageSize] = useState<number>(20)
   const [searchValue, setSearchValue] = useState<string>('')
+
+  const [linkData] = useState('')
+
+  const [sort, setSort] = useState<SortType>('asc')
+
+
+  const [allRows ] = useState<IPreRelacionCargosGetDto[]>([])
+  const [mensaje] = useState<string>('')
+
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-
-  function loadServerRows(currentPage: number, data: IPreRelacionCargosGetDto[]) {
-    //if(currentPage<=0) currentPage=1;
-
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
-  }
   const dispatch = useDispatch();
   const {listpresupuestoDtoSeleccionado,listpresupuestoDto} = useSelector((state: RootState) => state.presupuesto)
   const {icpSeleccionado} = useSelector((state: RootState) => state.icp)
-  const {verPreRelacionCargoActive,totalSueldo,totalSueldoAnual} = useSelector((state: RootState) => state.preRelacionCargo)
+  const {totalSueldo,totalSueldoAnual} = useSelector((state: RootState) => state.preRelacionCargo)
+
+
+  const qc: QueryClient = useQueryClient()
+
+  const {isLoading,data} = useQuery({
+    queryKey: ['preRelacionCargo',  page,icpSeleccionado.codigoIcp,icpSeleccionado.codigoPresupuesto],
+    queryFn: () => fetchTableDataRelacionCargo(icpSeleccionado.codigoIcp,icpSeleccionado.codigoPresupuesto),
+    initialData: () => {
+        return qc.getQueryData(['preRelacionCargo', page])
+    },
+    staleTime: 1000 * 1,
+    retry: 3,
+    enabled: !!icpSeleccionado,
+ 
+}, qc)
+
+
+
+
+
+const rowCount = data?.cantidadRegistros || 0
+const rows =data?.data || []
+
+
+const fetchTableDataRelacionCargo=async(icp:number,presupuesto:number)=>{
+
+  //if(currentPage<=0) currentPage=1;
+  const filter:IFilterPresupuestoIcp={
+    codigoPresupuesto:presupuesto,
+    codigoIcp:icp,
+    pageSize :pageSize,
+    pageNumber:page,
+    searchText:searchValue
+  }
+
+
+  if(listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.codigoPresupuesto!=null){
+    filter.codigoPresupuesto=listpresupuestoDtoSeleccionado.codigoPresupuesto;
+    if(icpSeleccionado && icpSeleccionado.codigoIcp!=null){
+      filter.codigoIcp=icpSeleccionado.codigoIcp;
+    }
+  }else{
+    if(listpresupuestoDto && listpresupuestoDto.length>0){
+      filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
+      dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
+    }
+
+  }
+
+  const response =  await ossmmasofApi.post<any>('/PreRelacionCargos/GetAllByPresupuesto',filter);
+
+  const suma = response.data.total1; //response.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad), 0);
+  dispatch(setTotalSueldo(suma));
+  const sumaAnual = response.data.total2;//response.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad)*12, 0);
+  dispatch(setTotalSueldoAnual(sumaAnual));
+
+  return response.data;
+}
+
+/*   function loadServerRows(currentPage: number, data: IPreRelacionCargosGetDto[]) {
+    //if(currentPage<=0) currentPage=1;
+
+    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  } */
 
   const columns: any = [
     {
@@ -138,6 +180,17 @@ const TableServerSide = () => {
 
 
         </Box>
+      )
+    },
+    {
+      flex: 0.075,
+      minWidth: 15,
+      headerName: 'Codigo',
+      field: 'codigoRelacionCargo',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.codigoRelacionCargo}
+        </Typography>
       )
     },
     {
@@ -251,12 +304,20 @@ const TableServerSide = () => {
     },
   ]
 
+  const updateField = (originalObject:IPreRelacionCargosGetDto, key:string, value:number) => {
+    return {
+      ...originalObject,
+      [key]: value
+    };
+  };
+
   const handleView=  (row : IPreRelacionCargosGetDto)=>{
 
-console.log('IPreRelacionCargosGetDto',row)
-    dispatch(setPreRelacionCargoSeleccionado(row))
-
-     // Operacion Crud 2 = Modificar presupuesto
+    console.log('registro seleccionado',row)
+    console.log(updateField(row,'page',page))
+    dispatch(setPreRelacionCargoSeleccionado(updateField(row,'page',page)))
+    
+    // Operacion Crud 2 = Modificar presupuesto
     dispatch(setOperacionCrudPreRelacionCargo(2));
     dispatch(setVerPreRelacionCargoActive(true))
 
@@ -266,46 +327,10 @@ console.log('IPreRelacionCargosGetDto',row)
   const fetchTableData = useCallback(
     async (filter:IFilterPresupuestoIcp) => {
 
-      //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
-
-
-      setMensaje('')
-      setLoading(true);
-
-      const responseAllCargos= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
-      const dataCargos = responseAllCargos.data.data;
-
-      dispatch(setListPreCargos(dataCargos));
-
-      const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/GetAllByPresupuesto',filter);
-
-
-      if(responseAll.data.data){
-        setAllRows(responseAll.data.data);
-        setTotal(responseAll.data.data.length);
-        setRows(loadServerRows(page, responseAll.data.data))
-        const suma = responseAll.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad), 0);
-        dispatch(setTotalSueldo(suma));
-        const sumaAnual = responseAll.data.data.reduce((anterior:any, actual:any) => anterior + (actual.sueldo* actual.cantidad)*12, 0);
-        dispatch(setTotalSueldoAnual(sumaAnual));
-        setLinkData(responseAll.data.linkData)
-        setMensaje('')
-      }else{
-        setTotal(0)
-        setAllRows([]);
-        setRows([]);
-        dispatch(setTotalSueldo(0));
-        dispatch(setTotalSueldoAnual(0));
-        setLinkData('')
-        setMensaje('')
-      }
-
-
-
-
-
-
-      setLoading(false);
+    
+          const responseAllCargos= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
+          const dataCargos = responseAllCargos.data.data;
+          dispatch(setListPreCargos(dataCargos));
 
 
     },
@@ -314,30 +339,20 @@ console.log('IPreRelacionCargosGetDto',row)
   )
 
 
-
   useEffect(() => {
     const filter:IFilterPresupuestoIcp={
-      codigoPresupuesto:0,
-      codigoIcp:0
-    }
-
-    if(listpresupuestoDtoSeleccionado && listpresupuestoDtoSeleccionado.codigoPresupuesto!=null){
-      filter.codigoPresupuesto=listpresupuestoDtoSeleccionado.codigoPresupuesto;
-      if(icpSeleccionado && icpSeleccionado.codigoIcp!=null){
-        filter.codigoIcp=icpSeleccionado.codigoIcp;
-      }
-    }else{
-      if(listpresupuestoDto && listpresupuestoDto.length>0){
-        filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
-        dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
-      }
-
+      codigoPresupuesto:listpresupuestoDtoSeleccionado.codigoPresupuesto,
+      codigoIcp:icpSeleccionado.codigoIcp,
+      pageSize :pageSize,
+      pageNumber:page,
+      searchText:searchValue
     }
     fetchTableData(filter);
 
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verPreRelacionCargoActive,listpresupuestoDtoSeleccionado,icpSeleccionado])
+  }, [listpresupuestoDtoSeleccionado]) 
+
+
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -358,7 +373,9 @@ console.log('IPreRelacionCargosGetDto',row)
 
             const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
             const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
-            setRows(loadServerRows(page, dataToFilter))
+            console.log(dataToFilter)
+
+            //setRows(loadServerRows(page, dataToFilter))
       }
 
 
@@ -378,12 +395,15 @@ console.log('IPreRelacionCargosGetDto',row)
 
     setSearchValue(value)
     if(value=='') {
-      setRows(allRows);
+      
+      //setRows(allRows);
 
 
     }else{
       const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
-      setRows(newRows);
+      console.log(newRows)
+      
+      //setRows(newRows);
 
 
     }
@@ -391,12 +411,22 @@ console.log('IPreRelacionCargosGetDto',row)
     //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
-  const handlePageChange = (newPage:number) => {
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+}
+
+const handleSizeChange = (newPageSize: number) => {
+    setPage(0)
+    setPageSize(newPageSize)
+}
+
+/*   const handlePageChange = (newPage:number) => {
 
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
 
-  }
+  } */
   const handleOnCellEditCommit=async(row:any)=>{
     const updateDto :IUpdateFieldDto={
       id:row.id,
@@ -442,8 +472,8 @@ console.log('IPreRelacionCargosGetDto',row)
     }
 
 
-    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/UpdateField',updateDto);
-    console.log(responseAll);
+    await ossmmasofApi.post<any>('/PreRelacionCargos/UpdateField',updateDto);
+   
   }
 
   const handleAdd=  ()=>{
@@ -489,7 +519,7 @@ console.log('IPreRelacionCargosGetDto',row)
   return (
     <Card>
       {
-        !loading && linkData.length>0 ?
+        !isLoading  ?
 
         <Grid m={2} pt={3}  item justifyContent="flex-end">
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
@@ -526,31 +556,37 @@ console.log('IPreRelacionCargosGetDto',row)
         : <Typography>{mensaje}</Typography>
       }
 
-     { loading  ? (
+     { isLoading  ? (
        <Spinner sx={{ height: '100%' }} />
       ) : (
         <DataGrid
+
+        pageSize={pageSize}
+        page={page}
+        rowsPerPageOptions={[5, 10, 20]}
+        onPageSizeChange={handleSizeChange}
+        onPageChange={handlePageChange}
 
         getRowHeight={() => 'auto'}
         autoHeight
         pagination
         getRowId={(row) => row.codigoRelacionCargo}
         rows={rows}
-        rowCount={total}
+        rowCount={rowCount}
         columns={columns}
-        pageSize={pageSize}
+ 
         sortingMode='server'
 
         paginationMode='server'
         onSortModelChange={handleSortModel}
 
-        onPageChange={handlePageChange}
+    
         onCellEditCommit={row =>handleOnCellEditCommit(row)}
 
 
         //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+     
         componentsProps={{
           baseButton: {
             variant: 'outlined'

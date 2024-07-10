@@ -35,6 +35,7 @@
     "@popperjs/core": "2.11.6",
     "@reduxjs/toolkit": "1.8.6",
     "@tanstack/react-query": "^5.40.1",
+    "@tanstack/react-query-devtools": "^5.50.1",
     "@types/file-saver": "^2.0.7",
     "apexcharts-clevision": "3.28.5",
     "axios": "1.1.3",
@@ -57,6 +58,7 @@
     "next": "13.0.0",
     "notistack": "^3.0.1",
     "nprogress": "0.2.0",
+    "numeral": "^2.0.6",
     "payment": "2.4.6",
     "prismjs": "1.29.0",
     "react": "18.2.0",
@@ -116,13 +118,7 @@
   "resolutions": {
     "minipass": "3.3.5",
     "@mui/x-data-grid/@mui/system": "5.4.1",
-    "react-credit-cards/prop-types": "15.7.2",
-    "react-hot-toast/goober/csstype": "3.0.10",
-    "recharts/react-smooth/prop-types": "15.6.0",
-    "react-draft-wysiwyg/html-to-draftjs/immutable": "3.x.x || 4.x.x",
-    "react-draft-wysiwyg/draftjs-utils/immutable": "3.x.x || 4.x.x",
-    "@emotion/react/@emotion/babel-plugin/@babel/core": "7.0.0",
-    "@emotion/react/@emotion/babel-plugin/@babel/plugin-syntax-jsx/@babel/core": "7.0.0"
+    "react-credit-cards/prop-types": "15.7.2"
   },
   "overrides": {
     "react-credit-cards": {
