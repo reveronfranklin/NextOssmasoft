@@ -51,7 +51,7 @@ const CargoList = () => {
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Ver'>
-            <IconButton size='small' onClick={() => handleAddChild(row)}>
+            <IconButton size='small' onClick={() => handleView(row)}>
             <Icon icon='ci:add-row' fontSize={20} />
             </IconButton>
           </Tooltip>
@@ -89,24 +89,29 @@ const CargoList = () => {
       width: 400
 
     },
-    {
-
-      field: 'descripcion',
-      headerName: 'descripcion',
-      width: 100
-
-    },
+   
 
   ]
 
 
-  
+  const updateField = (originalObject:IPreCargosGetDto, key:string, value:number) => {
+    return {
+      ...originalObject,
+      [key]: value
+    };
+  };
+  const updateFieldString = (originalObject:IPreCargosGetDto, key:string, value:string) => {
+    return {
+      ...originalObject,
+      [key]: value
+    };
+  };
 
   const handleView=  (row : IPreCargosGetDto)=>{
 
     console.log('row seleccionado',row)
-    dispatch(setPreCargoSeleccionado(row))
-
+    dispatch(setPreCargoSeleccionado(updateField(row,'page',page)))
+    dispatch(setPreCargoSeleccionado(updateFieldString(row,'searchText',searchText)))
      // Operacion Crud 2 = Modificar presupuesto
     dispatch(setOperacionCrudPreCargo(2));
     dispatch(setVerPreCargoActive(true))
@@ -230,7 +235,7 @@ const fetchCargo=async(presupuesto:number)=>{
 
   const response =  await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuestoPaginate',filter);
 
-console.log(response)
+  console.log(response)
   return response.data;
 }
 
@@ -292,9 +297,7 @@ console.log(response)
 
 
   const handleSearch = (value: string) => {
-    console.log('searchText',searchText)
-    console.log('value',value)
-    console.log('buffer',buffer)
+  
     if (value === '') {
         setSearchText('')
         setBuffer('')
@@ -306,8 +309,7 @@ console.log(response)
     setBuffer(newBuffer)
     debouncedSearch()
     console.log('searchText---',searchText)
-    console.log('value',value)
-    console.log('buffer',buffer)
+ 
 }
 
 const debouncedSearch = () => {
