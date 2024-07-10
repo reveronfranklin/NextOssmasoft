@@ -230,6 +230,7 @@ const FormPreCargoUpdateAsync = () => {
       codigoPresupuesto:preCargoSeleccionado.codigoPresupuesto
 
     };
+    console.log('Objeto enviado para guardar Cargo',updateCargo)
 
     const responseAll= await ossmmasofApi.post<any>('/PreCargos/Update',updateCargo);
 
@@ -253,12 +254,14 @@ const FormPreCargoUpdateAsync = () => {
    const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
    setListCargos(selec.listaDescriptiva);
 
+   console.log('seleccionado',preCargoSeleccionado)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Card>
-      <CardHeader title='Presupuesto - Modificar Cargo' />
+      <CardHeader title='Presupuesto - Modificar Cargo.' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>

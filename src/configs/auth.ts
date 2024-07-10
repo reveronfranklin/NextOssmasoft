@@ -10,9 +10,9 @@ const commonSetting = {
 
 const productionSetting = {
   ...commonSetting,
-  meEndpoint          : 'http://192.168.171.210:5000/api/SisUsuarios/RefreshToken',
-  loginEndpoint       : 'http://192.168.171.210:5000/api/SisUsuarios/Login',
-  refreshEndPoint     : 'http://192.168.171.210:5000/api/SisUsuarios/RefreshToken',
+  meEndpoint          : 'http://10.10.34.2:5000/api/SisUsuarios/RefreshToken',
+  loginEndpoint       : 'http://10.10.34.2:5000/api/SisUsuarios/Login',
+  refreshEndPoint     : 'http://10.10.34.2:5000/api/SisUsuarios/RefreshToken',
 }
 
 const developSetting = {

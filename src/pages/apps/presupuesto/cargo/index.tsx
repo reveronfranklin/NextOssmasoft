@@ -1,5 +1,5 @@
 import { Box, Card, CardActions, CardHeader, Grid, IconButton, Tooltip} from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
 
@@ -30,15 +30,15 @@ import { IFilterPreTituloDto } from 'src/interfaces/Presupuesto/i-filter-pre-tit
 import { setListPreCargos, setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
 import DialogPreCargoInfo from 'src/presupuesto/cargo/views/DialogPreCargoInfo';
 import { IListPresupuestoDto } from '../../../../interfaces/Presupuesto/i-list-presupuesto-dto';
+import { IFilterPresupuestoIcp } from 'src/interfaces/Presupuesto/i-filter-presupuesto-icp';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
 
 interface CellType {
   row: IPreCargosGetDto
 }
 
 const CargoList = () => {
-  //const theme = useTheme()
-  //const { direction } = theme
-  //const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   const columns = [
 
@@ -97,16 +97,14 @@ const CargoList = () => {
 
     },
 
-
-
-
   ]
 
 
-  //IPreIndiceCategoriaProgramaticaGetDto
+  
+
   const handleView=  (row : IPreCargosGetDto)=>{
 
-    console.log(row)
+    console.log('row seleccionado',row)
     dispatch(setPreCargoSeleccionado(row))
 
      // Operacion Crud 2 = Modificar presupuesto
@@ -176,7 +174,67 @@ const CargoList = () => {
   const [loading, setLoading] = useState(false);
   const [viewTable, setViewTable] = useState(false);
 
+
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState<number>(20)
+  const [searchText, setSearchText] = useState('')
+  const [buffer, setBuffer] = useState('')
+
+  const debounceTimeoutRef = useRef<any>(null)
   const [cargos, setCargos] = useState([]);
+
+
+  const qc: QueryClient = useQueryClient()
+
+  const {isLoading,data} = useQuery({
+    queryKey: ['cargos',  page,listpresupuestoDtoSeleccionado.codigoPresupuesto,searchText],
+    queryFn: () => fetchCargo(listpresupuestoDtoSeleccionado.codigoPresupuesto),
+    initialData: () => {
+        return qc.getQueryData(['cargos', page,listpresupuestoDtoSeleccionado.codigoPresupuesto])
+    },
+    staleTime: 1000 * 60,
+    refetchInterval: 1000 * 60, // 1 minuto en milisegundos
+    retry: 3,
+    enabled: !!listpresupuestoDtoSeleccionado,
+ 
+}, qc)
+
+
+
+const rowCount = data?.cantidadRegistros || 0
+const rows =data?.data || []
+
+
+
+const handlePageChange = (newPage: number) => {
+  setPage(newPage)
+}
+
+const handleSizeChange = (newPageSize: number) => {
+  setPage(0)
+  setPageSize(newPageSize)
+}
+
+const fetchCargo=async(presupuesto:number)=>{
+
+  //if(currentPage<=0) currentPage=1;
+  const filter:IFilterPresupuestoIcp  ={
+    codigoPresupuesto:presupuesto,
+    codigoIcp:0,
+    pageSize :pageSize,
+    pageNumber:page,
+    searchText:searchText
+  }
+
+
+
+  const response =  await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuestoPaginate',filter);
+
+console.log(response)
+  return response.data;
+}
+
+
   const handleViewTree=()=>{
     setViewTable(false);
 
@@ -192,12 +250,12 @@ const CargoList = () => {
       setLoading(true);
 
 
-      const responseAll= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
-      const data = responseAll.data.data;
+      //const responseAll= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
+      //const data = responseAll.data.data;
 
-      dispatch(setListPreCargos(data));
+      //dispatch(setListPreCargos(data));
 
-      setCargos(data);
+      //setCargos(data);
 
 
       const filterTipoPersonal:IFilterPreTituloDto={
@@ -208,12 +266,7 @@ const CargoList = () => {
       console.log('responseTipoPersonal.data.data',responseTipoPersonal.data.data)
       dispatch(setListTipoPersonal(responseTipoPersonal.data.data));
 
-      /*const filterTipoCargo:IFilterPreTituloDto={
-        tituloId:2,
-        codigo:''
-      }
-      const responseTipoCargo= await ossmmasofApi.post<any>('/PreDescriptivas/GetAllByTitulo',filterTipoCargo);
-      dispatch(setListTipoCargo(responseTipoCargo.data.data));*/
+     
 
       setLoading(false);
     };
@@ -238,7 +291,32 @@ const CargoList = () => {
   }, [verPreCargoActive, listpresupuestoDtoSeleccionado]);
 
 
+  const handleSearch = (value: string) => {
+    console.log('searchText',searchText)
+    console.log('value',value)
+    console.log('buffer',buffer)
+    if (value === '') {
+        setSearchText('')
+        setBuffer('')
 
+        return
+    }
+
+    const newBuffer =  value
+    setBuffer(newBuffer)
+    debouncedSearch()
+    console.log('searchText---',searchText)
+    console.log('value',value)
+    console.log('buffer',buffer)
+}
+
+const debouncedSearch = () => {
+    clearTimeout(debounceTimeoutRef.current)
+
+    debounceTimeoutRef.current = setTimeout(() => {
+        setSearchText(buffer)
+    }, 2500)
+}
 
   return (
     <Grid item xs={12}>
@@ -267,23 +345,8 @@ const CargoList = () => {
 
         </CardActions>
 
-             {/*  {
-                loading
-                ?   <Spinner sx={{ height: '100%' }} />
-                :
-                <Box sx={{ height: 500 }}>
-                  <DataGrid
-
-                  getRowId={(row) => row.codigoIcp}
-                  columns={columns}
-                  rows={icp} />
-
-
-                </Box>
-
-
-              } */}
-              {viewTable
+           
+            {/*   {viewTable
               ?  <div></div>
               :
                 loading ?   <Spinner sx={{ height: '100%' }} />
@@ -293,7 +356,7 @@ const CargoList = () => {
                   getRowId={(row) => row.codigoCargo + row.denominacion}
 
                   columns={columns}
-                  rows={cargos}
+                  rows={rows}
                   onRowDoubleClick={(row) => handleDoubleClick(row)}
 
                   />
@@ -301,7 +364,44 @@ const CargoList = () => {
 
                 </Box>
 
-              }
+              } */}
+
+{ isLoading  ? (
+       <Spinner sx={{ height: '100%' }} />
+      ) : (
+        <DataGrid
+        autoHeight
+        pagination
+        getRowId={(row) => row.codigoCargo}
+        rows={rows}
+        rowCount={rowCount}
+        columns={columns}
+        pageSize={pageSize}
+        page={page}
+        sortingMode='server'
+        paginationMode='server'
+        rowsPerPageOptions={[5, 10, 50]}
+        onPageSizeChange={handleSizeChange}
+        onPageChange={handlePageChange}
+        components={{ Toolbar: ServerSideToolbar }}
+        componentsProps={{
+            baseButton: {
+                variant: 'outlined'
+            },
+            toolbar: {
+                printOptions: { disableToolbarButton: true },
+                value: buffer,
+                clearSearch: () => handleSearch(''),
+                onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+            }
+        }}
+    />
+
+
+      )}
+
+
+
 
 
         </Card>
