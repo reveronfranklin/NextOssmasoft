@@ -12,7 +12,7 @@ const UnidadSolicitante = (props: any) => {
     const { preMtrUnidadEjecutora } = useSelector((state: RootState) => state.presupuesto)
 
     const query = useQuery({
-        queryKey: ['descriptivas'],
+        queryKey: ['unidadEjecutora'],
         queryFn: () => unidadEjecutora(),
         retry: 3,
     })

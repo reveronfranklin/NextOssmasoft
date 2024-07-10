@@ -6,7 +6,7 @@ import Icon from 'src/@core/components/icon'
 import { setVerSolicitudCompromisosActive, setOperacionCrudAdmSolCompromiso } from "src/store/apps/adm"
 
 import useServices from '../services/useServices'
-import dataGrid from './DataGrid'
+import dataGrid from './DataGrid/DataGridGeneralSolicitud'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DialogAdmSolCompromisoInfo from './../views/DialogAdmSolCompromisoInfo'
 import { CrudOperation } from './../enums/CrudOperations.enum'

@@ -4,9 +4,14 @@ import { Filters } from '../interfaces/filters.interfaces'
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 import { UrlServices } from '../enums/UrlServices.enum'
-
 import { useDispatch } from 'react-redux'
-import { setListTipoDeSolicitud, setListProveedores } from "src/store/apps/adm"
+
+import {
+    setListTipoDeSolicitud,
+    setListProveedores,
+    setListTipoImpuesto,
+    setListTipoUnidades
+} from "src/store/apps/adm"
 
 import { IFilterPrePresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-presupuesto';
 import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
@@ -16,7 +21,12 @@ import { Update } from '../interfaces/update.interfaces'
 import { Delete } from '../interfaces/delete.interfaces'
 import { Create } from '../interfaces/create.interfaces'
 
+import { UpdateDetalle } from '../interfaces/detalle/update.interfaces'
+import { CreateDetalle } from '../interfaces/detalle/create.interfaces'
+import { DeleteDetalle } from '../interfaces/detalle/delete.interfaces'
+
 import { fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
+import { IDetalleSolicitudCompromiso } from "../interfaces/detalle/IDetalleSolicitudCompromiso.interfaces"
 
 const useServices = (initialFilters: Filters = {}) => {
     const dispatch = useDispatch()
@@ -26,10 +36,9 @@ const useServices = (initialFilters: Filters = {}) => {
     const [mensaje] = useState<string>('')
     const [loading] = useState(false)
 
-    //Get la tabla DataGrid
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
-            filters.CodigoPresupuesto = presupuestoSeleccionado?.codigoPresupuesto
+            filters.CodigoPresupuesto = presupuestoSeleccionado?.codigoPresupuesto ?? 17 //todo quitar el ?? 17
             const fetchData = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
 
             return fetchData.data
@@ -40,7 +49,6 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
-    //Get tipos de Solicitudes Compromiso
     const fetchSolicitudCompromiso = useCallback(async () => {
         try {
             const filter = { tituloId: 35 }
@@ -57,7 +65,38 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }, [])
 
-    //Get Proveedores
+    const fetchTipoImpuesto = useCallback(async () => {
+        try {
+            const filter = { tituloId: 18 }
+            const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+            if (response.data.isValid) {
+                dispatch(setListTipoImpuesto(response.data ))
+            }
+
+            return response.data
+
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }, [])
+
+    const fetchTipoUnidades = useCallback(async () => {
+        try {
+            const filter = { tituloId: 21 }
+            const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+            if (response.data.isValid) {
+                dispatch(setListTipoUnidades(response.data ))
+            }
+
+            return response.data
+
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }, [])
+
     const fetchProveedores = useCallback(async () => {
         try {
             const response = await ossmmasofApi.get<any>(UrlServices.PROVEEDORES)
@@ -73,28 +112,31 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }, [])
 
-    //Update Solicitud Compromiso
     const updateSolicitudCompromiso = async (data: Update) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.UPDATE, data)
+
         } catch (e) {
             console.error(`updateSolicitudCompromiso:> ${e}`)
         }
     }
 
-    //Delete Solicitud Compromiso
     const eliminarSolicitudCompromiso = async (data: Delete) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.DELETE, data)
+
         } catch (e) {
             console.error(e)
         }
     }
 
-    //Create Solicitud Compromiso
     const crearSolicitudCompromiso = async (data: Create) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.CREATE, data)
+
         } catch (e) {
             console.error(e)
         }
@@ -113,6 +155,65 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
+    const getListProducts = async () => {
+        try {
+            const filter = {
+                "PageSize": 10,
+                "PageNumber": 0,
+                "SearchText": "BONO"
+            }
+            const listProducts = await ossmmasofApi.post<any>(UrlServices.GETLISTPRODUCTOS, filter)
+
+            return listProducts.data
+
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }
+
+    const getDetalleSolicitudFetchTable = async (codigoSolicitud: number) => {
+        try {
+            const filter = { codigoSolicitud }
+
+            return await ossmmasofApi.post<IDetalleSolicitudCompromiso>(UrlServices.DETALLESOLICITUD, filter)
+
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }
+
+    const fetchUpdateDetalleSolicitudCompromiso = async (data: UpdateDetalle) => {
+        try {
+
+            return await ossmmasofApi.post<any>(UrlServices.DETALLEUPDATE, data)
+
+        } catch (e) {
+            console.error(`updateSolicitudCompromiso:> ${e}`)
+        }
+    }
+
+    const fetchCreateDetalleSolicitudCompromiso = async (data: CreateDetalle) => {
+        try {
+
+            return await ossmmasofApi.post<any>(UrlServices.DETALLECREATE, data)
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const fetchDeleteDetalleSolicitudCompromiso = async (data: DeleteDetalle) => {
+        try {
+
+            return await ossmmasofApi.post<any>(UrlServices.DETALLEDELETE, data)
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     return {error, mensaje, loading,
         fetchTableData,
         fetchProveedores,
@@ -121,7 +222,14 @@ const useServices = (initialFilters: Filters = {}) => {
         eliminarSolicitudCompromiso,
         crearSolicitudCompromiso,
         unidadEjecutora,
+        getDetalleSolicitudFetchTable,
         presupuestoSeleccionado,
+        fetchTipoImpuesto,
+        fetchTipoUnidades,
+        fetchUpdateDetalleSolicitudCompromiso,
+        fetchCreateDetalleSolicitudCompromiso,
+        fetchDeleteDetalleSolicitudCompromiso,
+        getListProducts,
     }
 }
 

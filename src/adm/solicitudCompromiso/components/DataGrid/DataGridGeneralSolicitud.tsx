@@ -1,12 +1,12 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-import { Filters } from '../interfaces/filters.interfaces'
-import ColumnsDataGrid from './../config/DataGrid'
+import { Filters } from '../../interfaces/filters.interfaces'
+import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 
-import useServices from '../services/useServices'
+import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -15,11 +15,11 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState(false)
-    const [searchText, setSearchText] = useState('')
-    const [buffer, setBuffer] = useState('')
+    const [pageNumber, setPage] = useState<number>(0)
+    const [pageSize, setPageSize] = useState<number>(5)
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
+    const [searchText, setSearchText] = useState<string>('')
+    const [buffer, setBuffer] = useState<string>('')
 
     const debounceTimeoutRef = useRef<any>(null)
 

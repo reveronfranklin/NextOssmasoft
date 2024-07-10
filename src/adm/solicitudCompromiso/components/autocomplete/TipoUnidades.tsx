@@ -3,23 +3,23 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { Skeleton } from "@mui/material";
 import useServices from '../../services/useServices'
 
-interface ITipoSolicitud {
+interface ITipoUnidades {
     id: number
     descripcion: string
 }
 
-const TipoSolicitud = (props: any) => {
-    const { fetchSolicitudCompromiso } = useServices()
+const TipoUnidad = (props: any) => {
+    const { fetchTipoUnidades } = useServices()
     const qc: QueryClient = useQueryClient()
 
     const query = useQuery({
-        queryKey: ['tipoSolicitud'],
-        queryFn: () => fetchSolicitudCompromiso(),
+        queryKey: ['tipoUnidades'],
+        queryFn: () => fetchTipoUnidades(),
         retry: 3,
     }, qc)
 
-    const listTipo: ITipoSolicitud [] = query.data?.data ?? []
-    const tipo = listTipo.filter((item: { id: number }) => item?.id == props.id)[0]
+    const listTipo: ITipoUnidades[] = query.data?.data ?? []
+    const tipo = listTipo.filter((item: { id: number }) => item?.id == props?.id)[0]
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
@@ -45,10 +45,10 @@ const TipoSolicitud = (props: any) => {
                     <Autocomplete
                         options={listTipo}
                         defaultValue={tipo}
-                        id='autocomplete-TipoSolicitud'
+                        id='autocomplete-TipoUnidad'
                         getOptionLabel={(option) => option.id + '-' + option.descripcion}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label="Tipo de Solicitud" />}
+                        renderInput={(params) => <TextField {...params} label="Unidad" />}
                     />
                 )
             }
@@ -56,4 +56,4 @@ const TipoSolicitud = (props: any) => {
     )
 }
 
-export default TipoSolicitud
+export default TipoUnidad

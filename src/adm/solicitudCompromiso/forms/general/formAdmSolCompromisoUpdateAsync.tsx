@@ -30,12 +30,14 @@ import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 
 import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
+import IndexDetalleSolicitudCompromiso from '../detalle/formAdmSolCompromisoIndexAsync'
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
+
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState<boolean>(false)
 
     const dispatch = useDispatch()
     const solicitudCompromisoData = useSelector(
@@ -73,7 +75,12 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         fechaSolicitudString
     }
 
-    const { control, handleSubmit, setValue, formState: { errors }} = useForm<FormInputs>({ defaultValues })
+    const {
+        control: controlFormGeneral,
+        handleSubmit: handleSubmitGeneral,
+        setValue,
+        formState: { errors }
+    } = useForm<FormInputs>({ defaultValues })
 
     const handleCodigoSolicitanteChange = (codigoSolicitante: number) => {
         setValue('codigoSolicitante', codigoSolicitante)
@@ -103,7 +110,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         }
     }
 
-    const onSubmit = async (dataForm: FormInputs) => {
+    const onSubmitGeneral = async (dataForm: FormInputs) => {
         try {
             setLoading(true)
             const solicitudCompromisoUpdate: Update = {
@@ -165,13 +172,13 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         <Card>
             <CardHeader title='Adm - Modificar Solicitud Compromiso' />
             <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmitGeneral(onSubmitGeneral)}>
                     <Grid container spacing={5} paddingTop={5}>
                         <Grid item sm={3} xs={12}>
                             <FormControl fullWidth>
                                 <Controller
                                     name='codigoSolicitud'
-                                    control={control}
+                                    control={controlFormGeneral}
                                     render={({ field: {value, onChange} }) => (
                                         <TextField
                                             value={value || ''}
@@ -195,7 +202,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormControl fullWidth>
                                 <Controller
                                     name='descripcionStatus'
-                                    control={control}
+                                    control={controlFormGeneral}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
                                             value={value || ''}
@@ -232,7 +239,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormControl fullWidth>
                                 <Controller
                                     name='numeroSolicitud'
-                                    control={control}
+                                    control={controlFormGeneral}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
                                             value={value || ''}
@@ -278,7 +285,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormControl fullWidth>
                                 <Controller
                                     name='motivo'
-                                    control={control}
+                                    control={controlFormGeneral}
                                     rules={{
                                         required: false,
                                         maxLength: 1150,
@@ -293,7 +300,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                             error={Boolean(errors.motivo)}
                                             aria-describedby='validation-async-motivo'
                                             multiline
-                                            rows={4}
+                                            rows={5}
                                         />
                                     )}
                                 />
@@ -306,7 +313,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormControl fullWidth>
                                 <Controller
                                     name='nota'
-                                    control={control}
+                                    control={controlFormGeneral}
                                     rules={{
                                         required: false,
                                         maxLength: 1000,
@@ -375,6 +382,11 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
                         )}
                     </Box>
+                    <Grid container spacing={5} paddingTop={0}>
+                        <Grid item sm={12} xs={12}>
+                            <IndexDetalleSolicitudCompromiso codigoSolicitud={codigoSolicitud} />
+                        </Grid>
+                    </Grid>
                 </form>
             </CardContent>
         </Card>

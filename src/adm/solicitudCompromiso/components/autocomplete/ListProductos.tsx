@@ -3,27 +3,25 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { Skeleton } from "@mui/material";
 import useServices from '../../services/useServices'
 
-interface ITipoSolicitud {
-    id: number
-    descripcion: string
-}
-
-const TipoSolicitud = (props: any) => {
-    const { fetchSolicitudCompromiso } = useServices()
+const ListProducts = (props: any) => {
+    const { getListProducts } = useServices()
     const qc: QueryClient = useQueryClient()
 
     const query = useQuery({
-        queryKey: ['tipoSolicitud'],
-        queryFn: () => fetchSolicitudCompromiso(),
-        retry: 3,
+        queryKey: ['getListProducts'],
+        queryFn: () => getListProducts(),
+        initialData: () => {
+            return qc.getQueryData(['getListProducts'])
+        },
+        staleTime: 1000 * 60,
     }, qc)
 
-    const listTipo: ITipoSolicitud [] = query.data?.data ?? []
-    const tipo = listTipo.filter((item: { id: number }) => item?.id == props.id)[0]
+    const listProducts = query.data?.data ?? []
+    const tipo = listProducts.filter((item: { codigo: number }) => item?.codigo === props?.id)[0]
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
-            props.onSelectionChange(newValue.id)
+            props.onSelectionChange(newValue.codigo)
         }
     }
 
@@ -43,12 +41,12 @@ const TipoSolicitud = (props: any) => {
                     />
                 ) : (
                     <Autocomplete
-                        options={listTipo}
+                        options={listProducts}
                         defaultValue={tipo}
-                        id='autocomplete-TipoSolicitud'
-                        getOptionLabel={(option) => option.id + '-' + option.descripcion}
+                        id='autocomplete-ListProducts'
+                        getOptionLabel={(option : any) => option.codigo + '-' + option.descripcion}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label="Tipo de Solicitud" />}
+                        renderInput={(params) => <TextField {...params} label="Productos" />}
                     />
                 )
             }
@@ -56,4 +54,4 @@ const TipoSolicitud = (props: any) => {
     )
 }
 
-export default TipoSolicitud
+export default ListProducts
