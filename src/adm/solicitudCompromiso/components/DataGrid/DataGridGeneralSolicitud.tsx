@@ -15,11 +15,11 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState(false)
-    const [searchText, setSearchText] = useState('')
-    const [buffer, setBuffer] = useState('')
+    const [pageNumber, setPage] = useState<number>(0)
+    const [pageSize, setPageSize] = useState<number>(5)
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
+    const [searchText, setSearchText] = useState<string>('')
+    const [buffer, setBuffer] = useState<string>('')
 
     const debounceTimeoutRef = useRef<any>(null)
 
@@ -42,7 +42,7 @@ const DataGridComponent = () => {
         },
         staleTime: 1000 * 60,
         retry: 3,
-        // enabled: isPresupuestoSeleccionado
+        enabled: isPresupuestoSeleccionado
     }, qc)
 
     const rows = query?.data?.data || []

@@ -40,7 +40,9 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             filters.CodigoPresupuesto = presupuestoSeleccionado?.codigoPresupuesto ?? 17 //todo quitar el ?? 17
             const fetchData = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
+
             return fetchData.data
+
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -70,7 +72,9 @@ const useServices = (initialFilters: Filters = {}) => {
             if (response.data.isValid) {
                 dispatch(setListTipoImpuesto(response.data ))
             }
+
             return response.data
+
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -84,7 +88,9 @@ const useServices = (initialFilters: Filters = {}) => {
             if (response.data.isValid) {
                 dispatch(setListTipoUnidades(response.data ))
             }
+
             return response.data
+
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -108,7 +114,9 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const updateSolicitudCompromiso = async (data: Update) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.UPDATE, data)
+
         } catch (e) {
             console.error(`updateSolicitudCompromiso:> ${e}`)
         }
@@ -116,7 +124,9 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const eliminarSolicitudCompromiso = async (data: Delete) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.DELETE, data)
+
         } catch (e) {
             console.error(e)
         }
@@ -124,7 +134,9 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const crearSolicitudCompromiso = async (data: Create) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.CREATE, data)
+
         } catch (e) {
             console.error(e)
         }
@@ -151,7 +163,9 @@ const useServices = (initialFilters: Filters = {}) => {
                 "SearchText": "BONO"
             }
             const listProducts = await ossmmasofApi.post<any>(UrlServices.GETLISTPRODUCTOS, filter)
+
             return listProducts.data
+
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -161,32 +175,40 @@ const useServices = (initialFilters: Filters = {}) => {
     const getDetalleSolicitudFetchTable = async (codigoSolicitud: number) => {
         try {
             const filter = { codigoSolicitud }
+
             return await ossmmasofApi.post<IDetalleSolicitudCompromiso>(UrlServices.DETALLESOLICITUD, filter)
+
         } catch (e: any) {
             setError(e)
             console.error(e)
         }
     }
 
-    const updateDetalleSolicitudCompromiso = async (data: UpdateDetalle) => {
+    const fetchUpdateDetalleSolicitudCompromiso = async (data: UpdateDetalle) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.DETALLEUPDATE, data)
+
         } catch (e) {
             console.error(`updateSolicitudCompromiso:> ${e}`)
         }
     }
 
-    const createDetalleSolicitudCompromiso = async (data: CreateDetalle) => {
+    const fetchCreateDetalleSolicitudCompromiso = async (data: CreateDetalle) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.DETALLECREATE, data)
+
         } catch (e) {
             console.error(e)
         }
     }
 
-    const deleteDetalleSolicitudCompromiso = async (data: DeleteDetalle) => {
+    const fetchDeleteDetalleSolicitudCompromiso = async (data: DeleteDetalle) => {
         try {
+
             return await ossmmasofApi.post<any>(UrlServices.DETALLEDELETE, data)
+
         } catch (e) {
             console.error(e)
         }
@@ -204,9 +226,9 @@ const useServices = (initialFilters: Filters = {}) => {
         presupuestoSeleccionado,
         fetchTipoImpuesto,
         fetchTipoUnidades,
-        updateDetalleSolicitudCompromiso,
-        createDetalleSolicitudCompromiso,
-        deleteDetalleSolicitudCompromiso,
+        fetchUpdateDetalleSolicitudCompromiso,
+        fetchCreateDetalleSolicitudCompromiso,
+        fetchDeleteDetalleSolicitudCompromiso,
         getListProducts,
     }
 }

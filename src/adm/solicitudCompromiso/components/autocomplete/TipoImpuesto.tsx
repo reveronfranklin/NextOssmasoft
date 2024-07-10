@@ -8,7 +8,7 @@ interface ITipoImpuesto {
     descripcion: string
 }
 
-const tipoImpuesto = (props: any) => {
+const TipoImpuesto = (props: any) => {
     const { fetchTipoImpuesto } = useServices()
     const qc: QueryClient = useQueryClient()
 
@@ -56,4 +56,4 @@ const tipoImpuesto = (props: any) => {
     )
 }
 
-export default tipoImpuesto
+export default TipoImpuesto

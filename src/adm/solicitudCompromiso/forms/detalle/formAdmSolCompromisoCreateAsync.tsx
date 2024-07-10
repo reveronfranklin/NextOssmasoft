@@ -1,85 +1,120 @@
-import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress } from "@mui/material"
+import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress, Box } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { FormInputs } from "./../../interfaces/detalle/formImputs.interfaces"
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store';
 import useServices from './../../services/useServices';
-
+import { FormInputs } from './../../interfaces/detalle/formImputs.interfaces'
+import { CreateDetalle } from '../../interfaces/detalle/create.interfaces'
 import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/autocomplete/TipoUnidades'
 import ListProducts from '../../components/autocomplete/ListProductos'
-
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
 
-const createDetalleSolicitudCompromiso = () => {
-    const [cantidad, setCantidad] = useState<any>('')
-    const [precioUnitario, setPrecioUnitario] = useState<any>('')
+const CreateDetalleSolicitudCompromiso = () => {
+    const [cantidad, setCantidad] = useState<number>(0)
+    const [precioUnitario, setPrecioUnitario] = useState<number>(0)
     const [impuesto, setImpuesto] = useState<number>(0)
     const [total, setTotal] = useState<any>(0)
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
-    const { createDetalleSolicitudCompromiso } = useServices()
+    const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
+    const { fetchCreateDetalleSolicitudCompromiso } = useServices()
+    const qc: QueryClient = useQueryClient()
 
     const defaultValues: any = {
-        codigoDetalleSolicitud: '',
+        codigoDetalleSolicitud: 0,
+        codigoSolicitud,
         cantidad: 0,
-        precioUnitario: 0,
         udmId: 0,
-        tipoImpuestoId: 0,
-        descripcionUnidad: '',
         descripcion: '',
+        precioUnitario: 0,
+        tipoImpuestoId: 0,
+        codigoProducto: 0,
     }
 
-    const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({ defaultValues })
+    const {
+        control,
+        handleSubmit: handleSubmitCreateDetalle,
+        setValue,
+        reset,
+        formState: { errors }
+    } = useForm<FormInputs>({ defaultValues })
 
     const handleTipoImpuestoChange = (tipoImpuesto: any) => {
         setValue('tipoImpuestoId', tipoImpuesto.id)
         setImpuesto(tipoImpuesto.value)
+        setErrorMessage('')
     }
 
     const handleTipoUnidadChange = (tipoUnidad: number) => {
         setValue('udmId', tipoUnidad)
+        setErrorMessage('')
     }
 
-    const handleProductChange = (udmId: number) =>{
-        setValue('udmId', udmId)
-    }
-
-    useEffect(() => {
-        calculoTotalPrecio()
-    }, [cantidad, precioUnitario, impuesto])
-
-    const onSubmit = async (dataForm: FormInputs) => {
-        const nuevoDetalle: any = {
-            cantidad: dataForm.cantidad,
-            precioUnitario: dataForm.precioUnitario,
-            udmId: dataForm.udmId,
-            tipoImpuestoId: dataForm.tipoImpuestoId,
-            descripcionUnidad: dataForm.descripcionUnidad,
-            descripcion: dataForm.descripcion,
-        }
-
-        console.log(nuevoDetalle)
-        //const responseCreateDetalle = await createDetalleSolicitudCompromiso(nuevoDetalle)
-
-        //if (responseCreateDetalle?.data?.isValid) {
-            //todo tiene que hacerse unas tareas como actualizar la tabla con el nuevo detalle creado
-        //}
+    const handleProductChange = (producto: number) =>{
+        setValue('codigoProducto', producto)
+        setErrorMessage('')
     }
 
     const calculoTotalPrecio = () => {
         const typeCurrency = 'VES'
-        const cantidadInt = cantidad === '' ? 0 : parseFloat(cantidad)
-        const precioUnitarioInt = precioUnitario === '' ? 0 : parseFloat(precioUnitario)
 
-        if (cantidadInt < 0 || precioUnitarioInt < 0) {
+        if (cantidad < 0 || precioUnitario < 0) {
             setTotal(0)
+
             return
         }
 
-        setTotal(formatPrice(calculatePrice(precioUnitarioInt, cantidadInt, impuesto), typeCurrency))
+        setTotal(formatPrice(calculatePrice(precioUnitario, cantidad, impuesto), typeCurrency))
+    }
+
+    useEffect(() => {
+        calculoTotalPrecio()
+        setErrorMessage('')
+    }, [cantidad, precioUnitario, impuesto])
+
+
+    const resetForm = () => {
+        setCantidad(0)
+        setPrecioUnitario(0)
+        setImpuesto(0)
+        setTotal(0)
+
+        setValue('cantidad', 0)
+        setValue('tipoImpuestoId', 0)
+        setValue('udmId', 0)
+        setValue('codigoProducto', 0)
+        reset(defaultValues)
+    }
+
+    const onSubmitCreateDetalle = async (dataForm: FormInputs) => {
+        setLoading(true)
+        const nuevoDetalle: CreateDetalle = {
+            codigoDetalleSolicitud: dataForm.codigoDetalleSolicitud,
+            codigoSolicitud: dataForm.codigoSolicitud,
+            cantidad: cantidad,
+            udmId: dataForm.udmId,
+            descripcion: dataForm.descripcion,
+            precioUnitario: precioUnitario,
+            tipoImpuestoId: dataForm.tipoImpuestoId,
+            codigoProducto: dataForm.codigoProducto,
+        }
+
+        const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
+
+        if (responseCreateDetalle?.data.isValid) {
+            qc.invalidateQueries({
+                queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+            })
+        }
+
+        setErrorMessage(responseCreateDetalle?.data.message)
+        setLoading(false)
     }
 
     return (
@@ -91,7 +126,7 @@ const createDetalleSolicitudCompromiso = () => {
         }}>
             <CardHeader title='Crear un nuevo detalle' />
             <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
                     <Grid container spacing={5} paddingTop={5}>
                         <Grid item sm={2} xs={12}>
                             <FormControl fullWidth>
@@ -115,6 +150,7 @@ const createDetalleSolicitudCompromiso = () => {
                                             onValueChange={(values: any) => {
                                                 const { value } = values
                                                 setCantidad(value)
+                                                setErrorMessage('')
                                             }}
                                             placeholder='Cantidad'
                                             error={Boolean(errors.codigoSolicitud)}
@@ -140,7 +176,7 @@ const createDetalleSolicitudCompromiso = () => {
                         </Grid>
                         <Grid item sm={6} xs={12}>
                             <ListProducts
-                                id={defaultValues.udmId}
+                                id={defaultValues.codigoProducto}
                                 onSelectionChange={handleProductChange}
                             />
                         </Grid>
@@ -228,27 +264,43 @@ const createDetalleSolicitudCompromiso = () => {
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
                         <Button
-                            onClick={() => onSubmit(defaultValues)}
+                            onClick={handleSubmitCreateDetalle(onSubmitCreateDetalle)}
                             size='small'
-                            type='button'
-                            variant='contained'>
-                            {loading ? (
-                                <CircularProgress
-                                    sx={{
-                                        color: 'common.white',
-                                        width: '20px !important',
-                                        height: '20px !important',
-                                        mr: theme => theme.spacing(2)
-                                    }}
-                                />
-                            ) : null}
-                            + Añadir
+                            variant='contained'
+                        >
+                            { loading ? (
+                                <>
+                                    <CircularProgress
+                                        sx={{
+                                            color: 'common.white',
+                                            width: '20px !important',
+                                            height: '20px !important',
+                                            mr: theme => theme.spacing(2)
+                                        }}
+                                    />
+                                    Guardando...
+                                </>
+                            ) : '+ Añadir'}
+                        </Button>
+                        <Button
+                            onClick={resetForm}
+                            variant='outlined'
+                            size='small'
+                        >
+                            Limpiar
                         </Button>
                     </CardActions>
+                    <Box>
+                        {errorMessage && errorMessage.length > 0 && (
+                            <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
+                                { errorMessage }
+                            </FormHelperText>
+                        )}
+                    </Box>
                 </form>
             </CardContent>
         </Card>
     )
 }
 
-export default createDetalleSolicitudCompromiso
+export default CreateDetalleSolicitudCompromiso

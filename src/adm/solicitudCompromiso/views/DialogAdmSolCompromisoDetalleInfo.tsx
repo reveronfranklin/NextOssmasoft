@@ -2,7 +2,6 @@ import { Ref, forwardRef, ReactElement } from 'react'
 import Fade, { FadeProps } from '@mui/material/Fade'
 
 import { Card, Dialog, DialogContent } from "@mui/material"
-import { CrudOperation } from './../enums/CrudOperations.enum'
 import Icon from 'src/@core/components/icon'
 import IconButton from '@mui/material/IconButton'
 import DatePickerWrapper from "src/@core/styles/libs/react-datepicker"

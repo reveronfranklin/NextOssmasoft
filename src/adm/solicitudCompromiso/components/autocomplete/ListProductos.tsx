@@ -13,14 +13,15 @@ const ListProducts = (props: any) => {
         initialData: () => {
             return qc.getQueryData(['getListProducts'])
         },
-        staleTime: 5000 * 60 * 60,
+        staleTime: 1000 * 60,
     }, qc)
 
     const listProducts = query.data?.data ?? []
+    const tipo = listProducts.filter((item: { codigo: number }) => item?.codigo === props?.id)[0]
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
-            props.onSelectionChange(newValue.id)
+            props.onSelectionChange(newValue.codigo)
         }
     }
 
@@ -41,9 +42,10 @@ const ListProducts = (props: any) => {
                 ) : (
                     <Autocomplete
                         options={listProducts}
+                        defaultValue={tipo}
                         id='autocomplete-ListProducts'
-                        onChange={handleChange}
                         getOptionLabel={(option : any) => option.codigo + '-' + option.descripcion}
+                        onChange={handleChange}
                         renderInput={(params) => <TextField {...params} label="Productos" />}
                     />
                 )

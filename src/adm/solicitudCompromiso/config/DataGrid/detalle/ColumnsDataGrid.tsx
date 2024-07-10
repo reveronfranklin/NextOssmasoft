@@ -1,13 +1,9 @@
 import { useDispatch } from 'react-redux'
-
-import { CrudOperation } from '../../../enums/CrudOperations.enum'
 import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import { CellType } from '../../../interfaces/cellType.interfaces'
-
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-import dayjs from 'dayjs'
 
 import {
     setSolicitudCompromisoSeleccionadoDetalle,
@@ -25,7 +21,7 @@ function ColumnsDetalleDataGrid() {
     return [
         {
             flex: 0,
-            minWidth: 30,
+            minWidth: 80,
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
@@ -50,7 +46,7 @@ function ColumnsDetalleDataGrid() {
             )
         },
         {
-            Width: 15,
+            Width: 35,
             headerName: 'descripcionUnidad',
             field: 'descripcionUnidad',
             renderCell: (params: GridRenderCellParams) => (
@@ -81,12 +77,12 @@ function ColumnsDetalleDataGrid() {
             )
         },
         {
-            Width: 15,
+            Width: 20,
             headerName: 'precioTotal',
             field: 'precioTotal',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigoProducto}
+                    {params.row.precioTotal}
                 </Typography>
             )
         },

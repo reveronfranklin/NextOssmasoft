@@ -8,7 +8,7 @@ interface ITipoUnidades {
     descripcion: string
 }
 
-const tipoUnidad = (props: any) => {
+const TipoUnidad = (props: any) => {
     const { fetchTipoUnidades } = useServices()
     const qc: QueryClient = useQueryClient()
 
@@ -56,4 +56,4 @@ const tipoUnidad = (props: any) => {
     )
 }
 
-export default tipoUnidad
+export default TipoUnidad

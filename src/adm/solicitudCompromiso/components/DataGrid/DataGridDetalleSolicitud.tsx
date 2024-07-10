@@ -3,20 +3,17 @@ import Spinner from 'src/@core/components/spinner'
 import useServices from 'src/adm/solicitudCompromiso/services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import ColumnsDetalleDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/detalle/ColumnsDataGrid'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { useState } from "react"
 import { Box, styled } from '@mui/material'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 200,
+    height: 350,
     overflowY: 'auto',
 }))
 
 const DataGridDetalleSolicitudComponent = (props: any) => {
-    const [pageNumber, setPage] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
-    const [searchText, setSearchText] = useState('')
-    const [buffer, setBuffer] = useState('')
+    const [pageNumber, setPage] = useState<number>(0)
+    const [pageSize, setPageSize] = useState<number>(5)
 
     const { getDetalleSolicitudFetchTable } = useServices()
     const qc: QueryClient = useQueryClient()
@@ -32,7 +29,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     }, qc)
 
     const rows = query?.data?.data.data || []
-    const rowCount = query?.data?.data.cantidadRegistros || 0
+    const rowCount = rows.length || 0
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -43,6 +40,8 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         setPageSize(newPageSize)
     }
 
+    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize);
+
     return (
         <>
             {
@@ -51,7 +50,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                         autoHeight
                         pagination
                         getRowId={(row) => row.codigoDetalleSolicitud}
-                        rows={rows}
+                        rows={paginatedRows}
                         rowCount={rowCount}
                         columns={ColumnsDetalleDataGrid() as any}
                         sortingMode='server'

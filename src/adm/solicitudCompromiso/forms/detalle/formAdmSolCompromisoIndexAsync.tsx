@@ -1,17 +1,18 @@
-import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
+import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
-import DataGridDetalleSolicitudComponent from 'src/adm/solicitudCompromiso/components/DataGrid/DataGridDetalleSolicitud'
 
 import CreateDetalleSolicitudCompromiso from 'src/adm/solicitudCompromiso/forms/detalle/formAdmSolCompromisoCreateAsync'
+import DataGridDetalleSolicitudComponent from 'src/adm/solicitudCompromiso/components/DataGrid/DataGridDetalleSolicitud'
 import DialogAdmSolCompromisoDetalleInfo from './../../views/DialogAdmSolCompromisoDetalleInfo'
 
 const handleAdd = (setIsUpdateFormOpen: any, isUpdateFormOpen: boolean) => {
     setIsUpdateFormOpen(!isUpdateFormOpen)
 }
 
-const headerDetail = () => {
+const HeaderDetail = () => {
     const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+
     return (
         <>
             <Box>
@@ -30,16 +31,21 @@ const headerDetail = () => {
             </Collapse>
         </>
     )
+
 }
 
 const IndexDetalleSolicitudCompromiso = (props: any) => {
+
     return (
         <>
-            { headerDetail() }
+            {
+                HeaderDetail()
+            }
             <DataGridDetalleSolicitudComponent codigoSolicitud={ props.codigoSolicitud } />
             <DialogAdmSolCompromisoDetalleInfo />
         </>
     )
+
 }
 
 
