@@ -21,7 +21,6 @@ import { RootState } from 'src/store';
 import { IRhAdministrativosResponseDto } from 'src/interfaces/rh/i-rh-administrativos-response-dto';
 import { setListRhBancos, setListRhTipoCuenta, setOperacionCrudRhAdministrativas, setRhAdministrativoSeleccionado, setVerRhAdministrativasActive } from 'src/store/apps/rh-administrativos';
 import DialogRhAdministrativosInfo from './DialogRhAdministrativosInfo';
-import dayjs from 'dayjs';
 import { IFechaDto } from 'src/interfaces/fecha-dto';
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 import { monthByIndex } from 'src/utilities/ge-date-by-object';
@@ -64,7 +63,7 @@ const AdministrativoList = () => {
       field: 'fechaHasta',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaIngreso).format('DD/MM/YYYY') }
+          {params.row.fechaIngreso}
         </Typography>
       )
     },

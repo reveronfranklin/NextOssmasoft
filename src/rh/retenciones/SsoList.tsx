@@ -19,6 +19,7 @@ import dayjs from 'dayjs'
 import { RhTmpRetencionesSsoDto } from 'src/interfaces/rh/RhTmpRetencionesSsoDto'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 
 interface CellType {
   row: RhTmpRetencionesSsoDto
@@ -28,6 +29,7 @@ const SsoList = () => {
   // ** State
 
   const columns = [
+   
     {
       flex: 0.2,
       minWidth: 150,
@@ -110,11 +112,15 @@ const SsoList = () => {
       const filter: IFilterFechaTipoNomina = {
         fechaDesde: dayjs(fechaDesde).format('DD/MM/YYYY'),
         fechaHasta: dayjs(fechaHasta).format('DD/MM/YYYY'),
-        tipoNomina: tipoNominaSeleccionado.codigoTipoNomina
+        tipoNomina: tipoNominaSeleccionado.codigoTipoNomina,
+        fechaDesdeObj:fechaToFechaObj(fechaDesde),
+        fechaHastaObj:fechaToFechaObj(fechaHasta)
       }
       setData([])
 
       const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesSso/GetRetencionesSso', filter)
+      
+      console.log('responseAll.data?.data SSO',responseAll.data?.data)
       if (responseAll.data?.data) {
         setData(responseAll.data?.data)
       } else {
@@ -149,7 +155,10 @@ const SsoList = () => {
           <Spinner sx={{ height: '100%' }} />
         ) : (
           <Box sx={{ height: 450 }}>
-            <DataGrid getRowId={row => row.codigoRetencionAporte} columns={columns} rows={data} />
+            <DataGrid 
+            getRowId={row => row.id}
+             columns={columns} 
+             rows={data} />
           </Box>
         )}
       </Card>

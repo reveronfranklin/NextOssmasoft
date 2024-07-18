@@ -26,7 +26,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button } from '@mui/material'
+import { Button, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 
 
 // ** Types
@@ -37,8 +37,9 @@ import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import Spinner from 'src/@core/components/spinner';
 import dayjs from 'dayjs'
-
-
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+import Icon from 'src/@core/components/icon'
 
 
 
@@ -288,6 +289,21 @@ const TableServerSideHistoricoMasivo = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado])
 
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(allRows)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+  
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
+  
+    saveAs(blob, 'historicoMasivo.xlsx')
+  }
+
   const handleSortModel = (newModel: GridSortModel) => {
 
     const temp  = [... allRows];
@@ -348,15 +364,21 @@ const TableServerSideHistoricoMasivo = () => {
 
   return (
     <Card>
-      {
-        !loading && linkData.length>0 ?
-          <Box  m={2} pt={3}>
-          <Button variant='contained' href={linkData} size='large' >
-            Descargar Todo
-          </Button>
-        </Box>
-        : <Typography>{mensaje}</Typography>
-      }
+     
+{!loading ? (
+        <Grid m={2} pt={3} item justifyContent='flex-end'>
+          <Toolbar sx={{ justifyContent: 'flex-start' }}>
+         
+            <Tooltip title='Descargar'>
+              <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                <Icon icon='ci:download' fontSize={20} />
+              </IconButton>
+            </Tooltip>
+          </Toolbar>
+        </Grid>
+      ) : (
+        <Typography>{mensaje}</Typography>
+      )}
 
      { loading  ? (
        <Spinner sx={{ height: '100%' }} />

@@ -27,7 +27,7 @@ import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/Fil
 import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto';
 import { IPreCargosGetDto } from 'src/interfaces/Presupuesto/i-pre-cargos-get-dto';
 import { IFilterPreTituloDto } from 'src/interfaces/Presupuesto/i-filter-pre-titulo-dto';
-import { setListPreCargos, setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
+import {  setListTipoPersonal, setOperacionCrudPreCargo, setPreCargoSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo';
 import DialogPreCargoInfo from 'src/presupuesto/cargo/views/DialogPreCargoInfo';
 import { IListPresupuestoDto } from '../../../../interfaces/Presupuesto/i-list-presupuesto-dto';
 import { IFilterPresupuestoIcp } from 'src/interfaces/Presupuesto/i-filter-presupuesto-icp';
@@ -109,9 +109,10 @@ const CargoList = () => {
 
   const handleView=  (row : IPreCargosGetDto)=>{
 
-    console.log('row seleccionado',row)
+    
     dispatch(setPreCargoSeleccionado(updateField(row,'page',page)))
     dispatch(setPreCargoSeleccionado(updateFieldString(row,'searchText',searchText)))
+
      // Operacion Crud 2 = Modificar presupuesto
     dispatch(setOperacionCrudPreCargo(2));
     dispatch(setVerPreCargoActive(true))
@@ -119,7 +120,7 @@ const CargoList = () => {
 
   }
 
-  const handleAddChild=  (row : IPreCargosGetDto)=>{
+/*   const handleAddChild=  (row : IPreCargosGetDto)=>{
 
 
     const newRow = {...row};
@@ -132,13 +133,13 @@ const CargoList = () => {
    dispatch(setVerPreCargoActive(true))
 
 
-  }
+  } */
 
-  const handleDoubleClick=(row:any)=>{
+/*   const handleDoubleClick=(row:any)=>{
 
 
       handleView(row.row)
-  }
+  } */
   const handleAdd=  ()=>{
 
     //dispatch(setPresupuesto(row))
@@ -176,8 +177,8 @@ const CargoList = () => {
 
   const {verPreCargoActive=false} = useSelector((state: RootState) => state.preCargo)
   const {listpresupuestoDtoSeleccionado={} as IListPresupuestoDto ,listpresupuestoDto=[] as IListPresupuestoDto[] } = useSelector((state: RootState) => state.presupuesto)
-  const [loading, setLoading] = useState(false);
-  const [viewTable, setViewTable] = useState(false);
+
+
 
 
   const [page, setPage] = useState(0)
@@ -186,7 +187,7 @@ const CargoList = () => {
   const [buffer, setBuffer] = useState('')
 
   const debounceTimeoutRef = useRef<any>(null)
-  const [cargos, setCargos] = useState([]);
+
 
 
   const qc: QueryClient = useQueryClient()
@@ -235,13 +236,14 @@ const fetchCargo=async(presupuesto:number)=>{
 
   const response =  await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuestoPaginate',filter);
 
-  console.log(response)
+  
   return response.data;
 }
 
 
   const handleViewTree=()=>{
-    setViewTable(false);
+   
+   // setViewTable(false);
 
   }
 
@@ -251,8 +253,9 @@ const fetchCargo=async(presupuesto:number)=>{
   }*/
   useEffect(() => {
 
-    const getCargo = async (filter:FilterByPresupuestoDto) => {
-      setLoading(true);
+    const getCargo = async () => {
+      
+      //setLoading(true);
 
 
       //const responseAll= await ossmmasofApi.post<any>('/PreCargos/GetAllByPresupuesto',filter);
@@ -273,7 +276,7 @@ const fetchCargo=async(presupuesto:number)=>{
 
      
 
-      setLoading(false);
+     // setLoading(false);
     };
 
 
@@ -288,7 +291,7 @@ const fetchCargo=async(presupuesto:number)=>{
       filter.codigoPresupuesto==listpresupuestoDto[0].codigoPresupuesto;
       dispatch(setListpresupuestoDtoSeleccionado(listpresupuestoDto[0]));
     }
-    getCargo(filter);
+    getCargo();
 
 
 

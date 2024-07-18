@@ -7,7 +7,7 @@ import { CellType } from '../../../interfaces/cellType.interfaces'
 
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-import dayjs from 'dayjs'
+
 
 import {
     setVerSolicitudCompromisosActive,
@@ -67,7 +67,7 @@ function ColumnsDataGrid() {
             field: 'fechaSolicitudString',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {dayjs(params.row.fechaSolicitudString).format('DD/MM/YYYY')}
+                    {params.row.fechaSolicitudString}
                 </Typography>
             )
         },
