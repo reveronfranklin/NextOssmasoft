@@ -26,7 +26,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
+import {  Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 
 
 // ** Types
@@ -208,7 +208,8 @@ const columns: any = [
 const TableServerSideHistoricoMasivo = () => {
   // ** State
   const [page, setPage] = useState(0)
-  const [linkData, setLinkData] = useState('')
+  
+  //const [ setLinkData] = useState('')
   const [total, setTotal] = useState<number>(0)
   const [sort, setSort] = useState<SortType>('asc')
   const [pageSize, setPageSize] = useState<number>(100)
@@ -241,7 +242,8 @@ const TableServerSideHistoricoMasivo = () => {
       setAllRows([]);
       setTotal(0);
       setRows(loadServerRows(page, []))
-      setLinkData('')
+      
+      //setLinkData('')
 
 
 
@@ -266,7 +268,8 @@ const TableServerSideHistoricoMasivo = () => {
 
       setRows(loadServerRows(page, responseAll.data.data))
 
-      setLinkData(responseAll.data.linkData)
+      //setLinkData(responseAll.data.linkData)
+
       setLoading(false);
 
       if( responseAll.data.data.length>0){

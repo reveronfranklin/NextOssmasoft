@@ -247,6 +247,8 @@ const TableServerSideRhRelacionCargo = () => {
 
 
       const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo',filter);
+      console.log('responseAll RhRelacionCargos',responseAll.data)
+      
       setAllRows(responseAll.data.data);
       if(responseAll.data.data && responseAll.data.data.length>0){
         setTotal(responseAll.data.data.length);

@@ -72,8 +72,10 @@ interface FormInputs {
   sueldo: number
   fechaIni:Date;
   fechaFin: Date;
+  fechaIngreso:Date;
   fechaIniString:string;
   fechaFinString: string;
+  fechaIngresoString: string;
 
 }
 
@@ -147,6 +149,9 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
     fechaFinString:rhRelacionCargoSeleccionado.fechaFinString,
     fechaIniObj:rhRelacionCargoSeleccionado.fechaIniObj,
     fechaFinObj :rhRelacionCargoSeleccionado.fechaFinObj,
+    fechaIngreso :rhRelacionCargoSeleccionado.fechaIngreso,
+    fechaIngresoString :rhRelacionCargoSeleccionado.fechaFinString,
+    fechaIngresoObj :rhRelacionCargoSeleccionado.fechaIngresoObj,
     codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
     searchText:'',
 
@@ -180,6 +185,16 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
     setValue('fechaFin',fin)
     const fechaObj:IFechaDto =fechaToFechaObj(fin);
     const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaFin:fin,fechaFinString:fin.toISOString(),fechaFinObj:fechaObj};
+    dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
+
+  }
+  const handlerIngreso=(ingreso:Date)=>{
+
+
+    setValue('fechaIngresoString',ingreso.toISOString())
+    setValue('fechaIngreso',ingreso)
+    const fechaObj:IFechaDto =fechaToFechaObj(ingreso);
+    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIngreso:ingreso,fechaIngresoString:ingreso.toISOString(),fechaIngresoObj:fechaObj};
     dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
 
   }
@@ -266,7 +281,8 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
       codigoPersona :data.codigoPersona,
       sueldo: data.sueldo,
       fechaIni:data.fechaIni,
-      fechaFin:data.fechaFin
+      fechaFin:data.fechaFin,
+      fechaIngreso:data.fechaIngreso,
 
 
     };
@@ -431,7 +447,7 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
           </FormControl>
           </Grid>
              {/* sueldo*/}
-             <Grid item sm={4} xs={12}>
+             <Grid item sm={3} xs={12}>
               <FormControl fullWidth>
                                   <Controller
                                       name='sueldo'
@@ -471,7 +487,7 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
               </FormControl>
             </Grid>
 
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
             <DatePicker
 
 
@@ -484,7 +500,7 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
                   customInput={<CustomInput label='Fecha Inicio' />}
                 />
             </Grid>
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
                 <DatePicker
                   selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaFinObj)}
                   id='date-time-picker-desde'
@@ -495,7 +511,17 @@ const FormRhRelacionCargoUpdateAsync = ({ popperPlacement }: { popperPlacement: 
                   customInput={<CustomInput label='Fecha Fin' />}
                 />
             </Grid>
-
+            <Grid item  sm={3} xs={12}>
+                <DatePicker
+                  selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaIngresoObj)}
+                  id='date-time-picker-desde'
+                  dateFormat='dd/MM/yyyy'
+                  popperPlacement={popperPlacement}
+                  onChange={(date: Date) => handlerIngreso(date)}
+                  placeholderText='Click to select a date'
+                  customInput={<CustomInput label='Fecha Ingreso' />}
+                />
+            </Grid>
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
