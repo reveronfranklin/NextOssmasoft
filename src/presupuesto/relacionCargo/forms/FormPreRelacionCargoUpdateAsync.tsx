@@ -211,7 +211,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
     const deleteRelacionCargo : IPreRelacionCargosDeleteDto={
       codigoRelacionCargo:preRelacionCargoSeleccionado.codigoRelacionCargo
     }
-    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Delete',deleteRelacionCargo);
+    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/Delete',deleteRelacionCargo);
     setErrorMessage(responseAll.data.message)
     if(responseAll.data.isValid){
 
@@ -681,7 +681,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Button size='large' type='submit' variant='contained'>
+             {/*  <Button size='large' type='submit' variant='contained'>
                 {loading ? (
                   <CircularProgress
                     sx={{
@@ -693,7 +693,8 @@ const FormPreRelacionCargoUpdateAsync = () => {
                   />
                 ) : null}
                 Guardar
-              </Button>
+              </Button> */}
+
               <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
                 Eliminar
               </Button>

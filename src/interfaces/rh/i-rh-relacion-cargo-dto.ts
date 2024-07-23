@@ -14,10 +14,15 @@ export interface  IRhRelacionCargoDto{
   sueldo :number;
   fechaIniString? :string;
   fechaFinString? :string;
+  fechaIngresoString? :string;
   fechaIni? :Date;
   fechaFin? :Date;
-  fechaIniObj:IFechaDto;
-  fechaFinObj :IFechaDto;
+  fechaIngreso? :Date;
+  fechaIniObj?:IFechaDto;
+  fechaFinObj? :IFechaDto;
+  fechaIngresoObj? :IFechaDto;
+
+
 
   codigoRelacionCargoPre :number;
   searchText:string

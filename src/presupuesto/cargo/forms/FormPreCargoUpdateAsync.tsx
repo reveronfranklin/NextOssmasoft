@@ -48,6 +48,7 @@ import { IPreDescriptivasGetDto } from 'src/interfaces/Presupuesto/i-pre-descrip
 import { IPreCargosDeleteDto } from 'src/interfaces/Presupuesto/i-pre-cargos-delete-dto'
 import { setPreCargoSeleccionado, setTipoPersonalSeleccionado, setVerPreCargoActive } from 'src/store/apps/pre-cargo'
 import { IPreCargosUpdateDto } from 'src/interfaces/Presupuesto/i-pre-cargos-update-dto'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface FormInputs {
   codigoCargo :number;
@@ -130,7 +131,7 @@ const FormPreCargoUpdateAsync = () => {
 
   const [listCargos,setListCargos] = useState<IPreDescriptivasGetDto[]>([])
 
-
+  const queryClient = useQueryClient();
   const defaultValues = {
       codigoCargo :preCargoSeleccionado.codigoCargo,
       tipoPersonalId :preCargoSeleccionado.tipoPersonalId,
@@ -230,10 +231,14 @@ const FormPreCargoUpdateAsync = () => {
       codigoPresupuesto:preCargoSeleccionado.codigoPresupuesto
 
     };
+    console.log('Objeto enviado para guardar Cargo',updateCargo)
 
     const responseAll= await ossmmasofApi.post<any>('/PreCargos/Update',updateCargo);
 
     if(responseAll.data.isValid){
+      queryClient.invalidateQueries({
+        queryKey: ['cargos',  preCargoSeleccionado.page,preCargoSeleccionado.codigoPresupuesto,preCargoSeleccionado.searchText]
+      })
       dispatch(setPreCargoSeleccionado(responseAll.data.data))
       dispatch(setVerPreCargoActive(false))
     }
@@ -253,12 +258,14 @@ const FormPreCargoUpdateAsync = () => {
    const selec =  getTipoPersonal(preCargoSeleccionado.tipoPersonalId);
    setListCargos(selec.listaDescriptiva);
 
+   console.log('seleccionado',preCargoSeleccionado)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Card>
-      <CardHeader title='Presupuesto - Modificar Cargo' />
+      <CardHeader title='Presupuesto - Modificar Cargo.' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>

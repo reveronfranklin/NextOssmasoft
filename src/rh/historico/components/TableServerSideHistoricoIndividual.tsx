@@ -7,6 +7,10 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
 
+
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+
 //import { DataGridPro } from '@mui/x-data-grid-pro';
 
 // ** ThirdParty Components
@@ -26,7 +30,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button } from '@mui/material'
+import {  Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 
 
 // ** Types
@@ -40,6 +44,9 @@ import Spinner from 'src/@core/components/spinner';
 import dayjs from 'dayjs'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 
+
+
+import Icon from 'src/@core/components/icon'
 
 
 /*interface StatusObj {
@@ -204,6 +211,10 @@ const columns: any = [
   },
 ]
 
+
+
+
+
 const TableServerSideHistoricoIndividual = () => {
   // ** State
   const [page, setPage] = useState(0)
@@ -228,6 +239,20 @@ const TableServerSideHistoricoIndividual = () => {
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   }
 
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(allRows)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+  
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
+  
+    saveAs(blob, 'historicoIndividual.xlsx')
+  }
 
   const fetchTableData = useCallback(
     async (desde:Date,hasta:Date,tipoQuery:string,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[],codigoPersona:number,procesoSeleccionado:IRhProcesoGetDto) => {
@@ -349,7 +374,7 @@ const TableServerSideHistoricoIndividual = () => {
 
   return (
     <Card>
-      {
+    {/*   {
         !loading && linkData.length>0 ?
           <Box  m={2} pt={3}>
 
@@ -358,7 +383,22 @@ const TableServerSideHistoricoIndividual = () => {
           </Button>
         </Box>
         : <Typography>{mensaje}</Typography>
-      }
+      } */}
+
+      {!loading ? (
+        <Grid m={2} pt={3} item justifyContent='flex-end'>
+          <Toolbar sx={{ justifyContent: 'flex-start' }}>
+         
+            <Tooltip title='Descargar'>
+              <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                <Icon icon='ci:download' fontSize={20} />
+              </IconButton>
+            </Tooltip>
+          </Toolbar>
+        </Grid>
+      ) : (
+        <Typography>{mensaje}</Typography>
+      )}
 
      { loading  ? (
        <Spinner sx={{ height: '100%' }} />

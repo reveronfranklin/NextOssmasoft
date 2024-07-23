@@ -7,5 +7,7 @@ export interface  IRhRelacionCargoUpdateDto{
   sueldo:number;
   fechaIni:Date;
   fechaFin: Date;
+  fechaIngreso:Date;
   codigoRelacionCargoPre:number;
+
 }

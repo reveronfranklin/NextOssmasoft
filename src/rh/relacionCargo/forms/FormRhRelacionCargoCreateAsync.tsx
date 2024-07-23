@@ -55,6 +55,7 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
+import { NumericFormat } from 'react-number-format'
 
 
 
@@ -69,8 +70,10 @@ interface FormInputs {
   sueldo: number
   fechaIni:Date;
   fechaFin: Date;
+  fechaIngreso:Date;
   fechaIniString:string;
   fechaFinString: string;
+  fechaIngresoString:string;
 
 }
 
@@ -131,8 +134,10 @@ const defaultValues:IRhRelacionCargoDto = {
     fechaFinObj :rhRelacionCargoSeleccionado.fechaFinObj,
     codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
     searchText:'',
-    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
-
+    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp,
+    fechaIngresoObj :rhRelacionCargoSeleccionado.fechaIngresoObj,
+    fechaIngresoString:rhRelacionCargoSeleccionado.fechaIngresoString,
+    fechaIngreso:rhRelacionCargoSeleccionado.fechaIngreso,
 
   }
 
@@ -191,6 +196,21 @@ const defaultValues:IRhRelacionCargoDto = {
     }
   }
 
+  const handlerIngreso=(ingreso:Date)=>{
+
+
+    setValue('fechaIngresoString',ingreso.toISOString())
+    setValue('fechaIngreso',ingreso)
+    const fechaObj:IFechaDto =fechaToFechaObj(ingreso);
+    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIngreso:ingreso,fechaIngresoString:ingreso.toISOString(),fechaIngresoObj:fechaObj};
+    dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
+
+  }
+
+  const handlerSueldo = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+    setValue('sueldo', valueInt)
+  }
   const onSubmit = async (data:FormInputs) => {
 
     if(rhRelacionCargoSeleccionado.fechaIniObj.year=='1900'){
@@ -213,7 +233,9 @@ const defaultValues:IRhRelacionCargoDto = {
       sueldo: data.sueldo,
       fechaIni:data.fechaIni,
       fechaFin:data.fechaFin,
-      codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
+      codigoIcp:rhRelacionCargoSeleccionado.codigoIcp,
+      fechaIngreso:data.fechaIngreso,
+
 
 
     };
@@ -243,7 +265,7 @@ const defaultValues:IRhRelacionCargoDto = {
 
   return (
     <Card style={{height:'400px'}}>
-      <CardHeader title='RH - Crear Relacion Cargo' />
+      <CardHeader title='RH - Crear Relacion Cargo.' />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -336,37 +358,48 @@ const defaultValues:IRhRelacionCargoDto = {
 
                 </FormControl>
             </Grid>
-            {/* sueldo*/}
-            <Grid item sm={4} xs={12}>
+             {/* sueldo*/}
+             <Grid item sm={3} xs={12}>
               <FormControl fullWidth>
-                <Controller
-                  name='sueldo'
-                  control={control}
-                  rules={{ min:0.001}}
-
-                  render={({ field: { value, onChange } }) => (
-
-                    <TextField
-
-                      value={value || 0}
-                      type="decimal"
-                      label='Sueldo'
-                      onChange={onChange}
-                      placeholder='Sueldo'
-                      error={Boolean(errors.sueldo)}
-                      aria-describedby='validation-async-sueldo'
-                    />
-                  )}
-                />
-                {errors.sueldo && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
-                    This field is required
-                  </FormHelperText>
-                )}
+                                  <Controller
+                                      name='sueldo'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Sueldo"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerSueldo(value)
+                                              }}
+                                              placeholder='Sueldo'
+                                              error={Boolean(errors.sueldo)}
+                                              aria-describedby='validation-async-sueldo'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.sueldo && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-sueldo'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
 
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
             <DatePicker
 
 
@@ -379,7 +412,7 @@ const defaultValues:IRhRelacionCargoDto = {
                   customInput={<CustomInput label='Fecha Inicio' />}
                 />
             </Grid>
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
                 <DatePicker
                   selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaFinObj)}
                   id='date-time-picker-desde'
@@ -390,7 +423,17 @@ const defaultValues:IRhRelacionCargoDto = {
                   customInput={<CustomInput label='Fecha Fin' />}
                 />
             </Grid>
-
+            <Grid item  sm={3} xs={12}>
+                <DatePicker
+                  selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaIngresoObj)}
+                  id='date-time-picker-desde'
+                  dateFormat='dd/MM/yyyy'
+                  popperPlacement={popperPlacement}
+                  onChange={(date: Date) => handlerIngreso(date)}
+                  placeholderText='Click to select a date'
+                  customInput={<CustomInput label='Fecha Ingreso' />}
+                />
+            </Grid>
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>

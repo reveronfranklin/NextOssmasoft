@@ -90,7 +90,7 @@ const PresupuestoList = () => {
       field: 'fechaDesde',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaDesde).format('DD/MM/YYYY')}
+          {params.row.fechaDesde}
         </Typography>
       )
     },

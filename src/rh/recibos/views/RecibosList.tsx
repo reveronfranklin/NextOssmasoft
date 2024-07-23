@@ -28,7 +28,6 @@ import { RootState } from 'src/store'
 import { GridRenderCellParams } from '@mui/x-data-grid'
 
 import { RhReporteNominaResumenResponseDto } from 'src/interfaces/rh/Recibos/RhReporteNominaResponseDto'
-import dayjs from 'dayjs'
 import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
 
@@ -52,7 +51,7 @@ const RecibosList = () => {
       field: 'fechaNominaString',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaNominaString).format('DD/MM/YYYY')}
+          {params.row.fechaNominaString}
         </Typography>
       )
     },

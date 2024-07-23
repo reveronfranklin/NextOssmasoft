@@ -117,6 +117,11 @@ const TableServerSide = () => {
 
 
 
+
+
+
+
+
 const rowCount = data?.cantidadRegistros || 0
 const rows =data?.data || []
 

@@ -22,6 +22,7 @@ import dayjs from 'dayjs'
 import { RhTmpRetencionesIncesDto } from 'src/interfaces/rh/RhTmpRetencionesIncesDto'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 
 interface CellType {
   row: RhTmpRetencionesIncesDto
@@ -113,8 +114,12 @@ const InceList = () => {
       const filter: IFilterFechaTipoNomina = {
         fechaDesde: dayjs(fechaDesde).format('DD/MM/YYYY'),
         fechaHasta: dayjs(fechaHasta).format('DD/MM/YYYY'),
-        tipoNomina: tipoNominaSeleccionado.codigoTipoNomina
+        tipoNomina: tipoNominaSeleccionado.codigoTipoNomina,
+        fechaDesdeObj:fechaToFechaObj(fechaDesde),
+        fechaHastaObj:fechaToFechaObj(fechaHasta)
       }
+
+      console.log('filter ince*****', filter)
       if (filter.tipoNomina) {
         setData([])
         const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesInces/GetRetencionesInces', filter)
