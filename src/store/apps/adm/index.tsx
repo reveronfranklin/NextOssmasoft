@@ -7,9 +7,11 @@ export const admSolicitudCompromisoSlice = createSlice({
     initialState: {
         verSolicitudCompromisosActive: false,
         verSolicitudCompromisoDetalleActive: false,
+        verSolicitudCompromisoPucActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
         solicitudCompromisoSeleccionadoDetalle: {} as any,
+        pucSeleccionado: {} as any,
         listTipoDeSolicitud: {} as ITipoSolicitud[],
         listProveedores: {} as any[],
         listTipoImpuesto: {} as any[],
@@ -22,6 +24,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         setVerSolicitudCompromisoDetalleActive: (state, action) => {
             state.verSolicitudCompromisoDetalleActive = action.payload
         },
+        setVerSolicitudCompromisoPucActive: (state, action) => {
+            state.verSolicitudCompromisoPucActive = action.payload
+        },
         setOperacionCrudAdmSolCompromiso: (state, action) => {
             state.operacionCrudAdmSolCompromiso = action.payload
         },
@@ -30,6 +35,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setSolicitudCompromisoSeleccionadoDetalle: (state, action) => {
             state.solicitudCompromisoSeleccionadoDetalle = action.payload
+        },
+        setPucSeleccionado: (state, action) => {
+            state.pucSeleccionado = action.payload
         },
         setListTipoDeSolicitud: (state, action) => {
             state.listTipoDeSolicitud = action.payload
@@ -52,6 +60,8 @@ export const {
         setListTipoDeSolicitud,
         setSolicitudCompromisoSeleccionadoDetalle,
         setVerSolicitudCompromisoDetalleActive,
+        setVerSolicitudCompromisoPucActive,
+        setPucSeleccionado,
         setListTipoImpuesto,
         setListTipoUnidades,
         setListProveedores,

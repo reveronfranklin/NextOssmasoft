@@ -16,6 +16,7 @@ const TipoUnidad = (props: any) => {
         queryKey: ['tipoUnidades'],
         queryFn: () => fetchTipoUnidades(),
         retry: 3,
+        staleTime: 5000 * 60 * 60,
     }, qc)
 
     const listTipo: ITipoUnidades[] = query.data?.data ?? []
@@ -43,6 +44,7 @@ const TipoUnidad = (props: any) => {
                     />
                 ) : (
                     <Autocomplete
+                        ref={props.ref}
                         options={listTipo}
                         defaultValue={tipo}
                         id='autocomplete-TipoUnidad'

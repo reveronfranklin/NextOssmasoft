@@ -73,7 +73,7 @@ const DataGridComponent = () => {
             return
         }
 
-        const newBuffer = buffer + value
+        const newBuffer = value
         setBuffer(newBuffer)
         debouncedSearch()
     }

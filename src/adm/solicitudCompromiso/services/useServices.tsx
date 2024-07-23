@@ -13,7 +13,7 @@ import {
     setListTipoUnidades
 } from "src/store/apps/adm"
 
-import { IFilterPrePresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-presupuesto';
+//import { IFilterPrePresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-presupuesto';
 import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
 import { IsolicitudesCompromiso } from '../interfaces/ISolicitudCompromiso.interfaces'
 
@@ -27,6 +27,9 @@ import { DeleteDetalle } from '../interfaces/detalle/delete.interfaces'
 
 import { fetchDataPreMtrUnidadEjecutora } from 'src/store/apps/presupuesto/thunks'
 import { IDetalleSolicitudCompromiso } from "../interfaces/detalle/IDetalleSolicitudCompromiso.interfaces"
+
+import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
+import { DeletePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/delete.interfaces'
 
 const useServices = (initialFilters: Filters = {}) => {
     const dispatch = useDispatch()
@@ -45,7 +48,6 @@ const useServices = (initialFilters: Filters = {}) => {
 
         } catch (e: any) {
             setError(e)
-            console.error(e)
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
@@ -61,7 +63,6 @@ const useServices = (initialFilters: Filters = {}) => {
 
         } catch (e: any) {
             setError(e)
-            console.log(e)
         }
     }, [])
 
@@ -144,7 +145,7 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const unidadEjecutora = async () => {
         try {
-            const filter: IFilterPrePresupuestoDto = {
+            const filter: any = {
                 codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto
             }
 
@@ -188,9 +189,8 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
 
             return await ossmmasofApi.post<any>(UrlServices.DETALLEUPDATE, data)
-
         } catch (e) {
-            console.error(`updateSolicitudCompromiso:> ${e}`)
+            console.error(e)
         }
     }
 
@@ -198,7 +198,6 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
 
             return await ossmmasofApi.post<any>(UrlServices.DETALLECREATE, data)
-
         } catch (e) {
             console.error(e)
         }
@@ -208,7 +207,45 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
 
             return await ossmmasofApi.post<any>(UrlServices.DETALLEDELETE, data)
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
+    const fetchPucDetalleSolicitud = async (codigoDetalleSolicitud: number) => {
+        try {
+            const filter = { codigoDetalleSolicitud }
+            console.log('filter', filter)
+            const filterTest = { codigoDetalleSolicitud: 49172 }
+
+            return await ossmmasofApi.post<any>(UrlServices.GETPUCDETALLE, filterTest)
+
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }
+
+    const fetchPucCreate = async (data: CreatePuc) => {
+        try {
+            if (!presupuestoSeleccionado){
+                console.error('No se ha seleccionado un presupuesto')
+
+                return
+            }
+
+            data.codigoPresupuesto = presupuestoSeleccionado?.codigoPresupuesto
+
+            return await ossmmasofApi.post<any>(UrlServices.PUCDETALLECREATE , data)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const fetchPucDelete = async (data: DeletePuc) => {
+        try {
+
+            return await ossmmasofApi.post<any>(UrlServices.PUCDETALLEDELETE , data)
         } catch (e) {
             console.error(e)
         }
@@ -230,6 +267,9 @@ const useServices = (initialFilters: Filters = {}) => {
         fetchCreateDetalleSolicitudCompromiso,
         fetchDeleteDetalleSolicitudCompromiso,
         getListProducts,
+        fetchPucDetalleSolicitud,
+        fetchPucCreate,
+        fetchPucDelete
     }
 }
 

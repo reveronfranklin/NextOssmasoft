@@ -4,45 +4,37 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { Controller, useForm } from 'react-hook-form'
 import { FormInputs  } from './../../interfaces/formImputs.interfaces'
-
+import { getDateByObject } from 'src/utilities/ge-date-by-object'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
+import { Update } from '../../interfaces/update.interfaces'
+import { Delete } from '../../interfaces/delete.interfaces'
+import { useDispatch } from 'react-redux'
+import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import Button from '@mui/material/Button'
-
 import TipoSolicitud from '../../components/autocomplete/TipoSolicitud'
 import CodigoProveedor from '../../components/autocomplete/CodigoProveedor'
 import UnidadSolicitante from '../../components/autocomplete/UnidadSolicitante'
-
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
-
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import dayjs from 'dayjs'
-
-// import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import useServices from '../../services/useServices'
-
-import { Update } from '../../interfaces/update.interfaces'
-import { Delete } from '../../interfaces/delete.interfaces'
-
 import toast from 'react-hot-toast'
-import { useDispatch } from 'react-redux'
-
-import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
 import IndexDetalleSolicitudCompromiso from '../detalle/formAdmSolCompromisoIndexAsync'
 
-const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
-    const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
+// import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
 
+const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
 
     const dispatch = useDispatch()
-    const solicitudCompromisoData = useSelector(
-        (state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado
-    )
+    const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
+    const qc: QueryClient = useQueryClient()
+
+    const solicitudCompromisoData = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
 
     const {
         codigoSolicitud,
@@ -133,6 +125,9 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             if (responseUpdate?.data?.isValid) {
                 toast.success('Form Submitted')
                 dispatch(setVerSolicitudCompromisosActive(false))
+                qc.invalidateQueries({
+                    queryKey: ['solicitudCompromiso']
+                })
             }
 
             setErrorMessage(responseUpdate?.data.message)
@@ -154,6 +149,9 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 setErrorMessage(responseDelete?.data.message)
             } else {
                 handleClose()
+                qc.invalidateQueries({
+                    queryKey: ['solicitudCompromiso']
+                })
             }
         } catch (e: any) {
             console.log(e)
@@ -235,7 +233,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 />
                             </DatePickerWrapper>
                         </Grid>
-                        <Grid item sm={5} xs={12}>
+                        <Grid item sm={6} xs={12}>
                             <FormControl fullWidth>
                                 <Controller
                                     name='numeroSolicitud'
@@ -259,21 +257,21 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 )}
                             </FormControl>
                         </Grid>
-                        <Grid item sm={7} xs={12}>
-                            <UnidadSolicitante
-                                id={codigoSolicitante}
-                                onSelectionChange={handleCodigoSolicitanteChange}
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={5} xs={12}>
+                        <Grid item sm={6} xs={12}>
                             <TipoSolicitud
                                 id={tipoSolicitudId}
                                 onSelectionChange={handleTipoSolicitudChange}
                             />
                         </Grid>
-                        <Grid item sm={7} xs={12}>
+                    </Grid>
+                    <Grid container spacing={5} paddingTop={5}>
+                        <Grid item sm={6} xs={12}>
+                            <UnidadSolicitante
+                                id={codigoSolicitante}
+                                onSelectionChange={handleCodigoSolicitanteChange}
+                            />
+                        </Grid>
+                        <Grid item sm={6} xs={12}>
                             <CodigoProveedor
                                 id={codigoProveedor}
                                 onSelectionChange={handleCodigoProveedorChange}
@@ -340,17 +338,19 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
                         <Button size='large' type='submit' variant='contained'>
-                            {loading ? (
-                                <CircularProgress
-                                    sx={{
-                                        color: 'common.white',
-                                        width: '20px !important',
-                                        height: '20px !important',
-                                        mr: theme => theme.spacing(2)
-                                    }}
-                                />
-                            ) : null}
-                            Guardar
+                            { loading ? (
+                                <>
+                                    <CircularProgress
+                                        sx={{
+                                            color: 'common.white',
+                                            width: '20px !important',
+                                            height: '20px !important',
+                                            mr: theme => theme.spacing(2)
+                                        }}
+                                    />
+                                    Guardando...
+                                </>
+                            ) : 'Guardar' }
                         </Button>
                         <Button variant='outlined' size='large' onClick={handleDialogOpen}>
                             Eliminar
