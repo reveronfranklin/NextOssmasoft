@@ -97,6 +97,11 @@ const CreateDetalleSolicitudCompromiso = () => {
             tipoImpuestoId: dataForm.tipoImpuestoId,
             codigoProducto: dataForm.codigoProducto,
         }
+
+        if (dataForm.descripcion === null || dataForm.descripcion == '') {
+            nuevoDetalle.descripcion = 'Sin descripción'
+        }
+
         try {
             const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
 
