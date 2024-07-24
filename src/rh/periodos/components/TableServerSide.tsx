@@ -173,7 +173,7 @@ const TableServerSide = () => {
       field: 'fechaNominaString',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaNominaString).format('DD/MM/YYYY')}
+          {params.row.fechaNominaString}
         </Typography>
       )
     },
@@ -220,7 +220,7 @@ const TableServerSide = () => {
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
           {params.row.fechaPrenominaString.length == 0
             ? ''
-            : dayjs(params.row.fechaPrenominaString).format('DD/MM/YYYY')}
+            : params.row.fechaPrenominaString}
         </Typography>
       )
     },
@@ -231,7 +231,7 @@ const TableServerSide = () => {
       field: 'fechaCierreString',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.fechaCierreString.length == 0 ? '' : dayjs(params.row.fechaCierreString).format('DD/MM/YYYY')}
+          {params.row.fechaCierreString.length == 0 ? '' : params.row.fechaCierreString}
         </Typography>
       )
     }

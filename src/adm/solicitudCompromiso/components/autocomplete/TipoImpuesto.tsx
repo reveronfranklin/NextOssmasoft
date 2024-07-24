@@ -16,6 +16,7 @@ const TipoImpuesto = (props: any) => {
         queryKey: ['tipoImpuesto'],
         queryFn: () => fetchTipoImpuesto(),
         retry: 3,
+        staleTime: 5000 * 60 * 60,
     }, qc)
 
     const listTipo: ITipoImpuesto[] = query.data?.data ?? []

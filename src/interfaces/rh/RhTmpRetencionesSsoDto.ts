@@ -1,6 +1,7 @@
 
 export interface RhTmpRetencionesSsoDto{
 
+  id:number;
   codigoRetencionAporte:number;
   secuencia:number;
   unidadEjecutora :string;

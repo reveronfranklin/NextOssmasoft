@@ -1,35 +1,37 @@
+
 import { DataGrid } from "@mui/x-data-grid"
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
+import { Box, styled } from '@mui/material'
+import { useState } from "react"
 import Spinner from 'src/@core/components/spinner'
 import useServices from 'src/adm/solicitudCompromiso/services/useServices'
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
-import ColumnsDetalleDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/detalle/ColumnsDataGrid'
-import { useState } from "react"
-import { Box, styled } from '@mui/material'
+import ColumnsPucDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/puc/ColumnsPucDataGrid'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 350,
+    height: 400,
     overflowY: 'auto',
+    marginTop: '1rem',
 }))
 
-const DataGridDetalleSolicitudComponent = (props: any) => {
+const DataGridPucDetalleSolicitud = (props: any) => {
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
 
-    const { getDetalleSolicitudFetchTable } = useServices()
+    const { fetchPucDetalleSolicitud } = useServices()
     const qc: QueryClient = useQueryClient()
 
     const query = useQuery({
-        queryKey: ['detalleSolicitudCompromiso', props.codigoSolicitud],
-        queryFn: () => getDetalleSolicitudFetchTable(props.codigoSolicitud),
+        queryKey: ['pucDetalleSolicitud', props.codigoDetalleSolicitud],
+        queryFn: () => fetchPucDetalleSolicitud(props.codigoDetalleSolicitud),
         initialData: () => {
-            return qc.getQueryData(['detalleSolicitudCompromiso', props.codigoSolicitud])
+            return qc.getQueryData(['pucDetalleSolicitud', props.codigoDetalleSolicitud])
         },
-        staleTime: 1000 * 60,
+        staleTime: 1000 * 60 * 60,
         retry: 3
     }, qc)
 
-    const rows = query?.data?.data.data || []
-    const rowCount = rows.length || 0
+    const rows = query?.data?.data.data || [];
+    const rowCount = rows.length || 0;
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -49,15 +51,15 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                     <DataGrid
                         autoHeight
                         pagination
-                        getRowId={(row) => row.codigoDetalleSolicitud}
+                        getRowId={(row) => row.codigoPucSolicitud}
                         rows={paginatedRows}
                         rowCount={rowCount}
-                        columns={ColumnsDetalleDataGrid() as any}
+                        columns={ColumnsPucDataGrid() as any}
+                        pageSize={pageSize}
+                        page={pageNumber}
                         getRowHeight={() => 'auto'}
                         sortingMode='server'
                         paginationMode='server'
-                        pageSize={pageSize}
-                        page={pageNumber}
                         rowsPerPageOptions={[5, 10, 20]}
                         onPageSizeChange={handleSizeChange}
                         onPageChange={handlePageChange}
@@ -71,7 +73,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 const Component = (props: any) => {
     return (
         <StyledDataGridContainer>
-            <DataGridDetalleSolicitudComponent codigoSolicitud={props.codigoSolicitud} />
+            <DataGridPucDetalleSolicitud codigoDetalleSolicitud={props.codigoDetalleSolicitud} />
         </StyledDataGridContainer>
     )
 }

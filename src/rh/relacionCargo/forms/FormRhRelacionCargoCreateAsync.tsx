@@ -70,8 +70,10 @@ interface FormInputs {
   sueldo: number
   fechaIni:Date;
   fechaFin: Date;
+  fechaIngreso:Date;
   fechaIniString:string;
   fechaFinString: string;
+  fechaIngresoString:string;
 
 }
 
@@ -132,8 +134,10 @@ const defaultValues:IRhRelacionCargoDto = {
     fechaFinObj :rhRelacionCargoSeleccionado.fechaFinObj,
     codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
     searchText:'',
-    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
-
+    codigoIcp:rhRelacionCargoSeleccionado.codigoIcp,
+    fechaIngresoObj :rhRelacionCargoSeleccionado.fechaIngresoObj,
+    fechaIngresoString:rhRelacionCargoSeleccionado.fechaIngresoString,
+    fechaIngreso:rhRelacionCargoSeleccionado.fechaIngreso,
 
   }
 
@@ -192,6 +196,17 @@ const defaultValues:IRhRelacionCargoDto = {
     }
   }
 
+  const handlerIngreso=(ingreso:Date)=>{
+
+
+    setValue('fechaIngresoString',ingreso.toISOString())
+    setValue('fechaIngreso',ingreso)
+    const fechaObj:IFechaDto =fechaToFechaObj(ingreso);
+    const rhRelacionCargoTmp= {...rhRelacionCargoSeleccionado,fechaIngreso:ingreso,fechaIngresoString:ingreso.toISOString(),fechaIngresoObj:fechaObj};
+    dispatch(setRhRelacionCargoSeleccionado(rhRelacionCargoTmp))
+
+  }
+
   const handlerSueldo = (value: string) => {
     const valueInt = value === '' ? 0 : parseFloat(value)
     setValue('sueldo', valueInt)
@@ -218,7 +233,9 @@ const defaultValues:IRhRelacionCargoDto = {
       sueldo: data.sueldo,
       fechaIni:data.fechaIni,
       fechaFin:data.fechaFin,
-      codigoIcp:rhRelacionCargoSeleccionado.codigoIcp
+      codigoIcp:rhRelacionCargoSeleccionado.codigoIcp,
+      fechaIngreso:data.fechaIngreso,
+
 
 
     };
@@ -342,7 +359,7 @@ const defaultValues:IRhRelacionCargoDto = {
                 </FormControl>
             </Grid>
              {/* sueldo*/}
-             <Grid item sm={4} xs={12}>
+             <Grid item sm={3} xs={12}>
               <FormControl fullWidth>
                                   <Controller
                                       name='sueldo'
@@ -382,7 +399,7 @@ const defaultValues:IRhRelacionCargoDto = {
               </FormControl>
             </Grid>
 
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
             <DatePicker
 
 
@@ -395,7 +412,7 @@ const defaultValues:IRhRelacionCargoDto = {
                   customInput={<CustomInput label='Fecha Inicio' />}
                 />
             </Grid>
-            <Grid item  sm={4} xs={12}>
+            <Grid item  sm={3} xs={12}>
                 <DatePicker
                   selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaFinObj)}
                   id='date-time-picker-desde'
@@ -406,7 +423,17 @@ const defaultValues:IRhRelacionCargoDto = {
                   customInput={<CustomInput label='Fecha Fin' />}
                 />
             </Grid>
-
+            <Grid item  sm={3} xs={12}>
+                <DatePicker
+                  selected={ getDateByObject(rhRelacionCargoSeleccionado.fechaIngresoObj)}
+                  id='date-time-picker-desde'
+                  dateFormat='dd/MM/yyyy'
+                  popperPlacement={popperPlacement}
+                  onChange={(date: Date) => handlerIngreso(date)}
+                  placeholderText='Click to select a date'
+                  customInput={<CustomInput label='Fecha Ingreso' />}
+                />
+            </Grid>
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>

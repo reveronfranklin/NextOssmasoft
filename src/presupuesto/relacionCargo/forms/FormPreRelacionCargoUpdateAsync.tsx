@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl'
 
 import FormHelperText from '@mui/material/FormHelperText'
 
-import CircularProgress from '@mui/material/CircularProgress'
+// import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Third Party Imports
 import toast from 'react-hot-toast'
@@ -127,7 +127,8 @@ const FormPreRelacionCargoUpdateAsync = () => {
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
-  const [loading, setLoading] = useState<boolean>(false)
+  // const [loading, setLoading] = useState<boolean>(false)
+
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false);
 
@@ -211,7 +212,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
     const deleteRelacionCargo : IPreRelacionCargosDeleteDto={
       codigoRelacionCargo:preRelacionCargoSeleccionado.codigoRelacionCargo
     }
-    const responseAll= await ossmmasofApi.post<any>('/PreCargos/Delete',deleteRelacionCargo);
+    const responseAll= await ossmmasofApi.post<any>('/PreRelacionCargos/Delete',deleteRelacionCargo);
     setErrorMessage(responseAll.data.message)
     if(responseAll.data.isValid){
 
@@ -246,7 +247,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
     setValue('otro', valueInt)
   }
   const onSubmit = async (data:FormInputs) => {
-    setLoading(true)
+    // setLoading(true)
 
   
     const updateRelacionCargo:IPreRelacionCargosUpdateDto= {
@@ -288,7 +289,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
     //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     //await sleep(2000)
 
-    setLoading(false)
+    // setLoading(false)
     toast.success('Form Submitted')
   }
   useEffect(() => {
@@ -681,7 +682,7 @@ const FormPreRelacionCargoUpdateAsync = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Button size='large' type='submit' variant='contained'>
+             {/*  <Button size='large' type='submit' variant='contained'>
                 {loading ? (
                   <CircularProgress
                     sx={{
@@ -693,7 +694,8 @@ const FormPreRelacionCargoUpdateAsync = () => {
                   />
                 ) : null}
                 Guardar
-              </Button>
+              </Button> */}
+
               <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
                 Eliminar
               </Button>

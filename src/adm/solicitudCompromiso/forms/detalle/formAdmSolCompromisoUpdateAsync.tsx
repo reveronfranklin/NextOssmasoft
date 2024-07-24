@@ -17,6 +17,8 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { setVerSolicitudCompromisoDetalleActive } from "src/store/apps/adm"
 import { useDispatch } from "react-redux"
 
+import IndexPucSolicitudCompromiso from '../puc/formAdmSolicitudCompromisoIndexAsync'
+
 const UpdateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<number>(0)
     const [precioUnitario, setPrecioUnitario] = useState<number>(0)
@@ -343,6 +345,14 @@ const UpdateDetalleSolicitudCompromiso = () => {
                         )}
                     </Box>
                 </form>
+                <Grid container spacing={5} paddingTop={0}>
+                    <Grid item sm={12} xs={12}>
+                        <IndexPucSolicitudCompromiso
+                            codigoSolicitud={defaultValues.codigoSolicitud}
+                            codigoDetalleSolicitud={defaultValues.codigoDetalleSolicitud}
+                        />
+                    </Grid>
+                </Grid>
             </CardContent>
         </Card>
     )

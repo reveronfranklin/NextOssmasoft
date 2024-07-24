@@ -6,22 +6,22 @@ import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
 
 import {
-    setSolicitudCompromisoSeleccionadoDetalle,
-    setVerSolicitudCompromisoDetalleActive
+    setPucSeleccionado,
+    setVerSolicitudCompromisoPucActive
 } from "src/store/apps/adm"
 
-function ColumnsDetalleDataGrid() {
+function ColumnsPucDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
-        dispatch(setSolicitudCompromisoSeleccionadoDetalle(row))
-        dispatch(setVerSolicitudCompromisoDetalleActive(true))
+        dispatch(setPucSeleccionado(row))
+        dispatch(setVerSolicitudCompromisoPucActive(true))
     }
 
     return [
         {
             flex: 0,
-            minWidth: 80,
+            minWidth: 20,
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
@@ -37,55 +37,65 @@ function ColumnsDetalleDataGrid() {
         },
         {
             flex: 1,
-            headerName: 'cantidad',
-            field: 'cantidad',
+            headerName: 'IPC',
+            field: 'icpConcat',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.cantidad}
+                    {params.row.icpConcat}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'descripcionUnidad',
-            field: 'descripcionUnidad',
+            headerName: 'PUC',
+            field: 'pucConcat',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionUnidad}
+                    {params.row.pucConcat}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'descripcion',
-            field: 'descripcion',
+            headerName: 'Financiado',
+            field: 'descripcionFinanciado',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcion}
+                    {params.row.descripcionFinanciado}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'precioUnitario',
-            field: 'precioUnitario',
+            headerName: 'Monto',
+            field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.precioUnitario}
+                    {params.row.monto}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'precioTotal',
-            field: 'precioTotal',
+            headerName: 'Comprometido',
+            field: 'montoComprometido',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.precioTotal}
+                    {params.row.montoComprometido}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: 'Anulado',
+            field: 'montoAnulado',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.montoAnulado}
                 </Typography>
             )
         },
     ]
 }
 
-export default ColumnsDetalleDataGrid
+export default ColumnsPucDataGrid

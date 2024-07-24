@@ -1,25 +1,24 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Filters } from '../../interfaces/filters.interfaces'
-import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
-
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
+import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 450,
+    height: 600,
     overflowY: 'auto',
 }))
 
 const DataGridComponent = () => {
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
     const debounceTimeoutRef = useRef<any>(null)
 
@@ -31,14 +30,14 @@ const DataGridComponent = () => {
         pageNumber,
         searchText,
         CodigoSolicitud: 0,
-        CodigoPresupuesto: 0,
+        CodigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
     }
 
     const query = useQuery({
-        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText],
+        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
         queryFn: () => fetchTableData({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
-            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
         },
         staleTime: 1000 * 60,
         retry: 3,
@@ -73,7 +72,7 @@ const DataGridComponent = () => {
             return
         }
 
-        const newBuffer = buffer + value
+        const newBuffer = value
         setBuffer(newBuffer)
         debouncedSearch()
     }
@@ -99,6 +98,7 @@ const DataGridComponent = () => {
                         columns={ColumnsDataGrid() as any}
                         pageSize={pageSize}
                         page={pageNumber}
+                        getRowHeight={() => 'auto'}
                         sortingMode='server'
                         paginationMode='server'
                         rowsPerPageOptions={[5, 10, 50]}

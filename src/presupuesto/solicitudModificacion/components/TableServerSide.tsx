@@ -7,7 +7,7 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
-import dayjs from 'dayjs'
+
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -219,7 +219,7 @@ const TableServerSide = () => {
       field: 'Fecha',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaSolicitudString).format('DD/MM/YYYY')}
+          {params.row.fechaSolicitudString}
         </Typography>
       )
     },
