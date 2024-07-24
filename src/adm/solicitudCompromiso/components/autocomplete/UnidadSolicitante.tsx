@@ -4,18 +4,20 @@ import { RootState } from "src/store"
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
 
 import useServices from '../../services/useServices'
-import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from "@mui/material";
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 
 const UnidadSolicitante = (props: any) => {
     const { unidadEjecutora } = useServices()
     const { preMtrUnidadEjecutora } = useSelector((state: RootState) => state.presupuesto)
+    const qc: QueryClient = useQueryClient()
 
     const query = useQuery({
         queryKey: ['unidadEjecutora'],
         queryFn: () => unidadEjecutora(),
         retry: 3,
-    })
+        staleTime: 5000 * 60 * 60,
+    }, qc)
 
     const icp: IListPreMtrUnidadEjecutora = preMtrUnidadEjecutora?.filter(elemento => elemento?.codigoIcp === props.id)[0]
 

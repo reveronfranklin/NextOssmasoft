@@ -1,4 +1,6 @@
 export interface IFilterPrePresupuestoDto{
-  codigoPresupuesto:number;
-
+  CodigoPresupuesto: number;
+  page?: number
+  pageSize?: number
+  searchText?: string
 }

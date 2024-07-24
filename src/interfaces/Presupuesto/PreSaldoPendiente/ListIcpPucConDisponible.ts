@@ -7,6 +7,7 @@ export interface IListIcpPucConDisponible {
   codigoPucConcat: string
   denominacionPuc: string
   financiadoId: number
+  codigoFinanciado: number
   denominacionFinanciado: string
   disponible: number
   searchText: string

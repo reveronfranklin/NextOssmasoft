@@ -1,13 +1,10 @@
 import { useDispatch } from 'react-redux'
-
 import { CrudOperation } from '../../../enums/CrudOperations.enum'
 import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import { CellType } from '../../../interfaces/cellType.interfaces'
-
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-
 
 import {
     setVerSolicitudCompromisosActive,
@@ -26,8 +23,8 @@ function ColumnsDataGrid() {
 
     return [
         {
-            flex: 0.05,
-            minWidth: 80,
+            flex: 0,
+            minWidth: 40,
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
@@ -42,17 +39,8 @@ function ColumnsDataGrid() {
             )
         },
         {
-            Width: 10,
-            headerName: 'Id',
-            field: 'codigoSolicitud',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigoSolicitud}
-                </Typography>
-            )
-        },
-        {
-            minWidth: 200,
+            flex: 0,
+            minWidth: 180,
             headerName: '# Solicitud',
             field: 'numeroSolicitud',
             renderCell: (params: GridRenderCellParams) => (
@@ -62,6 +50,7 @@ function ColumnsDataGrid() {
             )
         },
         {
+            flex: 0,
             with: 40,
             headerName: 'Fecha',
             field: 'fechaSolicitudString',
@@ -72,7 +61,8 @@ function ColumnsDataGrid() {
             )
         },
         {
-            minWidth: 300,
+            flex: 0,
+            minWidth: 180,
             headerName: 'Tipo Solicitud',
             field: 'descripcionTipoSolicitud',
             renderCell: (params: GridRenderCellParams) => (
@@ -82,17 +72,24 @@ function ColumnsDataGrid() {
             )
         },
         {
-            minWidth: 350,
+            flex: 0.25,
+            minWidth: 300,
             headerName: 'Solicitante',
             field: 'denominacionSolicitante',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.denominacionSolicitante === '' ? 'NO DISPONIBLE' : params.row.denominacionSolicitante}
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'left' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                                {params.row.denominacionSolicitante === '' ? 'NO DISPONIBLE' : params.row.denominacionSolicitante}
+                            </Typography>
+                        </Box>
+                    </Box>
+                )
+            }
         },
         {
-            minWidth: 150,
+            flex: 1,
             headerName: 'Proveedor',
             field: 'nombreProveedor',
             renderCell: (params: GridRenderCellParams) => (
@@ -102,7 +99,7 @@ function ColumnsDataGrid() {
             )
         },
         {
-            with: 15,
+            flex: 1,
             headerName: 'Estado',
             field: 'descripcionStatus',
             renderCell: (params: GridRenderCellParams) => (

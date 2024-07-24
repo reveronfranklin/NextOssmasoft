@@ -16,6 +16,7 @@ const TipoSolicitud = (props: any) => {
         queryKey: ['tipoSolicitud'],
         queryFn: () => fetchSolicitudCompromiso(),
         retry: 3,
+        staleTime: 5000 * 60 * 60,
     }, qc)
 
     const listTipo: ITipoSolicitud [] = query.data?.data ?? []

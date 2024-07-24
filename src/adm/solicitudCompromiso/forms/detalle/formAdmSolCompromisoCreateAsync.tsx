@@ -3,9 +3,9 @@ import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
-import useServices from './../../services/useServices';
 import { FormInputs } from './../../interfaces/detalle/formImputs.interfaces'
 import { CreateDetalle } from '../../interfaces/detalle/create.interfaces'
+import useServices from './../../services/useServices';
 import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/autocomplete/TipoUnidades'
 import ListProducts from '../../components/autocomplete/ListProductos'
@@ -82,14 +82,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     const resetForm = () => {
         setCantidad(0)
         setPrecioUnitario(0)
-        setImpuesto(0)
-        setTotal(0)
-
-        setValue('cantidad', 0)
-        setValue('tipoImpuestoId', 0)
-        setValue('udmId', 0)
-        setValue('codigoProducto', 0)
-        reset(defaultValues)
+        reset()
     }
 
     const onSubmitCreateDetalle = async (dataForm: FormInputs) => {
@@ -104,16 +97,20 @@ const CreateDetalleSolicitudCompromiso = () => {
             tipoImpuestoId: dataForm.tipoImpuestoId,
             codigoProducto: dataForm.codigoProducto,
         }
+        try {
+            const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
 
-        const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
+            if (responseCreateDetalle?.data.isValid) {
+                qc.invalidateQueries({
+                    queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+                })
+            }
 
-        if (responseCreateDetalle?.data.isValid) {
-            qc.invalidateQueries({
-                queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
-            })
+            setErrorMessage(responseCreateDetalle?.data.message)
+
+        }   catch (error) {
+            setErrorMessage('Error al crear el detalle')
         }
-
-        setErrorMessage(responseCreateDetalle?.data.message)
         setLoading(false)
     }
 
@@ -124,49 +121,32 @@ const CreateDetalleSolicitudCompromiso = () => {
             marginBottom: 5,
             backgroundColor: '#fff',
         }}>
-            <CardHeader title='Crear un nuevo detalle' />
+            <CardHeader title='Crear detalle' />
             <CardContent>
                 <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
                     <Grid container spacing={5} paddingTop={5}>
                         <Grid item sm={2} xs={12}>
-                            <FormControl fullWidth>
-                                <Controller
-                                    name='cantidad'
-                                    control={control}
-                                    rules={{
-                                        required: false,
-                                        min: 0,
-                                    }}
-                                    render={({ field: { value } }) => (
-                                        <NumericFormat
-                                            value={value}
-                                            customInput={TextField}
-                                            thousandSeparator="."
-                                            decimalSeparator=","
-                                            allowNegative={false}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                            label="cantidad"
-                                            onValueChange={(values: any) => {
-                                                const { value } = values
-                                                setCantidad(value)
-                                                setErrorMessage('')
-                                            }}
-                                            placeholder='Cantidad'
-                                            error={Boolean(errors.codigoSolicitud)}
-                                            aria-describedby='validation-async-cantidad'
-                                            inputProps={{
-                                                type: 'text',
-                                            }}
-                                        />
-                                    )}
-                                />
-                                {errors.codigoSolicitud && (
-                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cantidad'>
-                                        This field is required
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
+                            <NumericFormat
+                                value={cantidad}
+                                customInput={TextField}
+                                thousandSeparator="."
+                                decimalSeparator=","
+                                allowNegative={false}
+                                decimalScale={2}
+                                fixedDecimalScale={true}
+                                label="cantidad"
+                                onValueChange={(values: any) => {
+                                    const { value } = values
+                                    setCantidad(value)
+                                    setErrorMessage('')
+                                }}
+                                placeholder='Cantidad'
+                                error={Boolean(errors.codigoSolicitud)}
+                                aria-describedby='validation-async-cantidad'
+                                inputProps={{
+                                    type: 'text',
+                                }}
+                            />
                         </Grid>
                         <Grid item sm={4} xs={12}>
                             <TipoUnidades
@@ -212,39 +192,26 @@ const CreateDetalleSolicitudCompromiso = () => {
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
                         <Grid item sm={3} xs={12}>
-                            <FormControl fullWidth>
-                                <Controller
-                                    name='precioUnitario'
-                                    control={control}
-                                    render={({ field: { value } }) => (
-                                        <NumericFormat
-                                            value={value}
-                                            customInput={TextField}
-                                            thousandSeparator="."
-                                            decimalSeparator=","
-                                            allowNegative={false}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                            label="Precio Unitario"
-                                            onValueChange={(values: any) => {
-                                                const { value } = values
-                                                setPrecioUnitario(value)
-                                            }}
-                                            placeholder='Precio Unitario'
-                                            error={Boolean(errors.codigoSolicitud)}
-                                            aria-describedby='validation-async-cantidad'
-                                            inputProps={{
-                                                type: 'text',
-                                            }}
-                                        />
-                                    )}
-                                />
-                                {errors.codigoSolicitud && (
-                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-cantidad-comprada'>
-                                        This field is required
-                                    </FormHelperText>
-                                )}
-                            </FormControl>
+                            <NumericFormat
+                                value={precioUnitario}
+                                customInput={TextField}
+                                thousandSeparator="."
+                                decimalSeparator=","
+                                allowNegative={false}
+                                decimalScale={2}
+                                fixedDecimalScale={true}
+                                label="Precio Unitario"
+                                onValueChange={(values: any) => {
+                                    const { value } = values
+                                    setPrecioUnitario(value)
+                                }}
+                                placeholder='Precio Unitario'
+                                error={Boolean(errors.codigoSolicitud)}
+                                aria-describedby='validation-async-cantidad'
+                                inputProps={{
+                                    type: 'text',
+                                }}
+                            />
                         </Grid>
                         <Grid item sm={6} xs={12}>
                             <TipoImpuesto
