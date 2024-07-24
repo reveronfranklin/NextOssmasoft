@@ -7,9 +7,15 @@ const ListProducts = (props: any) => {
     const { getListProducts } = useServices()
     const qc: QueryClient = useQueryClient()
 
+    const filter = {
+        "PageSize": 10,
+        "PageNumber": 0,
+        "SearchText": ""
+    }
+
     const query = useQuery({
         queryKey: ['getListProducts'],
-        queryFn: () => getListProducts(),
+        queryFn: () => getListProducts(filter),
         initialData: () => {
             return qc.getQueryData(['getListProducts'])
         },

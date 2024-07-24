@@ -155,14 +155,10 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
-    const getListProducts = async () => {
+    const getListProducts = async (filters: any) => {
         try {
-            const filter = {
-                "PageSize": 10,
-                "PageNumber": 0,
-                "SearchText": "BONO"
-            }
-            const listProducts = await ossmmasofApi.post<any>(UrlServices.GETLISTPRODUCTOS, filter)
+            console.log('getListProducts', filters)
+            const listProducts = await ossmmasofApi.post<any>(UrlServices.GETLISTPRODUCTOS, filters)
 
             return listProducts.data
 
