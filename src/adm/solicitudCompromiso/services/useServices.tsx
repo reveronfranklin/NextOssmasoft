@@ -41,7 +41,6 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
-            filters.CodigoPresupuesto = presupuestoSeleccionado?.codigoPresupuesto ?? 17 //todo quitar el ?? 17
             const fetchData = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
 
             return fetchData.data

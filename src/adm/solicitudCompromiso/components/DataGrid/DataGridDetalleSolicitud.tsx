@@ -53,6 +53,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                         rows={paginatedRows}
                         rowCount={rowCount}
                         columns={ColumnsDetalleDataGrid() as any}
+                        getRowHeight={() => 'auto'}
                         sortingMode='server'
                         paginationMode='server'
                         pageSize={pageSize}

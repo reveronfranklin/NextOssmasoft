@@ -20,8 +20,6 @@ const DataGridPucDetalleSolicitud = (props: any) => {
     const { fetchPucDetalleSolicitud } = useServices()
     const qc: QueryClient = useQueryClient()
 
-    console.log('props.codigoDetalleSolicitud', props.codigoDetalleSolicitud)
-
     const query = useQuery({
         queryKey: ['pucDetalleSolicitud', props.codigoDetalleSolicitud],
         queryFn: () => fetchPucDetalleSolicitud(props.codigoDetalleSolicitud),
@@ -53,12 +51,13 @@ const DataGridPucDetalleSolicitud = (props: any) => {
                     <DataGrid
                         autoHeight
                         pagination
-                        getRowId={(row) => row.codigoDetalleSolicitud}
+                        getRowId={(row) => row.codigoPucSolicitud}
                         rows={paginatedRows}
                         rowCount={rowCount}
                         columns={ColumnsPucDataGrid() as any}
                         pageSize={pageSize}
                         page={pageNumber}
+                        getRowHeight={() => 'auto'}
                         sortingMode='server'
                         paginationMode='server'
                         rowsPerPageOptions={[5, 10, 20]}
