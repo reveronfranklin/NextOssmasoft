@@ -23,10 +23,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
 
     const defaultValues: FormInputs = {
         codigoPucSolicitud: 0,
-
-        // codigoDetalleSolicitud: props.codigoDetalleSolicitud, //TODO quitar para subir
-
-        codigoDetalleSolicitud: 49172,
+        codigoDetalleSolicitud: props.codigoDetalleSolicitud,
         codigoSolicitud: props.codigoSolicitud,
         codigoSaldo: 0,
         codigoIcp: 0,

@@ -54,6 +54,7 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             const filter = { tituloId: 35 }
             const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+
             if (response.data.isValid) {
                 dispatch(setListTipoDeSolicitud(response.data.data as ITipoSolicitud[]))
             }
@@ -69,6 +70,7 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             const filter = { tituloId: 18 }
             const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+
             if (response.data.isValid) {
                 dispatch(setListTipoImpuesto(response.data ))
             }
@@ -85,6 +87,7 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             const filter = { tituloId: 21 }
             const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
+
             if (response.data.isValid) {
                 dispatch(setListTipoUnidades(response.data ))
             }
@@ -100,6 +103,7 @@ const useServices = (initialFilters: Filters = {}) => {
     const fetchProveedores = useCallback(async () => {
         try {
             const response = await ossmmasofApi.get<any>(UrlServices.PROVEEDORES)
+
             if (response.data.isValid) {
                 dispatch(setListProveedores(response.data.data))
             }
@@ -157,7 +161,6 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const getListProducts = async (filters: any) => {
         try {
-            console.log('getListProducts', filters)
             const listProducts = await ossmmasofApi.post<any>(UrlServices.GETLISTPRODUCTOS, filters)
 
             return listProducts.data
@@ -210,10 +213,8 @@ const useServices = (initialFilters: Filters = {}) => {
     const fetchPucDetalleSolicitud = async (codigoDetalleSolicitud: number) => {
         try {
             const filter = { codigoDetalleSolicitud }
-            console.log('filter', filter)
-            const filterTest = { codigoDetalleSolicitud: 49172 }
 
-            return await ossmmasofApi.post<any>(UrlServices.GETPUCDETALLE, filterTest)
+            return await ossmmasofApi.post<any>(UrlServices.GETPUCDETALLE, filter)
 
         } catch (e: any) {
             setError(e)

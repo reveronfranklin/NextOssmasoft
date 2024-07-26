@@ -8,6 +8,7 @@ export const admSolicitudCompromisoSlice = createSlice({
         verSolicitudCompromisosActive: false,
         verSolicitudCompromisoDetalleActive: false,
         verSolicitudCompromisoPucActive: false,
+        verDialogListProductsInfoActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
         solicitudCompromisoSeleccionadoDetalle: {} as any,
@@ -26,6 +27,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setVerSolicitudCompromisoPucActive: (state, action) => {
             state.verSolicitudCompromisoPucActive = action.payload
+        },
+        setVerDialogListProductsInfoActive: (state, action) => {
+            state.verDialogListProductsInfoActive = action.payload
         },
         setOperacionCrudAdmSolCompromiso: (state, action) => {
             state.operacionCrudAdmSolCompromiso = action.payload
@@ -61,6 +65,7 @@ export const {
         setSolicitudCompromisoSeleccionadoDetalle,
         setVerSolicitudCompromisoDetalleActive,
         setVerSolicitudCompromisoPucActive,
+        setVerDialogListProductsInfoActive,
         setPucSeleccionado,
         setListTipoImpuesto,
         setListTipoUnidades,
