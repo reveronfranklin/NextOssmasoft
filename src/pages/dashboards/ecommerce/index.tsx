@@ -29,7 +29,12 @@ const EcommerceDashboard = () => {
         <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
           <EcommerceCongratulations />
         </Grid>
-        <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
+        <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
+          <EcommerceCongratulations />
+        </Grid>
+
+
+        {/* <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
           <CardStatisticsVerticalComponent
             stats='1.2k'
             color='info'
@@ -104,7 +109,9 @@ const EcommerceDashboard = () => {
         </Grid>
         <Grid item xs={12} md={6} lg={4} sx={{ order: 0 }}>
           <EcommerceMeetingSchedule />
-        </Grid>
+        </Grid> */}
+
+
       </Grid>
     </ApexChartWrapper>
   )

@@ -101,7 +101,7 @@ const CreateDetalleSolicitudCompromiso = () => {
         if (dataForm.descripcion === null || dataForm.descripcion == '') {
             nuevoDetalle.descripcion = 'Sin descripción'
         }
-
+console.log('nuevoDetalle',nuevoDetalle)
         try {
             const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
 
