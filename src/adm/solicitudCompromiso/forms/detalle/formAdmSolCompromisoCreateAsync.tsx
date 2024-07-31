@@ -13,6 +13,9 @@ import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
+import { useDispatch } from "react-redux";
+import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 
 const CreateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<number>(0)
@@ -25,6 +28,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
     const { fetchCreateDetalleSolicitudCompromiso } = useServices()
     const qc: QueryClient = useQueryClient()
+    const dispatch = useDispatch()
 
     const defaultValues: any = {
         codigoDetalleSolicitud: 0,
@@ -119,15 +123,20 @@ console.log('nuevoDetalle',nuevoDetalle)
         setLoading(false)
     }
 
+    const viewDialogListProduct = () => {
+        dispatch(setVerDialogListProductsInfoActive(true))
+    }
+
     return (
-        <Card sx={{
-            border: 0,
-            boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1)',
-            marginBottom: 5,
-            backgroundColor: '#fff',
-        }}>
-            <CardHeader title='Crear detalle' />
-            <CardContent>
+        <>
+            <Card sx={{
+                border: 0,
+                boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1)',
+                marginBottom: 5,
+                backgroundColor: '#fff',
+            }}>
+                <CardHeader title='Crear detalle' />
+                <CardContent>
                 <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
                     <Grid container spacing={5} paddingTop={5}>
                         <Grid item sm={2} xs={12}>
@@ -254,6 +263,9 @@ console.log('nuevoDetalle',nuevoDetalle)
                                 </>
                             ) : '+ Añadir'}
                         </Button>
+                            <Button variant='contained' color='success' size='small' onClick={viewDialogListProduct}>
+                            Productos
+                        </Button>
                         <Button
                             onClick={resetForm}
                             variant='outlined'
@@ -270,8 +282,10 @@ console.log('nuevoDetalle',nuevoDetalle)
                         )}
                     </Box>
                 </form>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+            <DialogListProductsInfo />
+        </>
     )
 }
 
