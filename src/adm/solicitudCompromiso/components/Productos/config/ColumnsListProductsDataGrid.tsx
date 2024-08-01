@@ -1,7 +1,6 @@
 import { Box, Typography, Tooltip, IconButton } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
-import { CellType } from '../../../interfaces/cellType.interfaces'
 import { } from "src/store/apps/adm"
 
 // import { useDispatch } from 'react-redux'
@@ -23,7 +22,7 @@ function ColumnsListProductsDataGrid() {
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
-            renderCell: ({ row }: CellType) => (
+            renderCell: () => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Eliminar'>
                         <IconButton size='small' onClick={() => handleEdit()}>
