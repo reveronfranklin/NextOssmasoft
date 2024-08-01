@@ -1,4 +1,4 @@
-import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress, Box } from "@mui/material"
+import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress, Box, Tooltip, IconButton } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useSelector } from 'react-redux'
@@ -8,24 +8,28 @@ import { CreateDetalle } from '../../interfaces/detalle/create.interfaces'
 import useServices from './../../services/useServices';
 import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/autocomplete/TipoUnidades'
-import ListProducts from '../../components/autocomplete/ListProductos'
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
 import { useDispatch } from "react-redux";
+import Icon from 'src/@core/components/icon'
 import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
+import { Product } from './../../components/Productos/interfaces/product.interfaces'
 
 const CreateDetalleSolicitudCompromiso = () => {
-    const [cantidad, setCantidad] = useState<number>(0)
-    const [precioUnitario, setPrecioUnitario] = useState<number>(0)
+    const [cantidad, setCantidad] = useState<any>(0)
+    const [precioUnitario, setPrecioUnitario] = useState<any>(0)
     const [impuesto, setImpuesto] = useState<number>(0)
     const [total, setTotal] = useState<any>(0)
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
+    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado )
+
+    const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
     const { fetchCreateDetalleSolicitudCompromiso } = useServices()
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
@@ -40,6 +44,12 @@ const CreateDetalleSolicitudCompromiso = () => {
         tipoImpuestoId: 0,
         codigoProducto: 0,
     }
+
+    useEffect(() => {
+        if (productSeleccionado) {
+            setValue('codigoProducto', productSeleccionado.codigo)
+        }
+    }, [productSeleccionado])
 
     const {
         control,
@@ -57,11 +67,6 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     const handleTipoUnidadChange = (tipoUnidad: number) => {
         setValue('udmId', tipoUnidad)
-        setErrorMessage('')
-    }
-
-    const handleProductChange = (producto: number) =>{
-        setValue('codigoProducto', producto)
         setErrorMessage('')
     }
 
@@ -86,6 +91,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     const resetForm = () => {
         setCantidad(0)
         setPrecioUnitario(0)
+        setLoading(false)
         reset()
     }
 
@@ -149,16 +155,22 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 decimalScale={2}
                                 fixedDecimalScale={true}
                                 label="cantidad"
+                                onFocus={(event) => {
+                                    event.target.select()
+                                    setCantidad('')
+                                }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setCantidad(value)
                                     setErrorMessage('')
                                 }}
-                                placeholder='Cantidad'
+                                placeholder='0,00'
                                 error={Boolean(errors.codigoSolicitud)}
                                 aria-describedby='validation-async-cantidad'
                                 inputProps={{
                                     type: 'text',
+                                    inputMode: 'numeric',
+                                    autoFocus: true
                                 }}
                             />
                         </Grid>
@@ -169,10 +181,29 @@ const CreateDetalleSolicitudCompromiso = () => {
                             />
                         </Grid>
                         <Grid item sm={6} xs={12}>
-                            <ListProducts
-                                id={defaultValues.codigoProducto}
-                                onSelectionChange={handleProductChange}
-                            />
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <TextField
+                                        variant="outlined"
+                                        style={{ flex: 1, border: 'none', borderRight: 'none', marginRight: '10px' }}
+                                        value={labelProduct}
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                    />
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    size="large"
+                                    onClick={viewDialogListProduct}
+                                        style={{ height: '100%', borderRadius: '10', padding: '13px' }}
+                                >
+                                    <Tooltip title='ver Productos'>
+                                        <IconButton size='small'>
+                                            <Icon icon='mdi:search' color="white" fontSize={20} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Button>
+                            </Box>
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
@@ -215,15 +246,21 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 decimalScale={2}
                                 fixedDecimalScale={true}
                                 label="Precio Unitario"
+                                onFocus={(event) => {
+                                    event.target.select()
+                                    setCantidad('');
+                                }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setPrecioUnitario(value)
                                 }}
-                                placeholder='Precio Unitario'
+                                placeholder='0,00'
                                 error={Boolean(errors.codigoSolicitud)}
                                 aria-describedby='validation-async-cantidad'
                                 inputProps={{
                                     type: 'text',
+                                    inputMode: 'numeric',
+                                    autoFocus: true,
                                 }}
                             />
                         </Grid>
@@ -262,9 +299,6 @@ const CreateDetalleSolicitudCompromiso = () => {
                                     Guardando...
                                 </>
                             ) : '+ Añadir'}
-                        </Button>
-                            <Button variant='contained' color='success' size='small' onClick={viewDialogListProduct}>
-                            Productos
                         </Button>
                         <Button
                             onClick={resetForm}
