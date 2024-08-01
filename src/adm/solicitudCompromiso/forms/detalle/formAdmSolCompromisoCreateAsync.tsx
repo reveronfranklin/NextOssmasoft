@@ -158,12 +158,10 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 label="cantidad"
                                 onFocus={(event) => {
                                     event.target.select()
-                                    setCantidad('')
                                 }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setCantidad(value)
-                                    setErrorMessage('')
                                 }}
                                 placeholder='0,00'
                                 error={Boolean(errors.codigoSolicitud)}
