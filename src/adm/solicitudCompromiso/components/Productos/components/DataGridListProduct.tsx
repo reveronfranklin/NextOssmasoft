@@ -8,6 +8,8 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import ColumnsListProductsDataGrid from '../config/ColumnsListProductsDataGrid'
 import useServices from '../../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux'
+import { setProductSeleccionado, setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
@@ -22,6 +24,7 @@ const DataGridListProduct = () => {
 
     const debounceTimeoutRef = useRef<any>(null)
 
+    const dispatch = useDispatch()
     const { getListProducts } = useServices()
     const qc: QueryClient = useQueryClient()
 
@@ -43,6 +46,11 @@ const DataGridListProduct = () => {
 
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
+
+    const handleDoubleClick = (row: any) => {
+        dispatch(setProductSeleccionado(row.row))
+        dispatch(setVerDialogListProductsInfoActive(false))
+    }
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -93,6 +101,7 @@ const DataGridListProduct = () => {
                         rowsPerPageOptions={[5, 10, 50]}
                         onPageSizeChange={handleSizeChange}
                         onPageChange={handlePageChange}
+                        onRowDoubleClick={row => handleDoubleClick(row)}
                         components={{ Toolbar: ServerSideToolbar }}
                         componentsProps={{
                             baseButton: {

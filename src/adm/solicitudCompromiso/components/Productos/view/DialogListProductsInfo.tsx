@@ -33,7 +33,6 @@ const DialogListProductsInfo = () => {
                 scroll='body'
                 onClose={() => handleSetShow(false)}
                 TransitionComponent={Transition}
-                onBackdropClick={() => handleSetShow(false)}
             >
                 <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
                     <IconButton

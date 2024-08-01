@@ -179,6 +179,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                autoFocus: true
                                             }}
                                         />
                                     )}
@@ -256,6 +257,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                autoFocus: true
                                             }}
                                         />
                                     )}

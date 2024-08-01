@@ -46,7 +46,6 @@ const DialogPreSaldoDisponibleInfo = () => {
   const { verPreSaldoDisponibleActive } = useSelector((state: RootState) => state.preSaldoDisponible)
 
   const handleSetShow = (active: boolean) => {
-    console.log('al cerrar', active)
     if (active == false) {
       const defaultValues: IListIcpPucConDisponible = {
         codigoSaldo: 0,
