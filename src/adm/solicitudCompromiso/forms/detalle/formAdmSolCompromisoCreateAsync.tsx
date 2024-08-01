@@ -155,7 +155,10 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 decimalScale={2}
                                 fixedDecimalScale={true}
                                 label="cantidad"
-                                onFocus={() => setCantidad('')}
+                                onFocus={(event) => {
+                                    event.target.select()
+                                    setCantidad('')
+                                }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setCantidad(value)
@@ -167,6 +170,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 inputProps={{
                                     type: 'text',
                                     inputMode: 'numeric',
+                                    autoFocus: true
                                 }}
                             />
                         </Grid>
@@ -242,7 +246,10 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 decimalScale={2}
                                 fixedDecimalScale={true}
                                 label="Precio Unitario"
-                                onFocus={() => setPrecioUnitario('')}
+                                onFocus={(event) => {
+                                    event.target.select()
+                                    setCantidad('');
+                                }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setPrecioUnitario(value)
@@ -252,6 +259,8 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 aria-describedby='validation-async-cantidad'
                                 inputProps={{
                                     type: 'text',
+                                    inputMode: 'numeric',
+                                    autoFocus: true,
                                 }}
                             />
                         </Grid>
