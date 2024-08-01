@@ -27,9 +27,10 @@ const CreateDetalleSolicitudCompromiso = () => {
     const [loading, setLoading] = useState<boolean>(false)
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
-    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado )
 
+    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado )
     const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
+
     const { fetchCreateDetalleSolicitudCompromiso } = useServices()
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
