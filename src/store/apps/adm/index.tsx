@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CrudOperation } from 'src/adm/solicitudCompromiso/enums/CrudOperations.enum'
 import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
+import { Product } from 'src/adm/solicitudCompromiso/components/Productos/interfaces/product.interfaces'
 
 export const admSolicitudCompromisoSlice = createSlice({
     name: 'admSolicitudCompromiso',
@@ -8,6 +9,7 @@ export const admSolicitudCompromisoSlice = createSlice({
         verSolicitudCompromisosActive: false,
         verSolicitudCompromisoDetalleActive: false,
         verSolicitudCompromisoPucActive: false,
+        verDialogListProductsInfoActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
         solicitudCompromisoSeleccionadoDetalle: {} as any,
@@ -16,6 +18,7 @@ export const admSolicitudCompromisoSlice = createSlice({
         listProveedores: {} as any[],
         listTipoImpuesto: {} as any[],
         listTipoUnidades: {} as any[],
+        productSeleccionado: {} as Product[],
     },
     reducers: {
         setVerSolicitudCompromisosActive: (state, action) => {
@@ -26,6 +29,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setVerSolicitudCompromisoPucActive: (state, action) => {
             state.verSolicitudCompromisoPucActive = action.payload
+        },
+        setVerDialogListProductsInfoActive: (state, action) => {
+            state.verDialogListProductsInfoActive = action.payload
         },
         setOperacionCrudAdmSolCompromiso: (state, action) => {
             state.operacionCrudAdmSolCompromiso = action.payload
@@ -50,6 +56,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setListTipoUnidades: (state, action) => {
             state.listTipoUnidades = action.payload
+        },
+        setProductSeleccionado: (state, action) => {
+            state.productSeleccionado = action.payload
         }
     }
 })
@@ -61,8 +70,10 @@ export const {
         setSolicitudCompromisoSeleccionadoDetalle,
         setVerSolicitudCompromisoDetalleActive,
         setVerSolicitudCompromisoPucActive,
+        setVerDialogListProductsInfoActive,
         setPucSeleccionado,
         setListTipoImpuesto,
         setListTipoUnidades,
         setListProveedores,
+        setProductSeleccionado
     } = admSolicitudCompromisoSlice.actions

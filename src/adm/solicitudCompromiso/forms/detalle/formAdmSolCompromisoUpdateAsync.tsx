@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, TextField } from "@mui/material"
+import { Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, IconButton, TextField, Tooltip } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { FormInputs } from "./../../interfaces/detalle/formImputs.interfaces"
 import { useEffect, useState } from "react"
@@ -10,14 +10,17 @@ import useServices from "../../services/useServices";
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
-import ListProducts from '../../components/autocomplete/ListProductos'
 import { UpdateDetalle } from '../../interfaces/detalle/update.interfaces'
 import { DeleteDetalle } from '../../interfaces/detalle/delete.interfaces'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { setVerSolicitudCompromisoDetalleActive } from "src/store/apps/adm"
 import { useDispatch } from "react-redux"
 
+import Icon from 'src/@core/components/icon'
+import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 import IndexPucSolicitudCompromiso from '../puc/formAdmSolicitudCompromisoIndexAsync'
+
+import { Product } from './../../components/Productos/interfaces/product.interfaces'
 
 const UpdateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<number>(0)
@@ -35,6 +38,9 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const { fetchUpdateDetalleSolicitudCompromiso, fetchDeleteDetalleSolicitudCompromiso } = useServices()
 
     const { solicitudCompromisoSeleccionadoDetalle } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
+    const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
+
     const defaultValues: FormInputs = solicitudCompromisoSeleccionadoDetalle
     const qc: QueryClient = useQueryClient()
 
@@ -48,10 +54,6 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const handleTipoImpuestoChange = (tipoImpuesto: any) => {
         setValue('tipoImpuestoId', tipoImpuesto.id)
         setImpuesto(tipoImpuesto.value)
-    }
-
-    const handleProductChange = (producto: number) => {
-        setValue('codigoProducto', producto)
     }
 
     const handleTipoUnidadChange = (tipoUnidad: number) => {
@@ -131,6 +133,10 @@ const UpdateDetalleSolicitudCompromiso = () => {
         }, 1500)
     }
 
+    const viewDialogListProduct = () => {
+        dispatch(setVerDialogListProductsInfoActive(true))
+    }
+
     return (
         <Card>
             <CardHeader title='Editar detalle solicitud' />
@@ -179,6 +185,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                autoFocus: true
                                             }}
                                         />
                                     )}
@@ -197,10 +204,29 @@ const UpdateDetalleSolicitudCompromiso = () => {
                             />
                         </Grid>
                         <Grid item sm={6} xs={12}>
-                            <ListProducts
-                                id={defaultValues.codigoProducto}
-                                onSelectionChange={handleProductChange}
-                            />
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <TextField
+                                    variant="outlined"
+                                    style={{ flex: 1, border: 'none', borderRight: 'none', marginRight: '10px' }}
+                                    value={labelProduct}
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    size="large"
+                                    onClick={viewDialogListProduct}
+                                    style={{ height: '100%', borderRadius: '10', padding: '13px' }}
+                                >
+                                    <Tooltip title='ver Productos'>
+                                        <IconButton size='small'>
+                                            <Icon icon='mdi:search' color="white" fontSize={20} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Button>
+                            </Box>
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
@@ -256,6 +282,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                autoFocus: true
                                             }}
                                         />
                                     )}
