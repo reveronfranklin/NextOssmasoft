@@ -113,8 +113,6 @@ const CreateDetalleSolicitudCompromiso = () => {
             nuevoDetalle.descripcion = 'Sin descripción'
         }
 
-        console.log('nuevoDetalle', nuevoDetalle)
-
         try {
             const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
 

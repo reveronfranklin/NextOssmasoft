@@ -9,6 +9,7 @@ const indexMonth:IIndexMonth[]=[
   {index:4,month:5},
   {index:5,month:6},
   {index:6,month:7},
+  {index:7,month:8},
   {index:8,month:9},
   {index:9,month:10},
   {index:10,month:11},
@@ -37,6 +38,7 @@ if(dateObject ){
 
 export const monthByIndex= (indexParam:number)=>{
 
+ 
   const indice= indexMonth.filter((num) => num.index === indexParam)
 
   return indice[0].month;

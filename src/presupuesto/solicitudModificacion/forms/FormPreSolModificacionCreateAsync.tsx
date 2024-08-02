@@ -384,7 +384,6 @@ const FormPreSolModificacionCreateAsync = ({
                 <Controller
                   name='numeroCorrelativo'
                   control={control}
-                  rules={{ minLength: 5 }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
@@ -393,7 +392,7 @@ const FormPreSolModificacionCreateAsync = ({
                       type='number'
                       placeholder='Numero Correlativo'
                       error={Boolean(errors.numeroCorrelativo)}
-                      aria-describedby='validation-async-codigoOficio'
+                      aria-describedby='validation-async-numeroCorrelativo'
                     />
                   )}
                 />

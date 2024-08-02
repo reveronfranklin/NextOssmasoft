@@ -35,7 +35,7 @@ const CardAward = () => {
   return (
     <Card sx={{ position: 'relative' }}>
       <CardContent>
-        <Typography variant='h6'>Congratulations John! 🥳</Typography>
+        <Typography variant='h6'>Congratulations Franklin! 🥳</Typography>
         <Typography variant='body2'>Best seller of the month</Typography>
         <Typography variant='h5' sx={{ mt: 3.5, color: 'primary.main' }}>
           $42.8k

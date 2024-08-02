@@ -2,25 +2,29 @@
 import Grid from '@mui/material/Grid'
 
 // ** Icon Imports
-import Icon from 'src/@core/components/icon'
+//import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import CardStatisticsVerticalComponent from 'src/@core/components/card-statistics/card-stats-vertical'
+//import CardStatisticsVerticalComponent from 'src/@core/components/card-statistics/card-stats-vertical'
 
 // ** Styled Component Import
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 
 // ** Demo Components Imports
-import EcommerceTable from 'src/views/dashboards/ecommerce/EcommerceTable'
+
+/* import EcommerceTable from 'src/views/dashboards/ecommerce/EcommerceTable'
 import EcommerceTotalProfit from 'src/views/dashboards/ecommerce/EcommerceTotalProfit'
 import EcommerceNewVisitors from 'src/views/dashboards/ecommerce/EcommerceNewVisitors'
 import EcommerceTotalRevenue from 'src/views/dashboards/ecommerce/EcommerceTotalRevenue'
 import EcommerceTransactions from 'src/views/dashboards/ecommerce/EcommerceTransactions'
-import EcommerceCongratulations from 'src/views/dashboards/ecommerce/EcommerceCongratulations'
+
 import EcommerceTotalSalesDonut from 'src/views/dashboards/ecommerce/EcommerceTotalSalesDonut'
 import EcommerceMeetingSchedule from 'src/views/dashboards/ecommerce/EcommerceMeetingSchedule'
 import EcommerceTotalSalesRadial from 'src/views/dashboards/ecommerce/EcommerceTotalSalesRadial'
-import EcommerceWebsiteStatistics from 'src/views/dashboards/ecommerce/EcommerceWebsiteStatistics'
+import EcommerceWebsiteStatistics from 'src/views/dashboards/ecommerce/EcommerceWebsiteStatistics' */
+
+
+import EcommerceCongratulations from 'src/views/dashboards/ecommerce/EcommerceCongratulations'
 
 const EcommerceDashboard = () => {
   return (
@@ -29,7 +33,12 @@ const EcommerceDashboard = () => {
         <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
           <EcommerceCongratulations />
         </Grid>
-        <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
+        <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
+          <EcommerceCongratulations />
+        </Grid>
+
+
+        {/* <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
           <CardStatisticsVerticalComponent
             stats='1.2k'
             color='info'
@@ -104,7 +113,9 @@ const EcommerceDashboard = () => {
         </Grid>
         <Grid item xs={12} md={6} lg={4} sx={{ order: 0 }}>
           <EcommerceMeetingSchedule />
-        </Grid>
+        </Grid> */}
+
+
       </Grid>
     </ApexChartWrapper>
   )

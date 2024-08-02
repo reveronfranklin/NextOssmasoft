@@ -290,7 +290,7 @@ const LoginPage = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.email)}
-                      placeholder='dricardo@ossmasoft.com'
+                      placeholder='dricardo@ossmmasoft.com'
                     />
                   )}
                 />

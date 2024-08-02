@@ -3,10 +3,7 @@
     "title": "Presupuesto",
     "icon": "mdi:file-document-outline",
     "children": [
-      {
-        "title": "Solicitud de compromiso",
-        "path": "/apps/adm/solicitudCompromiso"
-      },
+ 
       {
         "title": "Presupuesto",
         "path": "/dashboards/presupuesto"

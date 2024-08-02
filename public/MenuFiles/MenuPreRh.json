@@ -31,14 +31,7 @@
         "title": "Maestro ICP",
         "path": "/apps/presupuesto/icp/list"
       },
-      {
-        "title": "Maestro PUC",
-        "path": "/apps/presupuesto/puc/list"
-      },
-      {
-        "title": "Relacion Cargo",
-        "path": "/apps/presupuesto/relacionCargo"
-      },
+     
       {
         "title": "Cargos",
         "path": "/apps/presupuesto/cargo"
@@ -86,6 +79,14 @@
       {
         "title": "Recibos",
         "path": "/apps/rh/recibos"
+      },
+      {
+        "title": "Maestro PUC",
+        "path": "/apps/presupuesto/puc/list"
+      },
+      {
+        "title": "Relacion Cargo",
+        "path": "/apps/presupuesto/relacionCargo"
       },
       {
         "title": "Personas",
