@@ -28,8 +28,13 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         retry: 3
     }, qc)
 
-    const rows = query?.data?.data.data || []
+    console.log(query)
+    const rows = query?.data?.data?.result?.data || []
     const rowCount = rows.length || 0
+    const total1 = query?.data?.data?.result.total1 || 0
+
+    console.log('rows', rows)
+    console.log('total1', total1)
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -44,24 +49,32 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 
     return (
         <>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ padding: '10px' }}>
+                    <label style={{ marginRight: '5px' }}>Total:</label>
+                    {total1}
+                </div>
+            </div>
             {
                 query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
-                    <DataGrid
-                        autoHeight
-                        pagination
-                        getRowId={(row) => row.codigoDetalleSolicitud}
-                        rows={paginatedRows}
-                        rowCount={rowCount}
-                        columns={ColumnsDetalleDataGrid() as any}
-                        getRowHeight={() => 'auto'}
-                        sortingMode='server'
-                        paginationMode='server'
-                        pageSize={pageSize}
-                        page={pageNumber}
-                        rowsPerPageOptions={[5, 10, 20]}
-                        onPageSizeChange={handleSizeChange}
-                        onPageChange={handlePageChange}
-                    />
+                    <StyledDataGridContainer>
+                        <DataGrid
+                            autoHeight
+                            pagination
+                            getRowId={(row) => row.codigoDetalleSolicitud}
+                            rows={paginatedRows}
+                            rowCount={rowCount}
+                            columns={ColumnsDetalleDataGrid() as any}
+                            getRowHeight={() => 'auto'}
+                            sortingMode='server'
+                            paginationMode='server'
+                            pageSize={pageSize}
+                            page={pageNumber}
+                            rowsPerPageOptions={[5, 10, 20]}
+                            onPageSizeChange={handleSizeChange}
+                            onPageChange={handlePageChange}
+                        />
+                    </StyledDataGridContainer>
                 )
             }
         </>
@@ -70,9 +83,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 
 const Component = (props: any) => {
     return (
-        <StyledDataGridContainer>
-            <DataGridDetalleSolicitudComponent codigoSolicitud={props.codigoSolicitud} />
-        </StyledDataGridContainer>
+        <DataGridDetalleSolicitudComponent codigoSolicitud={props.codigoSolicitud} />
     )
 }
 
