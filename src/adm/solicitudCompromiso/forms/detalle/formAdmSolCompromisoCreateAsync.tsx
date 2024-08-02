@@ -48,7 +48,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     useEffect(() => {
         if (productSeleccionado) {
-            setValue('codigoProducto', productSeleccionado.codigo)
+            setValue('codigoProducto', productSeleccionado?.codigo)
         }
     }, [productSeleccionado])
 
@@ -158,12 +158,10 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 label="cantidad"
                                 onFocus={(event) => {
                                     event.target.select()
-                                    setCantidad('')
                                 }}
                                 onValueChange={(values: any) => {
                                     const { value } = values
                                     setCantidad(value)
-                                    setErrorMessage('')
                                 }}
                                 placeholder='0,00'
                                 error={Boolean(errors.codigoSolicitud)}
@@ -249,7 +247,6 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 label="Precio Unitario"
                                 onFocus={(event) => {
                                     event.target.select()
-                                    setCantidad('');
                                 }}
                                 onValueChange={(values: any) => {
                                     const { value } = values

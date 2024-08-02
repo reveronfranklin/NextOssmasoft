@@ -77,11 +77,11 @@ function ColumnsDetalleDataGrid() {
         },
         {
             flex: 1,
-            headerName: 'precioTotal',
-            field: 'precioTotal',
+            headerName: 'totalMasImpuesto',
+            field: 'totalMasImpuesto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.precioTotal}
+                    {params.row.totalMasImpuesto}
                 </Typography>
             )
         },

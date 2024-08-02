@@ -20,6 +20,14 @@
         "path": "/apps/rh/recibos"
       },
       {
+        "title": "Relacion Cargo",
+        "path": "/apps/presupuesto/relacionCargo"
+      },
+      {
+        "title": "Cargos",
+        "path": "/apps/presupuesto/cargo"
+      },
+      {
         "title": "Maestros",
         "icon": "mdi:account-outline",
         "children": [

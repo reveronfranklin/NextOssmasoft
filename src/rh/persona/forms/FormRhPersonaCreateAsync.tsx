@@ -67,6 +67,7 @@ import { IRhPersonaUpdateDto } from 'src/interfaces/rh/RhPersonaUpdateDto'
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
 import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
+import { NumericFormat } from 'react-number-format'
 
 interface FormInputs {
   codigoPersona: number
@@ -318,6 +319,17 @@ const FormRhPersonaCreateAsync = ({
     setValue('fechaNacimiento', desde)
     setValue('fechaNacimientoString', desde.toISOString())
     setValue('fechaNacimientoObj', fechaObj)
+  }
+
+  const handlerPeso = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('peso', valueInt)
+  }
+  const handlerEstatura = (value: string) => {
+    const valueInt = value === '' ? 0 : parseFloat(value)
+
+    setValue('estatura', valueInt)
   }
 
   const onSubmit = async (data: FormInputs) => {
@@ -667,57 +679,86 @@ const FormRhPersonaCreateAsync = ({
                 renderInput={params => <TextField {...params} label='Estado' />}
               />
             </Grid>
-            {/* estatura*/}
-            <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='estatura'
-                  control={control}
-                  rules={{ min: 1 }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || 0}
-                      label='estatura'
-                      onChange={onChange}
-                      placeholder='estatura'
-                      error={Boolean(errors.estatura)}
-                      aria-describedby='validation-async-estatura'
-                    />
-                  )}
-                />
-                {errors.estatura && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-estatura'>
-                    This field is required
-                  </FormHelperText>
-                )}
+             {/* estatura*/}
+             <Grid item sm={4} xs={12}>
+            <FormControl fullWidth>
+                                  <Controller
+                                      name='estatura'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Estatura"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerEstatura(value)
+                                              }}
+                                              placeholder='Peso'
+                                              error={Boolean(errors.peso)}
+                                              aria-describedby='validation-async-estatura'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.estatura && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-estatura'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
+
+
             {/* peso*/}
             <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='peso'
-                  control={control}
-                  rules={{ min: 10 }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || 0}
-                      label='peso'
-                      onChange={onChange}
-                      placeholder='peso'
-                      inputProps={{
-                        inputMode: 'decimal', // Asegura que el teclado numérico se muestre en dispositivos móviles
-                      }}
-                      error={Boolean(errors.estatura)}
-                      aria-describedby='validation-async-peso'
-                    />
-                  )}
-                />
-                {errors.peso && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-peso'>
-                    This field is required
-                  </FormHelperText>
-                )}
+            <FormControl fullWidth>
+                                  <Controller
+                                      name='peso'
+                                      control={control}
+                                      rules={{
+                                          required: false,
+                                          min: 0.001,
+                                      }}
+                                      render={({ field: { value } }) => (
+                                          <NumericFormat
+                                              value={value}
+                                              customInput={TextField}
+                                              thousandSeparator="."
+                                              decimalSeparator=","
+                                              allowNegative={false}
+                                              decimalScale={2}
+                                              fixedDecimalScale={true}
+                                              label="Peso"
+                                              onValueChange={(values: any) => {
+                                                  const { value } = values
+                                                  handlerPeso(value)
+                                              }}
+                                              placeholder='Peso'
+                                              error={Boolean(errors.peso)}
+                                              aria-describedby='validation-async-peso'
+                                              inputProps={{
+                                                  type: 'text',
+                                              }}
+                                          />
+                                      )}
+                                  />
+                                  {errors.peso && (
+                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-peso'>
+                                          This field is required
+                                      </FormHelperText>
+                                  )}
               </FormControl>
             </Grid>
             {/* Mano Habil */}
