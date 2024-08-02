@@ -41,8 +41,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
 
     const {
         handleSubmit: handleSubmitCreatePuc,
-        reset,
-        formState: { errors }
+        reset
     } = useForm<FormInputs>({ defaultValues })
 
     const viewPreSaldoPendiente = () => {
@@ -67,6 +66,13 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
             codigoPresupuesto: defaultValues.codigoPresupuesto,
         }
         try {
+            if (monto <= 0) {
+                setErrorMessage('el monto no puede ser menor o igual a 0')
+                setLoading(false)
+
+                return
+            }
+
             if (monto > preSaldoDisponibleSeleccionado.disponible) {
                 setErrorMessage('el monto no puede ser mayor al saldo disponible')
                 setLoading(false)
@@ -98,8 +104,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
     return (
         <>
             <Card>
-                {errorMessage}
-                <CardHeader title='Crear PUC' />
+                <CardHeader title='Crear ICP-PUC' />
                 <CardContent>
                     <form onSubmit={handleSubmitCreatePuc(onSubmitPuc)}>
                         <Grid container spacing={5} paddingTop={5} justifyContent="flex">
@@ -167,17 +172,18 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                     decimalScale={2}
                                     fixedDecimalScale={true}
                                     label="Monto"
+                                    onFocus={(event) => {
+                                        event.target.select()
+                                    }}
                                     onValueChange={(values: any) => {
                                         const { value } = values
                                         setMonto(parseFloat(value) || 0)
                                         setErrorMessage('')
                                     }}
                                     placeholder='Monto'
-                                    error={Boolean(errors.codigoSolicitud)}
-                                    aria-describedby='validation-async-cantidad'
                                     inputProps={{
                                         type: 'text',
-                                        required: true,
+                                        autoFocus: true,
                                     }}
                                 />
                             </Grid>

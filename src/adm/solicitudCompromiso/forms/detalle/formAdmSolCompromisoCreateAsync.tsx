@@ -48,7 +48,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     useEffect(() => {
         if (productSeleccionado) {
-            setValue('codigoProducto', productSeleccionado.codigo)
+            setValue('codigoProducto', productSeleccionado?.codigo)
         }
     }, [productSeleccionado])
 
@@ -112,6 +112,8 @@ const CreateDetalleSolicitudCompromiso = () => {
         if (dataForm.descripcion === null || dataForm.descripcion == '') {
             nuevoDetalle.descripcion = 'Sin descripción'
         }
+
+        console.log('nuevoDetalle', nuevoDetalle)
 
         try {
             const responseCreateDetalle = await fetchCreateDetalleSolicitudCompromiso(nuevoDetalle)
@@ -247,7 +249,6 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 label="Precio Unitario"
                                 onFocus={(event) => {
                                     event.target.select()
-                                    setCantidad('');
                                 }}
                                 onValueChange={(values: any) => {
                                     const { value } = values

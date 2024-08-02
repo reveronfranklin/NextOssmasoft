@@ -48,22 +48,24 @@ const DataGridPucDetalleSolicitud = (props: any) => {
         <>
             {
                 query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
-                    <DataGrid
-                        autoHeight
-                        pagination
-                        getRowId={(row) => row.codigoPucSolicitud}
-                        rows={paginatedRows}
-                        rowCount={rowCount}
-                        columns={ColumnsPucDataGrid() as any}
-                        pageSize={pageSize}
-                        page={pageNumber}
-                        getRowHeight={() => 'auto'}
-                        sortingMode='server'
-                        paginationMode='server'
-                        rowsPerPageOptions={[5, 10, 20]}
-                        onPageSizeChange={handleSizeChange}
-                        onPageChange={handlePageChange}
-                    />
+                    <StyledDataGridContainer>
+                        <DataGrid
+                            autoHeight
+                            pagination
+                            getRowId={(row) => row.codigoPucSolicitud}
+                            rows={paginatedRows}
+                            rowCount={rowCount}
+                            columns={ColumnsPucDataGrid() as any}
+                            pageSize={pageSize}
+                            page={pageNumber}
+                            getRowHeight={() => 'auto'}
+                            sortingMode='server'
+                            paginationMode='server'
+                            rowsPerPageOptions={[5, 10, 20]}
+                            onPageSizeChange={handleSizeChange}
+                            onPageChange={handlePageChange}
+                        />
+                    </StyledDataGridContainer>
                 )
             }
         </>
@@ -72,9 +74,7 @@ const DataGridPucDetalleSolicitud = (props: any) => {
 
 const Component = (props: any) => {
     return (
-        <StyledDataGridContainer>
-            <DataGridPucDetalleSolicitud codigoDetalleSolicitud={props.codigoDetalleSolicitud} />
-        </StyledDataGridContainer>
+        <DataGridPucDetalleSolicitud codigoDetalleSolicitud={props.codigoDetalleSolicitud} />
     )
 }
 
