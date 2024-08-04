@@ -48,6 +48,7 @@ const DataGridListProduct = () => {
     const rowCount = query?.data?.cantidadRegistros || 0
 
     const handleDoubleClick = (row: any) => {
+        console.log(row.row)
         dispatch(setProductSeleccionado(row.row))
         dispatch(setVerDialogListProductsInfoActive(false))
     }
