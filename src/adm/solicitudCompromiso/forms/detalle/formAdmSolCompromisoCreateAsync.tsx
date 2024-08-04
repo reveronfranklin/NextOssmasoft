@@ -1,22 +1,23 @@
 import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress, Box, Tooltip, IconButton } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { FormInputs } from './../../interfaces/detalle/formImputs.interfaces'
 import { CreateDetalle } from '../../interfaces/detalle/create.interfaces'
+import { NumericFormat } from 'react-number-format'
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useDispatch } from "react-redux";
+import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
+import { Product } from './../../components/Productos/interfaces/product.interfaces'
+import { setProductSeleccionado } from "src/store/apps/adm"
 import useServices from './../../services/useServices';
 import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/autocomplete/TipoUnidades'
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
-import { NumericFormat } from 'react-number-format'
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
-import { useDispatch } from "react-redux";
 import Icon from 'src/@core/components/icon'
-import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
-import { Product } from './../../components/Productos/interfaces/product.interfaces'
 
 const CreateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<any>(0)
@@ -34,6 +35,8 @@ const CreateDetalleSolicitudCompromiso = () => {
     const { fetchCreateDetalleSolicitudCompromiso } = useServices()
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
+
+    const autocompleteRef = useRef()
 
     const defaultValues: any = {
         codigoDetalleSolicitud: 0,
@@ -90,6 +93,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
 
     const resetForm = () => {
+        dispatch(setProductSeleccionado(null))
         setCantidad(0)
         setPrecioUnitario(0)
         setLoading(false)
@@ -177,6 +181,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                             <TipoUnidades
                                 id={defaultValues.udmId}
                                 onSelectionChange={handleTipoUnidadChange}
+                                autocompleteRef={autocompleteRef}
                             />
                         </Grid>
                         <Grid item sm={6} xs={12}>

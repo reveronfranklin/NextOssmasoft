@@ -44,7 +44,7 @@ const TipoUnidad = (props: any) => {
                     />
                 ) : (
                     <Autocomplete
-                        ref={props.ref}
+                        ref={props.autocompleteRef}
                         options={listTipo}
                         defaultValue={tipo}
                         id='autocomplete-TipoUnidad'
