@@ -176,6 +176,9 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             decimalScale={2}
                                             fixedDecimalScale={true}
                                             label="cantidad"
+                                            onFocus={(event) => {
+                                                event.target.select()
+                                            }}
                                             onValueChange={(values: any) => {
                                                 const { value } = values
                                                 setCantidad(value)
@@ -185,6 +188,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                inputMode: 'numeric',
                                                 autoFocus: true
                                             }}
                                         />
@@ -273,6 +277,9 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             decimalScale={2}
                                             fixedDecimalScale={true}
                                             label="Precio Unitario"
+                                            onFocus={(event) => {
+                                                event.target.select()
+                                            }}
                                             onValueChange={(values: any) => {
                                                 const { value } = values
                                                 setPrecioUnitario(value)
@@ -282,6 +289,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             aria-describedby='validation-async-cantidad'
                                             inputProps={{
                                                 type: 'text',
+                                                inputMode: 'numeric',
                                                 autoFocus: true
                                             }}
                                         />

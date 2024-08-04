@@ -1,19 +1,16 @@
 import { Box, Typography, Tooltip, IconButton } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
+import { setProductSeleccionado, setVerDialogUpdateProductsInfoActive } from "src/store/apps/adm"
+import { useDispatch } from 'react-redux'
 import Icon from 'src/@core/components/icon'
-import { } from "src/store/apps/adm"
-
-// import { useDispatch } from 'react-redux'
 
 function ColumnsListProductsDataGrid() {
 
-    // const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
-    const handleEdit = () => {
-        alert('esta seguro de Eliminar este products')
-
-        // dispatch(setSolicitudCompromisoSeleccionadoDetalle(row))
-        // dispatch(setVerSolicitudCompromisoDetalleActive(true))
+    const handleEdit = (row: any) => {
+        dispatch(setProductSeleccionado(row))
+        dispatch(setVerDialogUpdateProductsInfoActive(true))
     }
 
     return [
@@ -22,11 +19,11 @@ function ColumnsListProductsDataGrid() {
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
-            renderCell: () => (
+            renderCell: ({ row }: any) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Tooltip title='Eliminar'>
-                        <IconButton size='small' onClick={() => handleEdit()}>
-                            <Icon icon='mdi:delete' fontSize={20} />
+                    <Tooltip title='Editar'>
+                        <IconButton size='small' onClick={() => handleEdit(row)}>
+                            <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
                         </IconButton>
                     </Tooltip>
                 </Box>
@@ -39,7 +36,18 @@ function ColumnsListProductsDataGrid() {
             field: 'Codigo',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigo}
+                    {params.row.codigo ? params.row.codigo : 'No tiene codigo'}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            sortable: true,
+            headerName: 'codigoReal',
+            field: 'codigoReal',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.codigoReal ? params.row.codigoReal : 'No tiene codigo real'}
                 </Typography>
             )
         },

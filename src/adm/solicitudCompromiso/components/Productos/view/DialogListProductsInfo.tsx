@@ -1,13 +1,12 @@
-import { Typography, Card, Dialog, DialogActions, DialogContent, IconButton } from "@mui/material"
+import { Typography, Card, Dialog, DialogContent, IconButton } from "@mui/material"
 import { Ref, forwardRef, ReactElement } from 'react'
-import Button from '@mui/material/Button'
-import Fade, { FadeProps } from '@mui/material/Fade'
-import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 import { setVerDialogListProductsInfoActive  } from 'src/store/apps/adm'
 import FormIndexProducts from '../forms/formIndexProducts'
+import Icon from 'src/@core/components/icon'
+import Fade, { FadeProps } from '@mui/material/Fade'
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -47,11 +46,6 @@ const DialogListProductsInfo = () => {
                     </Typography>
                     <FormIndexProducts />
                 </DialogContent>
-                <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'center' }}>
-                    <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-                        Cerrar
-                    </Button>
-                </DialogActions>
             </Dialog>
         </Card>
     )

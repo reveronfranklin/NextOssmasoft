@@ -10,9 +10,7 @@ export enum UrlServices {
     DETALLECREATE    = '/AdmDetalleSolicitud/Create',
     DETALLEDELETE    = '/AdmDetalleSolicitud/Delete',
     GETLISTPRODUCTOS = '/AdmProductos/GetAllPaginate',
-    CREATEPRODUCTOS  =  '/AdmProductos/Create', //todo verificar
-    UPDATEPRODUCTOS  = '/AdmProductos/Update', //todo verificar
-    DELETEPRODUCTOS  = '/AdmProductos/Delete', //todo verificar
+    UPDATEPRODUCTOS  = '/AdmProductos/Update',
     GETPUCDETALLE    = '/AdmPucSolicitud/GetByDetalleSolicitud',
     PUCDETALLEUPDATE = '/AdmPucSolicitud/Update',
     PUCDETALLECREATE = '/AdmPucSolicitud/Create',
