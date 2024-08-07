@@ -2,10 +2,10 @@ import { Button, Card, CardContent, CardHeader, Grid, Typography, TextField, Cir
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
-import { setVerPreSaldoDisponibleActive } from 'src/store/apps/pre-saldo-disponible'
+import { setVerPreSaldoDisponibleActive, setPreSaldoDisponibleSeleccionado } from 'src/store/apps/pre-saldo-disponible'
 import { NumericFormat } from 'react-number-format'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
 import { FormInputs } from 'src/adm/solicitudCompromiso/interfaces/puc/formImputs.interfaces'
@@ -48,6 +48,14 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
         dispatch(setVerPreSaldoDisponibleActive(true))
     }
 
+    useEffect(() => {
+        if (preSaldoDisponibleSeleccionado.disponible) {
+            if (monto > preSaldoDisponibleSeleccionado.disponible) {
+                setErrorMessage('Por favor, verifica el monto. No puede sobrepasar la disponibilidad de la partida.')
+            }
+        }
+    }, [monto])
+
     const onSubmitPuc = async () => {
         setLoading(true)
 
@@ -67,14 +75,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
         }
         try {
             if (monto <= 0) {
-                setErrorMessage('el monto no puede ser menor o igual a 0')
-                setLoading(false)
-
-                return
-            }
-
-            if (monto > preSaldoDisponibleSeleccionado.disponible) {
-                setErrorMessage('el monto no puede ser mayor al saldo disponible')
+                setErrorMessage('El monto debe ser mayor a 0. Por favor, ingrese un monto válido.')
                 setLoading(false)
 
                 return
@@ -99,6 +100,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
         setMonto(0)
         setErrorMessage('')
         setLoading(false)
+        dispatch(setPreSaldoDisponibleSeleccionado({}))
     }
 
     return (
@@ -193,6 +195,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                 onClick={handleSubmitCreatePuc(onSubmitPuc)}
                                 size='small'
                                 variant='contained'
+                                disabled={errorMessage.length > 0 ? true : false}
                             >
                                 { loading ? (
                                     <>

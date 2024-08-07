@@ -31,13 +31,17 @@ import { IDetalleSolicitudCompromiso } from "../interfaces/detalle/IDetalleSolic
 import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
 import { DeletePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/delete.interfaces'
 
+import authConfig from 'src/configs/auth'
+
 const useServices = (initialFilters: Filters = {}) => {
     const dispatch = useDispatch()
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+    const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+    const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
 
     const [error, setError] = useState<string>('')
     const [mensaje] = useState<string>('')
-    const [loading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
@@ -171,6 +175,16 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
+    const fetchUpdateProducts = async (data: any) => {
+        try {
+
+            return await ossmmasofApi.post<any>(UrlServices.UPDATEPRODUCTOS, data)
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     const getDetalleSolicitudFetchTable = async (codigoSolicitud: number) => {
         try {
             const filter = { codigoSolicitud }
@@ -247,7 +261,36 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
-    return {error, mensaje, loading,
+    const fetchSolicitudReportData = async (filter: any) => {
+        try {
+            const response = await ossmmasofApi.post<any>(UrlServices.GENERATEURLREPORT, filter)
+
+            return response.data
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }
+
+    const downloadReportByName = async (nameReport: string) => {
+        try {
+            setLoading(true)
+            const urlBase = !authConfig.isProduction ? urlDevelopment : urlProduction
+
+            const link = document.createElement('a')
+
+            link.href = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`
+            link.target = "_blank"
+            link.download = `${nameReport}`
+            link.click()
+            setLoading(false)
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        }
+    }
+
+    return { error, mensaje, loading,
         fetchTableData,
         fetchProveedores,
         fetchSolicitudCompromiso,
@@ -263,9 +306,12 @@ const useServices = (initialFilters: Filters = {}) => {
         fetchCreateDetalleSolicitudCompromiso,
         fetchDeleteDetalleSolicitudCompromiso,
         getListProducts,
+        fetchUpdateProducts,
         fetchPucDetalleSolicitud,
         fetchPucCreate,
-        fetchPucDelete
+        fetchPucDelete,
+        fetchSolicitudReportData,
+        downloadReportByName,
     }
 }
 

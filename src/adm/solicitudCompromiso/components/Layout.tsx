@@ -17,10 +17,6 @@ const handleAdd = (dispatch: any) => {
     dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.CREATE))
 }
 
-const exportToExcel = () => {
-    alert('export to Excel')
-}
-
 const LayoutSolicitudCompromiso = () => {
     const { mensaje, loading } = useServices()
     const dispatch = useDispatch()
@@ -53,11 +49,6 @@ const headerDetail = (dispatch: Dispatch<AnyAction>) => {
                     <Tooltip title='Agregar Solicitud'>
                         <IconButton color='primary' size='small' onClick={() => handleAdd(dispatch)}>
                             <Icon icon='ci:add-row' fontSize={20} />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title='Descargar'>
-                        <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
-                            <Icon icon='ci:download' fontSize={20} />
                         </IconButton>
                     </Tooltip>
                 </Toolbar>

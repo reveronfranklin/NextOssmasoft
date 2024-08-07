@@ -4,6 +4,7 @@ export interface FormInputs {
     fechaSolicitud: Date
     codigoSolicitante: number
     tipoSolicitudId: number
+    descripcionTipoSolicitud: string
     codigoProveedor: number
     motivo: string
     nota: string

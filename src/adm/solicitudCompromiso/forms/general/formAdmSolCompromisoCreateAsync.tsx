@@ -181,6 +181,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                             label="Numero de Solicitud"
                                             onChange={onChange}
                                             placeholder='Numero de Solicitud'
+                                            disabled
                                         />
                                     )}
                                 />
