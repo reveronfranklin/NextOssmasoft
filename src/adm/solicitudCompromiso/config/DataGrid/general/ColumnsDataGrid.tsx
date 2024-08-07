@@ -5,20 +5,42 @@ import { GridRenderCellParams } from '@mui/x-data-grid'
 import { CellType } from '../../../interfaces/cellType.interfaces'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-
+import HandleReport from '../../../helpers/generateReport/SolicitudCompromiso'
 import {
     setVerSolicitudCompromisosActive,
     setOperacionCrudAdmSolCompromiso,
     setSolicitudCompromisoSeleccionado
 } from "src/store/apps/adm"
 
-function ColumnsDataGrid() {
+function ColumnsDataGrid(props: any) {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
         dispatch(setVerSolicitudCompromisosActive(true))
         dispatch(setSolicitudCompromisoSeleccionado(row))
         dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.EDIT))
+    }
+
+    const handleReport = async (row: any) => {
+        props.setLoading(true)
+
+        const payload = {
+            filter: {
+                PageSize: 0,
+                PageNumber: 0,
+                codigoSolicitud: row.codigoSolicitud,
+                codigoPresupuesto: row.codigoPresupuesto,
+                SearchText: ''
+            },
+            fetchSolicitudReportData: props.fetchSolicitudReportData,
+            downloadReportByName: props.downloadReportByName
+        }
+
+        if (payload) {
+            await HandleReport(payload)
+        }
+
+        props.setLoading(false)
     }
 
     return [
@@ -33,6 +55,11 @@ function ColumnsDataGrid() {
                     <Tooltip title='Editar'>
                         <IconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Report">
+                        <IconButton size='small' onClick={() => handleReport(row)}>
+                            <Icon icon='mdi:download' fontSize={20} />
                         </IconButton>
                     </Tooltip>
                 </Box>

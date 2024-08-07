@@ -14,6 +14,7 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
+    const [loading, setLoading] = useState<boolean>(false)
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
@@ -22,7 +23,20 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef = useRef<any>(null)
 
-    const { fetchTableData, presupuestoSeleccionado } = useServices()
+    const {
+        fetchTableData,
+        presupuestoSeleccionado,
+        fetchSolicitudReportData,
+        downloadReportByName
+    } = useServices()
+
+    const actions = {
+        fetchSolicitudReportData,
+        downloadReportByName,
+        loading,
+        setLoading
+    }
+
     const qc: QueryClient = useQueryClient()
 
     const filter: Filters = {
@@ -89,34 +103,36 @@ const DataGridComponent = () => {
         <>
             {
                 query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
-                    <DataGrid
-                        autoHeight
-                        pagination
-                        getRowId={(row) => row.codigoSolicitud}
-                        rows={rows}
-                        rowCount={rowCount}
-                        columns={ColumnsDataGrid() as any}
-                        pageSize={pageSize}
-                        page={pageNumber}
-                        getRowHeight={() => 'auto'}
-                        sortingMode='server'
-                        paginationMode='server'
-                        rowsPerPageOptions={[5, 10, 50]}
-                        onPageSizeChange={handleSizeChange}
-                        onPageChange={handlePageChange}
-                        components={{ Toolbar: ServerSideToolbar }}
-                        componentsProps={{
-                            baseButton: {
-                                variant: 'outlined'
-                            },
-                            toolbar: {
-                                printOptions: { disableToolbarButton: true },
-                                value: buffer,
-                                clearSearch: () => handleSearch(''),
-                                onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-                            }
-                        }}
-                    />
+                    <StyledDataGridContainer>
+                        <DataGrid
+                            autoHeight
+                            pagination
+                            getRowId={(row) => row.codigoSolicitud}
+                            rows={rows}
+                            rowCount={rowCount}
+                            columns={ColumnsDataGrid(actions) as any}
+                            pageSize={pageSize}
+                            page={pageNumber}
+                            getRowHeight={() => 'auto'}
+                            sortingMode='server'
+                            paginationMode='server'
+                            rowsPerPageOptions={[5, 10, 50]}
+                            onPageSizeChange={handleSizeChange}
+                            onPageChange={handlePageChange}
+                            components={{ Toolbar: ServerSideToolbar }}
+                            componentsProps={{
+                                baseButton: {
+                                    variant: 'outlined'
+                                },
+                                toolbar: {
+                                    printOptions: { disableToolbarButton: true },
+                                    value: buffer,
+                                    clearSearch: () => handleSearch(''),
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                                }
+                            }}
+                        />
+                    </StyledDataGridContainer>
                 )
             }
         </>
@@ -125,9 +141,7 @@ const DataGridComponent = () => {
 
 const Component = () => {
     return (
-        <StyledDataGridContainer>
-            <DataGridComponent />
-        </StyledDataGridContainer>
+        <DataGridComponent />
     )
 }
 

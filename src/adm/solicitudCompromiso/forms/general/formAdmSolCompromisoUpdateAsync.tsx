@@ -12,7 +12,6 @@ import { useDispatch } from 'react-redux'
 import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import Button from '@mui/material/Button'
-import TipoSolicitud from '../../components/autocomplete/TipoSolicitud'
 import CodigoProveedor from '../../components/autocomplete/CodigoProveedor'
 import UnidadSolicitante from '../../components/autocomplete/UnidadSolicitante'
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
@@ -22,16 +21,22 @@ import dayjs from 'dayjs'
 import useServices from '../../services/useServices'
 import toast from 'react-hot-toast'
 import IndexDetalleSolicitudCompromiso from '../detalle/formAdmSolCompromisoIndexAsync'
+import HandleReport from '../../helpers/generateReport/SolicitudCompromiso'
 
 // import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [generatorReport, setGeneratorReport] = useState<boolean>(false)
     const [open, setOpen] = useState<boolean>(false)
-
+    const {
+        updateSolicitudCompromiso,
+        eliminarSolicitudCompromiso,
+        fetchSolicitudReportData,
+        downloadReportByName
+    } = useServices()
     const dispatch = useDispatch()
-    const { updateSolicitudCompromiso, eliminarSolicitudCompromiso } = useServices()
     const qc: QueryClient = useQueryClient()
 
     const solicitudCompromisoData = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
@@ -42,6 +47,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         fechaSolicitud,
         codigoSolicitante,
         tipoSolicitudId,
+        descripcionTipoSolicitud,
         codigoProveedor,
         descripcionStatus,
         motivo,
@@ -58,6 +64,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         fechaSolicitud,
         codigoSolicitante,
         tipoSolicitudId,
+        descripcionTipoSolicitud,
         codigoProveedor,
         motivo,
         nota,
@@ -76,10 +83,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     const handleCodigoSolicitanteChange = (codigoSolicitante: number) => {
         setValue('codigoSolicitante', codigoSolicitante)
-    }
-
-    const handleTipoSolicitudChange = (tipoSolicitudId: number) => {
-        setValue('tipoSolicitudId', tipoSolicitudId)
     }
 
     const handleCodigoProveedorChange = (codigoProveedor: number) => {
@@ -110,7 +113,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 numeroSolicitud: dataForm.numeroSolicitud,
                 fechaSolicitud: dataForm.fechaSolicitud,
                 codigoSolicitante: dataForm.codigoSolicitante,
-                tipoSolicitudId: dataForm.tipoSolicitudId,
+                tipoSolicitudId: tipoSolicitudId,
                 codigoProveedor: dataForm.codigoProveedor,
                 motivo: dataForm.motivo,
                 nota: dataForm.nota,
@@ -164,6 +167,23 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     const handleClose = () => {
         setOpen(false)
+    }
+
+    const handleReport = async () => {
+        setGeneratorReport(true)
+        const payload = {
+            filter: {
+                PageSize: 0,
+                PageNumber: 0,
+                codigoSolicitud: codigoSolicitud,
+                codigoPresupuesto: codigoPresupuesto,
+                SearchText: ''
+            },
+            fetchSolicitudReportData,
+            downloadReportByName
+        }
+        await HandleReport(payload)
+        setGeneratorReport(false)
     }
 
     return (
@@ -238,30 +258,32 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 <Controller
                                     name='numeroSolicitud'
                                     control={controlFormGeneral}
-                                    render={({ field: { value, onChange } }) => (
+                                    render={({ field: { value } }) => (
                                         <TextField
                                             value={value || ''}
                                             label="Numero de Solicitud"
-                                            onChange={onChange}
                                             placeholder='Numero de Solicitud'
-                                            error={Boolean(errors.numeroSolicitud)}
-                                            aria-describedby='validation-async-numeroSolicitud'
                                             disabled
                                         />
                                     )}
                                 />
-                                {errors.numeroSolicitud && (
-                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-numeroSolicitud'>
-                                        This field is required
-                                    </FormHelperText>
-                                )}
                             </FormControl>
                         </Grid>
                         <Grid item sm={6} xs={12}>
-                            <TipoSolicitud
-                                id={tipoSolicitudId}
-                                onSelectionChange={handleTipoSolicitudChange}
-                            />
+                            <FormControl fullWidth>
+                                <Controller
+                                    name='descripcionTipoSolicitud'
+                                    control={controlFormGeneral}
+                                    render={({ field: { value} }) => (
+                                        <TextField
+                                            value={value || ''}
+                                            label="tipo de SolicitudId"
+                                            placeholder='tipo de SolicitudId'
+                                            disabled
+                                        />
+                                    )}
+                                />
+                            </FormControl>
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
@@ -351,6 +373,21 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     Guardando...
                                 </>
                             ) : 'Guardar' }
+                        </Button>
+                        <Button variant='contained' size='large' onClick={() => handleReport()}>
+                            {generatorReport ? (
+                                <>
+                                    <CircularProgress
+                                        sx={{
+                                            color: 'common.white',
+                                            width: '20px !important',
+                                            height: '20px !important',
+                                            mr: theme => theme.spacing(2)
+                                        }}
+                                    />
+                                    Generando...
+                                </>
+                            ) : 'Imprimir'}
                         </Button>
                         <Button variant='outlined' size='large' onClick={handleDialogOpen}>
                             Eliminar
