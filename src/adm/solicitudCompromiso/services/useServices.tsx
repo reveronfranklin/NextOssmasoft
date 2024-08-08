@@ -41,7 +41,8 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const [error, setError] = useState<string>('')
     const [mensaje] = useState<string>('')
-    const [loading, setLoading] = useState(false)
+    const [loading] = useState(false)
+    const [generateReport, setGenerateReport] = useState(false)
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
@@ -263,27 +264,32 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const fetchSolicitudReportData = async (filter: any) => {
         try {
+            setGenerateReport(true)
             const response = await ossmmasofApi.post<any>(UrlServices.GENERATEURLREPORT, filter)
 
             return response.data
         } catch (e: any) {
             setError(e)
             console.error(e)
+        } finally {
+            setGenerateReport(false)
         }
     }
 
     const downloadReportByName = async (nameReport: string) => {
         try {
-            setLoading(true)
             const urlBase = !authConfig.isProduction ? urlDevelopment : urlProduction
+            const url = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`;
 
-            const link = document.createElement('a')
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const objectURL = URL.createObjectURL(blob);
 
-            link.href = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`
-            link.target = "_blank"
-            link.download = `${nameReport}`
-            link.click()
-            setLoading(false)
+            const newTab = window.open(objectURL, '_blank');
+
+            if (!newTab) {
+                throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.');
+            }
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -312,6 +318,7 @@ const useServices = (initialFilters: Filters = {}) => {
         fetchPucDelete,
         fetchSolicitudReportData,
         downloadReportByName,
+        generateReport,
     }
 }
 

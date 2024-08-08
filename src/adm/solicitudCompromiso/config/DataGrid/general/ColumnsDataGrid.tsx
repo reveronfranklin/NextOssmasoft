@@ -22,8 +22,6 @@ function ColumnsDataGrid(props: any) {
     }
 
     const handleReport = async (row: any) => {
-        props.setLoading(true)
-
         const payload = {
             filter: {
                 PageSize: 0,
@@ -39,8 +37,6 @@ function ColumnsDataGrid(props: any) {
         if (payload) {
             await HandleReport(payload)
         }
-
-        props.setLoading(false)
     }
 
     return [

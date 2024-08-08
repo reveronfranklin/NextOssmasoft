@@ -14,7 +14,6 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [loading, setLoading] = useState<boolean>(false)
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
@@ -27,14 +26,13 @@ const DataGridComponent = () => {
         fetchTableData,
         presupuestoSeleccionado,
         fetchSolicitudReportData,
-        downloadReportByName
+        downloadReportByName,
+        generateReport
     } = useServices()
 
     const actions = {
         fetchSolicitudReportData,
-        downloadReportByName,
-        loading,
-        setLoading
+        downloadReportByName
     }
 
     const qc: QueryClient = useQueryClient()
@@ -102,7 +100,7 @@ const DataGridComponent = () => {
     return (
         <>
             {
-                query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
+                query.isLoading || generateReport ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <StyledDataGridContainer>
                         <DataGrid
                             autoHeight
