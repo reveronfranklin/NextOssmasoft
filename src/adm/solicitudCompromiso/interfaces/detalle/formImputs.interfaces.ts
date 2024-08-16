@@ -15,4 +15,5 @@ export interface FormInputs {
     montoImpuesto: number
     codigoPresupuesto: number
     codigoProducto: number
+    totalMasImpuesto: number
 }
