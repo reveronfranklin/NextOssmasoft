@@ -27,11 +27,10 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         staleTime: 1000 * 60,
         retry: 3
     }, qc)
-    console.log('query>>>>>>',query)
+
     const rows = query?.data?.data?.result?.data || []
     const rowCount = rows.length || 0
-    const total1 = query?.data?.data?.result.total1 || 0
-
+    const total1 = query?.data?.total1 || 0
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)

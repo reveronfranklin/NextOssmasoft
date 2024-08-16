@@ -36,6 +36,7 @@ import authConfig from 'src/configs/auth'
 const useServices = (initialFilters: Filters = {}) => {
     const dispatch = useDispatch()
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+
     const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
     const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
 
@@ -46,9 +47,9 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
-            const fetchData = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
+            const response = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
 
-            return fetchData.data
+            return response?.data
 
         } catch (e: any) {
             setError(e)
@@ -190,7 +191,9 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             const filter = { codigoSolicitud }
 
-            return await ossmmasofApi.post<IDetalleSolicitudCompromiso>(UrlServices.DETALLESOLICITUD, filter)
+            const response = await ossmmasofApi.post<IDetalleSolicitudCompromiso>(UrlServices.DETALLESOLICITUD, filter)
+
+            return response?.data
 
         } catch (e: any) {
             setError(e)
