@@ -143,9 +143,11 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     const handleDelete = async () => {
         try {
+            setLoading(true)
             const data: Delete = {
                 codigoSolicitud: codigoSolicitud,
             }
+
             const responseDelete = await eliminarSolicitudCompromiso(data)
 
             if (!responseDelete?.data.isValid) {
@@ -155,9 +157,15 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
                 })
+
+                setTimeout(() => {
+                    dispatch(setVerSolicitudCompromisosActive(false))
+                }, 2000)
             }
         } catch (e: any) {
             console.log(e)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -409,7 +417,20 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             <DialogActions>
                                 <Button onClick={handleClose}>No</Button>
                                 <Button onClick={handleDelete} autoFocus>
-                                    Si
+                                    { loading ? (
+                                        <>
+                                            <CircularProgress
+                                                sx={{
+                                                    color: 'common.white',
+                                                    width: '20px !important',
+                                                    height: '20px !important',
+                                                    mr: theme => theme.spacing(2)
+                                                }}
+                                            />
+                                            Eliminando...
+                                        </>
+                                    )
+                                    : 'Sí' }
                                 </Button>
                             </DialogActions>
                         </Dialog>

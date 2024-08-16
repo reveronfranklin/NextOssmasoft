@@ -23,10 +23,13 @@ import IndexPucSolicitudCompromiso from '../puc/formAdmSolicitudCompromisoIndexA
 import { Product } from './../../components/Productos/interfaces/product.interfaces'
 
 const UpdateDetalleSolicitudCompromiso = () => {
-    const [cantidad, setCantidad] = useState<number>(0)
-    const [precioUnitario, setPrecioUnitario] = useState<number>(0)
-    const [impuesto, setImpuesto] = useState<number>(0)
-    const [total, setTotal] = useState<any>(0)
+    const { solicitudCompromisoSeleccionadoDetalle } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+
+    const [cantidad, setCantidad] = useState<number>(solicitudCompromisoSeleccionadoDetalle.cantidad)
+    const [precioUnitario, setPrecioUnitario] = useState<number>(solicitudCompromisoSeleccionadoDetalle.precioUnitario)
+    const [impuesto, setImpuesto] = useState<number>(solicitudCompromisoSeleccionadoDetalle.porImpuesto)
+    const [codigoProducto, setCodigoProducto] = useState<number>(solicitudCompromisoSeleccionadoDetalle.codigoProducto)
+    const [total, setTotal] = useState<number>(solicitudCompromisoSeleccionadoDetalle.totalMasImpuesto)
 
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
@@ -37,9 +40,11 @@ const UpdateDetalleSolicitudCompromiso = () => {
 
     const { fetchUpdateDetalleSolicitudCompromiso, fetchDeleteDetalleSolicitudCompromiso } = useServices()
 
-    const { solicitudCompromisoSeleccionadoDetalle } = useSelector((state: RootState) => state.admSolicitudCompromiso)
     const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
-    const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
+
+    console.log(productSeleccionado)
+
+    const labelProduct = productSeleccionado?.codigo ? `${productSeleccionado?.codigo} - ${productSeleccionado?.descripcion}` : `${solicitudCompromisoSeleccionadoDetalle?.codigoProducto} - ${solicitudCompromisoSeleccionadoDetalle?.descripcionProducto}`
 
     const defaultValues: FormInputs = solicitudCompromisoSeleccionadoDetalle
     const qc: QueryClient = useQueryClient()
@@ -50,6 +55,10 @@ const UpdateDetalleSolicitudCompromiso = () => {
         setValue,
         formState: { errors }
     } = useForm<FormInputs>({ defaultValues })
+
+    useEffect(() => {
+        setCodigoProducto(productSeleccionado?.codigo)
+    }, [productSeleccionado])
 
     const handleTipoImpuestoChange = (tipoImpuesto: any) => {
         setValue('tipoImpuestoId', tipoImpuesto.id)
@@ -82,13 +91,23 @@ const UpdateDetalleSolicitudCompromiso = () => {
     }
 
     const calculoTotalPrecio = () => {
+        let responseCalculePrice = 0
         const typeCurrency = 'VES'
+
         if (cantidad < 0 || precioUnitario < 0) {
             setTotal(0)
 
             return
         }
-        setTotal(formatPrice(calculatePrice(precioUnitario, cantidad, impuesto), typeCurrency))
+
+        responseCalculePrice = parseFloat(formatPrice(calculatePrice(precioUnitario, cantidad, impuesto), typeCurrency))
+
+        if (responseCalculePrice !== defaultValues.totalMasImpuesto) {
+            setTotal(responseCalculePrice)
+            return
+        } else {
+            setTotal(responseCalculePrice)
+        }
     }
 
     useEffect(() => {
@@ -105,10 +124,13 @@ const UpdateDetalleSolicitudCompromiso = () => {
             descripcion: dataForm.descripcion,
             precioUnitario: precioUnitario === 0 ? dataForm.precioUnitario : precioUnitario,
             tipoImpuestoId: dataForm.tipoImpuestoId,
-            codigoProducto: dataForm.codigoProducto,
+            codigoProducto: codigoProducto,
         }
 
+        console.log('updateDetalle', data)
+
         const responseUpdate = await fetchUpdateDetalleSolicitudCompromiso(data)
+
         if (responseUpdate?.data.isValid) {
             qc.invalidateQueries({
                 queryKey: ['detalleSolicitudCompromiso', defaultValues.codigoSolicitud]
@@ -310,9 +332,9 @@ const UpdateDetalleSolicitudCompromiso = () => {
                         </Grid>
                         <Grid item sm={3} xs={12}>
                             <TextField
-                                value={total || 0}
+                                value={total}
                                 label="PrecioTotal"
-                                placeholder='precio unitario'
+                                placeholder='precio Total'
                                 error={Boolean(errors.codigoSolicitud)}
                                 aria-describedby='validation-async-cantidad-comprada'
                             />
