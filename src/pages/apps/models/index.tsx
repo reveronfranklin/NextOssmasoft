@@ -152,7 +152,7 @@ const PermissionsTable = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <PageHeader
-            title={<Typography variant='h5'>Permissions List</Typography>}
+            title={<Typography variant='h5'>Lista de Modelos</Typography>}
             subtitle={
               <Typography variant='body2'>
                 Each category (Basic, Professional, and Business) includes the four predefined roles shown below.
@@ -178,14 +178,15 @@ const PermissionsTable = () => {
       <Dialog maxWidth='sm' fullWidth onClose={handleDialogToggle} open={editDialogOpen}>
         <DialogTitle sx={{ mx: 'auto', textAlign: 'center' }}>
           <Typography variant='h5' component='span' sx={{ mb: 2 }}>
-            Editar Permiso
+            Edit Permission
           </Typography>
-          <Typography variant='body2'>Edite el permiso según sus requisitos.</Typography>
+          <Typography variant='body2'>Edit permission as per your requirements.</Typography>
         </DialogTitle>
         <DialogContent sx={{ mx: 'auto' }}>
           <Alert severity='warning' sx={{ maxWidth: '500px' }}>
             <AlertTitle>Warning!</AlertTitle>
-            Al editar el nombre del permiso, es posible que se rompa la funcionalidad de permisos del sistema. Asegúrese de estar absolutamente seguro antes de continuar.
+            By editing the permission name, you might break the system permissions functionality. Please ensure you're
+            absolutely certain before proceeding.
           </Alert>
 
           <Box component='form' sx={{ mt: 8 }} onSubmit={onSubmit}>
