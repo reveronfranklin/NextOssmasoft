@@ -10,7 +10,7 @@ import { Update } from '../../interfaces/update.interfaces'
 import { Delete } from '../../interfaces/delete.interfaces'
 import { useDispatch } from 'react-redux'
 import { setSolicitudCompromisoSeleccionado, setVerSolicitudCompromisosActive } from "src/store/apps/adm"
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import Button from '@mui/material/Button'
 import CodigoProveedor from '../../components/Autocomplete/CodigoProveedor'
 import UnidadSolicitante from '../../components/Autocomplete/UnidadSolicitante'
