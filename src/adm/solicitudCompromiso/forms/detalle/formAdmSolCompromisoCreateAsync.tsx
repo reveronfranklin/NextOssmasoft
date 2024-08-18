@@ -12,8 +12,8 @@ import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 import { Product } from './../../components/Productos/interfaces/product.interfaces'
 import { setProductSeleccionado } from "src/store/apps/adm"
 import useServices from './../../services/useServices';
-import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
-import TipoUnidades from '../../components/autocomplete/TipoUnidades'
+import TipoImpuesto from '../../components/Autocomplete/TipoImpuesto'
+import TipoUnidades from '../../components/Autocomplete/TipoUnidades'
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
@@ -29,7 +29,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
 
-    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado )
+    const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
     const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
 
     const { fetchCreateDetalleSolicitudCompromiso } = useServices()
@@ -128,7 +128,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
             setErrorMessage(responseCreateDetalle?.data.message)
 
-        }   catch (error) {
+        } catch (error) {
             setErrorMessage('Error al crear el detalle')
         }
         setLoading(false)
@@ -148,44 +148,44 @@ const CreateDetalleSolicitudCompromiso = () => {
             }}>
                 <CardHeader title='Crear detalle' />
                 <CardContent>
-                <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
-                    <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={2} xs={12}>
-                            <NumericFormat
-                                value={cantidad}
-                                customInput={TextField}
-                                thousandSeparator="."
-                                decimalSeparator=","
-                                allowNegative={false}
-                                decimalScale={2}
-                                fixedDecimalScale={true}
-                                label="cantidad"
-                                onFocus={(event) => {
-                                    event.target.select()
-                                }}
-                                onValueChange={(values: any) => {
-                                    const { value } = values
-                                    setCantidad(value)
-                                }}
-                                placeholder='0,00'
-                                error={Boolean(errors.codigoSolicitud)}
-                                aria-describedby='validation-async-cantidad'
-                                inputProps={{
-                                    type: 'text',
-                                    inputMode: 'numeric',
-                                    autoFocus: true
-                                }}
-                            />
-                        </Grid>
-                        <Grid item sm={4} xs={12}>
-                            <TipoUnidades
-                                id={defaultValues.udmId}
-                                onSelectionChange={handleTipoUnidadChange}
-                                autocompleteRef={autocompleteRef}
-                            />
-                        </Grid>
-                        <Grid item sm={6} xs={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
+                        <Grid container spacing={5} paddingTop={5}>
+                            <Grid item sm={2} xs={12}>
+                                <NumericFormat
+                                    value={cantidad}
+                                    customInput={TextField}
+                                    thousandSeparator="."
+                                    decimalSeparator=","
+                                    allowNegative={false}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                    label="cantidad"
+                                    onFocus={(event) => {
+                                        event.target.select()
+                                    }}
+                                    onValueChange={(values: any) => {
+                                        const { value } = values
+                                        setCantidad(value)
+                                    }}
+                                    placeholder='0,00'
+                                    error={Boolean(errors.codigoSolicitud)}
+                                    aria-describedby='validation-async-cantidad'
+                                    inputProps={{
+                                        type: 'text',
+                                        inputMode: 'numeric',
+                                        autoFocus: true
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item sm={4} xs={12}>
+                                <TipoUnidades
+                                    id={defaultValues.udmId}
+                                    onSelectionChange={handleTipoUnidadChange}
+                                    autocompleteRef={autocompleteRef}
+                                />
+                            </Grid>
+                            <Grid item sm={6} xs={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <TextField
                                         variant="outlined"
                                         style={{ flex: 1, border: 'none', borderRight: 'none', marginRight: '10px' }}
@@ -194,131 +194,131 @@ const CreateDetalleSolicitudCompromiso = () => {
                                             readOnly: true,
                                         }}
                                     />
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    size="large"
-                                    onClick={viewDialogListProduct}
+                                    <Button
+                                        variant="contained"
+                                        color="success"
+                                        size="large"
+                                        onClick={viewDialogListProduct}
                                         style={{ height: '100%', borderRadius: '10', padding: '13px' }}
-                                >
-                                    <Tooltip title='ver Productos'>
-                                        <IconButton size='small'>
-                                            <Icon icon='mdi:search' color="white" fontSize={20} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Button>
-                            </Box>
+                                    >
+                                        <Tooltip title='ver Productos'>
+                                            <IconButton size='small'>
+                                                <Icon icon='mdi:search' color="white" fontSize={20} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Button>
+                                </Box>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={12} xs={12}>
-                            <FormControl fullWidth>
-                                <Controller
-                                    name='descripcion'
-                                    control={control}
-                                    rules={{
-                                        required: false,
-                                    }}
-                                    render={({ field: { value, onChange } }) => (
-                                        <TextField
-                                            helperText="Caracteres máximo 1000"
-                                            value={value || ''}
-                                            label="Descripcion"
-                                            onChange={onChange}
-                                            placeholder='Descripcion'
-                                            error={Boolean(errors.descripcion)}
-                                            aria-describedby='validation-async-descripcion'
-                                            multiline
-                                            rows={4}
-                                        />
-                                    )}
-                                />
-                                {errors.descripcion && (
-                                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-descripcion'></FormHelperText>
-                                )}
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={3} xs={12}>
-                            <NumericFormat
-                                value={precioUnitario}
-                                customInput={TextField}
-                                thousandSeparator="."
-                                decimalSeparator=","
-                                allowNegative={false}
-                                decimalScale={2}
-                                fixedDecimalScale={true}
-                                label="Precio Unitario"
-                                onFocus={(event) => {
-                                    event.target.select()
-                                }}
-                                onValueChange={(values: any) => {
-                                    const { value } = values
-                                    setPrecioUnitario(value)
-                                }}
-                                placeholder='0,00'
-                                error={Boolean(errors.codigoSolicitud)}
-                                aria-describedby='validation-async-cantidad'
-                                inputProps={{
-                                    type: 'text',
-                                    inputMode: 'numeric',
-                                    autoFocus: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid item sm={6} xs={12}>
-                            <TipoImpuesto
-                                id={defaultValues.tipoImpuestoId}
-                                onSelectionChange={handleTipoImpuestoChange}
-                            />
-                        </Grid>
-                        <Grid item sm={3} xs={12}>
-                            <TextField
-                                value={total || 0}
-                                label="PrecioTotal"
-                                placeholder='precio unitario'
-                                error={Boolean(errors.codigoSolicitud)}
-                                aria-describedby='validation-async-cantidad-comprada'
-                            />
-                        </Grid>
-                    </Grid>
-                    <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
-                        <Button
-                            onClick={handleSubmitCreateDetalle(onSubmitCreateDetalle)}
-                            size='small'
-                            variant='contained'
-                        >
-                            { loading ? (
-                                <>
-                                    <CircularProgress
-                                        sx={{
-                                            color: 'common.white',
-                                            width: '20px !important',
-                                            height: '20px !important',
-                                            mr: theme => theme.spacing(2)
+                        <Grid container spacing={5} paddingTop={5}>
+                            <Grid item sm={12} xs={12}>
+                                <FormControl fullWidth>
+                                    <Controller
+                                        name='descripcion'
+                                        control={control}
+                                        rules={{
+                                            required: false,
                                         }}
+                                        render={({ field: { value, onChange } }) => (
+                                            <TextField
+                                                helperText="Caracteres máximo 1000"
+                                                value={value || ''}
+                                                label="Descripcion"
+                                                onChange={onChange}
+                                                placeholder='Descripcion'
+                                                error={Boolean(errors.descripcion)}
+                                                aria-describedby='validation-async-descripcion'
+                                                multiline
+                                                rows={4}
+                                            />
+                                        )}
                                     />
-                                    Guardando...
-                                </>
-                            ) : '+ Añadir'}
-                        </Button>
-                        <Button
-                            onClick={resetForm}
-                            variant='outlined'
-                            size='small'
-                        >
-                            Limpiar
-                        </Button>
-                    </CardActions>
-                    <Box>
-                        {errorMessage && errorMessage.length > 0 && (
-                            <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
-                                { errorMessage }
-                            </FormHelperText>
-                        )}
-                    </Box>
-                </form>
+                                    {errors.descripcion && (
+                                        <FormHelperText sx={{ color: 'error.main' }} id='validation-async-descripcion'></FormHelperText>
+                                    )}
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={5} paddingTop={5}>
+                            <Grid item sm={3} xs={12}>
+                                <NumericFormat
+                                    value={precioUnitario}
+                                    customInput={TextField}
+                                    thousandSeparator="."
+                                    decimalSeparator=","
+                                    allowNegative={false}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                    label="Precio Unitario"
+                                    onFocus={(event) => {
+                                        event.target.select()
+                                    }}
+                                    onValueChange={(values: any) => {
+                                        const { value } = values
+                                        setPrecioUnitario(value)
+                                    }}
+                                    placeholder='0,00'
+                                    error={Boolean(errors.codigoSolicitud)}
+                                    aria-describedby='validation-async-cantidad'
+                                    inputProps={{
+                                        type: 'text',
+                                        inputMode: 'numeric',
+                                        autoFocus: true,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item sm={6} xs={12}>
+                                <TipoImpuesto
+                                    id={defaultValues.tipoImpuestoId}
+                                    onSelectionChange={handleTipoImpuestoChange}
+                                />
+                            </Grid>
+                            <Grid item sm={3} xs={12}>
+                                <TextField
+                                    value={total || 0}
+                                    label="PrecioTotal"
+                                    placeholder='precio unitario'
+                                    error={Boolean(errors.codigoSolicitud)}
+                                    aria-describedby='validation-async-cantidad-comprada'
+                                />
+                            </Grid>
+                        </Grid>
+                        <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
+                            <Button
+                                onClick={handleSubmitCreateDetalle(onSubmitCreateDetalle)}
+                                size='small'
+                                variant='contained'
+                            >
+                                {loading ? (
+                                    <>
+                                        <CircularProgress
+                                            sx={{
+                                                color: 'common.white',
+                                                width: '20px !important',
+                                                height: '20px !important',
+                                                mr: theme => theme.spacing(2)
+                                            }}
+                                        />
+                                        Guardando...
+                                    </>
+                                ) : '+ Añadir'}
+                            </Button>
+                            <Button
+                                onClick={resetForm}
+                                variant='outlined'
+                                size='small'
+                            >
+                                Limpiar
+                            </Button>
+                        </CardActions>
+                        <Box>
+                            {errorMessage && errorMessage.length > 0 && (
+                                <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
+                                    {errorMessage}
+                                </FormHelperText>
+                            )}
+                        </Box>
+                    </form>
                 </CardContent>
             </Card>
             <DialogListProductsInfo />

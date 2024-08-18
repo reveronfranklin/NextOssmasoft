@@ -10,7 +10,9 @@ import {
     setListTipoDeSolicitud,
     setListProveedores,
     setListTipoImpuesto,
-    setListTipoUnidades
+    setListTipoUnidades,
+    setTotalListPuc,
+    setIsLoadingTableSolicitudGeneral
 } from "src/store/apps/adm"
 
 //import { IFilterPrePresupuestoDto } from 'src/interfaces/Presupuesto/i-filter-presupuesto';
@@ -42,17 +44,19 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const [error, setError] = useState<string>('')
     const [mensaje] = useState<string>('')
-    const [loading] = useState(false)
-    const [generateReport, setGenerateReport] = useState(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [generateReport, setGenerateReport] = useState<boolean>(false)
 
     const fetchTableData = useCallback(async (filters = initialFilters) => {
         try {
+            dispatch(setIsLoadingTableSolicitudGeneral(true))
             const response = await ossmmasofApi.post<IsolicitudesCompromiso>(UrlServices.GETBYPRESUPUESTO, filters)
 
             return response?.data
-
         } catch (e: any) {
             setError(e)
+        } finally {
+            dispatch(setIsLoadingTableSolicitudGeneral(false))
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
@@ -232,8 +236,11 @@ const useServices = (initialFilters: Filters = {}) => {
         try {
             const filter = { codigoDetalleSolicitud }
 
-            return await ossmmasofApi.post<any>(UrlServices.GETPUCDETALLE, filter)
+            const response = await ossmmasofApi.post<any>(UrlServices.GETPUCDETALLE, filter)
 
+            dispatch(setTotalListPuc(response?.data?.total1))
+
+            return response
         } catch (e: any) {
             setError(e)
             console.error(e)
@@ -299,6 +306,34 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
+    const aprobarSolicitud = async (codigoSolicitud: number) => {
+        try {
+            setLoading(true)
+            const filter = { codigoSolicitud }
+
+            return await ossmmasofApi.post<any>(UrlServices.APROBARSOLICITUD, filter)
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const anularSolicitud = async (codigoSolicitud: number) => {
+        try {
+            setLoading(true)
+            const filter = { codigoSolicitud }
+
+            return await ossmmasofApi.post<any>(UrlServices.ANULARSOLICITUD, filter)
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return { error, mensaje, loading,
         fetchTableData,
         fetchProveedores,
@@ -322,6 +357,8 @@ const useServices = (initialFilters: Filters = {}) => {
         fetchSolicitudReportData,
         downloadReportByName,
         generateReport,
+        aprobarSolicitud,
+        anularSolicitud,
     }
 }
 
