@@ -5,18 +5,23 @@ import Button from '@mui/material/Button'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setVerSolicitudCompromisosActive } from "src/store/apps/adm"
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 
 const AnulacionComponent = (props: any) => {
     const [error, setError] = useState<string>('')
 
     const { loading, anularSolicitud } = useServices()
     const dispatch = useDispatch()
+    const qc: QueryClient = useQueryClient()
 
     const handleAnulacion = async () => {
         try {
             const response = await anularSolicitud(props.data.codigoSolicitud)
 
             if (response?.data?.isValid) {
+                qc.invalidateQueries({
+                    queryKey: ['solicitudCompromiso']
+                })
                 handleClose()
             }
 
