@@ -5,11 +5,13 @@ import Button from '@mui/material/Button'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setVerSolicitudCompromisosActive } from "src/store/apps/adm"
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 
 const AprobacionComponent = (props: any) => {
     const [error, setError] = useState<string>('')
 
     const dispatch = useDispatch()
+    const qc: QueryClient = useQueryClient()
     const { loading, aprobarSolicitud } = useServices()
 
     const handleAprobacion = async () => {
@@ -17,6 +19,9 @@ const AprobacionComponent = (props: any) => {
             const response = await aprobarSolicitud(props.data.codigoSolicitud)
 
             if (response?.data?.isValid) {
+                qc.invalidateQueries({
+                    queryKey: ['solicitudCompromiso']
+                })
                 handleClose()
             }
 
