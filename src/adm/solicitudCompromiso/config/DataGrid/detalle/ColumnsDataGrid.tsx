@@ -4,6 +4,7 @@ import { GridRenderCellParams } from '@mui/x-data-grid'
 import { CellType } from '../../../interfaces/cellType.interfaces'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
+import formatNumber from '../../../helpers/formateadorNumeros'
 
 import {
     setSolicitudCompromisoSeleccionadoDetalle,
@@ -71,7 +72,7 @@ function ColumnsDetalleDataGrid() {
             field: 'precioUnitario',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.precioUnitario}
+                    { formatNumber(params.row.precioUnitario) }
                 </Typography>
             )
         },
@@ -81,7 +82,7 @@ function ColumnsDetalleDataGrid() {
             field: 'totalMasImpuesto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.totalMasImpuesto}
+                    { formatNumber(params.row.totalMasImpuesto) }
                 </Typography>
             )
         },

@@ -7,9 +7,11 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 600,
+    height: 650,
     overflowY: 'auto',
 }))
 
@@ -20,6 +22,7 @@ const DataGridComponent = () => {
     const [buffer, setBuffer] = useState<string>('')
     const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
+    const { filtroEstatus } = useSelector((state: RootState) => state.admSolicitudCompromiso )
     const debounceTimeoutRef = useRef<any>(null)
 
     const {
@@ -43,13 +46,14 @@ const DataGridComponent = () => {
         searchText,
         CodigoSolicitud: 0,
         CodigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+        status: filtroEstatus ?? ''
     }
 
     const query = useQuery({
-        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
-        queryFn: () => fetchTableData({ ...filter, pageSize, pageNumber, searchText }),
+        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus],
+        queryFn: () => fetchTableData({ ...filter, pageSize, pageNumber, searchText, status: filtroEstatus }),
         initialData: () => {
-            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
+            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus])
         },
         staleTime: 1000 * 60,
         retry: 3,
@@ -65,7 +69,7 @@ const DataGridComponent = () => {
         } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
             setIsPresupuestoSeleccionado(false)
         }
-    }, [presupuestoSeleccionado]);
+    }, [presupuestoSeleccionado, filtroEstatus]);
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)

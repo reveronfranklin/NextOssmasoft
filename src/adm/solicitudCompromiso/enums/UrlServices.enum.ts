@@ -16,5 +16,7 @@ export enum UrlServices {
     PUCDETALLECREATE   = '/AdmPucSolicitud/Create',
     PUCDETALLEDELETE   = '/AdmPucSolicitud/Delete',
     GENERATEURLREPORT  = '/ReporteSolicitudCompromiso/ReportData',
-    GETREPORTBYURL     = '/Files/GetPdfFiles'
+    GETREPORTBYURL     = '/Files/GetPdfFiles',
+    APROBARSOLICITUD   = '/PreCompromisos/CrearCompromisoDesdeSolicitud',
+    ANULARSOLICITUD    = '/PreCompromisos/AnularDesdeSolicitud',
 }

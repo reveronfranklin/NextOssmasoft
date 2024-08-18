@@ -4,6 +4,7 @@ import { GridRenderCellParams } from '@mui/x-data-grid'
 import { CellType } from '../../../interfaces/cellType.interfaces'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
+import formatNumber from '../../../helpers/formateadorNumeros'
 
 import {
     setPucSeleccionado,
@@ -71,7 +72,7 @@ function ColumnsPucDataGrid() {
             field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto}
+                    { formatNumber(params.row.monto) }
                 </Typography>
             )
         },
@@ -81,7 +82,7 @@ function ColumnsPucDataGrid() {
             field: 'montoComprometido',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.montoComprometido}
+                    { formatNumber(params.row.montoComprometido) }
                 </Typography>
             )
         },
@@ -91,7 +92,7 @@ function ColumnsPucDataGrid() {
             field: 'montoAnulado',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.montoAnulado}
+                    { formatNumber(params.row.montoAnulado) }
                 </Typography>
             )
         },

@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form'
 import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
 import { FormInputs } from 'src/adm/solicitudCompromiso/interfaces/puc/formImputs.interfaces'
 import formatNumber from '../../helpers/formateadorNumeros'
+import CalculoDisponiblePuc from '../../helpers/calculoDisponiblePuc'
 import useServices from './../../services/useServices';
 import DialogPreSaldoDisponibleInfo from 'src/presupuesto/preSaldoPendiente/views/DialogPreSaldoDisponibleInfo'
 
@@ -87,14 +88,18 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                 qc.invalidateQueries({
                     queryKey: ['pucDetalleSolicitud', props.codigoDetalleSolicitud]
                 })
+                resetForm()
             }
+
             setErrorMessage(responseCreatePuc?.data.message)
         } catch (e: any) {
             console.log(e)
             setErrorMessage('Error al crear el PUC')
         }
+
         setLoading(false)
     }
+
     const resetForm = () => {
         reset(defaultValues)
         setMonto(0)
@@ -164,7 +169,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                     </>
                                 )}
                             </Grid>
-                            <Grid item sm={7} xs={12} justifyContent="flex-end" sx={{ width: '100%' }}>
+                            <Grid item sm={5} xs={12} justifyContent="flex-end" sx={{ width: '100%' }}>
                                 <NumericFormat
                                     value={monto}
                                     customInput={TextField}
@@ -188,6 +193,18 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                         autoFocus: true,
                                     }}
                                 />
+                            </Grid>
+                            <Grid item sm={2} xs={12}>
+                                {preSaldoDisponibleSeleccionado && (
+                                    <>
+                                        <small>Por Completar:</small>
+                                        <Grid item sm={12} xs={12} sx={{ marginTop: '10px' }}>
+                                            <Typography variant='subtitle2' gutterBottom>
+                                                { formatNumber(CalculoDisponiblePuc()) }
+                                            </Typography>
+                                        </Grid>
+                                    </>
+                                )}
                             </Grid>
                         </Grid>
                         <CardActions sx={{ justifyContent: 'start', paddingLeft: 0, marginTop: 1 }}>
