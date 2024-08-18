@@ -4,8 +4,8 @@ import { FormInputs } from "./../../interfaces/detalle/formImputs.interfaces"
 import { useEffect, useState } from "react"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
-import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
-import TipoUnidades from '../../components/autocomplete/TipoUnidades'
+import TipoImpuesto from '../../components/Autocomplete/TipoImpuesto'
+import TipoUnidades from '../../components/Autocomplete/TipoUnidades'
 import useServices from "../../services/useServices";
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
@@ -41,8 +41,6 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const { fetchUpdateDetalleSolicitudCompromiso, fetchDeleteDetalleSolicitudCompromiso } = useServices()
 
     const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
-
-    console.log(productSeleccionado)
 
     const labelProduct = productSeleccionado?.codigo ? `${productSeleccionado?.codigo} - ${productSeleccionado?.descripcion}` : `${solicitudCompromisoSeleccionadoDetalle?.codigoProducto} - ${solicitudCompromisoSeleccionadoDetalle?.descripcionProducto}`
 
@@ -104,6 +102,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
 
         if (responseCalculePrice !== defaultValues.totalMasImpuesto) {
             setTotal(responseCalculePrice)
+
             return
         } else {
             setTotal(responseCalculePrice)
@@ -126,8 +125,6 @@ const UpdateDetalleSolicitudCompromiso = () => {
             tipoImpuestoId: dataForm.tipoImpuestoId,
             codigoProducto: codigoProducto,
         }
-
-        console.log('updateDetalle', data)
 
         const responseUpdate = await fetchUpdateDetalleSolicitudCompromiso(data)
 
@@ -345,8 +342,8 @@ const UpdateDetalleSolicitudCompromiso = () => {
                             onClick={handleSubmitDetalle(onSubmitDetalleUpdate)}
                             size='large'
                             variant='contained'
-                            >
-                            { loading ? (
+                        >
+                            {loading ? (
                                 <CircularProgress
                                     sx={{
                                         color: 'common.white',
@@ -378,7 +375,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                             <DialogActions>
                                 <Button onClick={handleClose}>No</Button>
                                 <Button variant='contained' onClick={handleDeleteDetalle}>
-                                    { loadingDelete ? (
+                                    {loadingDelete ? (
                                         <>
                                             <CircularProgress
                                                 sx={{
@@ -391,7 +388,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             Eliminando...
                                         </>
                                     )
-                                    : 'Sí' }
+                                        : 'Sí'}
                                 </Button>
                             </DialogActions>
                         </Dialog>

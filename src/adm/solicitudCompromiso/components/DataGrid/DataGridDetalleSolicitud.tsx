@@ -5,6 +5,7 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import ColumnsDetalleDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/detalle/ColumnsDataGrid'
 import { useState } from "react"
 import { Box, styled } from '@mui/material'
+import formatNumber from '../../helpers/formateadorNumeros'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 350,
@@ -28,6 +29,8 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         retry: 3
     }, qc)
 
+    console.log(query)
+
     const rows = query?.data?.data || []
     const rowCount = rows.length || 0
     const total1 = query?.data?.total1 || 0
@@ -48,7 +51,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <div style={{ padding: '10px' }}>
                     <label style={{ marginRight: '5px' }}>Total:</label>
-                    {total1}
+                    { formatNumber(total1) }
                 </div>
             </div>
             {

@@ -4,4 +4,5 @@ export interface Filters {
     pageNumber?: number
     pageSize?: number
     searchText?: string
+    status?: string
 }
