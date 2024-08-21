@@ -22,10 +22,11 @@ import Icon from 'src/@core/components/icon'
 const CreateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<any>(0)
     const [precioUnitario, setPrecioUnitario] = useState<any>(0)
-    const [impuesto, setImpuesto] = useState<number>(0)
     const [total, setTotal] = useState<any>(0)
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [udmId, setUdmId] = useState<number>(0)
+    const [impuesto, setImpuesto] = useState<number>(0)
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
 
@@ -70,6 +71,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     }
 
     const handleTipoUnidadChange = (tipoUnidad: number) => {
+        setUdmId(tipoUnidad)
         setValue('udmId', tipoUnidad)
         setErrorMessage('')
     }
@@ -98,6 +100,8 @@ const CreateDetalleSolicitudCompromiso = () => {
         setPrecioUnitario(0)
         setLoading(false)
         reset()
+        setUdmId(0)
+        setImpuesto(0)
     }
 
     const onSubmitCreateDetalle = async (dataForm: FormInputs) => {
@@ -129,8 +133,10 @@ const CreateDetalleSolicitudCompromiso = () => {
             setErrorMessage(responseCreateDetalle?.data.message)
 
         } catch (error) {
+            console.error(error)
             setErrorMessage('Error al crear el detalle')
         }
+
         setLoading(false)
     }
 
@@ -179,7 +185,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                             </Grid>
                             <Grid item sm={4} xs={12}>
                                 <TipoUnidades
-                                    id={defaultValues.udmId}
+                                    id={udmId}
                                     onSelectionChange={handleTipoUnidadChange}
                                     autocompleteRef={autocompleteRef}
                                 />
@@ -269,8 +275,9 @@ const CreateDetalleSolicitudCompromiso = () => {
                             </Grid>
                             <Grid item sm={6} xs={12}>
                                 <TipoImpuesto
-                                    id={defaultValues.tipoImpuestoId}
+                                    id={impuesto}
                                     onSelectionChange={handleTipoImpuestoChange}
+                                    autocompleteRef={autocompleteRef}
                                 />
                             </Grid>
                             <Grid item sm={3} xs={12}>
