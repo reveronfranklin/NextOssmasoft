@@ -2,6 +2,7 @@ import { Autocomplete, TextField } from "@mui/material"
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { Skeleton } from "@mui/material";
 import useServices from '../../services/useServices'
+import { useEffect, useState } from "react";
 
 interface ITipoUnidades {
     id: number
@@ -19,12 +20,25 @@ const TipoUnidad = (props: any) => {
         staleTime: 5000 * 60 * 60,
     }, qc)
 
-    const listTipo: ITipoUnidades[] = query.data?.data ?? []
-    const tipo = listTipo.filter((item: { id: number }) => item?.id == props?.id)[0]
+    const listTipo: ITipoUnidades[] = query.data?.data ?? [];
+    const [selectedValue, setSelectedValue] = useState<ITipoUnidades | null>(null)
+
+    useEffect(() => {
+        if (props.id === 0) {
+            setSelectedValue(null)
+
+            return
+        }
+        setSelectedValue(listTipo.filter((item: { id: number }) => item?.id == props?.id)[0])
+    }, [props.id]);
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
             props.onSelectionChange(newValue.id)
+            setSelectedValue(newValue)
+        } else {
+            props.onSelectionChange(0)
+            setSelectedValue(null)
         }
     }
 
@@ -46,7 +60,7 @@ const TipoUnidad = (props: any) => {
                     <Autocomplete
                         ref={props.autocompleteRef}
                         options={listTipo}
-                        defaultValue={tipo}
+                        value={selectedValue}
                         id='autocomplete-TipoUnidad'
                         getOptionLabel={(option) => option.id + '-' + option.descripcion}
                         onChange={handleChange}

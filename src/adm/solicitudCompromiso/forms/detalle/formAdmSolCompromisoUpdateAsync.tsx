@@ -8,8 +8,8 @@ import TipoImpuesto from '../../components/Autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/Autocomplete/TipoUnidades'
 import useServices from "../../services/useServices";
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
-import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
+import formatNumber from '../../helpers/formateadorNumeros'
 import { UpdateDetalle } from '../../interfaces/detalle/update.interfaces'
 import { DeleteDetalle } from '../../interfaces/detalle/delete.interfaces'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
@@ -45,6 +45,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const labelProduct = productSeleccionado?.codigo ? `${productSeleccionado?.codigo} - ${productSeleccionado?.descripcion}` : `${solicitudCompromisoSeleccionadoDetalle?.codigoProducto} - ${solicitudCompromisoSeleccionadoDetalle?.descripcionProducto}`
 
     const defaultValues: FormInputs = solicitudCompromisoSeleccionadoDetalle
+    console.log('defaultValues', defaultValues)
     const qc: QueryClient = useQueryClient()
 
     const {
@@ -90,7 +91,6 @@ const UpdateDetalleSolicitudCompromiso = () => {
 
     const calculoTotalPrecio = () => {
         let responseCalculePrice = 0
-        const typeCurrency = 'VES'
 
         if (cantidad < 0 || precioUnitario < 0) {
             setTotal(0)
@@ -98,7 +98,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
             return
         }
 
-        responseCalculePrice = parseFloat(formatPrice(calculatePrice(precioUnitario, cantidad, impuesto), typeCurrency))
+        responseCalculePrice = calculatePrice(precioUnitario, cantidad, impuesto)
 
         if (responseCalculePrice !== defaultValues.totalMasImpuesto) {
             setTotal(responseCalculePrice)
@@ -149,7 +149,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const handleCloseModalDetalleUpdate = () => {
         setTimeout(() => {
             dispatch(setVerSolicitudCompromisoDetalleActive(false))
-        }, 1500)
+        }, 2500)
     }
 
     const viewDialogListProduct = () => {
@@ -281,7 +281,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={3} xs={12}>
+                        <Grid item sm={2} xs={12}>
                             <FormControl fullWidth>
                                 <Controller
                                     name='precioUnitario'
@@ -321,15 +321,31 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                 )}
                             </FormControl>
                         </Grid>
-                        <Grid item sm={6} xs={12}>
+                        <Grid item sm={4} xs={12}>
                             <TipoImpuesto
                                 id={defaultValues.tipoImpuestoId}
                                 onSelectionChange={handleTipoImpuestoChange}
                             />
                         </Grid>
-                        <Grid item sm={3} xs={12}>
+                        <Grid item sm={2} xs={12}>
                             <TextField
-                                value={total}
+                                value={formatNumber(solicitudCompromisoSeleccionadoDetalle.total)}
+                                label="Total"
+                                placeholder='Total'
+                                disabled={true}
+                            />
+                        </Grid>
+                        <Grid item sm={2} xs={12}>
+                            <TextField
+                                value={formatNumber(solicitudCompromisoSeleccionadoDetalle.montoImpuesto)}
+                                label="Impuesto"
+                                placeholder='Impuesto'
+                                disabled={true}
+                            />
+                        </Grid>
+                        <Grid item sm={2} xs={12}>
+                            <TextField
+                                value={formatNumber(total)}
                                 label="PrecioTotal"
                                 placeholder='precio Total'
                                 error={Boolean(errors.codigoSolicitud)}

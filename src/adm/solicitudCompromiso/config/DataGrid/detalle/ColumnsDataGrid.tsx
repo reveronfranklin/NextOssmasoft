@@ -61,7 +61,15 @@ function ColumnsDetalleDataGrid() {
             headerName: 'descripcion',
             field: 'descripcion',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                <Typography
+                    variant='body2'
+                    sx={{
+                        color: 'text.primary',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
+                >
                     {params.row.descripcion}
                 </Typography>
             )
