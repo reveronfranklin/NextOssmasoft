@@ -25,7 +25,6 @@ const CreateDetalleSolicitudCompromiso = () => {
     const [total, setTotal] = useState<any>(0)
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
-
     const [udmId, setUdmId] = useState<number>(0)
     const [impuesto, setImpuesto] = useState<number>(0)
 
@@ -134,8 +133,10 @@ const CreateDetalleSolicitudCompromiso = () => {
             setErrorMessage(responseCreateDetalle?.data.message)
 
         } catch (error) {
+            console.error(error)
             setErrorMessage('Error al crear el detalle')
         }
+
         setLoading(false)
     }
 
