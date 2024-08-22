@@ -53,8 +53,8 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                 <Grid item xs={2} sm={6}>
                     <small style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <div style={{ padding: '10px' }}>
-                            <label style={{ marginRight: '5px' }}>Por impugnar:</label>
-                            {formatNumber(total2 - total1)}
+                            <label style={{ marginRight: '5px' }}>Por imputar:</label>
+                            {formatNumber(total1 - total2)}
                         </div>
                     </small>
                     <small style={{ display: 'flex', justifyContent: 'flex-end' }}>
