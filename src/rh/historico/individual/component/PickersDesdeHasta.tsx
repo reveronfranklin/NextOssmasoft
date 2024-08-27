@@ -1,9 +1,6 @@
 // ** React Imports
 import { useState } from 'react'
 
-// ** MUI Imports
-import Box from '@mui/material/Box'
-
 // ** Third Party Imports
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -44,44 +41,39 @@ const PickersDesdeHasta = ({ popperPlacement }: { popperPlacement: ReactDatePick
   }
 
   return (
-    <Grid item xs={12}>
-    <Card>
-      <CardHeader title='Filtrar' />
-      <CardContent>
-        <Grid container spacing={6}>
-          <Grid item xs={12} sm={6}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
-              <div>
-                <DatePicker
+      <Card>
+        <CardHeader title='Filtrar' />
+        <CardContent>
+          <Grid container spacing={5} >
+            <Grid item sm={6} xs={12}>
+            <div>
+              <DatePicker
                 dateFormat="dd/MM/yyyy"
-                  selected={dateDesde}
-                  id='basic-input-desde'
-                  popperPlacement={popperPlacement}
-                  onChange={(dateDesde: Date) => (handlerDesde(dateDesde))}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Desde' />}
-                />
-              </div>
-              <div>
-                <DatePicker
+                selected={dateDesde}
+                id='basic-input-desde'
+                popperPlacement={popperPlacement}
+                onChange={(dateDesde: Date) => (handlerDesde(dateDesde))}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='Desde' />}
+              />
+            </div>
+            </Grid>
+            <Grid item sm={6} xs={12}>
+            <div>
+              <DatePicker
                 dateFormat="dd/MM/yyyy"
-                  selected={dateHasta}
-                  id='basic-input-hasta'
-                  popperPlacement={popperPlacement}
-                  onChange={(dateHasta: Date) => (handlerHasta(dateHasta))}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Hasta' />}
-                />
-              </div>
-
-          </Box>
-        </Grid>
-
-        </Grid>
-      </CardContent>
-    </Card>
-  </Grid>
-
+                selected={dateHasta}
+                id='basic-input-hasta'
+                popperPlacement={popperPlacement}
+                onChange={(dateHasta: Date) => (handlerHasta(dateHasta))}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='Hasta' />}
+              />
+            </div>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
   )
 }
 
