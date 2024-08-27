@@ -12,15 +12,15 @@ import { useDispatch } from "react-redux"
 import { setVerSolicitudCompromisosActive } from 'src/store/apps/adm'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
-import TipoSolicitud from '../../components/autocomplete/TipoSolicitud'
-import CodigoProveedor from '../../components/autocomplete/CodigoProveedor'
-import UnidadSolicitante from '../../components/autocomplete/UnidadSolicitante'
+import TipoSolicitud from '../../components/Autocomplete/TipoSolicitud'
+import CodigoProveedor from '../../components/Autocomplete/CodigoProveedor'
+import UnidadSolicitante from '../../components/Autocomplete/UnidadSolicitante'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import dayjs from 'dayjs'
 import useServices from '../../services/useServices'
 
-const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDatePickerProps['popperPlacement']}) => {
+const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [fecha, setFecha] = useState<IFechaDto>({
@@ -48,6 +48,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
         codigoPresupuesto: 0,
         fechaSolicitudString: '',
         descripcionStatus: 'Pendiente',
+        descripcionTipoSolicitud: ''
     }
 
     const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({ defaultValues })
@@ -96,6 +97,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
                 })
+
                 setTimeout(() => {
                     dispatch(setVerSolicitudCompromisosActive(false))
                 }, 1500)
@@ -126,7 +128,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                             label="Codigo de Solicitud"
                                             onChange={onChange}
                                             placeholder='Codigo de Solicitud'
-                                            error={Boolean(errors.codigoSolicitud )}
+                                            error={Boolean(errors.codigoSolicitud)}
                                             aria-describedby='validation-async-codigoSolicitud'
                                             inputProps={{ min: 0 }}
                                             disabled
@@ -181,6 +183,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                             label="Numero de Solicitud"
                                             onChange={onChange}
                                             placeholder='Numero de Solicitud'
+                                            disabled
                                         />
                                     )}
                                 />
@@ -257,7 +260,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
                         <Button size='large' type='submit' variant='contained'>
-                            { loading ? (
+                            {loading ? (
                                 <>
                                     <CircularProgress
                                         sx={{
@@ -269,7 +272,7 @@ const FormCreateSolCompromiso = ({popperPlacement}: {popperPlacement: ReactDateP
                                     />
                                     Guardando...
                                 </>
-                            ) : 'Guardar' }
+                            ) : 'Guardar'}
                         </Button>
                     </CardActions>
                     <Box>

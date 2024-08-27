@@ -4,7 +4,8 @@ import useServices from 'src/adm/solicitudCompromiso/services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import ColumnsDetalleDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/detalle/ColumnsDataGrid'
 import { useState } from "react"
-import { Box, styled } from '@mui/material'
+import { Box, Grid, styled } from '@mui/material'
+import formatNumber from '../../helpers/formateadorNumeros'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 350,
@@ -28,10 +29,12 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         retry: 3
     }, qc)
 
-    const rows = query?.data?.data?.result?.data || []
-    const rowCount = rows.length || 0
-    const total1 = query?.data?.data?.result.total1 || 0
+    console.log(query)
 
+    const rows = query?.data?.data || []
+    const rowCount = rows.length || 0
+    const total1 = query?.data?.total1 || 0
+    const total2 = query?.data?.total2 || 0
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -46,12 +49,22 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <div style={{ padding: '10px' }}>
-                    <label style={{ marginRight: '5px' }}>Total:</label>
-                    {total1}
-                </div>
-            </div>
+            <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+                <Grid item xs={2} sm={6}>
+                    <small style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div style={{ padding: '10px' }}>
+                            <label style={{ marginRight: '5px' }}>Por imputar:</label>
+                            {formatNumber(total1 - total2)}
+                        </div>
+                    </small>
+                    <small style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div style={{ padding: '10px' }}>
+                            <label style={{ marginRight: '5px' }}>Total:</label>
+                            { formatNumber(total1) }
+                        </div>
+                    </small>
+                </Grid>
+            </Grid>
             {
                 query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <StyledDataGridContainer>

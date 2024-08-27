@@ -1,17 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CrudOperation } from 'src/adm/solicitudCompromiso/enums/CrudOperations.enum'
+import { Estatus } from 'src/adm/solicitudCompromiso/enums/Estatus.enum'
 import { ITipoSolicitud } from 'src/adm/solicitudCompromiso/interfaces/tipoSolicitud.interfaces'
 import { Product } from 'src/adm/solicitudCompromiso/components/Productos/interfaces/product.interfaces'
 
 export const admSolicitudCompromisoSlice = createSlice({
     name: 'admSolicitudCompromiso',
     initialState: {
+        isLoadingTableSolicitudGeneral: false,
         verSolicitudCompromisosActive: false,
         verSolicitudCompromisoDetalleActive: false,
         verSolicitudCompromisoPucActive: false,
         verDialogListProductsInfoActive: false,
         verDialogUpdateProductsInfoActive: false,
         operacionCrudAdmSolCompromiso: CrudOperation.DEFAULT,
+        filtroEstatus: Estatus.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
         solicitudCompromisoSeleccionadoDetalle: {} as any,
         pucSeleccionado: {} as any,
@@ -20,8 +23,15 @@ export const admSolicitudCompromisoSlice = createSlice({
         listTipoImpuesto: {} as any[],
         listTipoUnidades: {} as any[],
         productSeleccionado: {} as Product[],
+        total1ListPuc: 0,
     },
     reducers: {
+        setTotalListPuc: (state, action) => {
+            state.total1ListPuc = action.payload
+        },
+        setIsLoadingTableSolicitudGeneral: (state, action) => {
+            state.isLoadingTableSolicitudGeneral = action.payload
+        },
         setVerSolicitudCompromisosActive: (state, action) => {
             state.verSolicitudCompromisosActive = action.payload
         },
@@ -39,6 +49,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         },
         setOperacionCrudAdmSolCompromiso: (state, action) => {
             state.operacionCrudAdmSolCompromiso = action.payload
+        },
+        setFiltroEstatus: (state, action) => {
+            state.filtroEstatus = action.payload
         },
         setSolicitudCompromisoSeleccionado: (state, action) => {
             state.solicitudCompromisoSeleccionado = action.payload
@@ -67,6 +80,8 @@ export const admSolicitudCompromisoSlice = createSlice({
     }
 })
 export const {
+        setTotalListPuc,
+        setIsLoadingTableSolicitudGeneral,
         setVerSolicitudCompromisosActive,
         setOperacionCrudAdmSolCompromiso,
         setSolicitudCompromisoSeleccionado,
@@ -80,5 +95,6 @@ export const {
         setListTipoImpuesto,
         setListTipoUnidades,
         setListProveedores,
-        setProductSeleccionado
+        setProductSeleccionado,
+        setFiltroEstatus,
     } = admSolicitudCompromisoSlice.actions

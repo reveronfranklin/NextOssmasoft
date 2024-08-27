@@ -4,12 +4,12 @@ import { FormInputs } from "./../../interfaces/detalle/formImputs.interfaces"
 import { useEffect, useState } from "react"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
-import TipoImpuesto from '../../components/autocomplete/TipoImpuesto'
-import TipoUnidades from '../../components/autocomplete/TipoUnidades'
+import TipoImpuesto from '../../components/Autocomplete/TipoImpuesto'
+import TipoUnidades from '../../components/Autocomplete/TipoUnidades'
 import useServices from "../../services/useServices";
 import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
-import formatPrice from '../../helpers/formateadorPrecio'
 import { NumericFormat } from 'react-number-format'
+import formatNumber from '../../helpers/formateadorNumeros'
 import { UpdateDetalle } from '../../interfaces/detalle/update.interfaces'
 import { DeleteDetalle } from '../../interfaces/detalle/delete.interfaces'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
@@ -23,10 +23,13 @@ import IndexPucSolicitudCompromiso from '../puc/formAdmSolicitudCompromisoIndexA
 import { Product } from './../../components/Productos/interfaces/product.interfaces'
 
 const UpdateDetalleSolicitudCompromiso = () => {
-    const [cantidad, setCantidad] = useState<number>(0)
-    const [precioUnitario, setPrecioUnitario] = useState<number>(0)
-    const [impuesto, setImpuesto] = useState<number>(0)
-    const [total, setTotal] = useState<any>(0)
+    const { solicitudCompromisoSeleccionadoDetalle } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+
+    const [cantidad, setCantidad] = useState<number>(solicitudCompromisoSeleccionadoDetalle.cantidad)
+    const [precioUnitario, setPrecioUnitario] = useState<number>(solicitudCompromisoSeleccionadoDetalle.precioUnitario)
+    const [impuesto, setImpuesto] = useState<number>(solicitudCompromisoSeleccionadoDetalle.porImpuesto)
+    const [codigoProducto, setCodigoProducto] = useState<number>(solicitudCompromisoSeleccionadoDetalle.codigoProducto)
+    const [total, setTotal] = useState<number>(solicitudCompromisoSeleccionadoDetalle.totalMasImpuesto)
 
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
@@ -37,11 +40,12 @@ const UpdateDetalleSolicitudCompromiso = () => {
 
     const { fetchUpdateDetalleSolicitudCompromiso, fetchDeleteDetalleSolicitudCompromiso } = useServices()
 
-    const { solicitudCompromisoSeleccionadoDetalle } = useSelector((state: RootState) => state.admSolicitudCompromiso)
     const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
-    const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
+
+    const labelProduct = productSeleccionado?.codigo ? `${productSeleccionado?.codigo} - ${productSeleccionado?.descripcion}` : `${solicitudCompromisoSeleccionadoDetalle?.codigoProducto} - ${solicitudCompromisoSeleccionadoDetalle?.descripcionProducto}`
 
     const defaultValues: FormInputs = solicitudCompromisoSeleccionadoDetalle
+    console.log('defaultValues', defaultValues)
     const qc: QueryClient = useQueryClient()
 
     const {
@@ -50,6 +54,10 @@ const UpdateDetalleSolicitudCompromiso = () => {
         setValue,
         formState: { errors }
     } = useForm<FormInputs>({ defaultValues })
+
+    useEffect(() => {
+        setCodigoProducto(productSeleccionado?.codigo)
+    }, [productSeleccionado])
 
     const handleTipoImpuestoChange = (tipoImpuesto: any) => {
         setValue('tipoImpuestoId', tipoImpuesto.id)
@@ -82,13 +90,23 @@ const UpdateDetalleSolicitudCompromiso = () => {
     }
 
     const calculoTotalPrecio = () => {
-        const typeCurrency = 'VES'
+        let responseCalculePrice = 0
+
         if (cantidad < 0 || precioUnitario < 0) {
             setTotal(0)
 
             return
         }
-        setTotal(formatPrice(calculatePrice(precioUnitario, cantidad, impuesto), typeCurrency))
+
+        responseCalculePrice = calculatePrice(precioUnitario, cantidad, impuesto)
+
+        if (responseCalculePrice !== defaultValues.totalMasImpuesto) {
+            setTotal(responseCalculePrice)
+
+            return
+        } else {
+            setTotal(responseCalculePrice)
+        }
     }
 
     useEffect(() => {
@@ -105,10 +123,11 @@ const UpdateDetalleSolicitudCompromiso = () => {
             descripcion: dataForm.descripcion,
             precioUnitario: precioUnitario === 0 ? dataForm.precioUnitario : precioUnitario,
             tipoImpuestoId: dataForm.tipoImpuestoId,
-            codigoProducto: dataForm.codigoProducto,
+            codigoProducto: codigoProducto,
         }
 
         const responseUpdate = await fetchUpdateDetalleSolicitudCompromiso(data)
+
         if (responseUpdate?.data.isValid) {
             qc.invalidateQueries({
                 queryKey: ['detalleSolicitudCompromiso', defaultValues.codigoSolicitud]
@@ -130,7 +149,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const handleCloseModalDetalleUpdate = () => {
         setTimeout(() => {
             dispatch(setVerSolicitudCompromisoDetalleActive(false))
-        }, 1500)
+        }, 2500)
     }
 
     const viewDialogListProduct = () => {
@@ -262,7 +281,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                         </Grid>
                     </Grid>
                     <Grid container spacing={5} paddingTop={5}>
-                        <Grid item sm={3} xs={12}>
+                        <Grid item sm={2} xs={12}>
                             <FormControl fullWidth>
                                 <Controller
                                     name='precioUnitario'
@@ -302,17 +321,33 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                 )}
                             </FormControl>
                         </Grid>
-                        <Grid item sm={6} xs={12}>
+                        <Grid item sm={4} xs={12}>
                             <TipoImpuesto
                                 id={defaultValues.tipoImpuestoId}
                                 onSelectionChange={handleTipoImpuestoChange}
                             />
                         </Grid>
-                        <Grid item sm={3} xs={12}>
+                        <Grid item sm={2} xs={12}>
                             <TextField
-                                value={total || 0}
+                                value={formatNumber(solicitudCompromisoSeleccionadoDetalle.total)}
+                                label="Total"
+                                placeholder='Total'
+                                disabled={true}
+                            />
+                        </Grid>
+                        <Grid item sm={2} xs={12}>
+                            <TextField
+                                value={formatNumber(solicitudCompromisoSeleccionadoDetalle.montoImpuesto)}
+                                label="Impuesto"
+                                placeholder='Impuesto'
+                                disabled={true}
+                            />
+                        </Grid>
+                        <Grid item sm={2} xs={12}>
+                            <TextField
+                                value={formatNumber(total)}
                                 label="PrecioTotal"
-                                placeholder='precio unitario'
+                                placeholder='precio Total'
                                 error={Boolean(errors.codigoSolicitud)}
                                 aria-describedby='validation-async-cantidad-comprada'
                             />
@@ -323,8 +358,8 @@ const UpdateDetalleSolicitudCompromiso = () => {
                             onClick={handleSubmitDetalle(onSubmitDetalleUpdate)}
                             size='large'
                             variant='contained'
-                            >
-                            { loading ? (
+                        >
+                            {loading ? (
                                 <CircularProgress
                                     sx={{
                                         color: 'common.white',
@@ -356,7 +391,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                             <DialogActions>
                                 <Button onClick={handleClose}>No</Button>
                                 <Button variant='contained' onClick={handleDeleteDetalle}>
-                                    { loadingDelete ? (
+                                    {loadingDelete ? (
                                         <>
                                             <CircularProgress
                                                 sx={{
@@ -369,7 +404,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
                                             Eliminando...
                                         </>
                                     )
-                                    : 'Sí' }
+                                        : 'Sí'}
                                 </Button>
                             </DialogActions>
                         </Dialog>

@@ -1,12 +1,14 @@
-const formatNumber = (number: number) => {
-    if (number) {
-        const strNumber = number.toString()
-        const [integerPart, decimalPart] = strNumber.split('.');
-        const formattedIntegerPart = integerPart.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
-        const formattedDecimalPart = decimalPart ? `.${decimalPart}` : '';
+const formatNumber = (number: number | null) : string | null => {
+    if (number !== null && number !== undefined) {
+        const fixedNumber = number.toFixed(2)
+        const [integerPart, decimalPart] = fixedNumber.split('.')
 
-        return `${formattedIntegerPart}${formattedDecimalPart}`;
+        const formattedIntegerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+        return `${formattedIntegerPart},${decimalPart}`
     }
+
+    return null
 }
 
 export default formatNumber

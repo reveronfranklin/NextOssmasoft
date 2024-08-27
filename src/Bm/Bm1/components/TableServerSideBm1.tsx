@@ -26,7 +26,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Autocomplete, Button, CircularProgress, Divider, Grid, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Divider, Grid, Link, TextField } from '@mui/material'
 
 // ** Types
 
@@ -164,6 +164,10 @@ const columns: any = [
 ]
 
 const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+  // ** Const
+  const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+  const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
+
   // ** State
   const [page, setPage] = useState(0)
 
@@ -174,10 +178,11 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [allRows, setAllRows] = useState<Bm1GetDto[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const [isGeneratePlaca, setGeneratePlace] = useState(false)
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
   const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
-  const [download, setDownload] = useState('')
+  // const [download, setDownload] = useState('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 
@@ -286,9 +291,9 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         fechaHasta: fechaHasta,
         listIcpSeleccionado: listIcpSelelected
       }
-      console.log('filter bm1', filter)
+
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
-      console.log('responseAll  BM1', responseAll)
+
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)
       setRows(loadServerRows(page, responseAll.data.data))
@@ -306,11 +311,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   )
 
   useEffect(() => {
-    const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_DOWNLOAD_PRODUCTION
-    const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_DOWNLOAD
-    const url: string = !authConfig.isProduction ? urlDevelopment! : urlProduction!
-    setDownload(`${url}/placas.pdf`)
-
     fetchTableData(listIcpSeleccionadoLocal, fechaDesde, fechaHasta)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -362,102 +362,137 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     setRows(loadServerRows(newPage, allRows))
   }
 
+  const handleDownloadPlacas =  async () => {
+    try {
+      setGeneratePlace(true)
+      const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
+      const url = `${urlBase}/Files/GetPdfFiles/placas.pdf`
+
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const objectURL = URL.createObjectURL(blob)
+      const newTab = window.open(objectURL, '_blank')
+
+      if (!newTab) {
+        throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.')
+      }
+    } catch (e: any) {
+      console.error(e)
+    } finally {
+      setGeneratePlace(false)
+    }
+  }
+
   return (
     <>
-      <PickersDesdeHasta popperPlacement={popperPlacement} />
-      <Card>
-        {!loading ? (
-          <Box m={2} pt={3}>
-            {/*  <Button variant='contained' href={linkData} size='large' >
-              Descargar Todo
-            </Button> */}
-            <Button variant='contained' onClick={exportToExcel} size='large'>
-              Descargar Todo
-            </Button>
-            <Button
-              sx={{
-                ml: theme => theme.spacing(2)
-              }}
-              variant='contained'
-              size='large'
-              startIcon={<GetAppIcon />}
-              component={Link}
-              target='_blank'
-              href={download}
-              download='placas.pdf'
-            >
-              Descargar Placas
-            </Button>
-
-            <Button size='large' onClick={refresh} variant='outlined' sx={{ ml: 4 }}>
-              {loading ? (
-                <CircularProgress
-                  sx={{
-                    color: 'common.blue',
-                    width: '20px !important',
-                    height: '20px !important',
-                    mr: theme => theme.spacing(2)
-                  }}
-                />
-              ) : null}
-              Refrescar
-            </Button>
-          </Box>
-        ) : (
-          <Typography>{mensaje}</Typography>
-        )}
-        <Divider></Divider>
-
-        <Grid item sm={12} xs={12}>
-          <div>
-            {icps && icps.length > 0 ? (
-              <Autocomplete
-                sx={{ ml: 5, mr: 2, mt: 2 }}
-                multiple={true}
-                options={icps}
-                id='autocomplete-list-icp'
-                isOptionEqualToValue={(option, value) => option.codigoIcp === value.codigoIcp}
-                getOptionLabel={option => option.codigoIcp + '-' + option.unidadTrabajo}
-                onChange={handleIcp}
-                renderInput={params => <TextField {...params} label='ICP' />}
-              />
-            ) : (
-              <div></div>
-            )}
-          </div>
+      <Grid item xs={12}>
+        <Grid container spacing={6}>
+            <Grid item xs={6}>
+              <PickersDesdeHasta popperPlacement={popperPlacement} />
+            </Grid>
+            <Grid item xs={6}>
+              <Card>
+                <CardHeader title='ICP' />
+                <CardContent>
+                  <div>
+                    {icps && icps.length > 0 ? (
+                      <Autocomplete
+                        multiple={true}
+                        options={icps}
+                        id='autocomplete-list-icp'
+                        isOptionEqualToValue={(option, value) => option.codigoIcp === value.codigoIcp}
+                        getOptionLabel={option => option.codigoIcp + '-' + option.unidadTrabajo}
+                        onChange={handleIcp}
+                        renderInput={params => <TextField {...params} label='ICP' />}
+                      />
+                    ) : null}
+                  </div>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              {true ? (
+                <Box m={2} pt={1}>
+                <Button variant='contained' onClick={exportToExcel} size='large' disabled={loading}>
+                    Descargar Todo
+                  </Button>
+                  <Button
+                    sx={{
+                      ml: theme => theme.spacing(2)
+                    }}
+                    variant='contained'
+                    size='large'
+                    startIcon={<GetAppIcon />}
+                    onClick={handleDownloadPlacas}
+                    disabled={loading}
+                  > {isGeneratePlaca ? (
+                    <>
+                      <CircularProgress
+                        sx={{
+                          color: 'common.white',
+                          width: '20px !important',
+                          height: '20px !important',
+                          mr: theme => theme.spacing(2)
+                        }}
+                      />
+                      Generando...
+                    </>
+                  ) : 'Descargar Placas'}
+                  </Button>
+                  <Button size='large' onClick={refresh} variant='outlined' sx={{ ml: 4 }} disabled={loading}>
+                    {loading ? (
+                      <CircularProgress
+                        sx={{
+                          color: 'common.blue',
+                          width: '20px !important',
+                          height: '20px !important',
+                          mr: theme => theme.spacing(2)
+                        }}
+                      />
+                    ) : null}
+                    Refrescar
+                  </Button>
+                </Box>
+              ) : (
+                <Typography>{mensaje}</Typography>
+              )}
+            </Grid>
         </Grid>
-
-        {loading ? (
-          <Spinner sx={{ height: '100%' }} />
-        ) : (
-          <DataGrid
-            autoHeight
-            pagination
-            getRowId={row => row.codigoBien}
-            rows={rows}
-            rowCount={total}
-            columns={columns}
-            pageSize={pageSize}
-            sortingMode='server'
-            paginationMode='server'
-            onSortModelChange={handleSortModel}
-            onPageChange={handlePageChange}
-            onRowDoubleClick={row => handleDoubleClick(row)}
-            components={{ Toolbar: ServerSideToolbar }}
-            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-            componentsProps={{
-              baseButton: {
-                variant: 'outlined'
-              },
-              toolbar: {
-                printOptions: { disableToolbarButton: true },
-                value: searchValue,
-                clearSearch: () => handleSearch(''),
-                onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-              }
-            }}
-          />
-        )}
+      </Grid>
+      <Card sx={{ mt:5 }}>
+        <CardContent>
+          { loading ? (
+            <Spinner sx={{ height: '100%' }} />
+          ) : (
+            <DataGrid
+              autoHeight
+              pagination
+              getRowId={row => row.codigoBien}
+              rows={rows}
+              rowCount={total}
+              columns={columns}
+              pageSize={pageSize}
+              sortingMode='server'
+              paginationMode='server'
+              onSortModelChange={handleSortModel}
+              onPageChange={handlePageChange}
+              onRowDoubleClick={row => handleDoubleClick(row)}
+              components={{ Toolbar: ServerSideToolbar }}
+              onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  printOptions: { disableToolbarButton: true },
+                  value: searchValue,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                }
+              }}
+            />
+          )}
+        </CardContent>
       </Card>
       <DialogReportInfo></DialogReportInfo>
       <DialogBM1Info />

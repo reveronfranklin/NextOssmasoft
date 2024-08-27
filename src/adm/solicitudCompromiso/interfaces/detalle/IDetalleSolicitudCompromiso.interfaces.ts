@@ -7,6 +7,8 @@ export interface IDetalleSolicitudCompromiso {
     page: number
     totalPage: number
     cantidadRegistros: number
+    total1: number
+    total2: number
 }
 
 export interface DetalleSolicitudCompromiso {

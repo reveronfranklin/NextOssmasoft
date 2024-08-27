@@ -2,14 +2,15 @@ import { Button, Card, CardContent, CardHeader, Grid, Typography, TextField, Cir
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
-import { setVerPreSaldoDisponibleActive } from 'src/store/apps/pre-saldo-disponible'
+import { setVerPreSaldoDisponibleActive, setPreSaldoDisponibleSeleccionado } from 'src/store/apps/pre-saldo-disponible'
 import { NumericFormat } from 'react-number-format'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
 import { FormInputs } from 'src/adm/solicitudCompromiso/interfaces/puc/formImputs.interfaces'
 import formatNumber from '../../helpers/formateadorNumeros'
+import CalculoDisponiblePuc from '../../helpers/calculoDisponiblePuc'
 import useServices from './../../services/useServices';
 import DialogPreSaldoDisponibleInfo from 'src/presupuesto/preSaldoPendiente/views/DialogPreSaldoDisponibleInfo'
 
@@ -48,6 +49,14 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
         dispatch(setVerPreSaldoDisponibleActive(true))
     }
 
+    useEffect(() => {
+        if (preSaldoDisponibleSeleccionado.disponible) {
+            if (monto > preSaldoDisponibleSeleccionado.disponible) {
+                setErrorMessage('Por favor, verifica el monto. No puede sobrepasar la disponibilidad de la partida.')
+            }
+        }
+    }, [monto])
+
     const onSubmitPuc = async () => {
         setLoading(true)
 
@@ -67,14 +76,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
         }
         try {
             if (monto <= 0) {
-                setErrorMessage('el monto no puede ser menor o igual a 0')
-                setLoading(false)
-
-                return
-            }
-
-            if (monto > preSaldoDisponibleSeleccionado.disponible) {
-                setErrorMessage('el monto no puede ser mayor al saldo disponible')
+                setErrorMessage('El monto debe ser mayor a 0. Por favor, ingrese un monto válido.')
                 setLoading(false)
 
                 return
@@ -86,19 +88,24 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                 qc.invalidateQueries({
                     queryKey: ['pucDetalleSolicitud', props.codigoDetalleSolicitud]
                 })
+                resetForm()
             }
+
             setErrorMessage(responseCreatePuc?.data.message)
         } catch (e: any) {
             console.log(e)
             setErrorMessage('Error al crear el PUC')
         }
+
         setLoading(false)
     }
+
     const resetForm = () => {
         reset(defaultValues)
         setMonto(0)
         setErrorMessage('')
         setLoading(false)
+        dispatch(setPreSaldoDisponibleSeleccionado({}))
     }
 
     return (
@@ -162,7 +169,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                     </>
                                 )}
                             </Grid>
-                            <Grid item sm={7} xs={12} justifyContent="flex-end" sx={{ width: '100%' }}>
+                            <Grid item sm={5} xs={12} justifyContent="flex-end" sx={{ width: '100%' }}>
                                 <NumericFormat
                                     value={monto}
                                     customInput={TextField}
@@ -187,12 +194,25 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                     }}
                                 />
                             </Grid>
+                            <Grid item sm={2} xs={12}>
+                                {preSaldoDisponibleSeleccionado && (
+                                    <>
+                                        <small>Por Completar:</small>
+                                        <Grid item sm={12} xs={12} sx={{ marginTop: '10px' }}>
+                                            <Typography variant='subtitle2' gutterBottom>
+                                                { formatNumber(CalculoDisponiblePuc()) }
+                                            </Typography>
+                                        </Grid>
+                                    </>
+                                )}
+                            </Grid>
                         </Grid>
                         <CardActions sx={{ justifyContent: 'start', paddingLeft: 0, marginTop: 1 }}>
                             <Button
                                 onClick={handleSubmitCreatePuc(onSubmitPuc)}
                                 size='small'
                                 variant='contained'
+                                disabled={errorMessage.length > 0 ? true : false}
                             >
                                 { loading ? (
                                     <>
