@@ -1,14 +1,14 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
-import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { FetchGetAll } from "../../interfaces/fetchGetAll.interfaces"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
 import { DataGrid } from "@mui/x-data-grid"
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import ColumnsDataGrid from './../../config/DataGrid/ColumnDataGrid'
+import useServices from '../../services/useServices'
+import Spinner from 'src/@core/components/spinner'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -16,18 +16,17 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const qc: QueryClient = useQueryClient()
-
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
     const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
+    const { fetchGetAll, presupuestoSeleccionado } = useServices()
+    const qc: QueryClient = useQueryClient()
+
     const { filtroEstatus } = useSelector((state: RootState) => state.admSolicitudCompromiso)
     const debounceTimeoutRef = useRef<any>(null)
-
-    const { fetchGetAll, presupuestoSeleccionado } = useServices()
 
     const filter: FetchGetAll = {
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
