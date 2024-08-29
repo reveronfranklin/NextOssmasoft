@@ -388,7 +388,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 ) : 'Guardar'}
                             </Button>
                             <Button variant='contained' size='large' onClick={() => handleReport()}>
-                                {generatorReport ? (
+                                { generatorReport ? (
                                     <>
                                         <CircularProgress
                                             sx={{

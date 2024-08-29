@@ -26,7 +26,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Divider, Grid, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Grid, TextField } from '@mui/material'
 
 // ** Types
 
@@ -182,7 +182,6 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
   const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
-  // const [download, setDownload] = useState('')
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 

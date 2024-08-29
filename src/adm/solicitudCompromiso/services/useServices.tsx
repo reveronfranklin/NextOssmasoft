@@ -288,17 +288,16 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const downloadReportByName = async (nameReport: string) => {
         try {
-            const urlBase = !authConfig.isProduction ? urlDevelopment : urlProduction
-            const url = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`;
+            const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
+            const url = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`
 
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const objectURL = URL.createObjectURL(blob);
-
-            const newTab = window.open(objectURL, '_blank');
+            const response = await fetch(url)
+            const blob = await response.blob()
+            const objectURL = URL.createObjectURL(blob)
+            const newTab = window.open(objectURL, '_blank')
 
             if (!newTab) {
-                throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.');
+                throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.')
             }
         } catch (e: any) {
             setError(e)
