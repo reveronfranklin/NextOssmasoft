@@ -39,7 +39,7 @@ const StatusComponent = () => {
                                             <Autocomplete
                                                 options={Object.keys(Estatus).filter((key) => key !== 'DEFAULT')}
                                                 onChange={handleChange}
-                                                renderInput={(params) => <TextField {...params} label="Estado" />}
+                                                renderInput={(params) => <TextField {...params} label="Seleccionar" />}
                                                 disabled={isLoadingTableGeneral}
                                             />
                                         </div>
