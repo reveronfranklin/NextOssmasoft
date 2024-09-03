@@ -184,6 +184,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
 
   // const [download, setDownload] = useState('')
+
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 

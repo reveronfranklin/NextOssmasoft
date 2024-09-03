@@ -66,14 +66,16 @@ const FilterOnlyPresupuesto = () => {
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
                 <div>
                   <Autocomplete
-                    sx={{ width: 350 }}
-                    options={listpresupuestoDto}
+                    sx={{ width: 450 }}
+                    options={listpresupuestoDto.filter(option => option !== undefined)}
                     defaultValue={listpresupuestoDtoSeleccionado}
                     id='autocomplete-MaestroPresupuesto'
                     isOptionEqualToValue={(option, value) => option.codigoPresupuesto === value.codigoPresupuesto}
-                    getOptionLabel={option => option.codigoPresupuesto + '-' + option.descripcion}
+                    getOptionLabel={ option => option && option.codigoPresupuesto && option.descripcion
+                      ? `${option.codigoPresupuesto} - ${option.descripcion}`
+                      : '' }
                     onChange={handlePresupuestos}
-                    renderInput={params => <TextField {...params} label='Presupuesto' />}
+                    renderInput={params => <TextField {...params} label='Seleccionar' />}
                   />
                 </div>
               </Box>

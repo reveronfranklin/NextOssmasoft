@@ -1,14 +1,14 @@
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
-import { DataGrid } from "@mui/x-data-grid"
-import { Filters } from '../../interfaces/filters.interfaces'
-import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import ColumnsDataGrid from '../../config/DataGrid/general/ColumnsDataGrid'
-import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
+import { FetchGetAll } from "../../interfaces/fetchGetAll.interfaces"
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
+import { Box, styled } from '@mui/material'
+import { DataGrid } from "@mui/x-data-grid"
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
+import ColumnsDataGrid from './../../config/DataGrid/ColumnDataGrid'
+import useServices from '../../services/useServices'
+import Spinner from 'src/@core/components/spinner'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -22,38 +22,26 @@ const DataGridComponent = () => {
     const [buffer, setBuffer] = useState<string>('')
     const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
-    const { filtroEstatus } = useSelector((state: RootState) => state.admSolicitudCompromiso )
-    const debounceTimeoutRef = useRef<any>(null)
-
-    const {
-        fetchTableData,
-        presupuestoSeleccionado,
-        fetchSolicitudReportData,
-        downloadReportByName,
-        generateReport
-    } = useServices()
-
-    const actions = {
-        fetchSolicitudReportData,
-        downloadReportByName
-    }
-
+    const { fetchGetAll, presupuestoSeleccionado } = useServices()
     const qc: QueryClient = useQueryClient()
 
-    const filter: Filters = {
+    const { filtroEstatus } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+    const debounceTimeoutRef = useRef<any>(null)
+
+    const filter: FetchGetAll = {
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+        codigoCompromiso: 0,
         pageSize,
         pageNumber,
         searchText,
-        CodigoSolicitud: 0,
-        CodigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
         status: filtroEstatus ?? ''
     }
 
     const query = useQuery({
-        queryKey: ['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus],
-        queryFn: () => fetchTableData({ ...filter, pageSize, pageNumber, searchText, status: filtroEstatus }),
+        queryKey: ['tableCompromisos', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus],
+        queryFn: () => fetchGetAll({ ...filter, pageSize, pageNumber, searchText, status: filtroEstatus }),
         initialData: () => {
-            return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus])
+            return qc.getQueryData(['tableCompromisos', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus])
         },
         staleTime: 1000 * 60,
         retry: 3,
@@ -104,7 +92,7 @@ const DataGridComponent = () => {
     return (
         <>
             {
-                query.isLoading || generateReport ? (<Spinner sx={{ height: '100%' }} />) : rows && (
+                query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <StyledDataGridContainer>
                         <DataGrid
                             autoHeight
@@ -112,7 +100,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoSolicitud}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid(actions) as any}
+                            columns={ColumnsDataGrid() as any}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}
@@ -141,10 +129,4 @@ const DataGridComponent = () => {
     )
 }
 
-const Component = () => {
-    return (
-        <DataGridComponent />
-    )
-}
-
-export default Component
+export default DataGridComponent

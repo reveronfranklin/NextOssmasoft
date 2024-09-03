@@ -80,7 +80,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                             paginationMode='server'
                             pageSize={pageSize}
                             page={pageNumber}
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
                         />
