@@ -29,8 +29,6 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         retry: 3
     }, qc)
 
-    console.log(query)
-
     const rows = query?.data?.data || []
     const rowCount = rows.length || 0
     const total1 = query?.data?.total1 || 0
