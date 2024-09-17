@@ -41,7 +41,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'cantidad',
             field: 'cantidad',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <Typography variant='body2' sx={{ color: color }}>
@@ -56,7 +56,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'descripcionUnidad',
             field: 'descripcionUnidad',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <Typography variant='body2' sx={{ color: color }}>
@@ -71,7 +71,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'descripcion',
             field: 'descripcion',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <Typography
@@ -94,7 +94,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'precioUnitario',
             field: 'precioUnitario',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
@@ -113,7 +113,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'total',
             field: 'total',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
@@ -132,7 +132,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'impuesto',
             field: 'impuesto',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
@@ -151,7 +151,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'totalMasImpuesto',
             field: 'totalMasImpuesto',
             renderCell: (params: GridRenderCellParams) => {
-                const color = params.row.lineaImpuesto ? 'green' : 'black'
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
 
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
@@ -162,7 +162,6 @@ function ColumnsDetalleDataGrid() {
                             { formatNumber(params.row.totalMasImpuesto) }
                         </Typography>
                     </div>
-
                 )
             }
         },

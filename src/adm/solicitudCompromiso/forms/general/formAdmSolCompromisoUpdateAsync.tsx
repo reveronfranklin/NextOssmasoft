@@ -160,6 +160,13 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             }
             const responseDeleteImputaciones = await eliminarImputaciones(filter)
             console.log(responseDeleteImputaciones)
+
+            if (responseDeleteImputaciones?.data.isValid) {
+                qc.invalidateQueries({
+                    queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+                })
+            }
+            setErrorMessage(responseDeleteImputaciones?.data.message)
         } catch (e: any) {
             console.log(e)
         } finally {
