@@ -62,6 +62,7 @@ const ListSaldoDisponibleTableServerSide = () => {
     CodigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto,
   }
 
+  console.log('searchText', searchText)
   const query = useQuery({
     queryKey: ['listSaldoDisponible', pageSize, page, searchText],
     queryFn: () => ossmmasofApi.post<any>('/PreVSaldos/GetListIcpPucConDisponible', filter),
@@ -237,14 +238,14 @@ const ListSaldoDisponibleTableServerSide = () => {
 
     const newBuffer = value
     setBuffer(newBuffer)
-    debouncedSearch()
+    debouncedSearch(newBuffer)
   }
 
-  const debouncedSearch = () => {
+  const debouncedSearch = (currentBuffer : string) => {
     clearTimeout(debounceTimeoutRef.current)
 
     debounceTimeoutRef.current = setTimeout(() => {
-      setSearchText(buffer)
+      setSearchText(currentBuffer)
     }, 2500)
   }
 
