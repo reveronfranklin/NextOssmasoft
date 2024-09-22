@@ -42,6 +42,7 @@ import { preSolModificacionSlice } from './apps/pre-sol-modificacion'
 import { prePucSolModificacionSlice } from './apps/pre-puc-sol-modificacion'
 import { preSaldoDisponibleSlice } from './apps/pre-saldo-disponible'
 import { admSolicitudCompromisoSlice } from './apps/adm'
+import { admOrdenPagoSlice } from './apps/ordenPago'
 
 export const store = configureStore({
   reducer: {
@@ -84,7 +85,8 @@ export const store = configureStore({
     preSolModificacion: preSolModificacionSlice.reducer,
     prePucSolModificacion: prePucSolModificacionSlice.reducer,
     preSaldoDisponible: preSaldoDisponibleSlice.reducer,
-    admSolicitudCompromiso: admSolicitudCompromisoSlice.reducer
+    admSolicitudCompromiso: admSolicitudCompromisoSlice.reducer,
+    admOrdenPago: admOrdenPagoSlice.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

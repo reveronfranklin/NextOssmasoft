@@ -9,7 +9,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
 
-import OrdenPagoComponent from '../forms/OrdenPagoComponent'
+import OrdenPagoComponent from '../../forms/OrdenPagoComponent'
+import { setIsOpenDialogOrdenPagoDetalle } from "src/store/apps/ordenPago"
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -21,8 +22,10 @@ const Transition = forwardRef(function Transition(
 const DialogAdmOrdenPagoDetalle = () => {
     const dispatch = useDispatch()
 
+    const { isOpenDialogOrdenPagoDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago )
+
     const handleClose = () => {
-        // dispatch()
+        dispatch(setIsOpenDialogOrdenPagoDetalle(false))
     }
 
     return (
@@ -31,7 +34,7 @@ const DialogAdmOrdenPagoDetalle = () => {
                 fullWidth
                 maxWidth={false}
                 scroll='body'
-                open={true}
+                open={isOpenDialogOrdenPagoDetalle}
                 TransitionComponent={Transition}
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'
@@ -50,7 +53,7 @@ const DialogAdmOrdenPagoDetalle = () => {
                     <AppBar position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{ justifyContent: 'space-between', padding: 0, backgroundColor: 'white' }}>
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Orden de Pago
+                                Orden de Pago { typeOperation }
                             </Typography>
                             <IconButton
                                 size='small'
@@ -62,7 +65,7 @@ const DialogAdmOrdenPagoDetalle = () => {
                         </Toolbar>
                     </AppBar>
                     <DialogContent>
-                        <OrdenPagoComponent />
+                        { typeOperation === 'update' ? <OrdenPagoComponent /> : <></> }
                     </DialogContent>
                 </Grid>
             </Dialog>

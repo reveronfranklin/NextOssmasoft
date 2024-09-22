@@ -1,36 +1,33 @@
 import { useDispatch } from 'react-redux'
-import { IconButton, Tooltip, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
-import Icon from 'src/@core/components/icon'
 import { } from "src/store/apps/adm"
-import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation } from 'src/store/apps/ordenPago'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
-    const handleEdit = (row: any) => {
-        dispatch(setIsOpenDialogOrdenPagoDetalle(true))
-        dispatch(setTypeOperation('update'))
-    }
+    // const handleEdit = (row: any) => {
+    //     console.log('row', row)
+    // }
 
     return [
-        {
-            flex: 0,
-            minWidth: 40,
-            sortable: false,
-            headerName: 'Acciones',
-            field: 'actions',
-            renderCell: ({ row }: any) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Tooltip title='Editar'>
-                        <IconButton size='small' onClick={() => handleEdit(row)}>
-                            <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            )
-        },
+        // {
+        //     flex: 0,
+        //     minWidth: 40,
+        //     sortable: false,
+        //     headerName: 'Acciones',
+        //     field: 'actions',
+        //     renderCell: ({ row }: any) => (
+        //         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        //             <Tooltip title='Editar'>
+        //                 <IconButton size='small' onClick={() => handleEdit(row)}>
+        //                     <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+        //                 </IconButton>
+        //             </Tooltip>
+        //         </Box>
+        //     )
+        // },
         {
             flex: 0,
             minWidth: 180,
@@ -39,6 +36,17 @@ function ColumnsDataGrid() {
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.codigoOrdenPago}
+                </Typography>
+            )
+        },
+        {
+            flex: 0,
+            minWidth: 180,
+            headerName: 'numeroOrdenPago',
+            field: 'numeroOrdenPago',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.numeroOrdenPago}
                 </Typography>
             )
         },

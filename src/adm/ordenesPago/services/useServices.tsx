@@ -48,11 +48,21 @@ const useServices = () => {
         }
     }, [])
 
+    const createOrden = useCallback(async (filters: any): Promise<any> => {
+        const responseGetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
+    }, [])
+
+    const updateOrden = useCallback(async (filters: any): Promise<any> => {
+        const responseUpdateOrden = await ossmmasofApi.post<any>(UrlServices.UPDATEORDENPAGO, filters)
+    }, [])
+
     return {
         error, message, loading,
         presupuestoSeleccionado,
         getOrdenesPagoByPresupuesto,
         getPucOrdenPago,
+        createOrden,
+        updateOrden,
     }
 }
 

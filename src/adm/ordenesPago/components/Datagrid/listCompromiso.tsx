@@ -1,13 +1,15 @@
-import { useState, ChangeEvent, useEffect, useRef } from 'react'
+import { useState, ChangeEvent, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import ColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
+import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridListCompromiso'
+import { setCompromisoSeleccionadoDetalle, setIsOpenDialogListCompromiso } from "src/store/apps/ordenPago"
+import { useDispatch } from 'react-redux'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -19,14 +21,10 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
     const qc: QueryClient = useQueryClient()
     const debounceTimeoutRef = useRef<any>(null)
-
-    const {
-        filtroEstatus
-    } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+    const dispatch = useDispatch()
 
     const {
         getOrdenesPagoByPresupuesto,
@@ -39,30 +37,37 @@ const DataGridComponent = () => {
         searchText,
         CodigoSolicitud: 0,
         CodigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        status: filtroEstatus ?? ''
+        status: 'AP'
     }
 
     const query = useQuery({
-        queryKey: ['ordenesPagoTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus],
-        queryFn: () => getOrdenesPagoByPresupuesto({ ...filter, pageSize, pageNumber, searchText, status: filtroEstatus }),
+        queryKey: ['ordenesPagoTable', pageSize, pageNumber, searchText ],
+        queryFn: () => getOrdenesPagoByPresupuesto({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
-            return qc.getQueryData(['ordenesPagoTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus])
+            return qc.getQueryData(['ordenesPagoTable', pageSize, pageNumber, searchText])
         },
         staleTime: 1000 * 60,
         retry: 3,
-        enabled: isPresupuestoSeleccionado
     }, qc)
 
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
 
-    useEffect(() => {
-        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
-            setIsPresupuestoSeleccionado(true)
-        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
-            setIsPresupuestoSeleccionado(false)
-        }
-    }, [presupuestoSeleccionado, filtroEstatus]);
+    // useEffect(() => {
+    //     if (presupuestoSeleccionado.codigoPresupuesto > 0) {
+    //         setIsPresupuestoSeleccionado(true)
+    //     } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
+    //         setIsPresupuestoSeleccionado(false)
+    //     }
+    // }, [presupuestoSeleccionado, filtroEstatus]);
+
+    const handleDoubleClick = (data: any) => {
+        const {row} = data
+        dispatch(setCompromisoSeleccionadoDetalle(row))
+        setTimeout(() => {
+            dispatch(setIsOpenDialogListCompromiso(false))
+        }, 1500)
+    }
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -114,6 +119,7 @@ const DataGridComponent = () => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
+                            onRowDoubleClick={row => handleDoubleClick(row)}
                             components={{ Toolbar: ServerSideToolbar }}
                             componentsProps={{
                                 baseButton: {
@@ -123,8 +129,7 @@ const DataGridComponent = () => {
                                     printOptions: { disableToolbarButton: true },
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                                    sx: { paddingLeft: 0 }
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
                                 }
                             }}
                         />
