@@ -40,59 +40,130 @@ function ColumnsDetalleDataGrid() {
             flex: 1,
             headerName: 'cantidad',
             field: 'cantidad',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.cantidad}
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <Typography variant='body2' sx={{ color: color }}>
+                        {params.row.cantidad}
+                    </Typography>
+
+                )
+            }
         },
         {
             flex: 1,
             headerName: 'descripcionUnidad',
             field: 'descripcionUnidad',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionUnidad}
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <Typography variant='body2' sx={{ color: color }}>
+                        {params.row.descripcionUnidad}
+                    </Typography>
+
+                )
+            }
         },
         {
             flex: 1,
             headerName: 'descripcion',
             field: 'descripcion',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography
-                    variant='body2'
-                    sx={{
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                    }}
-                >
-                    {params.row.descripcion}
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <Typography
+                        variant='body2'
+                        sx={{
+                            color: color,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {params.row.descripcion}
+                    </Typography>
+
+                )
+            }
         },
         {
             flex: 1,
             headerName: 'precioUnitario',
             field: 'precioUnitario',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    { formatNumber(params.row.precioUnitario) }
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                        <Typography
+                            variant='body2'
+                            sx={{ color: color }}
+                        >
+                            { formatNumber(params.row.precioUnitario) }
+                        </Typography>
+                    </div>
+                )
+            }
+        },
+        {
+            flex: 1,
+            headerName: 'total',
+            field: 'total',
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                        <Typography
+                            variant='body2'
+                            sx={{ color: color }}
+                        >
+                            { formatNumber(params.row.total) }
+                        </Typography>
+                    </div>
+                )
+            }
+        },
+        {
+            flex: 1,
+            headerName: 'impuesto',
+            field: 'impuesto',
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                        <Typography
+                            variant='body2'
+                            sx={{ color: color }}
+                        >
+                            {formatNumber(params.row.montoImpuesto) }
+                        </Typography>
+                    </div>
+                )
+            }
         },
         {
             flex: 1,
             headerName: 'totalMasImpuesto',
             field: 'totalMasImpuesto',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    { formatNumber(params.row.totalMasImpuesto) }
-                </Typography>
-            )
+            renderCell: (params: GridRenderCellParams) => {
+                const color = params.row.lineaImpuesto ? 'green' : '#3A3541DE'
+
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                        <Typography
+                            variant='body2'
+                            sx={{ color: color }}
+                        >
+                            { formatNumber(params.row.totalMasImpuesto) }
+                        </Typography>
+                    </div>
+                )
+            }
         },
     ]
 }

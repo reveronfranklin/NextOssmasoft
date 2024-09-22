@@ -1,7 +1,5 @@
 import { useState, ChangeEvent, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-
-// import { Filters } from '../../interfaces/filters.interfaces'
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
@@ -48,7 +46,6 @@ const DataGridListProduct = () => {
     const rowCount = query?.data?.cantidadRegistros || 0
 
     const handleDoubleClick = (row: any) => {
-        console.log(row.row)
         dispatch(setProductSeleccionado(row.row))
         dispatch(setVerDialogListProductsInfoActive(false))
     }
