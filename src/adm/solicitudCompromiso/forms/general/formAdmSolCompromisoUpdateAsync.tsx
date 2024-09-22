@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Card, CardActions, CardContent, CardHeader, CircularProgress, DialogContent, FormControl, FormHelperText, Grid, TextField, Dialog, DialogActions, DialogContentText, DialogTitle } from '@mui/material';
+import { Box, Card, CardActions, CardContent, CardHeader, CircularProgress, FormControl, FormHelperText, Grid, TextField } from '@mui/material';
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { Controller, useForm } from 'react-hook-form'
@@ -24,6 +24,9 @@ import IndexDetalleSolicitudCompromiso from '../detalle/formAdmSolCompromisoInde
 import HandleReport from '../../helpers/generateReport/SolicitudCompromiso'
 import AprobacionComponent from '../../components/Estados/Aprobacion'
 import AnulacionComponent from '../../components/Estados/Anulacion'
+import DialogCustom from '../../components/Dialog/dialogCustom'
+
+import { EliminarImputaciones } from '../../interfaces/detalle/eliminarImputaciones.interfaces'
 
 // import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
 
@@ -31,13 +34,18 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [generatorReport, setGeneratorReport] = useState<boolean>(false)
-    const [open, setOpen] = useState<boolean>(false)
+    const [openDialogImputaciones, setOpenDialogImputaciones] = useState<boolean>(false)
+    const [openDialogSolicitud, setOpenDialogSolicitud] = useState<boolean>(false)
+
     const {
         updateSolicitudCompromiso,
         eliminarSolicitudCompromiso,
         fetchSolicitudReportData,
-        downloadReportByName
+        downloadReportByName,
+        eliminarImputaciones,
+        presupuestoSeleccionado
     } = useServices()
+
     const dispatch = useDispatch()
     const qc: QueryClient = useQueryClient()
 
@@ -143,6 +151,29 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         }
     }
 
+    const handleDeleteImputacion = async () => {
+        try {
+            setLoading(true)
+            const filter: EliminarImputaciones = {
+                codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+                codigoSolicitud: codigoSolicitud
+            }
+            const responseDeleteImputaciones = await eliminarImputaciones(filter)
+            console.log(responseDeleteImputaciones)
+
+            if (responseDeleteImputaciones?.data.isValid) {
+                qc.invalidateQueries({
+                    queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+                })
+            }
+            setErrorMessage(responseDeleteImputaciones?.data.message)
+        } catch (e: any) {
+            console.log(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const handleDelete = async () => {
         try {
             setLoading(true)
@@ -155,7 +186,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             if (!responseDelete?.data.isValid) {
                 setErrorMessage(responseDelete?.data.message)
             } else {
-                handleClose()
+                handleClose('solCompromiso')
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
                 })
@@ -171,12 +202,24 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         }
     }
 
-    const handleDialogOpen = () => {
-        setOpen(true)
+    const handleDialogOpen = (params: string) => {
+        if (params === 'solCompromiso') {
+            setOpenDialogSolicitud(true)
+        }
+
+        else if (params === 'imputaciones') {
+            setOpenDialogImputaciones(true)
+        }
     }
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleClose = (params: string) => {
+        if (params === 'solCompromiso') {
+            setOpenDialogSolicitud(false)
+        }
+
+        else if (params === 'imputaciones') {
+            setOpenDialogImputaciones(false)
+        }
     }
 
     const handleReport = async () => {
@@ -388,7 +431,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                 ) : 'Guardar'}
                             </Button>
                             <Button variant='contained' size='large' onClick={() => handleReport()}>
-                                {generatorReport ? (
+                                { generatorReport ? (
                                     <>
                                         <CircularProgress
                                             sx={{
@@ -402,43 +445,28 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     </>
                                 ) : 'Imprimir'}
                             </Button>
-                            <Button variant='outlined' size='large' onClick={handleDialogOpen}>
+                            <Button variant='outlined' size='large' onClick={() => handleDialogOpen('solCompromiso')}>
                                 Eliminar
                             </Button>
-                            <Dialog
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby='alert-dialog-title'
-                                aria-describedby='alert-dialog-description'
-                            >
-                                <DialogTitle id='alert-dialog-title'>
-                                    {'Esta Seguro de Eliminar esta solicitud de Compromiso?'}
-                                </DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText id='alert-dialog-description'>
-                                        Se eliminaran los datos de esta solicitud de compromiso
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleClose}>No</Button>
-                                    <Button onClick={handleDelete} autoFocus>
-                                        {loading ? (
-                                            <>
-                                                <CircularProgress
-                                                    sx={{
-                                                        color: 'common.white',
-                                                        width: '20px !important',
-                                                        height: '20px !important',
-                                                        mr: theme => theme.spacing(2)
-                                                    }}
-                                                />
-                                                Eliminando...
-                                            </>
-                                        )
-                                            : 'Sí'}
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
+                            <DialogCustom
+                                open={openDialogSolicitud}
+                                onClose={() => handleClose('solCompromiso')}
+                                handle={handleDelete}
+                                title='Esta seguro de eliminar esta solicitud de compromiso?'
+                                message='Se eliminaran los datos de esta solicitud de compromiso.'
+                                loading={loading}
+                            />
+                            <Button variant='outlined' size='large' onClick={() => handleDialogOpen('imputaciones')}>
+                                Eliminar Imputaciones
+                            </Button>
+                            <DialogCustom
+                                open={openDialogImputaciones}
+                                onClose={() =>handleClose('imputaciones')}
+                                handle={handleDeleteImputacion}
+                                title='Esta seguro de eliminar las imputaciones asociadas a esta solicitud?'
+                                message='Se eliminaran todas las imputaciones vinculadas.'
+                                loading={loading}
+                            />
                         </CardActions>
                         <Box>
                             {errorMessage.length > 0 && (

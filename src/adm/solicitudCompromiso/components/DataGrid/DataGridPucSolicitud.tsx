@@ -61,7 +61,7 @@ const DataGridPucDetalleSolicitud = (props: any) => {
                             getRowHeight={() => 'auto'}
                             sortingMode='server'
                             paginationMode='server'
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
                         />

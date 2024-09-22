@@ -33,6 +33,7 @@ import { IDetalleSolicitudCompromiso } from "../interfaces/detalle/IDetalleSolic
 import { CreatePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/create.interfaces'
 import { DeletePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/delete.interfaces'
 
+import { EliminarImputaciones } from 'src/adm/solicitudCompromiso/interfaces/detalle/eliminarImputaciones.interfaces'
 import authConfig from 'src/configs/auth'
 
 const useServices = (initialFilters: Filters = {}) => {
@@ -191,10 +192,8 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
-    const getDetalleSolicitudFetchTable = async (codigoSolicitud: number) => {
+    const getDetalleSolicitudFetchTable = async (filter: any) => {
         try {
-            const filter = { codigoSolicitud }
-
             const response = await ossmmasofApi.post<IDetalleSolicitudCompromiso>(UrlServices.DETALLESOLICITUD, filter)
 
             return response?.data
@@ -288,17 +287,16 @@ const useServices = (initialFilters: Filters = {}) => {
 
     const downloadReportByName = async (nameReport: string) => {
         try {
-            const urlBase = !authConfig.isProduction ? urlDevelopment : urlProduction
-            const url = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`;
+            const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
+            const url = `${urlBase}${UrlServices.GETREPORTBYURL}/${nameReport}`
 
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const objectURL = URL.createObjectURL(blob);
-
-            const newTab = window.open(objectURL, '_blank');
+            const response = await fetch(url)
+            const blob = await response.blob()
+            const objectURL = URL.createObjectURL(blob)
+            const newTab = window.open(objectURL, '_blank')
 
             if (!newTab) {
-                throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.');
+                throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.')
             }
         } catch (e: any) {
             setError(e)
@@ -334,6 +332,19 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
+    const eliminarImputaciones = async (filter: EliminarImputaciones) => {
+        try {
+            setLoading(true)
+
+            return ossmmasofApi.post<any>(UrlServices.ELIMINARIMPUTACIONES, filter)
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return { error, mensaje, loading,
         fetchTableData,
         fetchProveedores,
@@ -359,6 +370,7 @@ const useServices = (initialFilters: Filters = {}) => {
         generateReport,
         aprobarSolicitud,
         anularSolicitud,
+        eliminarImputaciones,
     }
 }
 

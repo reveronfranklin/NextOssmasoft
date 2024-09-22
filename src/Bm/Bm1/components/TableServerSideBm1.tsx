@@ -26,7 +26,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 // ** Utils Import
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Divider, Grid, Link, TextField } from '@mui/material'
+import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Grid, TextField } from '@mui/material'
 
 // ** Types
 
@@ -182,7 +182,9 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
   const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
+
   // const [download, setDownload] = useState('')
+
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('')
 
@@ -362,7 +364,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     setRows(loadServerRows(newPage, allRows))
   }
 
-  const handleDownloadPlacas =  async () => {
+  const handleDownloadPlacas = async () => {
     try {
       setGeneratePlace(true)
       const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
@@ -374,7 +376,9 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       const newTab = window.open(objectURL, '_blank')
 
       if (!newTab) {
-        throw new Error('El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.')
+        throw new Error(
+          'El bloqueador de ventanas emergentes está activado. Por favor, habilite las ventanas emergentes para abrir el informe.'
+        )
       }
     } catch (e: any) {
       console.error(e)
@@ -387,45 +391,47 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     <>
       <Grid item xs={12}>
         <Grid container spacing={6}>
-            <Grid item xs={6}>
-              <PickersDesdeHasta popperPlacement={popperPlacement} />
-            </Grid>
-            <Grid item xs={6}>
-              <Card>
-                <CardHeader title='ICP' />
-                <CardContent>
-                  <div>
-                    {icps && icps.length > 0 ? (
-                      <Autocomplete
-                        multiple={true}
-                        options={icps}
-                        id='autocomplete-list-icp'
-                        isOptionEqualToValue={(option, value) => option.codigoIcp === value.codigoIcp}
-                        getOptionLabel={option => option.codigoIcp + '-' + option.unidadTrabajo}
-                        onChange={handleIcp}
-                        renderInput={params => <TextField {...params} label='ICP' />}
-                      />
-                    ) : null}
-                  </div>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              {true ? (
-                <Box m={2} pt={1}>
+          <Grid item xs={6}>
+            <PickersDesdeHasta popperPlacement={popperPlacement} />
+          </Grid>
+          <Grid item xs={6}>
+            <Card>
+              <CardHeader title='ICP' />
+              <CardContent>
+                <div>
+                  {icps && icps.length > 0 ? (
+                    <Autocomplete
+                      multiple={true}
+                      options={icps}
+                      id='autocomplete-list-icp'
+                      isOptionEqualToValue={(option, value) => option.codigoIcp === value.codigoIcp}
+                      getOptionLabel={option => option.codigoIcp + '-' + option.unidadTrabajo}
+                      onChange={handleIcp}
+                      renderInput={params => <TextField {...params} label='ICP' />}
+                    />
+                  ) : null}
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            {true ? (
+              <Box m={2} pt={1}>
                 <Button variant='contained' onClick={exportToExcel} size='large' disabled={loading}>
-                    Descargar Todo
-                  </Button>
-                  <Button
-                    sx={{
-                      ml: theme => theme.spacing(2)
-                    }}
-                    variant='contained'
-                    size='large'
-                    startIcon={<GetAppIcon />}
-                    onClick={handleDownloadPlacas}
-                    disabled={loading}
-                  > {isGeneratePlaca ? (
+                  Descargar Todo
+                </Button>
+                <Button
+                  sx={{
+                    ml: theme => theme.spacing(2)
+                  }}
+                  variant='contained'
+                  size='large'
+                  startIcon={<GetAppIcon />}
+                  onClick={handleDownloadPlacas}
+                  disabled={loading}
+                >
+                  {' '}
+                  {isGeneratePlaca ? (
                     <>
                       <CircularProgress
                         sx={{
@@ -437,31 +443,33 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
                       />
                       Generando...
                     </>
-                  ) : 'Descargar Placas'}
-                  </Button>
-                  <Button size='large' onClick={refresh} variant='outlined' sx={{ ml: 4 }} disabled={loading}>
-                    {loading ? (
-                      <CircularProgress
-                        sx={{
-                          color: 'common.blue',
-                          width: '20px !important',
-                          height: '20px !important',
-                          mr: theme => theme.spacing(2)
-                        }}
-                      />
-                    ) : null}
-                    Refrescar
-                  </Button>
-                </Box>
-              ) : (
-                <Typography>{mensaje}</Typography>
-              )}
-            </Grid>
+                  ) : (
+                    'Descargar Placas'
+                  )}
+                </Button>
+                <Button size='large' onClick={refresh} variant='outlined' sx={{ ml: 4 }} disabled={loading}>
+                  {loading ? (
+                    <CircularProgress
+                      sx={{
+                        color: 'common.blue',
+                        width: '20px !important',
+                        height: '20px !important',
+                        mr: theme => theme.spacing(2)
+                      }}
+                    />
+                  ) : null}
+                  Refrescar
+                </Button>
+              </Box>
+            ) : (
+              <Typography>{mensaje}</Typography>
+            )}
+          </Grid>
         </Grid>
       </Grid>
-      <Card sx={{ mt:5 }}>
+      <Card sx={{ mt: 5 }}>
         <CardContent>
-          { loading ? (
+          {loading ? (
             <Spinner sx={{ height: '100%' }} />
           ) : (
             <DataGrid

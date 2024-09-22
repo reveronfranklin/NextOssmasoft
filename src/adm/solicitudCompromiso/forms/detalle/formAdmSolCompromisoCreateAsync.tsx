@@ -8,9 +8,7 @@ import { CreateDetalle } from '../../interfaces/detalle/create.interfaces'
 import { NumericFormat } from 'react-number-format'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useDispatch } from "react-redux";
-import { setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 import { Product } from './../../components/Productos/interfaces/product.interfaces'
-import { setProductSeleccionado } from "src/store/apps/adm"
 import useServices from './../../services/useServices';
 import TipoImpuesto from '../../components/Autocomplete/TipoImpuesto'
 import TipoUnidades from '../../components/Autocomplete/TipoUnidades'
@@ -18,6 +16,7 @@ import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
 import Icon from 'src/@core/components/icon'
+import { setProductSeleccionado, setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 
 const CreateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<any>(0)
@@ -49,6 +48,10 @@ const CreateDetalleSolicitudCompromiso = () => {
         tipoImpuestoId: 0,
         codigoProducto: 0,
     }
+
+    useEffect(() => {
+        dispatch(setProductSeleccionado(null))
+    }, [])
 
     useEffect(() => {
         if (productSeleccionado) {

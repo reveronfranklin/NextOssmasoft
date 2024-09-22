@@ -1,7 +1,7 @@
 import { Estatus } from '../../enums/Estatus.enum'
 import { setFiltroEstatus } from "src/store/apps/adm"
 import { useDispatch } from 'react-redux';
-import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@mui/material'
+import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField, Skeleton } from '@mui/material'
 import Box from '@mui/material/Box'
 import useServices from '../../services/useServices'
 import { useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const StatusComponent = () => {
                 presupuestoSeleccionado.codigoPresupuesto ?
                 <Grid item xs={12} paddingBottom={5}>
                     <Card>
-                        <CardHeader title='Filtrar Solicitud' />
+                        <CardHeader title='Filtrar Estado' />
                         <CardContent>
                             <Grid container spacing={12}>
                                 <Grid item xs={12}>
@@ -39,7 +39,7 @@ const StatusComponent = () => {
                                             <Autocomplete
                                                 options={Object.keys(Estatus).filter((key) => key !== 'DEFAULT')}
                                                 onChange={handleChange}
-                                                renderInput={(params) => <TextField {...params} label="Estado" />}
+                                                renderInput={(params) => <TextField {...params} label="Seleccionar" />}
                                                 disabled={isLoadingTableGeneral}
                                             />
                                         </div>
@@ -48,7 +48,16 @@ const StatusComponent = () => {
                             </Grid>
                         </CardContent>
                     </Card>
-                </Grid> : null
+                </Grid> : (
+                    <Grid item xs={12} paddingBottom={5}>
+                        <Skeleton
+                            variant='rectangular'
+                            width='100%'
+                            height={160}
+                            sx={{ opacity: 0.1, borderRadius: 1 }}
+                        />
+                    </Grid>
+                )
             }
         </>
     )

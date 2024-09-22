@@ -71,9 +71,11 @@ function ColumnsPucDataGrid() {
             headerName: 'Monto',
             field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    { formatNumber(params.row.monto) }
-                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                    <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                        { formatNumber(params.row.monto) }
+                    </Typography>
+                </div>
             )
         },
         {
@@ -81,9 +83,11 @@ function ColumnsPucDataGrid() {
             headerName: 'Comprometido',
             field: 'montoComprometido',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    { formatNumber(params.row.montoComprometido) }
-                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                    <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                        { formatNumber(params.row.montoComprometido) }
+                    </Typography>
+                </div>
             )
         },
         {
@@ -91,9 +95,11 @@ function ColumnsPucDataGrid() {
             headerName: 'Anulado',
             field: 'montoAnulado',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    { formatNumber(params.row.montoAnulado) }
-                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                    <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                        { formatNumber(params.row.montoAnulado) }
+                    </Typography>
+                </div>
             )
         },
     ]

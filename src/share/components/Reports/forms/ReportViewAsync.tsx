@@ -1,57 +1,31 @@
-// ** React Imports
+import { useState } from 'react'
+import { Box } from '@mui/material'
+import ConvertToBase64 from 'src/utilities/convert-to-base64'
 
-// ** MUI Imports
-import Card from '@mui/material/Card'
+const ReportViewAsync = (props: { url: string, width: string, height: string }) => {
+  const [base64, setBase64] = useState<any>(null)
 
-import CardHeader from '@mui/material/CardHeader'
+  if (props.url == '' || props.url == null) {
+    return <div>Sentimos la demora, por favor espere...</div>
+  }
 
-import CardContent from '@mui/material/CardContent'
-
-// ** Third Party Imports
-//import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
-
-// ** Custom Component Imports
-//import CustomInput from '../../form-elements/pickers/PickersCustomInput'
-
-// ** Types
-
-import { useEffect } from 'react'
-import { CardActions } from '@mui/material'
-import { RootState } from 'src/store'
-import { useSelector } from 'react-redux'
-import authConfig from 'src/configs/auth'
-
-const ReportViewAsync = () => {
-  // ** States
-
-  const { reportName } = useSelector((state: RootState) => state.reportView)
-
-const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
-const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
-
-const baseURL= !authConfig.isProduction ? urlDevelopment : urlProduction
-
-
-
-  useEffect(() => {
-    console.log(reportName)
-console.log(baseURL);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  ConvertToBase64(props.url).then((base64) => {
+    setBase64(base64)
+  })
 
   return (
-    <Card sx={{ maxWidth: 800 }}>
-      <CardHeader title={` Reporte==>> /ExcelFiles/${reportName}`} />
-      <CardContent>
-        <CardActions>
-          <object data={`/ExcelFiles/${reportName}`} type='application/pdf' width='100%' height='800px'>
-            <p>
-              Unable to display PDF file. <a href={`/ExcelFiles/${reportName}`}>Download</a> instead.
-            </p>
-          </object>
-        </CardActions>
-      </CardContent>
-    </Card>
+    <Box sx={{ width: props.width, height: props.height, overflow: 'hidden' }}>
+      <object
+        data={"data:application/pdf;base64," + base64}
+        type='application/pdf'
+        width='100%'
+        height='100%'
+      >
+        <p>
+          Unable to display PDF file. <a href={`${props.url}`}>Download</a> instead.
+        </p>
+      </object>
+    </Box>
   )
 }
 
