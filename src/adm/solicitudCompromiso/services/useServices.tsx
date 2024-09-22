@@ -335,6 +335,7 @@ const useServices = (initialFilters: Filters = {}) => {
     const eliminarImputaciones = async (filter: EliminarImputaciones) => {
         try {
             setLoading(true)
+
             return ossmmasofApi.post<any>(UrlServices.ELIMINARIMPUTACIONES, filter)
         } catch (e: any) {
             setError(e)
