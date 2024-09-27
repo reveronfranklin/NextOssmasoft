@@ -9,8 +9,12 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
 
-import OrdenPagoComponent from '../../forms/OrdenPagoComponent'
 import { setIsOpenDialogOrdenPagoDetalle } from "src/store/apps/ordenPago"
+
+import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPAgo'
+import FormUpdateOrdenPago from '../../forms/edit/FormUpdateOrdenPago'
+
+import ListaCompromiso from '../../components/ListCompromiso/listaCompromisos'
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -28,11 +32,21 @@ const DialogAdmOrdenPagoDetalle = () => {
         dispatch(setIsOpenDialogOrdenPagoDetalle(false))
     }
 
+    const setFormComponent = () => {
+        return (
+            <Fade in={true} timeout={500}>
+                <div key={typeOperation}>
+                    {typeOperation === 'update' ? <FormUpdateOrdenPago /> : <FormCreateOrdenPago />}
+                </div>
+            </Fade>
+        )
+    }
+
     return (
         <Card>
             <Dialog
                 fullWidth
-                maxWidth={false}
+                maxWidth={typeOperation === 'update' ? false : 'lg'}
                 scroll='body'
                 open={isOpenDialogOrdenPagoDetalle}
                 TransitionComponent={Transition}
@@ -53,7 +67,7 @@ const DialogAdmOrdenPagoDetalle = () => {
                     <AppBar position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{ justifyContent: 'space-between', padding: 0, backgroundColor: 'white' }}>
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Orden de Pago { typeOperation }
+                                Orden de pago ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
                             </Typography>
                             <IconButton
                                 size='small'
@@ -65,7 +79,8 @@ const DialogAdmOrdenPagoDetalle = () => {
                         </Toolbar>
                     </AppBar>
                     <DialogContent>
-                        { typeOperation === 'update' ? <OrdenPagoComponent /> : <></> }
+                        {setFormComponent()}
+                        <ListaCompromiso />
                     </DialogContent>
                 </Grid>
             </Dialog>
