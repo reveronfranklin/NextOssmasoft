@@ -5,7 +5,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { RootState } from "src/store"
 import { useEffect, useState } from "react"
 
-const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
+const FormOrdenPago = (props: { orden?: any, onFormData: any }) => {
     const { orden, onFormData } = props
     const { control, reset, watch , formState: { errors }} = useForm<any>({ defaultValues: orden })
 
@@ -35,8 +35,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 value={value || ''}
                                                 rows={4}
                                                 multiline
-                                                onChange={onChange}
-                                                disabled={!!value}
+                                                onChange={(e) => {
+                                                    onChange(e.target.value)
+                                                    onFormData({ ...formData, descripcionStatus: e.target.value })
+                                                }}
                                             />
                                         )}
                                     />
@@ -56,8 +58,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                     value={value || ''}
                                                     label="IVA"
                                                     placeholder="IVA"
-                                                    onChange={(e) => alert('iva')}
-                                                    disabled={!!value}
+                                                    onChange={(e) => {
+                                                        onChange(e.target.value)
+                                                        onFormData({ ...formData, iva: e.target.value })
+                                                    }}
                                                 />
                                             )}
                                         />
@@ -76,7 +80,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                     label="N° Orden de Pago"
                                                     placeholder="N° Orden de Pago"
                                                     value={value || ''}
-                                                    disabled={!!value}
+                                                    onChange={(e) => {
+                                                        onChange(e.target.value)
+                                                        onFormData({ ...formData, numeroOrdenPago: e.target.value })
+                                                    }}
                                                 />
                                             )}
                                         />
@@ -103,7 +110,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                     label="Fecha de la orden"
                                                     placeholder="Fecha de la orden"
                                                     value={value || ''}
-                                                    disabled={!!value}
+                                                    onChange={(e) => {
+                                                        onChange(e.target.value)
+                                                        onFormData({ ...formData, fechaOrdenPagoString: e.target.value })
+                                                    }}
                                                 />
                                             )}
                                         />
@@ -131,7 +141,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 label="Tipo de Orden"
                                                 placeholder="Tipo de Orden"
                                                 value={value || ''}
-                                                disabled={!!value}
+                                                onChange={(e) => {
+                                                    onChange(e.target.value)
+                                                    onFormData({ ...formData, descripcionTipoOrdenPago: e.target.value })
+                                                }}
                                             />
                                         )}
                                     />
@@ -148,7 +161,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 label="Forma de Pago"
                                                 placeholder="Forma de Pago"
                                                 value={value || ''}
-                                                disabled={!!value}
+                                                onChange={(e) => {
+                                                    onChange(e.target.value)
+                                                    onFormData({ ...formData, descripcionTipoPago: e.target.value })
+                                                }}
                                             />
                                         )}
                                     />
@@ -165,7 +181,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 label="Frecuencia de Pago"
                                                 placeholder="Frecuencia de Pago"
                                                 value={value || ''}
-                                                disabled={!!value}
+                                                onChange={(e) => {
+                                                    onChange(e.target.value)
+                                                    onFormData({ ...formData, descripcionFrecuencia: e.target.value })
+                                                }}
                                             />
                                         )}
                                     />
@@ -183,7 +202,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                     label="Cantidad de Pagos"
                                                     placeholder="Cantidad de Pagos"
                                                     value={value || ''}
-                                                    disabled={!!value}
+                                                    onChange={(e) => {
+                                                        onChange(e.target.value)
+                                                        onFormData({ ...formData, cantidadPago: e.target.value })
+                                                    }}
                                                 />
                                             )}
                                         />
@@ -200,7 +222,10 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                     label="N°"
                                                     placeholder="N°"
                                                     value={value || ''}
-                                                    disabled={!!value}
+                                                    onChange={(e) => {
+                                                        onChange(e.target.value)
+                                                        onFormData({ ...formData, cantidadPago: e.target.value })
+                                                    }}
                                                 />
                                             )}
                                         />
@@ -238,7 +263,7 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 label="Proveedor"
                                                 placeholder="Proveedor"
                                                 value={value || ''}
-                                                disabled={!!value}
+                                                disabled={true}
                                             />
                                         )}
                                     />
@@ -256,8 +281,11 @@ const FormOrdenPago = (props: { orden: Orden, onFormData: any }) => {
                                                 placeholder="Motivo"
                                                 value={value || ''}
                                                 multiline
-                                                rows={5}
-                                                disabled={!!value}
+                                                rows={6}
+                                                onChange={(e) => {
+                                                    onChange(e.target.value)
+                                                    onFormData({ ...formData, motivo: e.target.value })
+                                                }}
                                             />
                                         )}
                                     />

@@ -21,6 +21,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setTypeOperation: (state, action) => {
             state.typeOperation = action.payload
+        },
+        resetCompromisoSeleccionadoDetalle: (state): void => {
+            state.compromisoSeleccionadoListaDetalle = {} as Orden
         }
     }
 })
@@ -28,5 +31,6 @@ export const {
     setIsOpenDialogOrdenPagoDetalle,
     setIsOpenDialogListCompromiso,
     setCompromisoSeleccionadoDetalle,
-    setTypeOperation
+    setTypeOperation,
+    resetCompromisoSeleccionadoDetalle,
 } = admOrdenPagoSlice.actions

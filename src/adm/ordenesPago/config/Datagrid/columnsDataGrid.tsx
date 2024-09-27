@@ -4,12 +4,17 @@ import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
 import { } from "src/store/apps/adm"
-import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation } from 'src/store/apps/ordenPago'
+import {
+    setIsOpenDialogOrdenPagoDetalle,
+    setTypeOperation,
+    setCompromisoSeleccionadoDetalle
+} from 'src/store/apps/ordenPago'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
+        dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('update'))
     }

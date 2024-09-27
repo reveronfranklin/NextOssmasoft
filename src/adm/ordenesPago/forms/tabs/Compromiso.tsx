@@ -1,40 +1,22 @@
-import { Grid, TextField } from "@mui/material"
+import { Grid, Button } from "@mui/material"
+import { useDispatch } from "react-redux"
+import {
+    setCompromisoSeleccionadoDetalle,
+    setIsOpenDialogListCompromiso,
+} from "src/store/apps/ordenPago"
 
 const Compromiso = () => {
+    const dispatch = useDispatch()
+
+    const handleListCompromiso = () => {
+        dispatch(setIsOpenDialogListCompromiso(true))
+    }
+
     return (
         <Grid container spacing={2} padding={5}>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Nro. de Compromiso'
-                    variant='outlined'
-                    size='small'
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Fecha de Compromiso'
-                    variant='outlined'
-                    size='small'
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Nro. de Compromiso'
-                    variant='outlined'
-                    size='small'
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Fecha de Compromiso'
-                    variant='outlined'
-                    size='small'
-                />
-            </Grid>
+            <Button variant='contained' color='success' size='small' onClick={handleListCompromiso}>
+                VER COMPROMISOS
+            </Button>
         </Grid>
     )
 }

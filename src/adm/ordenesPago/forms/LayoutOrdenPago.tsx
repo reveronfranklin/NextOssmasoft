@@ -1,7 +1,11 @@
-import { Card, CardContent, Grid, Typography, Button } from "@mui/material"
-import DataGridOrdenPagoComponent from '../components/Datagrid/ordenPago'
+import { Card, CardContent, Grid, Typography, Tooltip, IconButton, Box} from "@mui/material"
+import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
-import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation } from 'src/store/apps/ordenPago'
+import DataGridOrdenPagoComponent from '../components/Datagrid/ordenPago'
+import {
+    setIsOpenDialogOrdenPagoDetalle,
+    setTypeOperation
+} from 'src/store/apps/ordenPago'
 
 const LayoutOrdenPago = () => {
     const dispatch = useDispatch()
@@ -14,14 +18,20 @@ const LayoutOrdenPago = () => {
     return (
         <Card>
             <CardContent>
-                <Grid container direction="row" justifyContent="space-between" sm={12} xs={12} sx={{ padding: '5px' }}>
+                <Grid item justifyContent='flex-end'>
                     <Typography>
                         Orden de Pago
                     </Typography>
-                    <Button variant='contained' color='primary' size='small' onClick={handleCreateOrden}>
-                        Crear
-                    </Button>
                 </Grid>
+                <Grid item justifyContent='flex-end'>
+                    <Tooltip title='Agregar Orden de Pago'>
+                        <IconButton color='primary' size='small' onClick={handleCreateOrden}>
+                            <Icon icon='ci:add-row' fontSize={20} />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </CardContent>
+            <CardContent>
                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                     <DataGridOrdenPagoComponent />
                 </Grid>

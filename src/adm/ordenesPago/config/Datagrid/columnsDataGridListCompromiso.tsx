@@ -62,6 +62,16 @@ function ColumnsDataGrid() {
             )
         },
         {
+            flex: 1,
+            headerName: 'nombreProveedor',
+            field: 'nombreProveedor',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
+                </Typography>
+            )
+        },
+        {
             flex: 0,
             minWidth: 180,
             headerName: 'Tipo Orden',
