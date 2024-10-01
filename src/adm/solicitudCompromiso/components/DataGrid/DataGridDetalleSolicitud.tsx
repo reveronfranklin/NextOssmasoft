@@ -38,7 +38,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         initialData: () => {
             return qc.getQueryData(['detalleSolicitudCompromiso', pageSize, pageNumber, searchText])
         },
-        staleTime: 1000 * 60,
+        staleTime: 1000 * 10,
         retry: 3
     }, qc)
 
