@@ -26,7 +26,7 @@ const DataGridPucDetalleSolicitud = (props: any) => {
         initialData: () => {
             return qc.getQueryData(['pucDetalleSolicitud', props.codigoDetalleSolicitud])
         },
-        staleTime: 1000 * 60 * 60,
+        staleTime: 1000 * 60 ,
         retry: 3
     }, qc)
 

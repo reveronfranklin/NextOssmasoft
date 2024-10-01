@@ -35,8 +35,10 @@ import { DeletePuc } from 'src/adm/solicitudCompromiso/interfaces/puc/delete.int
 
 import { EliminarImputaciones } from 'src/adm/solicitudCompromiso/interfaces/detalle/eliminarImputaciones.interfaces'
 import authConfig from 'src/configs/auth'
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 
 const useServices = (initialFilters: Filters = {}) => {
+    const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
@@ -219,6 +221,10 @@ const useServices = (initialFilters: Filters = {}) => {
             return await ossmmasofApi.post<any>(UrlServices.DETALLECREATE, data)
         } catch (e) {
             console.error(e)
+        } finally {
+            qc.invalidateQueries({
+                queryKey: ['detalleSolicitudCompromiso', data.codigoSolicitud]
+            })
         }
     }
 
