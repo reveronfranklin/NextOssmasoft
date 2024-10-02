@@ -33,13 +33,16 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     }
 
     const query = useQuery({
-        queryKey: ['detalleSolicitudCompromiso', pageSize, pageNumber, searchText],
-        queryFn: () => getDetalleSolicitudFetchTable({...filter, pageSize, pageNumber, searchText}),
+        // queryKey: ['detalleSolicitudCompromiso', pageSize, pageNumber, searchText],
+        queryKey: ['detalleSolicitudCompromiso', props.codigoSolicitud],
+        queryFn: () => getDetalleSolicitudFetchTable({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
             return qc.getQueryData(['detalleSolicitudCompromiso', pageSize, pageNumber, searchText])
         },
-        staleTime: 1000 * 10,
-        retry: 3
+        refetchOnWindowFocus: true,
+        refetchInterval: 1000 * 5,
+        staleTime: 1000 * 5,
+        retry: 3,
     }, qc)
 
     const rows = query?.data?.data || []
