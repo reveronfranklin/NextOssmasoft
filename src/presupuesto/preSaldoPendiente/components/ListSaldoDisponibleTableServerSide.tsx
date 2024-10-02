@@ -51,8 +51,10 @@ const ListSaldoDisponibleTableServerSide = () => {
     () => {
       const savedValue = localStorage.getItem('isSaveSearchEnabled')
       if (savedValue !== null) {
+
         return JSON.parse(savedValue)
       }
+
       return true
     }
   )
