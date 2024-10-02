@@ -45,7 +45,7 @@ const UpdateDetalleSolicitudCompromiso = () => {
     const labelProduct = productSeleccionado?.codigo ? `${productSeleccionado?.codigo} - ${productSeleccionado?.descripcion}` : `${solicitudCompromisoSeleccionadoDetalle?.codigoProducto} - ${solicitudCompromisoSeleccionadoDetalle?.descripcionProducto}`
 
     const defaultValues: FormInputs = solicitudCompromisoSeleccionadoDetalle
-    console.log('defaultValues', defaultValues)
+
     const qc: QueryClient = useQueryClient()
 
     const {

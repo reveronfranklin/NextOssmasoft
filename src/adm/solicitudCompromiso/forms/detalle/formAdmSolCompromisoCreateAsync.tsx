@@ -26,6 +26,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [udmId, setUdmId] = useState<number>(0)
     const [impuesto, setImpuesto] = useState<number>(0)
+    
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
 
@@ -129,7 +130,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
             if (responseCreateDetalle?.data.isValid) {
                 qc.invalidateQueries({
-                    queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+                    queryKey: ['detalleSolicitudCompromiso', dataForm.codigoSolicitud]
                 })
             }
 
