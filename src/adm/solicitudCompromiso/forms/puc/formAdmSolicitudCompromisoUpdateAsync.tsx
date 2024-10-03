@@ -159,7 +159,11 @@ const UpdatePuc = () => {
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleClose}>No</Button>
-                                <Button variant='contained' onClick={handleDeleteDetalle}>
+                                <Button
+                                    variant='contained'
+                                    onClick={handleDeleteDetalle}
+                                    disabled={loading}
+                                >
                                     { loadingDelete ? (
                                         <>
                                             <CircularProgress

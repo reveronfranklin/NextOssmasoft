@@ -1,4 +1,4 @@
-
+import React from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { Box, styled } from '@mui/material'
@@ -26,9 +26,13 @@ const DataGridPucDetalleSolicitud = (props: any) => {
         initialData: () => {
             return qc.getQueryData(['pucDetalleSolicitud', props.codigoDetalleSolicitud])
         },
-        staleTime: 1000 * 60 ,
+        staleTime: 1000 * 60,
+        refetchOnWindowFocus: true,
+        refetchInterval: 1000 * 60,
         retry: 3
     }, qc)
+
+    console.log('puc', query?.data)
 
     const rows = query?.data?.data.data || [];
     const rowCount = rows.length || 0;
