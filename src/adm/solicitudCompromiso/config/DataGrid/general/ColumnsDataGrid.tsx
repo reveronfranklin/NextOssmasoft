@@ -16,6 +16,8 @@ function ColumnsDataGrid(props: any) {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
+        console.log('row', row)
+
         dispatch(setVerSolicitudCompromisosActive(true))
         dispatch(setSolicitudCompromisoSeleccionado(row))
         dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.EDIT))

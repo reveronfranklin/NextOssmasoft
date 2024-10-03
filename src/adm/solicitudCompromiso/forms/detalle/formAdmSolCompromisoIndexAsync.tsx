@@ -26,7 +26,7 @@ const HeaderDetail = () => {
                     </Toolbar>
                 </Grid>
             </Box>
-            <Collapse in={isUpdateFormOpen}>
+            <Collapse in={isUpdateFormOpen} sx={{ backgroundColor: '#f5f5f5', padding: '2px', borderRadius: '5px', marginBottom: '40px' }}>
                 <CreateDetalleSolicitudCompromiso />
             </Collapse>
         </>

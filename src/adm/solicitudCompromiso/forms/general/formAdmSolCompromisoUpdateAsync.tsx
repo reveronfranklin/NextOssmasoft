@@ -415,7 +415,12 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                             </Grid>
                         </Grid>
                         <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
-                            <Button size='large' type='submit' variant='contained'>
+                            <Button
+                                size='large'
+                                type='submit'
+                                variant='contained'
+                                disabled={loading}
+                            >
                                 {loading ? (
                                     <>
                                         <CircularProgress
