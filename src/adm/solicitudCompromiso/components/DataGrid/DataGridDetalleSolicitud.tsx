@@ -72,14 +72,14 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 
         const newBuffer = value
         setBuffer(newBuffer)
-        debouncedSearch()
+        debouncedSearch(newBuffer)
     }
 
-    const debouncedSearch = () => {
+    const debouncedSearch = (currentBuffer: string) => {
         clearTimeout(debounceTimeoutRef.current)
 
         debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
+            setSearchText(currentBuffer)
         }, 2500)
     }
 
