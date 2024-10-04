@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, ChangeEvent, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
@@ -69,14 +70,14 @@ const DataGridListProduct = () => {
 
         const newBuffer = value
         setBuffer(newBuffer)
-        debouncedSearch()
+        debouncedSearch(newBuffer)
     }
 
-    const debouncedSearch = () => {
+    const debouncedSearch = (currentBuffer: string) => {
         clearTimeout(debounceTimeoutRef.current)
 
         debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
+            setSearchText(currentBuffer)
         }, 2500)
     }
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, ChangeEvent, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import Spinner from 'src/@core/components/spinner'
@@ -9,7 +10,7 @@ import formatNumber from '../../helpers/formateadorNumeros'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 350,
+    height: 500,
     overflowY: 'auto',
 }))
 
@@ -33,20 +34,19 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     }
 
     const query = useQuery({
-        // queryKey: ['detalleSolicitudCompromiso', pageSize, pageNumber, searchText],
-        queryKey: ['detalleSolicitudCompromiso', props.codigoSolicitud],
+        queryKey: ['detalleSolicitudCompromiso', pageSize, pageNumber, searchText],
         queryFn: () => getDetalleSolicitudFetchTable({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
             return qc.getQueryData(['detalleSolicitudCompromiso', pageSize, pageNumber, searchText])
         },
+        staleTime: 1000 * 10,
         refetchOnWindowFocus: true,
         refetchInterval: 1000 * 5,
-        staleTime: 1000 * 5,
         retry: 3,
     }, qc)
 
     const rows = query?.data?.data || []
-    const rowCount = rows.length || 0
+    const rowCount = query?.data?.cantidadRegistros || 0
 
     const total1 = query?.data?.total1 || 0 //total mas impuesto
     const total2 = query?.data?.total2 || 0 //total puc
@@ -72,18 +72,16 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
 
         const newBuffer = value
         setBuffer(newBuffer)
-        debouncedSearch()
+        debouncedSearch(newBuffer)
     }
 
-    const debouncedSearch = () => {
+    const debouncedSearch = (currentBuffer: string) => {
         clearTimeout(debounceTimeoutRef.current)
 
         debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
+            setSearchText(currentBuffer)
         }, 2500)
     }
-
-    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize);
 
     return (
         <>
@@ -119,7 +117,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                             autoHeight
                             pagination
                             getRowId={(row) => row.codigoDetalleSolicitud}
-                            rows={paginatedRows}
+                            rows={rows}
                             rowCount={rowCount}
                             columns={ColumnsDetalleDataGrid() as any}
                             getRowHeight={() => 'auto'}

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Button, Card, CardActions, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, Grid, IconButton, TextField, Tooltip } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { FormInputs } from "./../../interfaces/detalle/formImputs.interfaces"

@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, ChangeEvent, useEffect, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Filters } from '../../interfaces/filters.interfaces'
@@ -56,6 +57,8 @@ const DataGridComponent = () => {
             return qc.getQueryData(['solicitudCompromiso', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto, filtroEstatus])
         },
         staleTime: 1000 * 30,
+        refetchOnWindowFocus: true,
+        refetchInterval: 1000 * 60,
         retry: 3,
         enabled: isPresupuestoSeleccionado
     }, qc)
@@ -90,14 +93,14 @@ const DataGridComponent = () => {
 
         const newBuffer = value
         setBuffer(newBuffer)
-        debouncedSearch()
+        debouncedSearch(newBuffer)
     }
 
-    const debouncedSearch = () => {
+    const debouncedSearch = (currentBuffer: string) => {
         clearTimeout(debounceTimeoutRef.current)
 
         debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
+            setSearchText(currentBuffer)
         }, 2500)
     }
 
