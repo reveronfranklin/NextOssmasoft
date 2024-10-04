@@ -32,8 +32,6 @@ const DataGridPucDetalleSolicitud = (props: any) => {
         retry: 3
     }, qc)
 
-    console.log('puc', query?.data)
-
     const rows = query?.data?.data.data || [];
     const rowCount = rows.length || 0;
 
