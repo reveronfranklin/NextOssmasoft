@@ -162,7 +162,7 @@ const UpdatePuc = () => {
                                 <Button
                                     variant='contained'
                                     onClick={handleDeleteDetalle}
-                                    disabled={loading}
+                                    disabled={loadingDelete}
                                 >
                                     { loadingDelete ? (
                                         <>
