@@ -12,6 +12,8 @@ import {
     setVerSolicitudCompromisosActive,
     setOperacionCrudAdmSolCompromiso
 } from "src/store/apps/adm"
+import { useSelector } from "react-redux"
+import { RootState } from "src/store"
 
 const handleAdd = (dispatch: any) => {
     dispatch(setVerSolicitudCompromisosActive(true))
@@ -19,6 +21,8 @@ const handleAdd = (dispatch: any) => {
 }
 
 const headerDetail = (dispatch: Dispatch<AnyAction>) => {
+    const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+
     return (
         <>
             <Box>
@@ -32,7 +36,12 @@ const headerDetail = (dispatch: Dispatch<AnyAction>) => {
                 <Grid item justifyContent='flex-end'>
                     <Toolbar sx={{ justifyContent: 'flex-start' }}>
                         <Tooltip title='Agregar Solicitud'>
-                            <IconButton color='primary' size='small' onClick={() => handleAdd(dispatch)}>
+                            <IconButton
+                                color='primary'
+                                size='small'
+                                onClick={() => handleAdd(dispatch)}
+                                disabled={!presupuestoSeleccionado.codigoPresupuesto}
+                            >
                                 <Icon icon='ci:add-row' fontSize={20} />
                             </IconButton>
                         </Tooltip>

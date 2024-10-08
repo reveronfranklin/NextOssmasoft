@@ -70,13 +70,17 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         setValue('codigoProveedor', codigoProveedor)
     }
 
-    const handleFechaSolicitudChange: any = (desde: Date) => {
-        const dateIsValid = dayjs(desde).isValid()
+    const handleFechaSolicitudChange: any = (fechaSolicitud: Date) => {
+        const dateIsValid = dayjs(fechaSolicitud).isValid()
+
+        const fechaFormat = dayjs(fechaSolicitud).format('YYYY-MM-DDTHH:mm:ss')
+        const fechaSolicitudDate = new Date(fechaFormat)
+
         if (dateIsValid) {
-            const fechaObj: any = fechaToFechaObj(desde)
+            const fechaObj: any = fechaToFechaObj(fechaSolicitud)
             setFecha(fechaObj)
-            setValue('fechaSolicitud', fechaObj)
-            setValue('fechaSolicitudString', desde.toISOString())
+            setValue('fechaSolicitud', fechaSolicitudDate)
+            setValue('fechaSolicitudString', fechaSolicitud.toISOString())
         }
     }
 
@@ -97,7 +101,6 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             }
 
             const responseCreate = await crearSolicitudCompromiso(solicitudCompromisoCreate)
-            console.log(responseCreate?.data)
 
             if (responseCreate?.data.isValid) {
                 setTimeout(() => {
