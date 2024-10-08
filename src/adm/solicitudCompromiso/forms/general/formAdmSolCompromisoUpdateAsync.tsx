@@ -105,8 +105,8 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
             const solCompromiso = {
                 ...solicitudCompromisoData,
-                fechaSolicitud: fechaSolicitud,
-                fechaSolicitudString: fechaSolicitud.toISOString(),
+                fechaSolicitud: dayjs(fechaSolicitud).format('YYYY-MM-DDTHH:mm:ss'),
+                fechaSolicitudString: dayjs(fechaSolicitud).format('DD/MM/YYYY'),
                 fechaSolicitudObj: fechaObj
             }
 
@@ -121,7 +121,8 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             const solicitudCompromisoUpdate: Update = {
                 codigoSolicitud: dataForm.codigoSolicitud,
                 numeroSolicitud: dataForm.numeroSolicitud,
-                fechaSolicitud: dataForm.fechaSolicitud,
+                fechaSolicitud: fechaSolicitud,
+                fechaSolicitudString: fechaSolicitudString,
                 codigoSolicitante: dataForm.codigoSolicitante,
                 tipoSolicitudId: tipoSolicitudId,
                 codigoProveedor: dataForm.codigoProveedor,
@@ -129,7 +130,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 nota: dataForm.nota,
                 status: dataForm.status,
                 codigoPresupuesto: dataForm.codigoPresupuesto,
-                fechaSolicitudString: dataForm.fechaSolicitudString,
                 descripcionStatus: dataForm.descripcionStatus,
             }
 
@@ -137,7 +137,8 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
             if (responseUpdate?.data?.isValid) {
                 toast.success('Form Submitted')
-                dispatch(setVerSolicitudCompromisosActive(false))
+
+                // dispatch(setVerSolicitudCompromisosActive(false))
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
                 })
@@ -301,7 +302,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     <DatePicker
                                         selected={getDateByObject(fechaSolicitudObj)}
                                         id='date-time-picker-desde'
-                                        dateFormat='dd/MM/yyyy'
                                         popperPlacement={popperPlacement}
                                         onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
                                         placeholderText='Click to select a date'
