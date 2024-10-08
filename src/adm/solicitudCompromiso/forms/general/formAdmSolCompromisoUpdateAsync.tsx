@@ -137,6 +137,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
             if (responseUpdate?.data?.isValid) {
                 toast.success('Form Submitted')
+
                 // dispatch(setVerSolicitudCompromisosActive(false))
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
@@ -301,7 +302,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     <DatePicker
                                         selected={getDateByObject(fechaSolicitudObj)}
                                         id='date-time-picker-desde'
-                                        // dateFormat='dd/MM/yyyy'
                                         popperPlacement={popperPlacement}
                                         onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
                                         placeholderText='Click to select a date'
