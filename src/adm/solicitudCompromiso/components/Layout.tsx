@@ -20,7 +20,7 @@ const handleAdd = (dispatch: any) => {
     dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.CREATE))
 }
 
-const headerDetail = (dispatch: Dispatch<AnyAction>) => {
+const HeaderDetail = (dispatch: Dispatch<AnyAction>) => {
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
     return (
@@ -59,7 +59,7 @@ const LayoutSolicitudCompromiso = () => {
     return (
         <Card>
             {
-                !loading ? headerDetail(dispatch) : <Typography>{mensaje}</Typography>
+                !loading ? HeaderDetail(dispatch) : <Typography>{mensaje}</Typography>
             }
             {
                 loading ? <Spinner sx={{ height: '100%' }} /> : dataGrid()
