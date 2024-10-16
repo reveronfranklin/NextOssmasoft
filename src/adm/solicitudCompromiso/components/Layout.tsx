@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { Box, Card, CardContent, Grid, IconButton, Toolbar, Tooltip, Typography } from "@mui/material"
+import { Box, Card, CardHeader, Grid, IconButton, Toolbar, Tooltip, Typography } from "@mui/material"
 import { Dispatch, AnyAction } from "@reduxjs/toolkit"
 import { CrudOperation } from './../enums/CrudOperations.enum'
 import Spinner from 'src/@core/components/spinner'
@@ -26,13 +26,7 @@ const HeaderDetail = (dispatch: Dispatch<AnyAction>) => {
     return (
         <>
             <Box>
-                <CardContent>
-                    <Grid item justifyContent='flex-end'>
-                        <Typography>
-                            Solicitud de compromiso
-                        </Typography>
-                    </Grid>
-                </CardContent>
+                <CardHeader title='Solicitud de compromiso' />
                 <Grid item justifyContent='flex-end'>
                     <Toolbar sx={{ justifyContent: 'flex-start' }}>
                         <Tooltip title='Agregar Solicitud'>
