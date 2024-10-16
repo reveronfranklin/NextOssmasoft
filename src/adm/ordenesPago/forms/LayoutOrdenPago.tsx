@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Typography, Tooltip, IconButton, Box} from "@mui/material"
+import { Card, CardContent, Grid, Typography, Tooltip, IconButton, Box, CardHeader} from "@mui/material"
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
 import DataGridOrdenPagoComponent from '../components/Datagrid/ordenPago'
@@ -17,12 +17,8 @@ const LayoutOrdenPago = () => {
 
     return (
         <Card>
+            <CardHeader title='Orden de Pago'/>
             <CardContent>
-                <Grid item justifyContent='flex-end'>
-                    <Typography>
-                        Orden de Pago
-                    </Typography>
-                </Grid>
                 <Grid item justifyContent='flex-end'>
                     <Tooltip title='Agregar Orden de Pago'>
                         <IconButton color='primary' size='small' onClick={handleCreateOrden}>

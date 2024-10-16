@@ -124,7 +124,7 @@ const DataGridComponent = () => {
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
                                     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                                    sx: { paddingLeft: 0 }
+                                    sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
                         />

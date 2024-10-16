@@ -27,7 +27,7 @@ const DataGridComponent = () => {
     const dispatch = useDispatch()
 
     const {
-        getOrdenesPagoByPresupuesto,
+        getCompromisoByPresupuesto,
         presupuestoSeleccionado
     } = useServices()
 
@@ -41,10 +41,10 @@ const DataGridComponent = () => {
     }
 
     const query = useQuery({
-        queryKey: ['ordenesPagoTable', pageSize, pageNumber, searchText ],
-        queryFn: () => getOrdenesPagoByPresupuesto({ ...filter, pageSize, pageNumber, searchText }),
+        queryKey: ['compromisosTable', pageSize, pageNumber, searchText ],
+        queryFn: () => getCompromisoByPresupuesto({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
-            return qc.getQueryData(['ordenesPagoTable', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['compromisosTable', pageSize, pageNumber, searchText])
         },
         staleTime: 1000 * 60,
         retry: 3,
@@ -107,7 +107,7 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoOrdenPago}
+                            getRowId={(row) => row.codigoCompromiso}
                             rows={rows}
                             rowCount={rowCount}
                             columns={ColumnsDataGrid() as any}
@@ -129,7 +129,8 @@ const DataGridComponent = () => {
                                     printOptions: { disableToolbarButton: true },
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
+                                    sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
                         />

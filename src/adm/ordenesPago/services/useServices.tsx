@@ -14,6 +14,23 @@ const useServices = () => {
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
+    const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSBYPRESUPUESTO, filters)
+
+            if (responseGetOrdenes.data.isValid) {
+                return responseGetOrdenes.data
+            }
+            setMessage(responseGetOrdenes.data.message)
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [presupuestoSeleccionado.codigoPresupuesto])
+
     const getOrdenesPagoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<any> => {
         try {
             setLoading(true)
@@ -61,6 +78,7 @@ const useServices = () => {
     return {
         error, message, loading,
         presupuestoSeleccionado,
+        getCompromisoByPresupuesto,
         getOrdenesPagoByPresupuesto,
         getPucOrdenPago,
         createOrden,

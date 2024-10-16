@@ -1,7 +1,7 @@
 import { Ref, forwardRef, ReactElement } from 'react'
 import Fade, { FadeProps } from '@mui/material/Fade'
 
-import { AppBar, Card, Dialog, DialogContent, Grid, Toolbar, Typography } from "@mui/material"
+import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from "@mui/material"
 import Icon from 'src/@core/components/icon'
 import IconButton from '@mui/material/IconButton'
 
@@ -31,7 +31,7 @@ const ListCompromiso = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth={false}
+                maxWidth={'lg'}
                 scroll='body'
                 open={isOpenDialogListCompromiso}
                 TransitionComponent={Transition}
@@ -49,10 +49,10 @@ const ListCompromiso = () => {
                 }}
             >
                 <Grid spacing={0} >
-                    <AppBar position="static" sx={{ boxShadow: 'none' }}>
-                        <Toolbar sx={{ justifyContent: 'space-between', padding: 0, backgroundColor: 'white' }}>
+                    <Box position="static" sx={{ boxShadow: 'none' }}>
+                        <Toolbar sx={{ justifyContent: 'space-between', padding: 0 }}>
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                lista de compromiso
+                                Lista de compromiso
                             </Typography>
                             <IconButton
                                 size='small'
@@ -62,7 +62,7 @@ const ListCompromiso = () => {
                                 <Icon icon='mdi:close' />
                             </IconButton>
                         </Toolbar>
-                    </AppBar>
+                    </Box>
                     <DialogContent>
                         <Component />
                     </DialogContent>
