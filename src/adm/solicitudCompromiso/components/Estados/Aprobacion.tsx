@@ -9,7 +9,8 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions } from '@mui/material'
+    DialogActions
+} from '@mui/material'
 import useServices from '../../services/useServices'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -21,7 +22,10 @@ const AprobacionComponent = (props: any) => {
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const qc: QueryClient = useQueryClient()
-    const { loading, aprobarSolicitud } = useServices()
+    const {
+        loading,
+        aprobarSolicitud
+    } = useServices()
 
     const handleAprobacion = async () => {
         try {

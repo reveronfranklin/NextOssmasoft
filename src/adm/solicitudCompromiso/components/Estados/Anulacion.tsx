@@ -9,7 +9,8 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions } from '@mui/material'
+    DialogActions
+} from '@mui/material'
 import useServices from '../../services/useServices'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -22,9 +23,13 @@ const AnulacionComponent = (props: any) => {
     const [error, setError] = useState<string>('')
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-    const { loading, anularSolicitud } = useServices()
     const dispatch = useDispatch()
     const qc: QueryClient = useQueryClient()
+
+    const {
+        loading,
+        anularSolicitud
+    } = useServices()
 
     const handleAnulacion = async () => {
         try {
