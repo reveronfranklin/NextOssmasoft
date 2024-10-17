@@ -127,7 +127,7 @@ const FaovList = () => {
       setLinkDataAlternative(responseAll.data.linkDataArlternative)
 
       const pathLinkDataAlternative = responseAll.data.linkDataArlternative !== null ? responseAll.data.linkDataArlternative.split('/').pop() : null
-      setNameFile(`RetencionesFaove-Desde-${dayjs(fechaDesde).format('DD-MM-YYYY')}-Hasta-${dayjs(fechaHasta).format('DD-MM-YYYY')}-tipoNomina.txt`)
+      setNameFile(`RetencionesFaove-Desde-${dayjs(fechaDesde).format('DD-MM-YYYY')}-Hasta-${dayjs(fechaHasta).format('DD-MM-YYYY')}-tipoNomina-${tipoNominaSeleccionado.codigoTipoNomina}.txt`)
 
       if (pathLinkDataAlternative) {
         const path = `/Files/GetTxtFiles/${pathLinkDataAlternative}`
