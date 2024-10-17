@@ -34,16 +34,20 @@ const useServices = () => {
 
     const fetchGetAll = useCallback(async (fetchGetAll: FetchGetAll) => {
         try {
+            setLoading(true)
+
             const response = await ossmmasofApi.post<ResponseGetAll>(UrlServices.GETCOMPROMISOSBYPRESUPUESTO, fetchGetAll)
 
             if (response && response?.data.isValid) {
 
                 return response?.data
-            } else {
-                console.error(response.data.message)
             }
+
+            setMessage(response?.data.message)
         } catch (error) {
             console.error(error)
+        } finally {
+            setLoading(false)
         }
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
