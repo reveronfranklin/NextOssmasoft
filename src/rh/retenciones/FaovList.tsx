@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, Grid, Typography } from '@mui/material'
+import { Box, Card, CardActions, Grid, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 //import { ReactDatePickerProps } from 'react-datepicker'
@@ -18,6 +18,9 @@ import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponom
 import dayjs from 'dayjs'
 import { RhTmpRetencionesFaovDto } from 'src/interfaces/rh/RhTmpRetencionesFaovDto'
 import Link from 'next/link'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+import Icon from 'src/@core/components/icon'
 
 interface CellType {
   row: RhTmpRetencionesFaovDto
@@ -28,7 +31,7 @@ const FaovList = () => {
 
   const [linkData, setLinkData] = useState('')
   const [linkDataArlternative, SetLinkDataArlternative] = useState('')
-
+  const [mensaje] = useState<string>('')
   const columns = [
     {
       flex: 0.2,
@@ -86,11 +89,27 @@ const FaovList = () => {
   const [loading, setLoading] = useState(false)
 
   const [data, setData] = useState<RhTmpRetencionesFaovDto[]>([])
+
   const {
     fechaDesde,
     fechaHasta,
     tipoNominaSeleccionado = {} as IListTipoNominaDto
   } = useSelector((state: RootState) => state.nomina)
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(data)
+
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+    // Buffer to store the generated Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
+
+    saveAs(blob, 'data.xlsx')
+  }
 
   useEffect(() => {
     const getData = async () => {
@@ -108,8 +127,10 @@ const FaovList = () => {
 
       if (responseAll.data?.data) {
         setData(responseAll.data?.data)
+
         setLinkData(responseAll.data.linkData)
         SetLinkDataArlternative(responseAll.data.linkDataArlternative)
+        console.log(responseAll.data.linkDataArlternative)
       } else {
         setData([])
       }
@@ -125,15 +146,19 @@ const FaovList = () => {
     <Grid item xs={12}>
       <Card>
         <CardActions>
-          <Box m={2} pt={3}>
-            {linkData.length > 0 ? (
-              <Link href={linkData} target='_blank' download={linkData}>
-                Descargar Xls
-              </Link>
-            ) : (
-              <div></div>
-            )}
-          </Box>
+          {!loading ? (
+            <Grid m={2} pt={3} item justifyContent='flex-end'>
+              <Toolbar sx={{ justifyContent: 'flex-start' }}>
+                <Tooltip title='Descargar'>
+                  <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                    <Icon icon='ci:download' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </Grid>
+          ) : (
+            <Typography>{mensaje}</Typography>
+          )}
 
           <Box m={2} pt={3}>
             {linkData.length > 0 ? (
