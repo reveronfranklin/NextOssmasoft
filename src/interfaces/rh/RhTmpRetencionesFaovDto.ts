@@ -7,6 +7,7 @@ export interface RhTmpRetencionesFaovDto {
   nombresApellidos: string
   descripcionCargo: string
   fechaIngreso: Date
+  fechaEgreso: Date
   montoFaovTrabajador: number
   montoFaovPatrono: number
   montoTotalRetencion: number
