@@ -124,7 +124,7 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
 
     return (
         <Card>
-            <CardHeader title='Adm - Crear Solicitud Compromiso' />
+            <CardHeader title='Crear Solicitud Compromiso' />
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Grid container spacing={5} paddingTop={5}>
