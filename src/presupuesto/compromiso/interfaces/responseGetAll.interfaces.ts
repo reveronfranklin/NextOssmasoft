@@ -16,6 +16,7 @@ export interface ICompromiso {
     ano: number;
     codigoSolicitud: number;
     numeroCompromiso: string;
+    numeroSolicitud: string;
     fechaCompromiso: string;
     fechaCompromisoString: string;
     fechaCompromisoObj: FechaCompromiso;

@@ -35,12 +35,21 @@ function ColumnsDataGrid() {
         },
         {
             flex: 0,
-            minWidth: 180,
             headerName: 'Codigo Compromiso',
             field: 'codigoCompromiso',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.codigoCompromiso}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: '# Solicitud',
+            field: 'numeroSolicitud',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.numeroSolicitud }
                 </Typography>
             )
         },
