@@ -15,9 +15,11 @@ export enum UrlServices {
     PUCDETALLEUPDATE     = '/AdmPucSolicitud/Update',
     PUCDETALLECREATE     = '/AdmPucSolicitud/Create',
     PUCDETALLEDELETE     = '/AdmPucSolicitud/Delete',
-    GENERATEURLREPORT    = '/ReporteSolicitudCompromiso/ReportData',
     GETREPORTBYURL       = '/Files/GetPdfFiles',
     APROBARSOLICITUD     = '/PreCompromisos/CrearCompromisoDesdeSolicitud',
     ANULARSOLICITUD      = '/PreCompromisos/AnularDesdeSolicitud',
-    ELIMINARIMPUTACIONES = '/AdmPucSolicitud/EliminarImputacion'
+    ELIMINARIMPUTACIONES = '/AdmPucSolicitud/EliminarImputacion',
+
+    GENERATEURLREPORTSOLICITUDCOMPROMISO = '/ReporteSolicitudCompromiso/ReportData',
+    GENERATEURLREPORTORDENSERVICIO       = 'ReporteOrdenServicioPresupuestario/ReportData'
 }
