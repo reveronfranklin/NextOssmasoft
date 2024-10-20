@@ -23,4 +23,5 @@ export interface IPreSolModificacionResponseDto {
   OrigenPreSaldo: boolean
   totalAportar: number
   totalDescontar: number
+  ordenServicio?: boolean
 }

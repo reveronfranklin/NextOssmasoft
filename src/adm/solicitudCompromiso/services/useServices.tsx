@@ -270,10 +270,24 @@ const useServices = (initialFilters: Filters = {}) => {
         }
     }
 
-    const fetchSolicitudReportData = async (filter: any) => {
+    const fetchNameReportSolicitudCompromiso = async (filter: any) => {
         try {
             setGenerateReport(true)
-            const response = await ossmmasofApi.post<any>(UrlServices.GENERATEURLREPORT, filter)
+            const response = await ossmmasofApi.post<any>(UrlServices.GENERATEURLREPORTSOLICITUDCOMPROMISO, filter)
+
+            return response.data
+        } catch (e: any) {
+            setError(e)
+            console.error(e)
+        } finally {
+            setGenerateReport(false)
+        }
+    }
+
+    const fetchNameReportOrderServicio = async (filter: any) => {
+        try {
+            setGenerateReport(true)
+            const response = await ossmmasofApi.post<any>(UrlServices.GENERATEURLREPORTORDENSERVICIO, filter)
 
             return response.data
         } catch (e: any) {
@@ -364,7 +378,8 @@ const useServices = (initialFilters: Filters = {}) => {
         fetchPucDetalleSolicitud,
         fetchPucCreate,
         fetchPucDelete,
-        fetchSolicitudReportData,
+        fetchNameReportSolicitudCompromiso,
+        fetchNameReportOrderServicio,
         downloadReportByName,
         generateReport,
         aprobarSolicitud,
