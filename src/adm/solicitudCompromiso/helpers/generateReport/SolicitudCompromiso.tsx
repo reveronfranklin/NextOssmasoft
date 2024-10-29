@@ -1,9 +1,24 @@
-const HandleReport = async (props: any) => {
-    const urlReport = await props.fetchSolicitudReportData(props.filter)
+const HandleReport = async (props: {
+    filter: any
+    geReportUrl: (filter: any) => Promise<any>
+    downLoadReport: (url: string) => Promise<any>
+}) => {
+    const { filter, geReportUrl, downLoadReport } = props
 
-    if (urlReport?.isValid) {
-        const url = urlReport?.data
-        await props.downloadReportByName(url)
+    if (!geReportUrl || !filter) {
+        return
+    }
+
+    const responseGetReportUrl = await geReportUrl(filter)
+
+    if (responseGetReportUrl.isValid) {
+        const url = responseGetReportUrl?.data
+
+        try {
+            await downLoadReport(url)
+        } catch (e: any) {
+            console.error(e)
+        }
     }
 }
 

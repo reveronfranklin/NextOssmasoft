@@ -26,7 +26,7 @@ const HeaderDetail = (props: any) => {
                     </Toolbar>
                 </Grid>
             </Box>
-            <Collapse in={isUpdateFormOpen} sx={{ backgroundColor: '#f5f5f5', padding: '5px', borderRadius: '5px' }}>
+            <Collapse in={isUpdateFormOpen} sx={{ backgroundColor: '#f5f5f5', padding: '2px', borderRadius: '5px', marginBottom: '40px' }}>
                 <CreatePucDetalleSolicitudCompromiso
                     codigoSolicitud={props.codigoSolicitud}
                     codigoDetalleSolicitud={props.codigoDetalleSolicitud}

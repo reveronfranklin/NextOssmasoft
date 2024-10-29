@@ -1,4 +1,16 @@
-import { Card, CardContent, CardHeader, Grid, CircularProgress, FormHelperText } from '@mui/material'
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    Grid,
+    CircularProgress,
+    FormHelperText,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions
+} from '@mui/material'
 import useServices from '../../services/useServices'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -7,16 +19,19 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import {
     setVerComrpromisoActive,
 } from "src/store/apps/presupuesto"
+import { useState } from 'react'
 
 const AnulacionComponent = (props: any) => {
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+    const dispatch = useDispatch()
+    const qc: QueryClient = useQueryClient()
+
     const {
         loading,
         message,
         anularCompromiso
     } = useServices()
-
-    const dispatch = useDispatch()
-    const qc: QueryClient = useQueryClient()
 
     const handleAnulacion = async () => {
         try {
@@ -29,8 +44,10 @@ const AnulacionComponent = (props: any) => {
                     handleClose()
                 }
             })
-        } catch (e: any) {
-            console.error(e)
+        } catch (error: any) {
+            console.error(error)
+        } finally {
+            setOpenConfirmDialog(false)
         }
     }
 
@@ -46,34 +63,66 @@ const AnulacionComponent = (props: any) => {
                 props.data.status === 'AP' ?
                 <Grid item xs={12} paddingBottom={5}>
                     <Card>
-                        <CardHeader title='Adm - Anulación Solicitud Compromiso' />
+                        <CardHeader title='Anular Compromiso' />
                         <CardContent>
                             <Grid container spacing={12}>
                                 <Grid item xs={12}>
                                     <Box className='demo-space-x'>
-                                        <Button variant='contained' size='large' onClick={handleAnulacion} autoFocus>
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                        }}
-                                                    />
-                                                    Por favor espere...
-                                                </>
-                                            )
-                                                : 'Anular'
-                                            }
+                                            <Button
+                                                variant='contained'
+                                                size='large'
+                                                onClick={() => setOpenConfirmDialog(true)}
+                                                autoFocus
+                                            >
+                                            Anular
                                         </Button>
                                     </Box>
                                 </Grid>
                             </Grid>
+                            <Dialog
+                                open={openConfirmDialog}
+                                onClose={() => setOpenConfirmDialog(false)}
+                            >
+                                <DialogTitle id='alert-dialog-title'>
+                                    {'Esta usted seguro de realizar esta acción?'}
+                                </DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        Esta acción va <b>ANULAR</b> el compromiso seleccionado.
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button
+                                        onClick={() => setOpenConfirmDialog(false)}
+                                        color="primary"
+                                    >
+                                        No
+                                    </Button>
+                                        <Button
+                                            onClick={handleAnulacion}
+                                            color="primary"
+                                            autoFocus
+                                        >
+                                        { loading ? (
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <CircularProgress
+                                                    sx={{
+                                                        color: '#8A2BE2',
+                                                        width: '20px !important',
+                                                        height: '20px !important',
+                                                        marginRight: '8px',
+                                                    }}
+                                                />
+                                                Por favor espere...
+                                            </Box>
+                                        )
+                                            : 'Si'
+                                        }
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
                             <Box>
-                                { message && (
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 15, mt: 5 }}>{message}</FormHelperText>
-                                )}
+                                { message && (<FormHelperText sx={{ color: 'error.main', fontSize: 15, mt: 5 }}>{message}</FormHelperText>) }
                             </Box>
                         </CardContent>
                     </Card>

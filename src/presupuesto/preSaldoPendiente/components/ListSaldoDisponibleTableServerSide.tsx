@@ -1,3 +1,4 @@
+import { Tooltip, IconButton, Grid, Toolbar, Checkbox, FormControlLabel } from '@mui/material'
 import { useState, ChangeEvent, useRef } from 'react'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
@@ -5,7 +6,6 @@ import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import Icon from 'src/@core/components/icon'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Tooltip, IconButton, Grid, Toolbar } from '@mui/material'
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 import Spinner from 'src/@core/components/spinner'
@@ -45,8 +45,19 @@ const ListSaldoDisponibleTableServerSide = () => {
 
   // const [sort, setSort] = useState<SortType>('asc')
 
-  const [buffer, setBuffer] = useState<string>('')
-  const [searchText, setSearchText] = useState<string>('')
+  const [buffer, setBuffer] = useState<string>(localStorage.getItem('searchTextSaldo') || '')
+  const [searchText, setSearchText] = useState<string>(localStorage.getItem('searchTextSaldo') || '')
+  const [isSaveSearchEnabled, setIsSaveSearchEnabled] = useState<boolean>(
+    () => {
+      const savedValue = localStorage.getItem('isSaveSearchEnabled')
+      if (savedValue !== null) {
+
+        return JSON.parse(savedValue)
+      }
+
+      return true
+    }
+  )
 
   const debounceTimeoutRef = useRef<any>(null)
   const [sortColumn, setSortColumn] = useState<string>('fechaSolicitudString')
@@ -62,7 +73,6 @@ const ListSaldoDisponibleTableServerSide = () => {
     CodigoPresupuesto: listpresupuestoDtoSeleccionado.codigoPresupuesto,
   }
 
-  console.log('searchText', searchText)
   const query = useQuery({
     queryKey: ['listSaldoDisponible', pageSize, page, searchText],
     queryFn: () => ossmmasofApi.post<any>('/PreVSaldos/GetListIcpPucConDisponible', filter),
@@ -246,20 +256,54 @@ const ListSaldoDisponibleTableServerSide = () => {
 
     debounceTimeoutRef.current = setTimeout(() => {
       setSearchText(currentBuffer)
+      if (isSaveSearchEnabled) {
+        localStorage.setItem('searchTextSaldo', currentBuffer)
+      } else {
+        localStorage.removeItem('searchTextSaldo');
+      }
     }, 2500)
+  }
+
+  const handleSaveSearchChange = (event: any) => {
+    setIsSaveSearchEnabled(event.target.checked)
+    localStorage.setItem('isSaveSearchEnabled', event.target.checked.toString())
+
+    if (event.target.checked === false && localStorage.getItem('searchText')) {
+      localStorage.removeItem('searchTextSaldo')
+    }
   }
 
   return (
     <Card>
       {!loading ? (
-        <Grid m={2} pt={3} item justifyContent='flex-end'>
-          <Toolbar sx={{ justifyContent: 'flex-start' }}>
-            <Tooltip title='Descargar'>
-              <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
-                <Icon icon='ci:download' fontSize={20} />
-              </IconButton>
-            </Tooltip>
-          </Toolbar>
+        <Grid m={2} pt={3} item justifyContent='flex-end' flexDirection="column">
+          <Grid>
+            <Toolbar sx={{ justifyContent: 'flex-start' }}>
+              <Tooltip title='Descargar'>
+                <IconButton color='primary' size='small' onClick={() => exportToExcel()}>
+                  <Icon icon='ci:download' fontSize={20} />
+                </IconButton>
+              </Tooltip>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isSaveSearchEnabled}
+                    onChange={handleSaveSearchChange}
+                    color='primary'
+                    size='small'
+                  />
+                }
+                label={isSaveSearchEnabled ? 'Desactivar última búsqueda' : 'Activar última búsqueda'}
+              />
+            </Toolbar>
+          </Grid>
+          <Grid>
+            {isSaveSearchEnabled === false && (
+              <small style={{ color: 'red' }}>
+                Si desactiva esta opción, la última búsqueda no se guardará.
+              </small>
+            )}
+          </Grid>
         </Grid>
       ) : (
         <Typography>{mensaje}</Typography>

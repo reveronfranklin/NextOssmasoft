@@ -1,33 +1,40 @@
-import { Box, Card, CardActions, Grid, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardActions,
+  Grid,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
-
-//import { ReactDatePickerProps } from 'react-datepicker'
-//import { ReactDatePickerProps } from 'react-datepicker'
-
-// ** Icon Imports
-
-import { DataGrid } from '@mui/x-data-grid'
-
-import Spinner from 'src/@core/components/spinner'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { DataGrid } from '@mui/x-data-grid'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { IFilterFechaTipoNomina } from 'src/interfaces/rh/i-filter-fecha-tiponomina'
-import dayjs from 'dayjs'
 import { RhTmpRetencionesFaovDto } from 'src/interfaces/rh/RhTmpRetencionesFaovDto'
-import Link from 'next/link'
+import { saveAs } from 'file-saver'
+
+import * as XLSX from 'xlsx'
+import dayjs from 'dayjs'
+import Icon from 'src/@core/components/icon'
+import Spinner from 'src/@core/components/spinner'
 
 interface CellType {
   row: RhTmpRetencionesFaovDto
 }
 
 const FaovList = () => {
-  // ** State
-
+  const [mensaje] = useState<string>('')
   const [linkData, setLinkData] = useState('')
-  const [linkDataArlternative, SetLinkDataArlternative] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState<RhTmpRetencionesFaovDto[]>([])
+  const [linkDataAlternative, setLinkDataAlternative] = useState('')
+  const [textToDownload, setTextToDownload] = useState('')
+  const [nameFile, setNameFile] = useState('')
 
   const columns = [
     {
@@ -55,20 +62,16 @@ const FaovList = () => {
       headerName: 'Dpto',
       renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.unidadEjecutora}</Typography>
     },
-
     {
       flex: 0.4,
       minWidth: 125,
-
       field: 'montoCahTrabajador',
       headerName: 'Trabajador',
       renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoFaovTrabajador}</Typography>
     },
-
     {
       flex: 0.4,
       minWidth: 125,
-
       field: 'montoCahPatrono',
       headerName: 'Patrono',
       renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoFaovPatrono}</Typography>
@@ -76,40 +79,64 @@ const FaovList = () => {
     {
       flex: 0.4,
       minWidth: 125,
-
       field: 'montoTotalRetencion',
       headerName: 'Total',
       renderCell: ({ row }: CellType) => <Typography variant='body2'>{row.montoTotalRetencion}</Typography>
     }
   ]
 
-  const [loading, setLoading] = useState(false)
-
-  const [data, setData] = useState<RhTmpRetencionesFaovDto[]>([])
   const {
     fechaDesde,
     fechaHasta,
     tipoNominaSeleccionado = {} as IListTipoNominaDto
   } = useSelector((state: RootState) => state.nomina)
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(data)
+
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    })
+
+    saveAs(blob, 'data.xlsx')
+  }
+
   useEffect(() => {
     const getData = async () => {
-      console.log(tipoNominaSeleccionado.codigoTipoNomina)
-      if (tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina <= 0) return
+      if (tipoNominaSeleccionado && tipoNominaSeleccionado.codigoTipoNomina <= 0) {
+        return
+      }
+
       setData([])
       setLoading(true)
       setLinkData('')
+
       const filter: IFilterFechaTipoNomina = {
         fechaDesde: dayjs(fechaDesde).format('DD/MM/YYYY'),
         fechaHasta: dayjs(fechaHasta).format('DD/MM/YYYY'),
         tipoNomina: tipoNominaSeleccionado.codigoTipoNomina
       }
+
       const responseAll = await ossmmasofApi.post<any>('/RhTmpRetencionesFaov/GetRetencionesFaov', filter)
+
+      setLinkData(responseAll.data.linkData)
+      setLinkDataAlternative(responseAll.data.linkDataArlternative)
+
+      const pathLinkDataAlternative = responseAll.data.linkDataArlternative !== null ? responseAll.data.linkDataArlternative.split('/').pop() : null
+      setNameFile(`RetencionesFaove-Desde-${dayjs(fechaDesde).format('DD-MM-YYYY')}-Hasta-${dayjs(fechaHasta).format('DD-MM-YYYY')}-tipoNomina-${tipoNominaSeleccionado.codigoTipoNomina}.txt`)
+
+      if (pathLinkDataAlternative) {
+        const path = `/Files/GetTxtFiles/${pathLinkDataAlternative}`
+        const fetchTextToDownload = await ossmmasofApi.get<any>(path)
+        setTextToDownload(fetchTextToDownload.data)
+      }
 
       if (responseAll.data?.data) {
         setData(responseAll.data?.data)
-        setLinkData(responseAll.data.linkData)
-        SetLinkDataArlternative(responseAll.data.linkDataArlternative)
       } else {
         setData([])
       }
@@ -121,28 +148,61 @@ const FaovList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fechaDesde, fechaHasta, tipoNominaSeleccionado])
 
+  const handleDownloadText = () => {
+    const element = document.createElement('a')
+    const file = new Blob([textToDownload], { type: 'text/plain' })
+    element.href = URL.createObjectURL(file)
+    element.download = nameFile
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+  }
+
   return (
     <Grid item xs={12}>
       <Card>
         <CardActions>
-          <Box m={2} pt={3}>
-            {linkData.length > 0 ? (
-              <Link href={linkData} target='_blank' download={linkData}>
-                Descargar Xls
-              </Link>
-            ) : (
-              <div></div>
-            )}
-          </Box>
+          {!loading ? (
+            <Grid m={2} pt={3} item justifyContent='flex-end'>
+              <Toolbar sx={{ justifyContent: 'flex-start' }}>
+                <Tooltip title='Descargar .xls'>
+                  <IconButton
+                    color='primary'
+                    size='small'
+                    onClick={() => exportToExcel()}
+                  >
+                    <Icon
+                      icon='ci:download'
+                      fontSize={20}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </Grid>
+          ) : (
+            <Typography>{mensaje}</Typography>
+          )}
 
           <Box m={2} pt={3}>
-            {linkData.length > 0 ? (
-              <Link href={linkDataArlternative} target='_blank' download={linkDataArlternative}>
-                Descargar Txt
-              </Link>
-            ) : (
-              <div></div>
-            )}
+            {
+              linkData.length > 0 ? (
+                <Toolbar sx={{ justifyContent: 'flex-start' }}>
+                  <Tooltip title='Descargar .txt'>
+                    <IconButton
+                      color='primary'
+                      size='small'
+                      onClick={handleDownloadText}
+                      disabled={!linkDataAlternative}
+                    >
+                      <Icon
+                        icon='mdi:file-download-outline'
+                        fontSize={20}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </Toolbar>
+              ) : ( <></> )
+            }
           </Box>
         </CardActions>
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Button, Card, CardContent, CardHeader, Grid, Typography, TextField, CircularProgress, Box, CardActions, FormHelperText } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
@@ -212,7 +213,7 @@ const CreatePucDetalleSolicitudCompromiso = (props: any) => {
                                 onClick={handleSubmitCreatePuc(onSubmitPuc)}
                                 size='small'
                                 variant='contained'
-                                disabled={errorMessage.length > 0 ? true : false}
+                                disabled={loading || errorMessage.length > 0 ? true : false}
                             >
                                 { loading ? (
                                     <>

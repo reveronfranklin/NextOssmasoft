@@ -9,7 +9,11 @@ import { Create } from '../../interfaces/create.interfaces'
 import { useState } from "react"
 import { IFechaDto } from "src/interfaces/fecha-dto";
 import { useDispatch } from "react-redux"
-import { setVerSolicitudCompromisosActive } from 'src/store/apps/adm'
+import {
+    setVerSolicitudCompromisosActive,
+    setOperacionCrudAdmSolCompromiso,
+    setSolicitudCompromisoSeleccionado
+} from 'src/store/apps/adm'
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import TipoSolicitud from '../../components/Autocomplete/TipoSolicitud'
@@ -19,6 +23,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import dayjs from 'dayjs'
 import useServices from '../../services/useServices'
+import { CrudOperation } from '../../enums/CrudOperations.enum'
 
 const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
@@ -65,13 +70,17 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         setValue('codigoProveedor', codigoProveedor)
     }
 
-    const handleFechaSolicitudChange: any = (desde: Date) => {
-        const dateIsValid = dayjs(desde).isValid()
+    const handleFechaSolicitudChange: any = (fechaSolicitud: Date) => {
+        const dateIsValid = dayjs(fechaSolicitud).isValid()
+
+        const fechaFormat = dayjs(fechaSolicitud).format('YYYY-MM-DDTHH:mm:ss')
+        const fechaSolicitudDate = new Date(fechaFormat)
+
         if (dateIsValid) {
-            const fechaObj: any = fechaToFechaObj(desde)
+            const fechaObj: any = fechaToFechaObj(fechaSolicitud)
             setFecha(fechaObj)
-            setValue('fechaSolicitud', fechaObj)
-            setValue('fechaSolicitudString', desde.toISOString())
+            setValue('fechaSolicitud', fechaSolicitudDate)
+            setValue('fechaSolicitudString', fechaSolicitud.toISOString())
         }
     }
 
@@ -94,25 +103,28 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             const responseCreate = await crearSolicitudCompromiso(solicitudCompromisoCreate)
 
             if (responseCreate?.data.isValid) {
-                qc.invalidateQueries({
-                    queryKey: ['solicitudCompromiso']
-                })
-
                 setTimeout(() => {
                     dispatch(setVerSolicitudCompromisosActive(false))
-                }, 1500)
+
+                    dispatch(setSolicitudCompromisoSeleccionado(responseCreate?.data?.data))
+                    dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.EDIT))
+                    dispatch(setVerSolicitudCompromisosActive(true))
+                }, 1000)
             }
             setErrorMessage(responseCreate?.data.message)
         } catch (e) {
             console.log(e)
         } finally {
+            qc.invalidateQueries({
+                queryKey: ['solicitudCompromiso']
+            })
             setLoading(false)
         }
     }
 
     return (
         <Card>
-            <CardHeader title='Adm - Crear Solicitud Compromiso' />
+            <CardHeader title='Crear Solicitud Compromiso' />
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Grid container spacing={5} paddingTop={5}>
@@ -259,7 +271,12 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                         </Grid>
                     </Grid>
                     <CardActions sx={{ justifyContent: 'start', paddingLeft: 0 }}>
-                        <Button size='large' type='submit' variant='contained'>
+                        <Button
+                            size='large'
+                            type='submit'
+                            variant='contained'
+                            disabled={loading}
+                        >
                             {loading ? (
                                 <>
                                     <CircularProgress

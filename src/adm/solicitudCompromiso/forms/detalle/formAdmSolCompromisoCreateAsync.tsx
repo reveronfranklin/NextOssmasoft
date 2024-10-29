@@ -1,3 +1,4 @@
+import React from 'react'
 import { Card, CardActions, Button, CardContent, CardHeader, FormControl, FormHelperText, Grid, TextField, CircularProgress, Box, Tooltip, IconButton } from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -129,7 +130,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
             if (responseCreateDetalle?.data.isValid) {
                 qc.invalidateQueries({
-                    queryKey: ['detalleSolicitudCompromiso', codigoSolicitud]
+                    queryKey: ['detalleSolicitudCompromiso', dataForm.codigoSolicitud]
                 })
             }
 
@@ -151,9 +152,7 @@ const CreateDetalleSolicitudCompromiso = () => {
         <>
             <Card sx={{
                 border: 0,
-                boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1)',
-                marginBottom: 5,
-                backgroundColor: '#fff',
+                boxShadow: '0 -1px 3px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05)',
             }}>
                 <CardHeader title='Crear detalle' />
                 <CardContent>
@@ -298,6 +297,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                                 onClick={handleSubmitCreateDetalle(onSubmitCreateDetalle)}
                                 size='small'
                                 variant='contained'
+                                disabled={loading}
                             >
                                 {loading ? (
                                     <>
