@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, Grid, Tooltip } from '@mui/material';
+import { Tabs, Tab, Box, Grid } from '@mui/material';
 import { tabs } from '../config/tabsOrdenPago'
 
 const TabsComponent = () => {
@@ -11,6 +11,7 @@ const TabsComponent = () => {
 
     const renderForm = () => {
         const selectedTab = tabs.find(tab => tab.label === value)
+
         return selectedTab ? selectedTab.component : null;
     }
 
@@ -59,7 +60,7 @@ const TabsComponent = () => {
             </Box>
             {
                 <Grid sm={12} xs={12} sx={{overflow: 'auto'}}>
-                    {renderForm()}
+                    { renderForm() }
                 </Grid>
             }
         </>

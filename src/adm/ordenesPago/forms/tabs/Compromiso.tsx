@@ -1,9 +1,6 @@
 import { Grid, Button } from "@mui/material"
 import { useDispatch } from "react-redux"
-import {
-    setCompromisoSeleccionadoDetalle,
-    setIsOpenDialogListCompromiso,
-} from "src/store/apps/ordenPago"
+import { setIsOpenDialogListCompromiso } from "src/store/apps/ordenPago"
 
 const Compromiso = () => {
     const dispatch = useDispatch()

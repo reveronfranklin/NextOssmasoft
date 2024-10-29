@@ -5,14 +5,12 @@ import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridListCompromiso'
 import { setCompromisoSeleccionadoDetalle, setIsOpenDialogListCompromiso } from "src/store/apps/ordenPago"
 import { useDispatch } from 'react-redux'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 650,
+    height: 500,
     overflowY: 'auto',
 }))
 
@@ -52,14 +50,6 @@ const DataGridComponent = () => {
 
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
-
-    // useEffect(() => {
-    //     if (presupuestoSeleccionado.codigoPresupuesto > 0) {
-    //         setIsPresupuestoSeleccionado(true)
-    //     } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
-    //         setIsPresupuestoSeleccionado(false)
-    //     }
-    // }, [presupuestoSeleccionado, filtroEstatus]);
 
     const handleDoubleClick = (data: any) => {
         const {row} = data

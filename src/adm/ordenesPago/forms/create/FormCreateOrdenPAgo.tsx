@@ -1,69 +1,61 @@
 import { Grid, Button, Box } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
+import { ICreateOrdenPago } from '../../interfaces/createOrdenPago.interfaces'
+import { CleaningServices } from '@mui/icons-material'
+import { setIsOpenDialogListCompromiso, resetCompromisoSeleccionadoDetalle, setTypeOperation } from "src/store/apps/ordenPago"
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
-import {
-    setCompromisoSeleccionadoDetalle,
-    setIsOpenDialogListCompromiso,
-    resetCompromisoSeleccionadoDetalle,
-    setTypeOperation
-} from "src/store/apps/ordenPago"
 
 const FormCreateOrdenPago = () => {
-    const [dataReady, setDataReady] = useState(false);
-    const [formData, setFormData] = useState({
-        descripcionStatus: '',
-        id: '',
-        fecha: '',
-        proveedor: '',
-        monto: '',
-        tipoPago: '',
-        estado: '',
-        observacion: '',
-    })
-
     const dispatch = useDispatch()
-    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const { createOrden } = useServices()
 
-    const handleInputChange = (e: any) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    }
+    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
+    const { createOrden, message, loading } = useServices()
 
     const handleListCompromiso = () => {
         dispatch(setIsOpenDialogListCompromiso(true))
     }
 
-    const handleFormData = (data: any) => {
-        setFormData(data)
-    }
-
-    const handleCreateOrden = async () => {
+    const handleCreateOrden = async (dataFormOrder: any) => {
         try {
-            console.log('Create', formData)
-            const response = await createOrden(formData)
+            const { codigoCompromiso, codigoPresupuesto, origenId, fechaCompromiso } = compromisoSeleccionadoListaDetalle
+            const { motivo, frecuenciaPago, formaPago, cantidadPago } = dataFormOrder
 
-            setTimeout(() => {
-                dispatch(setTypeOperation('update'))
-            }, 1000);
+            const cantidadPagoNumber = Number(cantidadPago)
+
+            const payload: ICreateOrdenPago = {
+                codigoOrdenPago: 0,
+                codigoPresupuesto,
+                codigoCompromiso,
+                fechaOrdenPago: fechaCompromiso,
+                tipoOrdenPagoId: origenId,
+                cantidadPago: cantidadPagoNumber,
+                frecuenciaPagoId: frecuenciaPago,
+                tipoPagoId: formaPago,
+                motivo,
+                fechaComprobante: null,
+                numeroComprobante: null,
+                numeroComprobante2: null,
+                numeroComprobante3: null,
+                numeroComprobante4: null,
+            }
+
+            const response = await createOrden(payload)
+            console.log(response)
         } catch (e: any) {
             console.error(e)
         }
     }
 
     const handleClearCompromiso = () => {
-        console.log('limpiar')
         dispatch(resetCompromisoSeleccionadoDetalle())
     }
 
     useEffect(() => {
-        console.log('compromisoSeleccionadoListaDetalle')
         dispatch(resetCompromisoSeleccionadoDetalle())
-        setDataReady(true)
     }, [])
 
     return (
@@ -71,14 +63,20 @@ const FormCreateOrdenPago = () => {
             <Grid container spacing={5} paddingTop={1}>
                 <Grid sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
-                        <Button variant='contained' color='primary' size='small' onClick={handleCreateOrden}>
-                            Crear
-                        </Button>
-                        <Button variant='contained' color='success' size='small' onClick={handleListCompromiso}>
+                        <Button
+                            variant='contained'
+                            color='success'
+                            size='small'
+                            onClick={handleListCompromiso}
+                        >
                             VER COMPROMISOS
                         </Button>
-                        <Button variant='contained' color='primary' size='small' onClick={handleClearCompromiso}>
-                            Limpiar
+                        <Button
+                            color='primary'
+                            size='small'
+                            onClick={handleClearCompromiso}
+                        >
+                            <CleaningServices /> Limpiar
                         </Button>
                     </Box>
                 </Grid>
@@ -87,8 +85,12 @@ const FormCreateOrdenPago = () => {
                     padding: '0 1rem',
                 }}>
                     <FormOrdenPago
-                        orden={dataReady ? compromisoSeleccionadoListaDetalle : null}
-                        onFormData={handleFormData}
+                        orden={compromisoSeleccionadoListaDetalle}
+                        onFormData={handleCreateOrden}
+                        titleButton = {'Crear'}
+                        message = {message}
+                        loading = {loading}
+                        type={setTypeOperation}
                     />
                 </Grid>
             </Grid>

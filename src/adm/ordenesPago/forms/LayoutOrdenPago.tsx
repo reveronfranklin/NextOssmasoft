@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Typography, Tooltip, IconButton, Box, CardHeader} from "@mui/material"
+import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from "@mui/material"
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
 import DataGridOrdenPagoComponent from '../components/Datagrid/ordenPago'
@@ -6,9 +6,11 @@ import {
     setIsOpenDialogOrdenPagoDetalle,
     setTypeOperation
 } from 'src/store/apps/ordenPago'
+import useServices from '../services/useServices'
 
 const LayoutOrdenPago = () => {
     const dispatch = useDispatch()
+    const { presupuestoSeleccionado } = useServices()
 
     const handleCreateOrden = async () => {
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
@@ -20,11 +22,13 @@ const LayoutOrdenPago = () => {
             <CardHeader title='Orden de Pago'/>
             <CardContent>
                 <Grid item justifyContent='flex-end'>
-                    <Tooltip title='Agregar Orden de Pago'>
-                        <IconButton color='primary' size='small' onClick={handleCreateOrden}>
-                            <Icon icon='ci:add-row' fontSize={20} />
-                        </IconButton>
-                    </Tooltip>
+                    {presupuestoSeleccionado.codigoPresupuesto && (
+                        <Tooltip title='Agregar Orden de Pago'>
+                            <IconButton color='primary' size='small' onClick={handleCreateOrden}>
+                                <Icon icon='ci:add-row' fontSize={20} />
+                            </IconButton>
+                        </Tooltip> )
+                    }
                 </Grid>
             </CardContent>
             <CardContent>

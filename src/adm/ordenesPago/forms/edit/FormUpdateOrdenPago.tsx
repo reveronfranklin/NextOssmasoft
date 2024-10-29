@@ -4,25 +4,44 @@ import FormOrdenPago from '../../forms/FormOrdenPago'
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-import { useState } from "react"
-import { resetCompromisoSeleccionadoDetalle } from "src/store/apps/ordenPago"
+import { resetCompromisoSeleccionadoDetalle, setTypeOperation } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
+import { CleaningServices } from '@mui/icons-material'
+
+import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 
 const FormUpdateOrdenPago = () => {
-    const [formData, setFormData] = useState({})
     const dispatch = useDispatch()
 
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const { updateOrden } = useServices()
+    const { updateOrden, loading, message } = useServices()
 
-    const handleFormData = (data: any) => {
-        setFormData(data)
-    }
-
-    const handleUpdateOrden = async () => {
+    const handleUpdateOrden = async (dataFormOrder: any) => {
         try {
-            console.log('update', formData)
-            const response = await updateOrden(formData)
+            const { codigoOrdenPago, codigoPresupuesto, tipoOrdenPagoId, fechaOrdenPago } = compromisoSeleccionadoListaDetalle
+            const { motivo, frecuenciaPago, formaPago, cantidadPago } = dataFormOrder
+
+            const payload: IUpdateOrdenPago = {
+                codigoOrdenPago,
+                codigoPresupuesto,
+                codigoCompromiso: 15,
+                fechaOrdenPago: fechaOrdenPago,
+                tipoOrdenPagoId,
+                cantidadPago,
+                frecuenciaPagoId: frecuenciaPago,
+                tipoPagoId: formaPago,
+                motivo,
+                fechacomprobante: null,
+                numeroComprobante: null,
+                numeroComprobante2: null,
+                numeroComprobante3: null,
+                numeroComprobante4: null,
+            }
+
+            const response = await updateOrden(payload)
+
+            //todo validar la respuesta
+            console.log(response)
         } catch (e: any) {
             console.error(e)
         }
@@ -37,11 +56,12 @@ const FormUpdateOrdenPago = () => {
             <Grid container spacing={5} paddingTop={1}>
                 <Grid sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
-                        <Button variant='contained' color='primary' size='small' onClick={handleUpdateOrden}>
-                            Actualizar
-                        </Button>
-                        <Button variant='contained' color='primary' size='small' onClick={handleClearCompromiso}>
-                            limpiar
+                        <Button
+                            color='primary'
+                            size='small'
+                            onClick={handleClearCompromiso}
+                        >
+                            <CleaningServices /> Limpiar
                         </Button>
                     </Box>
                 </Grid>
@@ -52,7 +72,11 @@ const FormUpdateOrdenPago = () => {
                 }}>
                     <FormOrdenPago
                         orden={compromisoSeleccionadoListaDetalle}
-                        onFormData={handleFormData}
+                        onFormData={handleUpdateOrden}
+                        titleButton={'Actualizar'}
+                        message={message}
+                        loading={loading}
+                        type={setTypeOperation}
                     />
                 </Grid>
                 <Grid sm={6} xs={12}>

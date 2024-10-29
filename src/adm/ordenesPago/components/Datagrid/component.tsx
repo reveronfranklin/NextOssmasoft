@@ -1,4 +1,5 @@
-import { useState, ChangeEvent, useEffect, useRef } from 'react'
+// import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
@@ -11,11 +12,11 @@ const StyledDataGridContainer = styled(Box)(() => ({
 const DataGridComponent = (props: any) => {
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
-    const [searchText, setSearchText] = useState<string>('')
-    const [buffer, setBuffer] = useState<string>('')
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
-    const debounceTimeoutRef = useRef<any>(null)
+    // const [searchText, setSearchText] = useState<string>('')
+    // const [buffer, setBuffer] = useState<string>('')
+    // const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
+    // const debounceTimeoutRef = useRef<any>(null)
 
     const query = props?.query || {}
 
@@ -23,11 +24,11 @@ const DataGridComponent = (props: any) => {
     const rowCount = props?.data?.cantidadRegistros || 0
     const columnsDataGrid = props?.columnsDataGrid || []
 
-    useEffect(() => {
-        if (props?.data?.codigoPresupuesto > 0) {
-            setIsPresupuestoSeleccionado(true)
-        }
-    }, [props?.data?.codigoPresupuesto])
+    // useEffect(() => {
+    //     if (props?.data?.codigoPresupuesto > 0) {
+    //         setIsPresupuestoSeleccionado(true)
+    //     }
+    // }, [props?.data?.codigoPresupuesto])
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -38,26 +39,26 @@ const DataGridComponent = (props: any) => {
         setPageSize(newPageSize)
     }
 
-    const handleSearch = (value: string) => {
-        if (value === '') {
-            setSearchText('')
-            setBuffer('')
+    // const handleSearch = (value: string) => {
+    //     if (value === '') {
+    //         setSearchText('')
+    //         setBuffer('')
 
-            return
-        }
+    //         return
+    //     }
 
-        const newBuffer = value
-        setBuffer(newBuffer)
-        debouncedSearch()
-    }
+    //     const newBuffer = value
+    //     setBuffer(newBuffer)
+    //     debouncedSearch()
+    // }
 
-    const debouncedSearch = () => {
-        clearTimeout(debounceTimeoutRef.current)
+    // const debouncedSearch = () => {
+    //     clearTimeout(debounceTimeoutRef.current)
 
-        debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
-        }, 2500)
-    }
+    //     debounceTimeoutRef.current = setTimeout(() => {
+    //         setSearchText(buffer)
+    //     }, 2500)
+    // }
 
     return (
         <>
@@ -79,6 +80,7 @@ const DataGridComponent = (props: any) => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
+
                             // components={{ Toolbar: ServerSideToolbar }}
                             // componentsProps={{
                             //     baseButton: {

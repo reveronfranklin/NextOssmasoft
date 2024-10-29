@@ -3,5 +3,6 @@ export enum UrlServices {
     GETCOMPROMISOSBYPRESUPUESTO = '/PreCompromisos/GetByPresupuesto',
     GETPUCORDENPAGO             = '/AdmPucOrdenPago/GetByOrdenPago',
     CREATEORDENPAGO             = '/AdmOrdenPago/Create',
-    UPDATEORDENPAGO             = '/AdmOrdenPago/Update'
+    UPDATEORDENPAGO             = '/AdmOrdenPago/Update',
+    DESCRIPTIVAS                = '/AdmDescriptivas/GetSelectDescriptiva',
 }

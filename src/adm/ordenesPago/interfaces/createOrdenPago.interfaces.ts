@@ -1,7 +1,7 @@
-export interface CreateOrdenPago {
+export interface ICreateOrdenPago {
     codigoOrdenPago: number | null;
-    CodigoPresupuesto: number;
-    codigoCompromiso: number;
+    codigoPresupuesto: number;
+    codigoCompromiso: string | number;
     fechaOrdenPago: string;
     tipoOrdenPagoId: number;
     cantidadPago: number;
@@ -9,7 +9,7 @@ export interface CreateOrdenPago {
     tipoPagoId: number;
     motivo: string;
     numeroComprobante: number | null;
-    fechacomprobante: string;
+    fechaComprobante: string | null;
     numeroComprobante2: number | null;
     numeroComprobante3: number | null;
     numeroComprobante4: number | null;

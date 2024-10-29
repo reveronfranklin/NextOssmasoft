@@ -12,6 +12,9 @@ export interface ResponseGetOrdenes {
 }
 
 export interface Orden {
+    fechaCompromisoString: string;
+    fechaCompromiso: string;
+
     codigoOrdenPago: number;
     ano: number;
     codigoCompromiso: string;
@@ -39,6 +42,7 @@ export interface Orden {
     numeroComprobante2: null;
     numeroComprobante3: null;
     numeroComprobante4: null;
+    origenId: number;
 }
 
 export interface FechaOrdenPagoObj {
