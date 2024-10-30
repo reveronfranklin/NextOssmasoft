@@ -25,10 +25,7 @@ import HandleReport from '../../helpers/generateReport/SolicitudCompromiso'
 import AprobacionComponent from '../../components/Estados/Aprobacion'
 import AnulacionComponent from '../../components/Estados/Anulacion'
 import DialogCustom from '../../components/Dialog/dialogCustom'
-
 import { EliminarImputaciones } from '../../interfaces/detalle/eliminarImputaciones.interfaces'
-
-// import { SolicitudCompromiso } from '../../interfaces/SolicitudCompromiso.interfaces'
 
 const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
@@ -138,7 +135,6 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
             if (responseUpdate?.data?.isValid) {
                 toast.success('Form Submitted')
 
-                // dispatch(setVerSolicitudCompromisosActive(false))
                 qc.invalidateQueries({
                     queryKey: ['solicitudCompromiso']
                 })

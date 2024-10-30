@@ -3,7 +3,7 @@ import { Tabs, Tab, Box, Grid } from '@mui/material';
 import { tabs } from '../config/tabsOrdenPago'
 
 const TabsComponent = () => {
-    const [value, setValue] = useState('Compromiso');
+    const [value, setValue] = useState('Compromiso')
 
     const handleChange = (event: any, newValue: any) => {
         setValue(newValue)
@@ -60,7 +60,7 @@ const TabsComponent = () => {
             </Box>
             {
                 <Grid sm={12} xs={12} sx={{overflow: 'auto'}}>
-                    { renderForm() }
+                    {renderForm()}
                 </Grid>
             }
         </>

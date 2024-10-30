@@ -1,13 +1,11 @@
-import { Grid, Button, Box } from "@mui/material"
+import { Grid, Box } from "@mui/material"
 import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-import { resetCompromisoSeleccionadoDetalle, setTypeOperation } from "src/store/apps/ordenPago"
+import { resetCompromisoSeleccionadoDetalle } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
-import { CleaningServices } from '@mui/icons-material'
-
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 
 const FormUpdateOrdenPago = () => {
@@ -56,13 +54,6 @@ const FormUpdateOrdenPago = () => {
             <Grid container spacing={5} paddingTop={1}>
                 <Grid sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
-                        <Button
-                            color='primary'
-                            size='small'
-                            onClick={handleClearCompromiso}
-                        >
-                            <CleaningServices /> Limpiar
-                        </Button>
                     </Box>
                 </Grid>
                 <Grid sm={6} xs={12} sx={{
@@ -73,10 +64,10 @@ const FormUpdateOrdenPago = () => {
                     <FormOrdenPago
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
+                        onFormClear={handleClearCompromiso}
                         titleButton={'Actualizar'}
                         message={message}
                         loading={loading}
-                        type={setTypeOperation}
                     />
                 </Grid>
                 <Grid sm={6} xs={12}>
