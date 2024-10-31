@@ -40,7 +40,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
     const {
         updateSolicitudCompromiso,
         eliminarSolicitudCompromiso,
-        fetchSolicitudReportData,
+        fetchNameReportSolicitudCompromiso,
         downloadReportByName,
         eliminarImputaciones,
         presupuestoSeleccionado
@@ -223,9 +223,10 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
         }
     }
 
-    const handleReport = async () => {
+    const handleReportCustom = async () => {
         setGeneratorReport(true)
-        const payload = {
+
+        const payload: any = {
             filter: {
                 PageSize: 0,
                 PageNumber: 0,
@@ -233,9 +234,10 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                 codigoPresupuesto: codigoPresupuesto,
                 SearchText: ''
             },
-            fetchSolicitudReportData,
-            downloadReportByName
+            geReportUrl: fetchNameReportSolicitudCompromiso,
+            downLoadReport: downloadReportByName
         }
+
         await HandleReport(payload)
         setGeneratorReport(false)
     }
@@ -435,7 +437,7 @@ const FormUpdateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     </>
                                 ) : 'Guardar'}
                             </Button>
-                            <Button variant='contained' size='large' onClick={() => handleReport()}>
+                            <Button variant='contained' size='large' onClick={() => handleReportCustom()}>
                                 { generatorReport ? (
                                     <>
                                         <CircularProgress
