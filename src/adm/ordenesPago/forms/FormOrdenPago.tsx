@@ -1,4 +1,5 @@
-import { Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress } from "@mui/material"
+import {Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
+    Checkbox, FormControlLabel } from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from 'react-hook-form'
 import FormaPago from '../components/AutoComplete/FormaPago'
@@ -7,11 +8,14 @@ import { CleaningServices } from '@mui/icons-material'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import DatePicker from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import dayjs from 'dayjs'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
+import { useDispatch } from 'react-redux'
+import { setCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
+
 export interface FormInputs {
     codigoOrdenPago: number,
     descripcionStatus: string,
@@ -19,15 +23,16 @@ export interface FormInputs {
     islr: number,
     fechaOrdenPagoString: string | Date,
     origenDescripcion: string,
-    formaPago: number,
-    frecuenciaPago: number,
+    tipoPagoId: number,
+    frecuenciaPagoId: number,
     cantidadPago: number,
     fecha: string,
     nombreProveedor: string,
     plazoPagoDesde: number,
     plazoPagoHasta: number,
     motivo: string,
-    numeroOrdenPago: number | string
+    numeroOrdenPago: number | string,
+    conFactura: boolean
 }
 
 export interface IFechaDto {
@@ -37,9 +42,17 @@ export interface IFechaDto {
 }
 
 const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any, titleButton?: string, message?: string, loading?: boolean }) => {
-    const { orden, onFormData, titleButton, message, loading, onFormClear } = props
+    const {
+        orden,
+        onFormData,
+        titleButton,
+        message,
+        loading,
+        onFormClear
+    } = props
+
     const [open, setOpen] = useState<boolean>(false)
-    const [fecha, setFecha] = useState<IFechaDto>({
+    const [fecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
         day: new Date().getDate(),
@@ -48,8 +61,8 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     const defaultValues: any = {
         codigoOrdenPago: 0,
         descripcionStatus: '',
-        frecuenciaPago: 0,
-        formaPago: 0,
+        frecuenciaPagoId: 0,
+        tipoPagoId: 0,
         iva: 0,
         numeroOrdenPago: 0,
         islr: 0,
@@ -61,26 +74,25 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         plazoPagoHasta: 0,
         nombreProveedor: '',
         motivo: '',
+        conFactura: false
     }
 
-    const { typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
     const autocompleteRef = useRef()
+    const dispatch = useDispatch()
+    const { typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
 
-    const { control, handleSubmit, setValue, formState: { errors, isValid } } = useForm<FormInputs>({
-        defaultValues,
-        mode: 'onChange'
-    })
+    const { control, handleSubmit, setValue, formState: { errors, isValid } } = useForm<FormInputs>({ defaultValues, mode: 'onChange' })
 
     const onSubmit = async (data: FormInputs) => {
-        onFormData(data)
+        onFormData({ ...data })
     }
 
     const handleFormaPago = (formaPagoId: number) => {
-        setValue('formaPago', formaPagoId)
+        setValue('tipoPagoId', formaPagoId)
     }
 
     const handleFrecuenciaPago = (frecuenciaPagoId: number) => {
-        setValue('frecuenciaPago', frecuenciaPagoId)
+        setValue('frecuenciaPagoId', frecuenciaPagoId)
     }
 
     const handleDialogOpen = () => {
@@ -93,24 +105,23 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
 
     const handleFechaSolicitudChange = (fecha: Date | null) => {
         if (fecha && dayjs(fecha).isValid()) {
-            const fechaFormat = dayjs(fecha).format('YYYY-MM-DDTHH:mm:ss')
-            setValue('fechaOrdenPagoString', fechaFormat, {
-                shouldValidate: true,
-                shouldDirty: true,
-                shouldTouch: true
-            })
-        } else {
-            setValue('fechaOrdenPagoString', '', {
-                shouldValidate: true,
-                shouldDirty: true,
-                shouldTouch: true
-            })
+            const fechaOrdenPagoObj = fechaToFechaObj(fecha)
+            const fechaOrdenPagoString = dayjs(fecha).format('DD/MM/YYYY')
+            const fechaOrdenPago = dayjs(fecha).format('YYYY-MM-DDTHH:mm:ss')
+
+            const ordenNew: any = {
+                ...orden,
+                fechaOrdenPagoObj,
+                fechaOrdenPagoString,
+                fechaOrdenPago
+            }
+
+            dispatch(setCompromisoSeleccionadoDetalle(ordenNew))
+            setValue('fechaOrdenPagoString', fechaOrdenPagoString.toString())
         }
     }
 
     useEffect(() => {
-        console.log('ORDEN', orden)
-
         if (orden) {
             setValue('descripcionStatus', orden.descripcionStatus ?? '')
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
@@ -118,7 +129,10 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
             setValue('nombreProveedor', orden.nombreProveedor ?? '')
             setValue('motivo', orden.motivo ?? '')
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
-            setValue('fechaOrdenPagoString', orden.fechaOrdenPagoString ?? null, { shouldValidate: true });
+            setValue('fechaOrdenPagoString', orden.fechaOrdenPagoString ?? null, { shouldValidate: true })
+            setValue('tipoPagoId', orden.tipoPagoId ?? 0)
+            setValue('frecuenciaPagoId', orden.frecuenciaPagoId ?? 0)
+            setValue('conFactura', orden.conFactura ?? false)
         }
 
         if (open && !loading) handleClose()
@@ -128,6 +142,25 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         <Box>
             <form>
                 <Grid container spacing={0} paddingTop={5} justifyContent="flex">
+                    <Grid container sm={12} xs={12} sx={{ paddingTop: 1 }}>
+                        <FormControlLabel
+                            control={
+                                <Controller
+                                    name="conFactura"
+                                    control={control}
+                                    render={({ field: { value } }) => (
+                                        <Checkbox
+                                            checked={value}
+                                            onChange={() => setValue('conFactura', !value)}
+                                            color='primary'
+                                            size='small'
+                                        />
+                                    )}
+                                />
+                            }
+                            label={ true ? 'con Factura' : 'sin Factura'}
+                        />
+                    </Grid>
                     <Grid container sm={6} xs={12}>
                         <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                             <FormControl fullWidth>
@@ -260,13 +293,15 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                             <FormaPago
                                 id={orden?.tipoPagoId ?? ''}
                                 autocompleteRef={autocompleteRef}
-                                onSelectionChange={(value: any) => { handleFormaPago(value.id) }} />
+                                onSelectionChange={(value: any) => { handleFormaPago(value.id) }}
+                            />
                         </Grid>
                         <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                             <FrecuenciaPago
                                 id={orden?.frecuenciaPagoId ?? ''}
                                 autocompleteRef={autocompleteRef}
-                                onSelectionChange={(value: any) => { handleFrecuenciaPago(value.id) }} />
+                                onSelectionChange={(value: any) => { handleFrecuenciaPago(value.id) }}
+                            />
                         </Grid>
                         <Grid container direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
@@ -313,30 +348,36 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         <Grid container direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
                                 <FormControl fullWidth>
-                                    <DatePickerWrapper>
-                                        <DatePicker
-                                            selected={getDateByObject(fecha)}
-                                            id='date-time-picker-desde'
-                                            dateFormat='dd/MM/yyyy'
-                                            onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                            placeholderText='Plazo de Pago Desde'
-                                            customInput={<CustomInput label='Plazo de Pago Desde' />}
-                                        />
-                                    </DatePickerWrapper>
+                                    {typeOperation === 'update' ? (
+                                        <DatePickerWrapper>
+                                            <DatePicker
+                                                selected={fecha ? getDateByObject(fecha) : null}
+                                                id='date-time-picker-desde'
+                                                dateFormat='dd/MM/yyyy'
+                                                onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                placeholderText='Plazo de Pago Desde'
+                                                customInput={<CustomInput label='Plazo de Pago Desde' />}
+                                                disabled={true}
+                                            />
+                                        </DatePickerWrapper> ) : null
+                                    }
                                 </FormControl>
                             </Grid>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
                                 <FormControl fullWidth>
-                                    <DatePickerWrapper>
-                                        <DatePicker
-                                            selected={getDateByObject(fecha)}
-                                            id='date-time-picker-hasta'
-                                            dateFormat='dd/MM/yyyy'
-                                            onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                            placeholderText='Plazo de Pago Hasta'
-                                            customInput={<CustomInput label='Plazo de Pago Hasta' />}
-                                        />
-                                    </DatePickerWrapper>
+                                    { typeOperation === 'update' ? (
+                                        <DatePickerWrapper>
+                                            <DatePicker
+                                                selected={fecha ? getDateByObject(fecha) : null}
+                                                id='date-time-picker-hasta'
+                                                dateFormat='dd/MM/yyyy'
+                                                onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                placeholderText='Plazo de Pago Hasta'
+                                                customInput={<CustomInput label='Plazo de Pago Hasta' />}
+                                                disabled={true}
+                                            />
+                                        </DatePickerWrapper> ) : null
+                                    }
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -423,23 +464,25 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Button
-                    variant='contained'
-                    color='primary'
-                    size='small'
-                    onClick={handleDialogOpen}
-                    disabled={!isValid}
-                >
-                    { titleButton }
-                </Button>
-                <Button
-                    color='primary'
-                    size='small'
-                    onClick={onFormClear}
-                >
-                    <CleaningServices /> Limpiar
-                </Button>
-                <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
+                <Box sx={{ paddingTop: 6 }}>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        size='small'
+                        onClick={handleDialogOpen}
+                        disabled={!isValid}
+                    >
+                        { titleButton }
+                    </Button>
+                    <Button
+                        color='primary'
+                        size='small'
+                        onClick={onFormClear}
+                    >
+                        <CleaningServices /> Limpiar
+                    </Button>
+                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
+                </Box>
             </form>
         </Box>
     )
