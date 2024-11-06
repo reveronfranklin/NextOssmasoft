@@ -31,7 +31,6 @@ const FormUpdateOrdenPago = () => {
                 codigoPresupuesto,
                 tipoOrdenPagoId,
                 fechaComprobante,
-                fechaOrdenPago,
             } = compromisoSeleccionadoListaDetalle
 
             const {
