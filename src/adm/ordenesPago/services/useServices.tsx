@@ -7,6 +7,8 @@ import { ResponseGetOrdenes } from '../interfaces/responseGetOrdenes.interfaces'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 
+import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+
 interface IFilterDesciptiva {
     tituloId: number
 }
@@ -159,6 +161,21 @@ const useServices = () => {
         }
     }, [])
 
+    const fetchUpdatePucByOrdenPago = useCallback(async (filters: IUpdateFieldDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<any>(UrlServices.UPDATEPUCBYORDENPAGO , filters)
+            setMessage(responseGetOrdenes.data.message)
+
+            return responseGetOrdenes
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error, message, loading,
         presupuestoSeleccionado,
@@ -169,7 +186,8 @@ const useServices = () => {
         updateOrden,
         fetchDescriptivaById,
         getCompromisoByOrden,
-        getListPucByOrdenPago
+        getListPucByOrdenPago,
+        fetchUpdatePucByOrdenPago
     }
 }
 

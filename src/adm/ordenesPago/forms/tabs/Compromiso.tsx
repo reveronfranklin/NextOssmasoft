@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material"
 import DataGridListCompromisoByOrden from "../../components/Datagrid/compromisosByOrden"
 import DialogListPucByOrdenPago from '../../views/Dialog/ListPucByOrdenPago'
+import DialogListPucByOrdenPagoEdit from '../../views/Dialog/ListPucByOrdenEdit'
 
 const Compromiso = () => {
     return (
@@ -8,6 +9,7 @@ const Compromiso = () => {
             <Grid item xs={12}>
                 <DataGridListCompromisoByOrden />
                 <DialogListPucByOrdenPago />
+                <DialogListPucByOrdenPagoEdit />
             </Grid>
         </Grid>
     )

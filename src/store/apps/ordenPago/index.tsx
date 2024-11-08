@@ -8,7 +8,9 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogListCompromiso: false,
         isOpenDialogOrdenPagoDetalle: false,
         isOpenDialogListPucOrdenPago: false,
+        isOpenDialogListPucOrdenPagoEdit: false,
         compromisoSeleccionadoListaDetalle: {} as Orden,
+        pucSeleccionado: {} as any,
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -20,8 +22,14 @@ export const admOrdenPagoSlice = createSlice({
         setIsOpenDialogListPucOrdenPago: (state, action) => {
             state.isOpenDialogListPucOrdenPago = action.payload
         },
+        setIsOpenDialogListPucOrdenPagoEdit: (state, action) => {
+            state.isOpenDialogListPucOrdenPagoEdit = action.payload
+        },
         setCompromisoSeleccionadoDetalle: (state, action) => {
             state.compromisoSeleccionadoListaDetalle = action.payload
+        },
+        setPucSeleccionado: (state, action) => {
+            state.pucSeleccionado = action.payload
         },
         setTypeOperation: (state, action) => {
             state.typeOperation = action.payload
@@ -36,6 +44,8 @@ export const {
     setIsOpenDialogListCompromiso,
     setCompromisoSeleccionadoDetalle,
     setIsOpenDialogListPucOrdenPago,
+    setIsOpenDialogListPucOrdenPagoEdit,
     setTypeOperation,
     resetCompromisoSeleccionadoDetalle,
+    setPucSeleccionado
 } = admOrdenPagoSlice.actions

@@ -1,13 +1,16 @@
 import { useState, ChangeEvent, useRef } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import ColumnsDataGridListPucByOrden from '../../config/Datagrid/columnsDataGridListPucByOrden'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
+import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+import ColumnsDataGridListPucByOrden from '../../config/Datagrid/columnsDataGridListPucByOrden'
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
+import Spinner from 'src/@core/components/spinner'
+import useServices from '../../services/useServices'
+import toast from 'react-hot-toast'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
@@ -26,8 +29,12 @@ const DataGridComponent = () => {
 
     const qc: QueryClient = useQueryClient()
     const debounceTimeoutRef = useRef<any>(null)
+    const dispatch = useDispatch()
 
-    const { getListPucByOrdenPago } = useServices()
+    const {
+        getListPucByOrdenPago,
+        fetchUpdatePucByOrdenPago
+    } = useServices()
 
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
@@ -47,11 +54,6 @@ const DataGridComponent = () => {
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
 
-    const handleDoubleClick = (data: any) => {
-        const { row } = data
-        console.log(row)
-    }
-
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
     }
@@ -59,6 +61,27 @@ const DataGridComponent = () => {
     const handleSizeChange = (newPageSize: number) => {
         setPage(0)
         setPageSize(newPageSize)
+    }
+
+    const handleOnCellEditCommit = async (row: any) => {
+        const updateDto: IUpdateFieldDto = {
+            id: row.id,
+            field: row.field,
+            value: row.value
+        }
+
+        try {
+            const response = await fetchUpdatePucByOrdenPago(updateDto)
+
+            if (response?.data?.isValid) {
+                console.log('Registro actualizado')
+                toast.success('Registro actualizado')
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            qc.invalidateQueries({ queryKey: ['listPucByOrdenPago'] })
+        }
     }
 
     const handleSearch = (value: string) => {
@@ -102,7 +125,7 @@ const DataGridComponent = () => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
-                            onRowDoubleClick={row => handleDoubleClick(row)}
+                            onCellEditCommit={row => handleOnCellEditCommit(row)}
                             components={{ Toolbar: ServerSideToolbar }}
                             componentsProps={{
                                 baseButton: {
