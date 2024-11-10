@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Tabs, Tab, Box, Grid } from '@mui/material';
 import { tabs } from '../config/tabsOrdenPago'
 
-const TabsComponent = () => {
-    const [value, setValue] = useState('Compromiso');
+const TabsComponent = (props: { orden?: any}) => {
+    const { orden } = props
+
+    const [value, setValue] = useState('Compromiso')
 
     const handleChange = (event: any, newValue: any) => {
         setValue(newValue)
@@ -27,7 +29,7 @@ const TabsComponent = () => {
             >
                 {
                     tabs.map((tab, index) => (
-                        tab.show.includes('without-invoice') && (
+                        tab.show.includes(orden.conFactura ? 'with-invoice' : 'without-invoice') && (
                             <Tab
                                 key={index}
                                 label={
@@ -60,7 +62,7 @@ const TabsComponent = () => {
             </Box>
             {
                 <Grid sm={12} xs={12} sx={{overflow: 'auto'}}>
-                    { renderForm() }
+                    {renderForm()}
                 </Grid>
             }
         </>

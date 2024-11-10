@@ -9,8 +9,9 @@ export interface IUpdateOrdenPago {
     tipoPagoId: number;
     motivo: string;
     numeroComprobante: number | null;
-    fechacomprobante: string | null;
+    fechaComprobante: string | null;
     numeroComprobante2: number | null;
     numeroComprobante3: number | null;
     numeroComprobante4: number | null;
+    conFactura: boolean;
 }

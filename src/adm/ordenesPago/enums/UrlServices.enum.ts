@@ -5,4 +5,7 @@ export enum UrlServices {
     CREATEORDENPAGO             = '/AdmOrdenPago/Create',
     UPDATEORDENPAGO             = '/AdmOrdenPago/Update',
     DESCRIPTIVAS                = '/AdmDescriptivas/GetSelectDescriptiva',
+    GETCOMPROMISOBYORDENPAGO    = '/AdmCompromisoOp/GetByOrdenPago',
+    LISTPUCBYORDENPAGO          = '/AdmPucOrdenPago/GetByOrdenPago',
+    UPDATEPUCBYORDENPAGO        = '/AdmPucOrdenPago/UpdateField',
 }

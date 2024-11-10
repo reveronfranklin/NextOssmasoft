@@ -1,49 +1,75 @@
-import { Grid, Button, Box } from "@mui/material"
-import TabsComponent from '../../components/Tabs'
-import FormOrdenPago from '../../forms/FormOrdenPago'
+import { Grid, Box } from "@mui/material"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-import { resetCompromisoSeleccionadoDetalle, setTypeOperation } from "src/store/apps/ordenPago"
-import useServices from '../../services/useServices'
-import { CleaningServices } from '@mui/icons-material'
-
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
+import {
+    resetCompromisoSeleccionadoDetalle,
+    setCompromisoSeleccionadoDetalle
+} from "src/store/apps/ordenPago"
+import TabsComponent from '../../components/Tabs'
+import FormOrdenPago from '../../forms/FormOrdenPago'
+import useServices from '../../services/useServices'
 
 const FormUpdateOrdenPago = () => {
+    const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const { updateOrden, loading, message } = useServices()
+
+    const {
+        updateOrden,
+        loading,
+        message
+    } = useServices()
 
     const handleUpdateOrden = async (dataFormOrder: any) => {
         try {
-            const { codigoOrdenPago, codigoPresupuesto, tipoOrdenPagoId, fechaOrdenPago } = compromisoSeleccionadoListaDetalle
-            const { motivo, frecuenciaPago, formaPago, cantidadPago } = dataFormOrder
+            const {
+                codigoOrdenPago,
+                codigoPresupuesto,
+                tipoOrdenPagoId,
+                fechaComprobante,
+            } = compromisoSeleccionadoListaDetalle
+
+            const {
+                fechaOrdenPagoString,
+                motivo,
+                frecuenciaPagoId,
+                tipoPagoId,
+                cantidadPago,
+                conFactura,
+            } = dataFormOrder
 
             const payload: IUpdateOrdenPago = {
                 codigoOrdenPago,
                 codigoPresupuesto,
                 codigoCompromiso: 15,
-                fechaOrdenPago: fechaOrdenPago,
+                fechaOrdenPago: fechaOrdenPagoString,
                 tipoOrdenPagoId,
                 cantidadPago,
-                frecuenciaPagoId: frecuenciaPago,
-                tipoPagoId: formaPago,
+                frecuenciaPagoId,
+                tipoPagoId,
                 motivo,
-                fechacomprobante: null,
+                fechaComprobante,
                 numeroComprobante: null,
                 numeroComprobante2: null,
                 numeroComprobante3: null,
                 numeroComprobante4: null,
+                conFactura
             }
 
+            console.log('payload', payload)
             const response = await updateOrden(payload)
 
-            //todo validar la respuesta
-            console.log(response)
+            dispatch(setCompromisoSeleccionadoDetalle(response.data))
         } catch (e: any) {
             console.error(e)
+        } finally {
+            qc.invalidateQueries({
+                queryKey: ['ordenesPagoTable']
+            })
         }
     }
 
@@ -56,13 +82,6 @@ const FormUpdateOrdenPago = () => {
             <Grid container spacing={5} paddingTop={1}>
                 <Grid sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
-                        <Button
-                            color='primary'
-                            size='small'
-                            onClick={handleClearCompromiso}
-                        >
-                            <CleaningServices /> Limpiar
-                        </Button>
                     </Box>
                 </Grid>
                 <Grid sm={6} xs={12} sx={{
@@ -73,14 +92,16 @@ const FormUpdateOrdenPago = () => {
                     <FormOrdenPago
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
+                        onFormClear={handleClearCompromiso}
                         titleButton={'Actualizar'}
                         message={message}
                         loading={loading}
-                        type={setTypeOperation}
                     />
                 </Grid>
                 <Grid sm={6} xs={12}>
-                    <TabsComponent />
+                    <TabsComponent
+                        orden={compromisoSeleccionadoListaDetalle}
+                    />
                 </Grid>
             </Grid>
         </>

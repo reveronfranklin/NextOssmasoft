@@ -7,12 +7,21 @@ import { ResponseGetOrdenes } from '../interfaces/responseGetOrdenes.interfaces'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 
+import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+
 interface IFilterDesciptiva {
     tituloId: number
 }
 
+interface IfilterByOrdenPago {
+    codigoOrdenPago: number
+}
+
 import { IUpdateOrdenPago } from '../interfaces/updateOrdenPago.interfaces'
 import { ICreateOrdenPago } from '../interfaces/createOrdenPago.interfaces'
+
+import { IResponseListPucByOrden } from '../interfaces/responseListPucByOrden'
+import { IResponseCompromisoByOrden } from '../interfaces/responseCompromisoByOrden'
 
 const useServices = () => {
     const [error, setError] = useState<string>('')
@@ -118,6 +127,55 @@ const useServices = () => {
         }
     }, [])
 
+    const getCompromisoByOrden = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
+
+            if (responseGetOrdenes.data.isValid) {
+                return responseGetOrdenes.data
+            }
+            setMessage(responseGetOrdenes.data.message)
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const getListPucByOrdenPago = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<IResponseListPucByOrden>(UrlServices.LISTPUCBYORDENPAGO , filters)
+
+            if (responseGetOrdenes.data.isValid) {
+                return responseGetOrdenes.data
+            }
+            setMessage(responseGetOrdenes.data.message)
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const fetchUpdatePucByOrdenPago = useCallback(async (filters: IUpdateFieldDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<any>(UrlServices.UPDATEPUCBYORDENPAGO , filters)
+            setMessage(responseGetOrdenes.data.message)
+
+            return responseGetOrdenes
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error, message, loading,
         presupuestoSeleccionado,
@@ -127,6 +185,9 @@ const useServices = () => {
         createOrden,
         updateOrden,
         fetchDescriptivaById,
+        getCompromisoByOrden,
+        getListPucByOrdenPago,
+        fetchUpdatePucByOrdenPago
     }
 }
 

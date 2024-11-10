@@ -13,4 +13,5 @@ export interface ICreateOrdenPago {
     numeroComprobante2: number | null;
     numeroComprobante3: number | null;
     numeroComprobante4: number | null;
+    conFactura: boolean;
 }
