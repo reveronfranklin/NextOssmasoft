@@ -187,24 +187,6 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
                             </Grid>
-                            <Grid item sm={4} xs={12} sx={{ padding: '5px' }}>
-                                <FormControl fullWidth>
-                                    <Controller
-                                        name="iva"
-                                        control={control}
-                                        render={({ field: { value, onChange } }) => (
-                                            <TextField
-                                                fullWidth
-                                                value={value || ''}
-                                                label="IVA"
-                                                placeholder="IVA"
-                                                onChange={onChange}
-                                                disabled={true}
-                                            />
-                                        )}
-                                    />
-                                </FormControl>
-                            </Grid>
                         </Grid>
                         <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
@@ -225,23 +207,6 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                     />
                                 </FormControl> : null }
                             </Grid>
-                            <Grid item sm={4} xs={12} sx={{ padding: '5px' }}>
-                                <FormControl fullWidth>
-                                    <Controller
-                                        name="islr"
-                                        control={control}
-                                        render={({ field: { value, onChange } }) => (
-                                            <TextField
-                                                label="ISLR"
-                                                placeholder="ISLR"
-                                                value={value || ''}
-                                                onChange={onChange}
-                                                disabled={true}
-                                            />
-                                        )}
-                                    />
-                                </FormControl>
-                            </Grid>
                         </Grid>
                         <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
@@ -259,15 +224,6 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                         </DatePickerWrapper>
                                     </FormControl>
                                 ) : null }
-                            </Grid>
-                            <Grid item sm={4} xs={12} sx={{ padding: '5px' }}>
-                                <TextField
-                                    fullWidth
-                                    label="TF"
-                                    placeholder="TF"
-                                    value={0}
-                                    disabled={true}
-                                />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -303,7 +259,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                 onSelectionChange={(value: any) => { handleFrecuenciaPago(value.id) }}
                             />
                         </Grid>
-                        <Grid container direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
                             <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
                                 <FormControl fullWidth>
                                     <Controller
@@ -324,7 +280,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                            <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
                                 <FormControl fullWidth>
                                     <Controller
                                         name="cantidadPago"
@@ -346,40 +302,40 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                             </Grid>
                         </Grid>
                         <Grid container direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
-                            <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
-                                <FormControl fullWidth>
-                                    {typeOperation === 'update' ? (
-                                        <DatePickerWrapper>
-                                            <DatePicker
-                                                selected={fecha ? getDateByObject(fecha) : null}
-                                                id='date-time-picker-desde'
-                                                dateFormat='dd/MM/yyyy'
-                                                onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                                placeholderText='Plazo de Pago Desde'
-                                                customInput={<CustomInput label='Plazo de Pago Desde' />}
-                                                disabled={true}
-                                            />
-                                        </DatePickerWrapper> ) : null
-                                    }
-                                </FormControl>
-                            </Grid>
-                            <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
-                                <FormControl fullWidth>
-                                    { typeOperation === 'update' ? (
-                                        <DatePickerWrapper>
-                                            <DatePicker
-                                                selected={fecha ? getDateByObject(fecha) : null}
-                                                id='date-time-picker-hasta'
-                                                dateFormat='dd/MM/yyyy'
-                                                onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                                placeholderText='Plazo de Pago Hasta'
-                                                customInput={<CustomInput label='Plazo de Pago Hasta' />}
-                                                disabled={true}
-                                            />
-                                        </DatePickerWrapper> ) : null
-                                    }
-                                </FormControl>
-                            </Grid>
+                            {typeOperation === 'update' && (
+                                <>
+                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                        <FormControl fullWidth>
+                                            <DatePickerWrapper>
+                                                <DatePicker
+                                                    selected={fecha ? getDateByObject(fecha) : null}
+                                                    id='date-time-picker-desde'
+                                                    dateFormat='dd/MM/yyyy'
+                                                    onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                    placeholderText='Plazo de Pago Desde'
+                                                    customInput={<CustomInput label='Plazo de Pago Desde' />}
+                                                    disabled={true}
+                                                />
+                                            </DatePickerWrapper>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                        <FormControl fullWidth>
+                                            <DatePickerWrapper>
+                                                <DatePicker
+                                                    selected={fecha ? getDateByObject(fecha) : null}
+                                                    id='date-time-picker-hasta'
+                                                    dateFormat='dd/MM/yyyy'
+                                                    onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                    placeholderText='Plazo de Pago Hasta'
+                                                    customInput={<CustomInput label='Plazo de Pago Hasta' />}
+                                                    disabled={true}
+                                                />
+                                            </DatePickerWrapper>
+                                        </FormControl>
+                                    </Grid>
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid container sm={12} xs={12}>

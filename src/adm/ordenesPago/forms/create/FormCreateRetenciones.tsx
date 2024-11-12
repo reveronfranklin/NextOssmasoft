@@ -1,9 +1,7 @@
-import { Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
-  Checkbox, FormControlLabel
-} from "@mui/material"
+import { Box, Grid, TextField, Button, CircularProgress } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 
-const FormCreateRetenciones = (props: any) => {
+const FormCreateRetenciones = () => {
   const defaultValues: any = {
     conFactura: true,
     tipoRetencion: '',
@@ -12,12 +10,7 @@ const FormCreateRetenciones = (props: any) => {
     montoRetenido: ''
   }
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors, isValid }
-  } = useForm<any>({ defaultValues, mode: 'onChange' })
+  const { control } = useForm<any>({ defaultValues, mode: 'onChange' })
 
   return (
     <Box>
@@ -88,7 +81,7 @@ const FormCreateRetenciones = (props: any) => {
           variant='contained'
           color='primary'
           size='small'
-          onClick={() => {}}
+          onClick={() => console.log('Guardar')}
         >
           { false ? (
             <>
