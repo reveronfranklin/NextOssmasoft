@@ -4,7 +4,6 @@ import { Box, styled } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-import { useDispatch } from "react-redux"
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 import ColumnsDataGridListPucByOrden from '../../config/Datagrid/columnsDataGridListPucByOrden'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
@@ -29,12 +28,14 @@ const DataGridComponent = () => {
 
     const qc: QueryClient = useQueryClient()
     const debounceTimeoutRef = useRef<any>(null)
-    const dispatch = useDispatch()
 
-    const { getListPucByOrdenPago, fetchUpdatePucByOrdenPago } = useServices()
+    const {
+        getListPucByOrdenPago,
+        fetchUpdatePucByOrdenPago
+    } = useServices()
+
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
-
     const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
     const query = useQuery({

@@ -8,4 +8,9 @@ export enum UrlServices {
     GETCOMPROMISOBYORDENPAGO    = '/AdmCompromisoOp/GetByOrdenPago',
     LISTPUCBYORDENPAGO          = '/AdmPucOrdenPago/GetByOrdenPago',
     UPDATEPUCBYORDENPAGO        = '/AdmPucOrdenPago/UpdateField',
+
+    GETRETENCIONESBYORDENPAGO   = '/AdmRetencionesOp/GetByOrdenPago',
+    CREATERETENCIONES           = '/AdmRetencionesOp/Create',
+    UPDATERETENCIONES           = '/AdmRetencionesOp/Update',
+    DELETERETENCIONES           = '/AdmRetencionesOp/Delete',
 }

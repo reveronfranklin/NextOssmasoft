@@ -8,6 +8,7 @@ import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
 
 interface IFilterDesciptiva {
     tituloId: number
@@ -176,11 +177,29 @@ const useServices = () => {
         }
     }, [])
 
+    const getRetencionesByOrdenPago = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+        try {
+            setLoading(true)
+            const responseGetOrdenes = await ossmmasofApi.post<IResponseGetRetenciones>(UrlServices.GETRETENCIONESBYORDENPAGO , filters)
+
+            if (responseGetOrdenes.data.isValid) {
+                return responseGetOrdenes.data
+            }
+            setMessage(responseGetOrdenes.data.message)
+        } catch (e: any) {
+            setError(e.message)
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error, message, loading,
         presupuestoSeleccionado,
         getCompromisoByPresupuesto,
         getOrdenesPagoByPresupuesto,
+        getRetencionesByOrdenPago,
         getPucOrdenPago,
         createOrden,
         updateOrden,
