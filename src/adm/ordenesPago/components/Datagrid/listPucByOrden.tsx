@@ -31,11 +31,7 @@ const DataGridComponent = () => {
     const debounceTimeoutRef = useRef<any>(null)
     const dispatch = useDispatch()
 
-    const {
-        getListPucByOrdenPago,
-        fetchUpdatePucByOrdenPago
-    } = useServices()
-
+    const { getListPucByOrdenPago, fetchUpdatePucByOrdenPago } = useServices()
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
 
@@ -72,9 +68,7 @@ const DataGridComponent = () => {
 
         try {
             const response = await fetchUpdatePucByOrdenPago(updateDto)
-
             if (response?.data?.isValid) {
-                console.log('Registro actualizado')
                 toast.success('Registro actualizado')
             }
         } catch (error) {

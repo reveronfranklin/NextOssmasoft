@@ -46,7 +46,7 @@ const FormUpdateOrdenPago = () => {
                 codigoOrdenPago,
                 codigoPresupuesto,
                 codigoCompromiso: 15,
-                fechaOrdenPago: fechaOrdenPagoString,
+                fechaOrdenPago: new Date(fechaOrdenPagoString),
                 tipoOrdenPagoId,
                 cantidadPago,
                 frecuenciaPagoId,
