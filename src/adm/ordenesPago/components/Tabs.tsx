@@ -4,7 +4,6 @@ import { tabs } from '../config/tabsOrdenPago'
 
 const TabsComponent = (props: { orden?: any}) => {
     const { orden } = props
-
     const [value, setValue] = useState('Compromiso')
 
     const handleChange = (event: any, newValue: any) => {

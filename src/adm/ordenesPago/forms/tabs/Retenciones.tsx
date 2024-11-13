@@ -1,15 +1,15 @@
 import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
-import { useState } from 'react'
 import Icon from 'src/@core/components/icon'
 import Component from '../../components/Datagrid/listRetenciones'
 import FormCreateRetenciones from '../../forms/create/FormCreateRetenciones'
-
-const handleAdd = (setIsUpdateFormOpen: any, isUpdateFormOpen: boolean) => {
-    setIsUpdateFormOpen(!isUpdateFormOpen)
-}
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store';
+import { setIsCollapseRetenciones } from 'src/store/apps/ordenPago'
+import { useDispatch } from 'react-redux'
 
 const Retenciones = () => {
-    const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+    const dispatch = useDispatch()
+    const { isCollapseRetenciones } = useSelector((state: RootState) => state.admOrdenPago)
 
     return (
         <>
@@ -18,11 +18,11 @@ const Retenciones = () => {
                     <Toolbar
                         sx={{ justifyContent: 'flex-start' }}
                     >
-                        <Tooltip title='Agregar Retención'>
+                        <Tooltip title='Agregar Retencion'>
                             <IconButton
-                                color='primary'
                                 size='small'
-                                onClick={() => handleAdd(setIsUpdateFormOpen, isUpdateFormOpen)}
+                                color='primary'
+                                onClick={() => dispatch(setIsCollapseRetenciones(!isCollapseRetenciones))}
                             >
                                 <Icon icon='ci:add-row' fontSize={20} />
                             </IconButton>
@@ -31,7 +31,7 @@ const Retenciones = () => {
                 </Grid>
             </Box>
             <Collapse
-                in={isUpdateFormOpen}
+                in={isCollapseRetenciones}
                 sx={{
                     padding: '2px',
                     maxHeight: '300px',
