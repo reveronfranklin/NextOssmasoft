@@ -18,3 +18,8 @@ export interface RhTmpRetencionesFaovDto {
   fechaHasta: Date
   codigoTipoNomina: number
 }
+
+
+export interface RhTmpRetencionesFaovTxtDto {
+  registroConcat:string
+}

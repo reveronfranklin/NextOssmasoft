@@ -23,7 +23,6 @@ import EcommerceMeetingSchedule from 'src/views/dashboards/ecommerce/EcommerceMe
 import EcommerceTotalSalesRadial from 'src/views/dashboards/ecommerce/EcommerceTotalSalesRadial'
 import EcommerceWebsiteStatistics from 'src/views/dashboards/ecommerce/EcommerceWebsiteStatistics' */
 
-
 import EcommerceCongratulations from 'src/views/dashboards/ecommerce/EcommerceCongratulations'
 
 const EcommerceDashboard = () => {
@@ -36,7 +35,6 @@ const EcommerceDashboard = () => {
         <Grid item xs={12} md={8} sx={{ order: 0, alignSelf: 'flex-end' }}>
           <EcommerceCongratulations />
         </Grid>
-
 
         {/* <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
           <CardStatisticsVerticalComponent
@@ -114,8 +112,6 @@ const EcommerceDashboard = () => {
         <Grid item xs={12} md={6} lg={4} sx={{ order: 0 }}>
           <EcommerceMeetingSchedule />
         </Grid> */}
-
-
       </Grid>
     </ApexChartWrapper>
   )
