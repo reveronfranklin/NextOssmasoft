@@ -1,26 +1,129 @@
-import { Box, Grid, TextField } from "@mui/material"
-import { useServicesRetenciones } from '../../services/index'
+import React from 'react';
+import { Box, FormHelperText, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { RootState } from "src/store"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
+import { useServicesRetenciones } from '../../services/index'
+import { setIsOpenDialogConfirmButtons, setRetencionSeleccionado } from "src/store/apps/ordenPago"
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
+
+import { ICreateRetencionOp } from '../../interfaces/retenciones/createRetencionOp'
+import { IUpdateRetencionOp } from '../../interfaces/retenciones/updateRetencionOp'
+import { IDeleteRetencionOp } from '../../interfaces/retenciones/deleteRetencionOp'
+
+interface getValuesForm {
+  tipoRetencion: number
+  conceptoPago: string
+  montoRetencion: number
+  montoRetenido: number
+}
 
 const FormCreateRetenciones = () => {
   const { retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
-  const { message, loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
+  const dispatch = useDispatch()
+  const qc: QueryClient = useQueryClient()
 
-  const defaultValues: any = {
-    tipoRetencion: retencionSeleccionado?.tipoRetencionId || '',
-    conceptoPago: retencionSeleccionado?.conceptoPago || '',
-    montoRetencion: retencionSeleccionado?.montoRetencion || '',
-    montoRetenido: retencionSeleccionado?.montoRetenido || ''
+  const {
+    message,
+    loading,
+    presupuestoSeleccionado,
+    createRetencion,
+    updateRetencion,
+    deleteRetencion
+  } = useServicesRetenciones()
+
+  const { control, setValue, getValues, formState: { errors } } = useForm<any>({
+    defaultValues: {
+      tipoRetencion: retencionSeleccionado?.tipoRetencionId || '',
+      conceptoPago: retencionSeleccionado?.conceptoPago || '',
+      montoRetencion: retencionSeleccionado?.montoRetencion || '',
+      montoRetenido: retencionSeleccionado?.montoRetenido || '',
+    },
+    mode: 'onChange',
+  })
+
+  const handleCreateOrden = async () => {
+    const formData: getValuesForm = getValues()
+
+    try {
+      const payload: ICreateRetencionOp = {
+        codigoRetencionOp: 0,
+        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
+        tipoRetencionId: Number(formData.tipoRetencion),
+        codigoRetencion: 39, //todo cambiar este valor
+        porRetencion: 0,
+        montoRetencion: Number(formData.montoRetencion),
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+        baseImponible: 0
+      }
+
+      const response = await createRetencion(payload)
+      console.log('response', response)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      qc.invalidateQueries({
+        queryKey: ['retencionesTable']
+      })
+      clearForm()
+      dispatch(setIsOpenDialogConfirmButtons(false))
+    }
   }
 
-  const { control, handleSubmit, setValue, formState: { errors, isValid } } = useForm<any>({ defaultValues, mode: 'onChange' })
+  const handleUpdateOrden = async () => {
+    const formData: getValuesForm = getValues()
 
-  const onSubmit = async (data: any) => {
-    console.log(data)
+    try {
+      const payload: IUpdateRetencionOp = {
+        codigoRetencionOp: retencionSeleccionado.codigoRetencionOp,
+        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
+        tipoRetencionId: Number(formData.tipoRetencion),
+        codigoRetencion: 39, //todo cambiar este valor
+        porRetencion: 0,
+        montoRetencion: Number(formData.montoRetencion),
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+        baseImponible: 0
+      }
+
+      const response = await updateRetencion(payload)
+      console.log('response', response)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      qc.invalidateQueries({
+        queryKey: ['retencionesTable']
+      })
+      clearForm()
+      dispatch(setIsOpenDialogConfirmButtons(false))
+    }
+  }
+
+  const handleDeleteOrden = async () => {
+    try {
+      const payload: IDeleteRetencionOp = {
+        codigoRetencionOp: retencionSeleccionado?.codigoRetencionOp ?? 0,
+      }
+
+      const response = await deleteRetencion(payload)
+      console.log('response', response)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      qc.invalidateQueries({
+        queryKey: ['retencionesTable']
+      })
+      dispatch(setIsOpenDialogConfirmButtons(false))
+    }
+  }
+
+  const clearForm = async (): Promise<void> => {
+    setValue('tipoRetencion', '')
+    setValue('conceptoPago', '')
+    setValue('montoRetencion', '')
+    setValue('montoRetenido', '')
+    dispatch(setRetencionSeleccionado(null))
   }
 
   useEffect(() => {
@@ -30,7 +133,7 @@ const FormCreateRetenciones = () => {
       setValue('montoRetencion', retencionSeleccionado.montoRetencion)
       setValue('montoRetenido', retencionSeleccionado.montoRetenido)
     }
-  }, [retencionSeleccionado])
+  }, [retencionSeleccionado, setValue])
 
   return (
     <Box>
@@ -40,13 +143,16 @@ const FormCreateRetenciones = () => {
             <Controller
               name='tipoRetencion'
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange} }) => (
                 <TextField
-                  {...field}
+                  fullWidth
                   label='Tipo Retención'
+                  value={value}
+                  onChange={onChange}
                   variant='outlined'
                   size='small'
-                  fullWidth
+                  error={!!errors.tipoRetencion}
+                  helperText={errors.tipoRetencion?.message as string | undefined}
                 />
               )}
             />
@@ -55,13 +161,16 @@ const FormCreateRetenciones = () => {
             <Controller
               name='conceptoPago'
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <TextField
-                  {...field}
+                  fullWidth
                   label='Concepto Pago'
+                  value={value}
+                  onChange={onChange}
                   variant='outlined'
                   size='small'
-                  fullWidth
+                  error={!!errors.conceptoPago}
+                  helperText={errors.conceptoPago?.message as string | undefined}
                 />
               )}
             />
@@ -70,13 +179,16 @@ const FormCreateRetenciones = () => {
             <Controller
               name='montoRetencion'
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <TextField
-                  {...field}
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
                   label='Monto Retención'
                   variant='outlined'
                   size='small'
-                  fullWidth
+                  error={!!errors.montoRetencion}
+                  helperText={errors.montoRetencion?.message as string | undefined}
                 />
               )}
             />
@@ -85,42 +197,48 @@ const FormCreateRetenciones = () => {
             <Controller
               name='montoRetenido'
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <TextField
-                  {...field}
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
                   label='Monto Retenido'
                   variant='outlined'
                   size='small'
-                  fullWidth
+                  error={!!errors.montoRetenido}
+                  helperText={errors.montoRetenido?.message as string | undefined}
                 />
               )}
             />
           </Grid>
+          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+            <Box> {message && (<FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message}</FormHelperText>)}</Box>
+          </Grid>
           <CustomButtonDialog
             saveButtonConfig={{
-              label: 'Crear',
-              onClick: createRetencion,
+              label: 'Guardar',
+              onClick: handleCreateOrden,
               show: true,
-              variant: 'outlined',
-              color: 'success',
+              confirm: true
             }}
             updateButtonConfig={{
-              label: 'Actualizar',
-              onClick: updateRetencion,
-              show: true
+              label: 'Modificar',
+              onClick: handleUpdateOrden,
+              show: true,
+              confirm: true
             }}
             deleteButtonConfig={{
               label: 'Eliminar',
-              onClick: deleteRetencion,
-              show: true
+              onClick: handleDeleteOrden,
+              show: true,
+              confirm: true
             }}
             clearButtonConfig={{
               label: 'Limpiar',
-              onClick: deleteRetencion,
+              onClick: clearForm,
               show: true
             }}
-            handleSubmit
-            onSubmit
+            loading={loading}
           />
         </Grid>
       </form>

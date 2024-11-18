@@ -42,7 +42,7 @@ const DataGridComponent = () => {
   }, qc)
 
   const rows = query?.data?.data || []
-  const rowCount = query?.data?.cantidadRegistros || 0
+  const rowCount = query?.data?.data?.length || 0
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)

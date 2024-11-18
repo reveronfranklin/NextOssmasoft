@@ -8,10 +8,15 @@ import {
   DialogActions,
   CircularProgress
 } from "@mui/material"
-import React, { useState } from 'react';
+import React from 'react';
+import { useRef } from 'react';
 import { CleaningServices } from '@mui/icons-material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SaveIcon from '@mui/icons-material/Save'
+import EditIcon from '@mui/icons-material/Edit'
+import { RootState } from "src/store"
+import { useSelector, useDispatch } from "react-redux"
+import { setIsOpenDialogConfirmButtons } from "src/store/apps/ordenPago"
 
 interface ButtonConfig<T> {
   label: string
@@ -21,6 +26,7 @@ interface ButtonConfig<T> {
   color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
   size?: 'small' | 'medium' | 'large'
   sx?: React.CSSProperties
+  confirm?: boolean
 }
 
 const CustomButtonDialog = ({
@@ -28,28 +34,38 @@ const CustomButtonDialog = ({
   updateButtonConfig,
   deleteButtonConfig,
   clearButtonConfig,
-  handleSubmit,
-  onSubmit,
   loading
 }: {
   saveButtonConfig?: ButtonConfig<Promise<void>>,
   updateButtonConfig?: ButtonConfig<Promise<void>>,
   deleteButtonConfig?: ButtonConfig<Promise<void>>,
   clearButtonConfig?: ButtonConfig<Promise<void>>,
-  handleSubmit?: any,
-  onSubmit?: any,
   loading?: boolean
 }) => {
+  const dynamicFunctionRef = useRef<((filters?: any) => any) | null>(null)
+  const { isOpenDialogConfirmButtons } = useSelector((state: RootState) => state.admOrdenPago)
+  const dispatch = useDispatch();
 
-  const [open, setOpen] = useState(false);
+  const handle = async (config: ButtonConfig<Promise<void>>) => {
+    dynamicFunctionRef.current = config.onClick
 
-  const handle = (onClick?: any) => {
-    setOpen(true)
-    // onSubmit(onClick)
+    if (config.confirm) {
+      dispatch(setIsOpenDialogConfirmButtons(true))
+
+      return
+    }
+
+    try {
+      await config.onClick()
+    } catch (error) {
+      console.error(error)
+    } finally {
+      handleClose()
+    }
   }
 
   const handleClose = () => {
-    setOpen(false)
+    dispatch(setIsOpenDialogConfirmButtons(false))
   }
 
   return (
@@ -61,7 +77,7 @@ const CustomButtonDialog = ({
             color={saveButtonConfig?.color}
             size={saveButtonConfig?.size}
             sx={{ ...saveButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(saveButtonConfig?.onClick)}
+            onClick={() => handle(saveButtonConfig)}
           >
             <SaveIcon sx={{ marginRight: 1 }} />
             {saveButtonConfig?.label}
@@ -73,9 +89,9 @@ const CustomButtonDialog = ({
             color={updateButtonConfig?.color}
             size={updateButtonConfig?.size}
             sx={{ ...updateButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(updateButtonConfig?.onClick)}
+            onClick={() => handle(updateButtonConfig)}
           >
-            <SaveIcon sx={{ marginRight: 1 }} />
+            <EditIcon sx={{ marginRight: 1 }} />
             {updateButtonConfig?.label}
           </Button>
         )}
@@ -85,7 +101,7 @@ const CustomButtonDialog = ({
             color={deleteButtonConfig?.color}
             size={deleteButtonConfig?.size}
             sx={{ ...deleteButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(deleteButtonConfig?.onClick)}
+            onClick={() => handle(deleteButtonConfig)}
           >
             <DeleteIcon sx={{ marginRight: 1 }} />
             {deleteButtonConfig?.label}
@@ -97,7 +113,7 @@ const CustomButtonDialog = ({
             color={clearButtonConfig?.color}
             size={clearButtonConfig?.size}
             sx={{ ...clearButtonConfig?.sx, marginRight: 2 }}
-            // onClick={() => handleButtonClick(clearButtonConfig?.onClick)}
+            onClick={() => handle(clearButtonConfig)}
           >
             <CleaningServices />
             {clearButtonConfig?.label}
@@ -105,7 +121,7 @@ const CustomButtonDialog = ({
         )}
       </Box>
       <Dialog
-        open={open}
+        open={isOpenDialogConfirmButtons}
         onClose={handleClose}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
@@ -123,9 +139,9 @@ const CustomButtonDialog = ({
             variant='contained'
             color='primary'
             size='small'
-            // onClick={handleSubmit(onSubmit)}
+            onClick={() => dynamicFunctionRef.current?.()}
           >
-            { false ? (
+            { loading ? (
               <>
                 <CircularProgress
                   sx={{
