@@ -4,7 +4,10 @@ import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetenciones'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import useServices from '../../services/useServices'
+import { useServicesRetenciones } from '../../services/index'
+import { setIsCollapseRetenciones, setRetencionSeleccionado } from 'src/store/apps/ordenPago'
+import { useDispatch } from 'react-redux'
+import { Retencion } from '../../interfaces/responseRetenciones.interfaces'
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 400,
@@ -20,8 +23,8 @@ const DataGridComponent = () => {
   const [searchText] = useState<string>('')
 
   const qc: QueryClient = useQueryClient()
-
-  const { getRetencionesByOrdenPago } = useServices()
+  const dispatch = useDispatch()
+  const { getRetencionesByOrdenPago } = useServicesRetenciones()
 
   // const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
 
@@ -30,7 +33,7 @@ const DataGridComponent = () => {
 
   const query = useQuery({
     queryKey: ['retencionesTable', pageSize, pageNumber, searchText],
-    queryFn: () => getRetencionesByOrdenPago( filter),
+    queryFn: () => getRetencionesByOrdenPago(filter),
     initialData: () => {
       return qc.getQueryData(['retencionesTable', pageSize, pageNumber, searchText])
     },
@@ -39,7 +42,7 @@ const DataGridComponent = () => {
   }, qc)
 
   const rows = query?.data?.data || []
-  const rowCount = query?.data?.cantidadRegistros || 0
+  const rowCount = query?.data?.data?.length || 0
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
@@ -48,6 +51,12 @@ const DataGridComponent = () => {
   const handleSizeChange = (newPageSize: number) => {
     setPage(0)
     setPageSize(newPageSize)
+  }
+
+  const handleDoubleClick = (data: { row: Retencion }) => {
+    const { row } = data
+    dispatch(setIsCollapseRetenciones(true))
+    dispatch(setRetencionSeleccionado(row))
   }
 
   return (
@@ -70,8 +79,8 @@ const DataGridComponent = () => {
               rowsPerPageOptions={[5, 10, 50]}
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
+              onRowDoubleClick={row => handleDoubleClick(row)}
 
-              // onRowDoubleClick={row => handleDoubleClick(row)}
               // components={{ Toolbar: ServerSideToolbar }}
               // componentsProps={{
               //   baseButton: {
