@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -28,26 +28,26 @@ import { ThemeColor } from 'src/@core/layouts/types'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Tooltip,IconButton, Grid, Toolbar } from '@mui/material'
-
+import { Tooltip, IconButton, Grid, Toolbar } from '@mui/material'
 
 // ** Types
 
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-import Spinner from 'src/@core/components/spinner';
-
+import Spinner from 'src/@core/components/spinner'
 
 import { useDispatch } from 'react-redux'
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 import { IRhRelacionCargoDto } from 'src/interfaces/rh/i-rh-relacion-cargo-dto'
-import { setOperacionCrudRhRelacionCargo, setRhRelacionCargoSeleccionado, setVerRhRelacionCargoActive } from 'src/store/apps/rh-relacion-cargo'
+import {
+  setOperacionCrudRhRelacionCargo,
+  setRhRelacionCargoSeleccionado,
+  setVerRhRelacionCargoActive
+} from 'src/store/apps/rh-relacion-cargo'
 import { IFilterByPreRelacionCargoDto } from 'src/interfaces/rh/i-filter-by-pre-relacion-cargo-dto'
 import { fetchDataPersonas, fetchDataTipoNomina } from 'src/store/apps/rh/thunks'
 import { monthByIndex } from 'src/utilities/ge-date-by-object'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
-
-
 
 /*interface StatusObj {
   [key: number]: {
@@ -55,7 +55,6 @@ import { IFechaDto } from 'src/interfaces/fecha-dto'
     color: ThemeColor
   }
 }*/
-
 
 type SortType = 'asc' | 'desc' | undefined | null
 
@@ -75,7 +74,7 @@ const renderClient = (params: GridRenderCellParams) => {
         color={color as ThemeColor}
         sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
       >
-        {getInitials(row.denominacionCargo? row.denominacionCargo : 'John Doe')}
+        {getInitials(row.denominacionCargo ? row.denominacionCargo : 'John Doe')}
       </CustomAvatar>
     )
   }
@@ -92,7 +91,6 @@ interface CellType {
   row: IRhRelacionCargoDto
 }
 
-
 const TableServerSideRhRelacionCargo = () => {
   // ** State
   const [page, setPage] = useState(0)
@@ -108,32 +106,31 @@ const TableServerSideRhRelacionCargo = () => {
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-
   function loadServerRows(currentPage: number, data: IRhRelacionCargoDto[]) {
     //if(currentPage<=0) currentPage=1;
 
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const {preRelacionCargoSeleccionado} = useSelector((state: RootState) => state.preRelacionCargo)
-  const {verRhRelacionCargoActive} = useSelector((state: RootState) => state.rhRelacionCargo)
-
-
+  const { preRelacionCargoSeleccionado } = useSelector((state: RootState) => state.preRelacionCargo)
+  const { verRhRelacionCargoActive } = useSelector((state: RootState) => state.rhRelacionCargo)
 
   const fechaActual = new Date()
 
-  const currentYear  = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
+  const currentYear = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+  const currentMonthString = '00' + monthByIndex(currentMonth).toString()
 
-  const currentDay =new Date().getDate();
-  const currentDayString = '00' + currentDay.toString();
-  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
+  const currentDay = new Date().getDate()
+  const currentDayString = '00' + currentDay.toString()
+  const defaultDate: IFechaDto = {
+    year: currentYear.toString(),
+    month: currentMonthString.slice(-2),
+    day: currentDayString.slice(-2)
+  }
 
-  const defaultDateString = fechaActual.toISOString();
-
-
+  const defaultDateString = fechaActual.toISOString()
 
   const columns: any = [
     {
@@ -146,15 +143,12 @@ const TableServerSideRhRelacionCargo = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='View'>
             <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
+              <Icon icon='mdi:eye-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
-
-
         </Box>
       )
     },
-
 
     {
       flex: 0.15,
@@ -164,7 +158,6 @@ const TableServerSideRhRelacionCargo = () => {
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params
 
-
         return (
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
             {renderClient(params)}
@@ -173,7 +166,7 @@ const TableServerSideRhRelacionCargo = () => {
                 {row.nombre}
               </Typography>
               <Typography noWrap variant='caption'>
-                {row.apellido }
+                {row.apellido}
               </Typography>
             </Box>
           </Box>
@@ -205,8 +198,6 @@ const TableServerSideRhRelacionCargo = () => {
       )
     },
 
-
-
     {
       flex: 0.125,
       minWidth: 110,
@@ -215,264 +206,208 @@ const TableServerSideRhRelacionCargo = () => {
       editable: true,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {new Intl.NumberFormat("de-DE").format(params.row.sueldo)}
+          {new Intl.NumberFormat('de-DE').format(params.row.sueldo)}
         </Typography>
       )
-    },
-
-
+    }
   ]
 
-  const handleView=  (row : IRhRelacionCargoDto)=>{
-
-    console.log('IRhRelacionCargoDto>>>>>',row)
+  const handleView = (row: IRhRelacionCargoDto) => {
+    console.log('IRhRelacionCargoDto>>>>>', row)
     dispatch(setRhRelacionCargoSeleccionado(row))
 
-     // Operacion Crud 2 = Modificar presupuesto
-    dispatch(setOperacionCrudRhRelacionCargo(2));
+    // Operacion Crud 2 = Modificar presupuesto
+    dispatch(setOperacionCrudRhRelacionCargo(2))
     dispatch(setVerRhRelacionCargoActive(true))
-
-
   }
 
   const fetchTableData = useCallback(
-    async (filter:IFilterByPreRelacionCargoDto) => {
-
+    async (filter: IFilterByPreRelacionCargoDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
-
-      if (filter.codigoRelacionCargoPre==0) return
+      if (filter.codigoRelacionCargoPre == 0) return
       setMensaje('')
-      setLoading(true);
+      setLoading(true)
 
+      const responseAll = await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo', filter)
+      console.log('responseAll RhRelacionCargos', responseAll.data)
 
-      const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/GetAllByRelacionCargo',filter);
-      console.log('responseAll RhRelacionCargos',responseAll.data)
-      
-      setAllRows(responseAll.data.data);
-      if(responseAll.data.data && responseAll.data.data.length>0){
-        setTotal(responseAll.data.data.length);
+      setAllRows(responseAll.data.data)
+      if (responseAll.data.data && responseAll.data.data.length > 0) {
+        setTotal(responseAll.data.data.length)
         setRows(loadServerRows(page, responseAll.data.data))
-      }else{
-        setTotal(0);
+      } else {
+        setTotal(0)
         setRows([])
       }
 
-
-      setLoading(false);
+      setLoading(false)
       setMensaje('')
-
-
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
-
-
   useEffect(() => {
-    const filter:IFilterByPreRelacionCargoDto={
-      codigoRelacionCargoPre:0
-
+    const filter: IFilterByPreRelacionCargoDto = {
+      codigoRelacionCargoPre: 0
     }
 
-    if(preRelacionCargoSeleccionado && preRelacionCargoSeleccionado.codigoRelacionCargo!=null){
-      filter.codigoRelacionCargoPre=preRelacionCargoSeleccionado.codigoRelacionCargo;
-
+    if (preRelacionCargoSeleccionado && preRelacionCargoSeleccionado.codigoRelacionCargo != null) {
+      filter.codigoRelacionCargoPre = preRelacionCargoSeleccionado.codigoRelacionCargo
     }
-    fetchTableData(filter);
-    fetchDataPersonas(dispatch);
-    fetchDataTipoNomina(dispatch);
+    fetchTableData(filter)
+    fetchDataPersonas(dispatch)
+    fetchDataTipoNomina(dispatch)
 
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [verRhRelacionCargoActive,preRelacionCargoSeleccionado])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verRhRelacionCargoActive, preRelacionCargoSeleccionado])
 
   const handleSortModel = (newModel: GridSortModel) => {
-
-    const temp  = [... allRows];
+    const temp = [...allRows]
 
     if (newModel.length) {
-
-      setSort(newModel[0].sort);
-      setSortColumn(newModel[0].field);
+      setSort(newModel[0].sort)
+      setSortColumn(newModel[0].field)
 
       //const column: string=newModel[0].field.toString();
 
-      if(sortColumn==='denominacionCargo' ||
-         sortColumn==='nombre' ||
-         sortColumn ==='apellido' ||
-         sortColumn==='cedula')
-      {
-
-            const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
-            const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
-            setRows(loadServerRows(page, dataToFilter))
+      if (
+        sortColumn === 'denominacionCargo' ||
+        sortColumn === 'nombre' ||
+        sortColumn === 'apellido' ||
+        sortColumn === 'cedula'
+      ) {
+        const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
+        const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
+        setRows(loadServerRows(page, dataToFilter))
       }
 
-
-
       //fetchTableData(newModel[0].sort, newModel[0].field,fechaDesde,fechaHasta,tiposNominaSeleccionado.codigoTipoNomina,conceptoSeleccionado,personaSeleccionado.codigoPersona);
-
     } else {
       setSort('asc')
       setSortColumn('full_name')
     }
   }
 
-
-
   const handleSearch = (value: string) => {
-
-
     setSearchValue(value)
-    if(value=='') {
-      setRows(allRows);
-
-
-    }else{
-      const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
-      setRows(newRows);
-
-
+    if (value == '') {
+      setRows(allRows)
+    } else {
+      const newRows = allRows.filter(el => el.searchText.toLowerCase().includes(value.toLowerCase()))
+      setRows(newRows)
     }
 
     //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
-  const handlePageChange = (newPage:number) => {
-
+  const handlePageChange = (newPage: number) => {
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
-
   }
-  const handleOnCellEditCommit=async(row:any)=>{
-    const updateDto :IUpdateFieldDto={
-      id:row.id,
-      field:row.field,
-      value:row.value
+  const handleOnCellEditCommit = async (row: any) => {
+    const updateDto: IUpdateFieldDto = {
+      id: row.id,
+      field: row.field,
+      value: row.value
     }
 
-    if(row.field=='sueldo'){
+    if (row.field == 'sueldo') {
       for (const i of allRows) {
         if (i.codigoRelacionCargo == row.id) {
-         i.sueldo = row.value;
+          i.sueldo = row.value
         }
-       }
-       for (const i of rows) {
+      }
+      for (const i of rows) {
         if (i.codigoRelacionCargo == row.id) {
-         i.sueldo = row.value;
+          i.sueldo = row.value
         }
-       }
-
+      }
     }
 
-
-
-    const responseAll= await ossmmasofApi.post<any>('/RhRelacionCargos/UpdateField',updateDto);
-    console.log(responseAll);
+    const responseAll = await ossmmasofApi.post<any>('/RhRelacionCargos/UpdateField', updateDto)
+    console.log(responseAll)
   }
 
-  const handleAdd=  ()=>{
-
-
+  const handleAdd = () => {
     // Operacion Crud 1 = Crear titulo
 
+    const defaultValues: IRhRelacionCargoDto = {
+      codigoRelacionCargo: 0,
+      codigoCargo: preRelacionCargoSeleccionado.codigoCargo,
+      denominacionCargo: preRelacionCargoSeleccionado.denominacionCargo,
+      codigoPersona: 0,
+      nombre: '',
+      apellido: '',
+      cedula: 0,
+      sueldo: 0,
+      fechaFin: fechaActual,
+      fechaIni: fechaActual,
+      fechaIniObj: defaultDate,
+      fechaFinObj: defaultDate,
+      fechaIniString: defaultDateString,
+      fechaFinString: defaultDateString,
+      codigoRelacionCargoPre: preRelacionCargoSeleccionado.codigoRelacionCargo,
+      searchText: '',
+      tipoNomina: 0,
+      codigoIcp: 0
+    }
 
-      const defaultValues:IRhRelacionCargoDto = {
-        codigoRelacionCargo:0,
-        codigoCargo :preRelacionCargoSeleccionado.codigoCargo,
-        denominacionCargo :preRelacionCargoSeleccionado.denominacionCargo,
-        codigoPersona :0,
-        nombre:'',
-        apellido :'',
-        cedula:0,
-        sueldo :0,
-        fechaFin:fechaActual,
-        fechaIni:fechaActual,
-        fechaIniObj:defaultDate,
-        fechaFinObj:defaultDate,
-        fechaIniString:defaultDateString,
-        fechaFinString:defaultDateString,
-        codigoRelacionCargoPre :preRelacionCargoSeleccionado.codigoRelacionCargo,
-        searchText:'',
-        tipoNomina:0,
-        codigoIcp:0
-
-      }
-
-
-      dispatch(setRhRelacionCargoSeleccionado(defaultValues))
-      dispatch(setOperacionCrudRhRelacionCargo(1));
-      dispatch(setVerRhRelacionCargoActive(true))
-
-
+    dispatch(setRhRelacionCargoSeleccionado(defaultValues))
+    dispatch(setOperacionCrudRhRelacionCargo(1))
+    dispatch(setVerRhRelacionCargoActive(true))
   }
 
   return (
     <Card>
-      {
-        !loading ?
-
-        <Grid m={2} pt={3}  item justifyContent="flex-end">
+      {!loading ? (
+        <Grid m={2} pt={3} item justifyContent='flex-end'>
           <Toolbar sx={{ justifyContent: 'flex-start' }}>
-          <Tooltip title='Agregar'>
-            <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
-            <Icon icon='ci:add-row' fontSize={20} />
-            </IconButton>
-          </Tooltip>
-
-
-
-
+            <Tooltip title='Agregar'>
+              <IconButton color='primary' size='small' onClick={() => handleAdd()}>
+                <Icon icon='ci:add-row' fontSize={20} />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
-
         </Grid>
-
-        : <Typography>{mensaje}</Typography>
-      }
-
-     { loading  ? (
-       <Spinner sx={{ height: '100%' }} />
       ) : (
-        <DataGrid
-
-        getRowHeight={() => 'auto'}
-        autoHeight
-        pagination
-        getRowId={(row) => row.codigoRelacionCargo}
-        rows={rows}
-        rowCount={total}
-        columns={columns}
-        pageSize={pageSize}
-        sortingMode='server'
-
-        paginationMode='server'
-        onSortModelChange={handleSortModel}
-
-        onPageChange={handlePageChange}
-        onCellEditCommit={row =>handleOnCellEditCommit(row)}
-
-        //onPageChange={newPage => setPage(newPage)}
-        components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-        componentsProps={{
-          baseButton: {
-            variant: 'outlined'
-          },
-          toolbar: {
-            printOptions: { disableToolbarButton: true },
-            value: searchValue,
-            clearSearch: () => handleSearch(''),
-            onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-          }
-        }}
-      />
-
-
+        <Typography>{mensaje}</Typography>
       )}
 
-
+      {loading ? (
+        <Spinner sx={{ height: '100%' }} />
+      ) : (
+        <DataGrid
+          getRowHeight={() => 'auto'}
+          autoHeight
+          pagination
+          getRowId={row => row.codigoRelacionCargo}
+          rows={rows}
+          rowCount={total}
+          columns={columns}
+          pageSize={pageSize}
+          sortingMode='server'
+          paginationMode='server'
+          onSortModelChange={handleSortModel}
+          onPageChange={handlePageChange}
+          onCellEditCommit={row => handleOnCellEditCommit(row)}
+          //onPageChange={newPage => setPage(newPage)}
+          components={{ Toolbar: ServerSideToolbar }}
+          onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+          componentsProps={{
+            baseButton: {
+              variant: 'outlined'
+            },
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              value: searchValue,
+              clearSearch: () => handleSearch(''),
+              onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+            }
+          }}
+        />
+      )}
     </Card>
   )
 }

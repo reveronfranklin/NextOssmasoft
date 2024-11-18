@@ -278,15 +278,24 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     async (listIcpSelelected: ICPGetDto[], fechaDesde: Date, fechaHasta: Date) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
+      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      dispatch(setListIcp(responseIcps.data.data))
+      setIcps(responseIcps.data.data)
+
+      if (listIcpSelelected.length == 0) {
+        setMensaje('')
+        setLoading(false)
+        setAllRows([])
+        setTotal(0)
+        setRows(loadServerRows(page, []))
+        return
+      }
+
       setMensaje('')
       setLoading(true)
       setAllRows([])
       setTotal(0)
       setRows(loadServerRows(page, []))
-
-      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
-      dispatch(setListIcp(responseIcps.data.data))
-      setIcps(responseIcps.data.data)
 
       const filter: Bm1FilterDto = {
         fechaDesde: fechaDesde,
