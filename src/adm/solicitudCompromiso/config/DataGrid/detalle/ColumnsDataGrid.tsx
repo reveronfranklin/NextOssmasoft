@@ -22,11 +22,11 @@ function ColumnsDetalleDataGrid() {
 
     const getRowColor = (row: any) => {
         if (row.lineaImpuesto) {
-            return '#5a8933'
-        } else if (row.tipoDiferencia) {
-            return 'red'
+            return theme.palette.mode === 'dark' ? '#ADFF2F' : '#5a8933'
+        } else if (row.tieneDiferencia) {
+            return theme.palette.mode === 'dark' ? '#FF5555' : '#DC143C'
         } else {
-            return theme.palette.mode === 'dark' ? '#212121' : '#fff'
+            return theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
         }
     }
 
@@ -48,7 +48,7 @@ function ColumnsDetalleDataGrid() {
             )
         },
         {
-            flex: 1,
+            flex: 0,
             headerName: 'cantidad',
             field: 'cantidad',
             renderCell: (params: GridRenderCellParams) => {
@@ -157,6 +157,18 @@ function ColumnsDetalleDataGrid() {
                             { formatNumber(params.row.totalMasImpuesto) }
                         </Typography>
                     </div>
+                )
+            }
+        },
+        {
+            flex: 1,
+            headerName: 'puc',
+            field: 'totalPuc',
+            renderCell: (params: GridRenderCellParams) => {
+                return (
+                    <Typography variant='body2' sx={{ color: getRowColor(params.row) }}>
+                        {params.row.totalPuc}
+                    </Typography>
                 )
             }
         },
