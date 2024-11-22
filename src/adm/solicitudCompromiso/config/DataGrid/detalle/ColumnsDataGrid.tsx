@@ -20,6 +20,16 @@ function ColumnsDetalleDataGrid() {
         dispatch(setVerSolicitudCompromisoDetalleActive(true))
     }
 
+    const getRowColor = (row: any) => {
+        if (row.lineaImpuesto) {
+            return '#5a8933'
+        } else if (row.tipoDiferencia) {
+            return 'red'
+        } else {
+            return theme.palette.mode === 'dark' ? '#212121' : '#fff'
+        }
+    }
+
     return [
         {
             flex: 0,
@@ -28,7 +38,7 @@ function ColumnsDetalleDataGrid() {
             headerName: 'Acciones',
             field: 'actions',
             renderCell: ({ row }: CellType) => (
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}> {/* Center content horizontally */}
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Tooltip title='Editar'>
                         <IconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
@@ -42,14 +52,10 @@ function ColumnsDetalleDataGrid() {
             headerName: 'cantidad',
             field: 'cantidad',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
-                    <Typography variant='body2' sx={{ color: color }}>
+                    <Typography variant='body2' sx={{ color: getRowColor(params.row) }}>
                         {params.row.cantidad}
                     </Typography>
-
                 )
             }
         },
@@ -58,14 +64,10 @@ function ColumnsDetalleDataGrid() {
             headerName: 'descripcionUnidad',
             field: 'descripcionUnidad',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
-                    <Typography variant='body2' sx={{ color: color }}>
+                    <Typography variant='body2' sx={{ color: getRowColor(params.row) }}>
                         {params.row.descripcionUnidad}
                     </Typography>
-
                 )
             }
         },
@@ -74,14 +76,11 @@ function ColumnsDetalleDataGrid() {
             headerName: 'descripcion',
             field: 'descripcion',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
                     <Typography
                         variant='body2'
                         sx={{
-                            color: color,
+                            color: getRowColor(params.row),
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -98,14 +97,11 @@ function ColumnsDetalleDataGrid() {
             headerName: 'precioUnitario',
             field: 'precioUnitario',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                         <Typography
                             variant='body2'
-                            sx={{ color: color }}
+                            sx={{ color: getRowColor(params.row) }}
                         >
                             { formatNumber(params.row.precioUnitario) }
                         </Typography>
@@ -118,14 +114,11 @@ function ColumnsDetalleDataGrid() {
             headerName: 'total',
             field: 'total',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                         <Typography
                             variant='body2'
-                            sx={{ color: color }}
+                            sx={{ color: getRowColor(params.row) }}
                         >
                             { formatNumber(params.row.total) }
                         </Typography>
@@ -138,14 +131,11 @@ function ColumnsDetalleDataGrid() {
             headerName: 'impuesto',
             field: 'impuesto',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                         <Typography
                             variant='body2'
-                            sx={{ color: color }}
+                            sx={{ color: getRowColor(params.row) }}
                         >
                             {formatNumber(params.row.montoImpuesto) }
                         </Typography>
@@ -158,14 +148,11 @@ function ColumnsDetalleDataGrid() {
             headerName: 'totalMasImpuesto',
             field: 'totalMasImpuesto',
             renderCell: (params: GridRenderCellParams) => {
-                const letterColor = theme.palette.mode === 'dark' ? '#E7E3FC99' : '#3A3541DE'
-                const color = params.row.lineaImpuesto ? '#5a8933' : letterColor
-
                 return (
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                         <Typography
                             variant='body2'
-                            sx={{ color: color }}
+                            sx={{ color: getRowColor(params.row) }}
                         >
                             { formatNumber(params.row.totalMasImpuesto) }
                         </Typography>
