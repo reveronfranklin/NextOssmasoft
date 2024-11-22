@@ -1,7 +1,7 @@
 import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import Component from '../../components/Datagrid/listRetenciones'
-import FormCreateRetenciones from '../../forms/create/FormCreateRetenciones'
+import FormCreateRetencionesOp from '../../forms/create/FormCreateRetencionesOp'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { setIsCollapseRetenciones } from 'src/store/apps/ordenPago'
@@ -39,7 +39,7 @@ const Retenciones = () => {
                     marginBottom: '5px'
                 }}
             >
-                <FormCreateRetenciones />
+                <FormCreateRetencionesOp />
             </Collapse>
             <Box
                 sx={{

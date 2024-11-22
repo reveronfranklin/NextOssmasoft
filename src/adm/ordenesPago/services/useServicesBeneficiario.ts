@@ -6,24 +6,21 @@ import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 
 // import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
-import { ICreateRetencion, IResponseCreateRetencion } from '../interfaces/retenciones/createRetencion'
-import { IUpdateRetencion, IResponseUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
-import { IDeleteRetencion, IResponseDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
+import { ICreateBenenficiarioOp, IResponseCreateBenenficiario } from '../interfaces/admBeneficiario/createBenenficiarioOp.interfaces'
+import { IUpdateBenenficiarioOp, IResponseUpdateBenenficiario } from '../interfaces/admBeneficiario/updateBenenficiarioOp.interfaces'
+import { IDeleteBenenficiarioOp, IResponseDeleteBeneficiario } from '../interfaces/admBeneficiario/deleteBenenficiarioOp.interfaces'
 
-interface IfilterByOrdenPago {
-  codigoOrdenPago: number
-}
-
-const useServicesRetencionesOp = () => {
+const useServicesBeneficiario = () => {
   const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getRetenciones = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+  const getBeneficiarioByOrdenPago = useCallback(async (filters: any): Promise<any> => {
     try {
       setLoading(true)
-      const responseGetOrdenes = await ossmmasofApi.post<any>(UrlServices.GETADMRETENCIONES, filters)
+      const responseGetOrdenes = await ossmmasofApi.post(UrlServices.GETBENEFICIARIO, filters)
 
       if (responseGetOrdenes.data.isValid) {
         return responseGetOrdenes.data
@@ -37,11 +34,11 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const createRetencion = useCallback(async (filters: ICreateRetencion): Promise<any> => {
+  const createBeneficiario = useCallback(async (filters: any): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseCreateRetencion>(UrlServices.CREATEADMRETENCIONES , filters)
+      const responseCreateRetencion = await ossmmasofApi.post(UrlServices.CREATEBENEFICIARIO, filters)
 
       if (responseCreateRetencion.data.isValid) {
         return responseCreateRetencion.data
@@ -55,16 +52,16 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const updateRetencion = useCallback(async (filters: IUpdateRetencion): Promise<any> => {
+  const updateBeneficiario = useCallback(async (filters: any): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseUpdateRetencion = await ossmmasofApi.post<IResponseUpdateRetencion>(UrlServices.UPDATEADMRETENCIONES , filters)
+      const responseCreateRetencion = await ossmmasofApi.post(UrlServices.UPDATEBENEFICIARIO, filters)
 
-      if (responseUpdateRetencion.data.isValid) {
-        return responseUpdateRetencion.data
+      if (responseCreateRetencion.data.isValid) {
+        return responseCreateRetencion.data
       }
-      setMessage(responseUpdateRetencion.data.message)
+      setMessage(responseCreateRetencion.data.message)
     } catch (e: any) {
       setError(e.message)
       console.error(e)
@@ -73,17 +70,16 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const deleteRetencion = useCallback(async (filters: IDeleteRetencion): Promise<any> => {
+  const deleteBeneficiario = useCallback(async (filters: any): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseDeleteRetencion = await ossmmasofApi.post<IResponseDeleteRetencion>(UrlServices.DELETEADMRETENCIONES, filters)
+      const responseCreateRetencion = await ossmmasofApi.post(UrlServices.DELETEBENEFICIARIO, filters)
 
-      if (responseDeleteRetencion.data.isValid) {
-        return responseDeleteRetencion.data
+      if (responseCreateRetencion.data.isValid) {
+        return responseCreateRetencion.data
       }
-
-      setMessage(responseDeleteRetencion.data.message)
+      setMessage(responseCreateRetencion.data.message)
     } catch (e: any) {
       setError(e.message)
       console.error(e)
@@ -95,11 +91,11 @@ const useServicesRetencionesOp = () => {
   return {
     error, message, loading,
     presupuestoSeleccionado,
-    getRetenciones,
-    createRetencion,
-    updateRetencion,
-    deleteRetencion
+    getBeneficiarioByOrdenPago,
+    createBeneficiario,
+    updateBeneficiario,
+    deleteBeneficiario
   }
 }
 
-export default useServicesRetencionesOp
+export default useServicesBeneficiario

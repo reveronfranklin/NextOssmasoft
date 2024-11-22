@@ -9,8 +9,20 @@ export enum UrlServices {
     LISTPUCBYORDENPAGO          = '/AdmPucOrdenPago/GetByOrdenPago',
     UPDATEPUCBYORDENPAGO        = '/AdmPucOrdenPago/UpdateField',
 
-    GETRETENCIONESBYORDENPAGO   = '/AdmRetencionesOp/GetByOrdenPago',
-    CREATERETENCIONES           = '/AdmRetencionesOp/Create',
-    UPDATERETENCIONES           = '/AdmRetencionesOp/Update',
-    DELETERETENCIONES           = '/AdmRetencionesOp/Delete',
+    GETRETENCIONESOPBYORDENPAGO = '/AdmRetencionesOp/GetByOrdenPago',
+    CREATERETENCIONESOP         = '/AdmRetencionesOp/Create',
+    UPDATERETENCIONESOP         = '/AdmRetencionesOp/Update',
+    DELETERETENCIONESOP         = '/AdmRetencionesOp/Delete',
+
+    GETADMRETENCIONES    = '/AdmRetenciones/GetAll',
+    CREATEADMRETENCIONES = '/AdmRetenciones/Create',
+    UPDATEADMRETENCIONES = '/AdmRetenciones/Update',
+    DELETEADMRETENCIONES = '/AdmRetenciones/Delete',
+
+    GETBENEFICIARIO         = '/AdmBeneficiariosOp/GetByOrdenPago',
+    CREATEBENEFICIARIO      = '/AdmBeneficiariosOp/Update',
+    UPDATEBENEFICIARIO      = '/AdmBeneficiariosOp/Create',
+    DELETEBENEFICIARIO      = '/AdmBeneficiariosOp/Delete',
+    UPDATEBENEFICIARIOMONTO = '/AdmBeneficiariosOp/UpdateMonto',
+
 }
