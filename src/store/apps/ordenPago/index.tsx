@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Orden } from 'src/adm/ordenesPago/interfaces/responseGetOrdenes.interfaces'
 import { Retencion } from 'src/adm/ordenesPago/interfaces/responseRetenciones.interfaces'
+import { IRetencionData } from 'src/adm/ordenesPago/interfaces/retenciones/createRetencion'
+import { BeneficiarioOp } from 'src/adm/ordenesPago/interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
 
 export const admOrdenPagoSlice = createSlice({
     name: 'admOrdenPago',
@@ -11,9 +13,12 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogOrdenPagoDetalle: false,
         isOpenDialogListPucOrdenPago: false,
         isOpenDialogConfirmButtons: false,
+        isOpenDialogListRetenciones: false,
         isOpenDialogListPucOrdenPagoEdit: false,
         compromisoSeleccionadoListaDetalle: {} as Orden,
-        retencionSeleccionado: {} as Retencion,
+        retencionOpSeleccionado: {} as Retencion,
+        retencionSeleccionado: {} as IRetencionData,
+        beneficioOpSeleccionado: {} as BeneficiarioOp,
         pucSeleccionado: {} as any,
     },
     reducers: {
@@ -32,6 +37,9 @@ export const admOrdenPagoSlice = createSlice({
         setIsOpenDialogConfirmButtons: (state, action) => {
             state.isOpenDialogConfirmButtons = action.payload
         },
+        setIsOpenDialogListRetenciones: (state, action) => {
+            state.isOpenDialogListRetenciones = action.payload
+        },
         setCompromisoSeleccionadoDetalle: (state, action) => {
             state.compromisoSeleccionadoListaDetalle = action.payload
         },
@@ -47,8 +55,14 @@ export const admOrdenPagoSlice = createSlice({
         setIsCollapseRetenciones: (state, action) => {
             state.isCollapseRetenciones = action.payload
         },
+        setRetencionOpSeleccionado: (state, action) => {
+            state.retencionOpSeleccionado = action.payload
+        },
         setRetencionSeleccionado: (state, action) => {
             state.retencionSeleccionado = action.payload
+        },
+        setBeneficioOpSeleccionado: (state, action) => {
+            state.beneficioOpSeleccionado = action.payload
         }
     }
 })
@@ -59,9 +73,12 @@ export const {
     setIsOpenDialogListPucOrdenPago,
     setIsOpenDialogListPucOrdenPagoEdit,
     setIsOpenDialogConfirmButtons,
+    setIsOpenDialogListRetenciones,
     setTypeOperation,
     resetCompromisoSeleccionadoDetalle,
     setPucSeleccionado,
     setIsCollapseRetenciones,
-    setRetencionSeleccionado
+    setRetencionSeleccionado,
+    setRetencionOpSeleccionado,
+    setBeneficioOpSeleccionado
 } = admOrdenPagoSlice.actions

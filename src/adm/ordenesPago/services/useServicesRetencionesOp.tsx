@@ -5,25 +5,34 @@ import { useCallback, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 
-// import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
-import { ICreateRetencion, IResponseCreateRetencion } from '../interfaces/retenciones/createRetencion'
-import { IUpdateRetencion, IResponseUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
-import { IDeleteRetencion, IResponseDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
+import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
+import { ICreateRetencionOp, IResponseCreateRetencion } from '../interfaces/retencionesOp/createRetencionOp'
+import { IUpdateRetencionOp, IResponseUpdateRetencion } from '../interfaces/retencionesOp/updateRetencionOp'
+import { IDeleteRetencionOp, IResponseDeleteRetencion } from '../interfaces/retencionesOp/deleteRetencionOp'
 
-// interface IfilterByOrdenPago {
-//   codigoOrdenPago: number
-// }
+interface IfilterByOrdenPago {
+  codigoOrdenPago: number
+}
 
-const useServicesRetencionesOp = () => {
+const useServicesRetencionesOp = (): {
+  error: string,
+  message: string,
+  loading: boolean,
+  presupuestoSeleccionado: any,
+  getRetencionesOpByOrdenPago: (filters: IfilterByOrdenPago) => Promise<any>,
+  createRetencionOp: (filters: ICreateRetencionOp) => Promise<any>,
+  updateRetencionOp: (filters: IUpdateRetencionOp) => Promise<any>,
+  deleteRetencionOp: (filters: IDeleteRetencionOp) => Promise<any>
+} => {
   const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getRetenciones = useCallback(async (): Promise<any> => {
+  const getRetencionesOpByOrdenPago = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
     try {
       setLoading(true)
-      const responseGetOrdenes = await ossmmasofApi.get<any>(UrlServices.GETADMRETENCIONES)
+      const responseGetOrdenes = await ossmmasofApi.post<IResponseGetRetenciones>(UrlServices.GETRETENCIONESOPBYORDENPAGO, filters)
 
       if (responseGetOrdenes.data.isValid) {
         return responseGetOrdenes.data
@@ -37,11 +46,11 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const createRetencion = useCallback(async (filters: ICreateRetencion): Promise<any> => {
+  const createRetencionOp = useCallback(async (filters: ICreateRetencionOp): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseCreateRetencion>(UrlServices.CREATEADMRETENCIONES , filters)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseCreateRetencion>(UrlServices.CREATERETENCIONESOP, filters)
 
       if (responseCreateRetencion.data.isValid) {
         return responseCreateRetencion.data
@@ -55,11 +64,11 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const updateRetencion = useCallback(async (filters: IUpdateRetencion): Promise<any> => {
+  const updateRetencionOp = useCallback(async (filters: IUpdateRetencionOp): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseUpdateRetencion = await ossmmasofApi.post<IResponseUpdateRetencion>(UrlServices.UPDATEADMRETENCIONES , filters)
+      const responseUpdateRetencion = await ossmmasofApi.post<IResponseUpdateRetencion>(UrlServices.UPDATERETENCIONESOP, filters)
 
       if (responseUpdateRetencion.data.isValid) {
         return responseUpdateRetencion.data
@@ -73,11 +82,11 @@ const useServicesRetencionesOp = () => {
     }
   }, [])
 
-  const deleteRetencion = useCallback(async (filters: IDeleteRetencion): Promise<any> => {
+  const deleteRetencionOp = useCallback(async (filters: IDeleteRetencionOp): Promise<any> => {
     try {
       setLoading(true)
       setMessage('')
-      const responseDeleteRetencion = await ossmmasofApi.post<IResponseDeleteRetencion>(UrlServices.DELETEADMRETENCIONES, filters)
+      const responseDeleteRetencion = await ossmmasofApi.post<IResponseDeleteRetencion>(UrlServices.DELETERETENCIONESOP, filters)
 
       if (responseDeleteRetencion.data.isValid) {
         return responseDeleteRetencion.data
@@ -95,10 +104,10 @@ const useServicesRetencionesOp = () => {
   return {
     error, message, loading,
     presupuestoSeleccionado,
-    getRetenciones,
-    createRetencion,
-    updateRetencion,
-    deleteRetencion
+    getRetencionesOpByOrdenPago,
+    createRetencionOp,
+    updateRetencionOp,
+    deleteRetencionOp
   }
 }
 

@@ -4,6 +4,7 @@ import { setIsOpenDialogListPucOrdenPagoEdit, setPucSeleccionado } from "src/sto
 import { useDispatch } from 'react-redux'
 import Icon from 'src/@core/components/icon'
 import Box from '@mui/material/Box'
+import FormatNumber from 'src/utilities/format-numbers'
 
 function ColumnsDataGridListPucByOrden() {
     const dispatch = useDispatch()
@@ -34,6 +35,7 @@ function ColumnsDataGridListPucByOrden() {
             flex: 1,
             headerName: 'descripcionFinanciado',
             field: 'descripcionFinanciado',
+            editable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.descripcionFinanciado}
@@ -44,6 +46,7 @@ function ColumnsDataGridListPucByOrden() {
             flex: 1,
             headerName: 'icpConcat',
             field: 'icpConcat',
+            editable: false,
             renderCell: (params: GridRenderCellParams) => {
                 return (
                     <Box sx={{ display: 'flex', alignItems: 'left' }}>
@@ -60,6 +63,7 @@ function ColumnsDataGridListPucByOrden() {
             flex: 1,
             headerName: 'pucConcat',
             field: 'pucConcat',
+            editable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.pucConcat === '' ? 'NO DISPONIBLE' : params.row.pucConcat}
@@ -73,7 +77,7 @@ function ColumnsDataGridListPucByOrden() {
             editable: true,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto === '' ? 'NO DISPONIBLE' : params.row.monto}
+                    {params.row.monto === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
                 </Typography>
             )
         }

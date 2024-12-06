@@ -288,6 +288,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         setAllRows([])
         setTotal(0)
         setRows(loadServerRows(page, []))
+
         return
       }
 

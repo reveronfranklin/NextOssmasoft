@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormHelperText, Grid, TextField } from "@mui/material"
+import { Box, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { RootState } from "src/store"
 import { useSelector, useDispatch } from "react-redux"
@@ -9,182 +9,297 @@ import { useServicesRetenciones } from '../../services/index'
 import { setIsOpenDialogConfirmButtons, setRetencionSeleccionado } from "src/store/apps/ordenPago"
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
 
-import { ICreateRetencionOp } from '../../interfaces/retenciones/createRetencionOp'
-import { IUpdateRetencionOp } from '../../interfaces/retenciones/updateRetencionOp'
-import { IDeleteRetencionOp } from '../../interfaces/retenciones/deleteRetencionOp'
+import { ICreateRetencion } from '../../interfaces/retenciones/createRetencion'
+import { IUpdateRetencion } from '../../interfaces/retenciones/updateRetencion'
+import { IDeleteRetencion } from '../../interfaces/retenciones/deleteRetencion'
 
-interface getValuesForm {
-  tipoRetencion: number
-  conceptoPago: string
-  montoRetencion: number
-  montoRetenido: number
-}
+import TipoRetencion from 'src/adm/ordenesPago/components/AutoComplete/TipoRetencion'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePicker from 'react-datepicker'
+import { getDateByObject } from 'src/utilities/ge-date-by-object'
+import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
+import dayjs from 'dayjs'
+import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 
 const FormCreateRetenciones = () => {
-  const { retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
 
-  const {
-    message,
-    loading,
-    presupuestoSeleccionado,
-    createRetencion,
-    updateRetencion,
-    deleteRetencion
-  } = useServicesRetenciones()
+  const { isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
+  const { loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
 
   const { control, setValue, getValues, formState: { errors } } = useForm<any>({
     defaultValues: {
-      tipoRetencion: retencionSeleccionado?.tipoRetencionId || '',
-      conceptoPago: retencionSeleccionado?.conceptoPago || '',
-      montoRetencion: retencionSeleccionado?.montoRetencion || '',
-      montoRetenido: retencionSeleccionado?.montoRetenido || '',
+      codigoRetencion: 0,
+      codigo: 0,
+      conceptoPago: '',
+      tipoPersonaId: 0,
+      baseImponible: 0,
+      porRetencion: 0,
+      montoRetencion: 0,
+      fechaIni: null,
+      fechaFin: null
     },
     mode: 'onChange',
   })
 
-  const handleCreateOrden = async () => {
-    const formData: getValuesForm = getValues()
+  const invalidateAndReset = (nameTable: string) => {
+    if (nameTable && nameTable !== null) {
+      qc.invalidateQueries({
+        queryKey: [nameTable]
+      })
+    }
+    clearForm()
+    dispatch(setIsOpenDialogConfirmButtons(false))
+  }
 
+  const handleCreateOrden = async (): Promise<void> => {
     try {
-      const payload: ICreateRetencionOp = {
-        codigoRetencionOp: 0,
-        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
-        tipoRetencionId: Number(formData.tipoRetencion),
-        codigoRetencion: 39, //todo cambiar este valor
-        porRetencion: 0,
-        montoRetencion: Number(formData.montoRetencion),
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: 0
+      const data: ICreateRetencion = {
+        codigoRetencion: 0,
+        tipoRetencionId: getValues('tipoRetencion'),
+        conceptoPago: getValues('conceptoPago'),
+        codigo: getValues('codigo'),
+        baseImponible: getValues('baseImponible'),
+        porRetencion: getValues('porRetencion'),
+        montoRetencion: getValues('montoRetencion'),
+        fechaIni: getValues('fechaIni') || null,
+        fechaFin: getValues('fechaFin') || null
       }
 
-      const response = await createRetencion(payload)
-      console.log('response', response)
+      const result = await createRetencion(data)
+
+      if (result.isValid) {
+        dispatch(setRetencionSeleccionado(result.data))
+      }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesTable']
-      })
-      clearForm()
-      dispatch(setIsOpenDialogConfirmButtons(false))
+      invalidateAndReset('retencionesTable')
     }
   }
 
-  const handleUpdateOrden = async () => {
-    const formData: getValuesForm = getValues()
-
+  const handleUpdateOrden = async (): Promise<void> => {
     try {
-      const payload: IUpdateRetencionOp = {
-        codigoRetencionOp: retencionSeleccionado.codigoRetencionOp,
-        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
-        tipoRetencionId: Number(formData.tipoRetencion),
-        codigoRetencion: 39, //todo cambiar este valor
-        porRetencion: 0,
-        montoRetencion: Number(formData.montoRetencion),
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: 0
+      const data: IUpdateRetencion = {
+        codigoRetencion: getValues('codigoRetencion'),
+        tipoRetencionId: getValues('tipoRetencion'),
+        conceptoPago: getValues('conceptoPago'),
+        codigo: getValues('codigo'),
+        baseImponible: getValues('baseImponible'),
+        porRetencion: getValues('porRetencion'),
+        montoRetencion: getValues('montoRetencion'),
+        fechaIni: getValues('fechaIni') || null,
+        fechaFin: getValues('fechaFin') || null
       }
 
-      const response = await updateRetencion(payload)
-      console.log('response', response)
+      const result = await updateRetencion(data)
+
+      if (result.isValid) {
+        dispatch(setRetencionSeleccionado(result.data))
+      }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesTable']
-      })
-      clearForm()
-      dispatch(setIsOpenDialogConfirmButtons(false))
+      invalidateAndReset('retencionesTable')
     }
   }
 
-  const handleDeleteOrden = async () => {
+  const handleDeleteOrden = async (): Promise<void> => {
     try {
-      const payload: IDeleteRetencionOp = {
-        codigoRetencionOp: retencionSeleccionado?.codigoRetencionOp ?? 0,
+      const data: IDeleteRetencion = {
+        codigoRetencion: getValues('codigoRetencion')
       }
 
-      const response = await deleteRetencion(payload)
-      console.log('response', response)
+      const result = await deleteRetencion(data)
+      if (result.isValid) {
+        dispatch(setRetencionSeleccionado({} as any))
+      }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesTable']
-      })
-      dispatch(setIsOpenDialogConfirmButtons(false))
+      invalidateAndReset('retencionesTable')
     }
   }
 
   const clearForm = async (): Promise<void> => {
-    setValue('tipoRetencion', '')
+    setValue('codigoRetencion', '')
+    setValue('codigo', '')
     setValue('conceptoPago', '')
+    setValue('tipoPersonaId', '')
+    setValue('baseImponible', '')
+    setValue('porRetencion', '')
     setValue('montoRetencion', '')
-    setValue('montoRetenido', '')
-    dispatch(setRetencionSeleccionado(null))
+    setValue('fechaIni', '')
+    setValue('fechaFin', '')
+  }
+
+  const handleFechaIniChange = (date: Date) => {
+    if (dayjs(date).isValid()) {
+      const fechaObj: any = fechaToFechaObj(date)
+
+      const retencionFechaIni = {
+        ...retencionSeleccionado,
+        fechaIni: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
+        fechaIniString: dayjs(date).format('DD/MM/YYYY'),
+        fechaIniObject: fechaObj
+      }
+
+      dispatch(setRetencionSeleccionado(retencionFechaIni))
+      setValue('fechaIni', dayjs(date).format('YYYY-MM-DDTHH:mm:ss'))
+    }
+  }
+
+  const handleFechaFinChange = (date: Date) => {
+    if (dayjs(date).isValid()) {
+      const fechaObj: any = fechaToFechaObj(date)
+
+      const retencionFechaFin = {
+        ...retencionSeleccionado,
+        fechaFin: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
+        fechaFinString: dayjs(date).format('DD/MM/YYYY'),
+        fechaFinObject: fechaObj
+      }
+
+      dispatch(setRetencionSeleccionado(retencionFechaFin))
+      setValue('fechaFin', dayjs(date).format('YYYY-MM-DD HH:mm:ss'))
+    }
   }
 
   useEffect(() => {
-    if (retencionSeleccionado) {
-      setValue('tipoRetencion', retencionSeleccionado.tipoRetencionId)
+    console.log('retencionSeleccionado', retencionSeleccionado)
+
+    if (retencionSeleccionado && Object.keys(retencionSeleccionado).length > 0) {
+      setValue('codigoRetencion', retencionSeleccionado.codigoRetencion)
+      setValue('tipoRetencionId', retencionSeleccionado.tipoRetencionId)
       setValue('conceptoPago', retencionSeleccionado.conceptoPago)
+      setValue('codigo', retencionSeleccionado.codigo)
+      setValue('baseImponible', retencionSeleccionado.baseImponible)
+      setValue('porRetencion', retencionSeleccionado.porRetencion)
       setValue('montoRetencion', retencionSeleccionado.montoRetencion)
-      setValue('montoRetenido', retencionSeleccionado.montoRetenido)
+      setValue('fechaIni', retencionSeleccionado.fechaIni)
+      setValue('fechaFin', retencionSeleccionado.fechaFin)
     }
-  }, [retencionSeleccionado, setValue])
+  }, [retencionSeleccionado])
 
   return (
     <Box>
       <form>
         <Grid container spacing={0} paddingTop={0} justifyContent="flex">
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+          <Grid container sm={2} xs={12} sx={{ padding: 2 }}>
             <Controller
-              name='tipoRetencion'
-              control={control}
-              render={({ field: { value, onChange} }) => (
-                <TextField
-                  fullWidth
-                  label='Tipo Retención'
-                  value={value}
-                  onChange={onChange}
-                  variant='outlined'
-                  size='small'
-                  error={!!errors.tipoRetencion}
-                  helperText={errors.tipoRetencion?.message as string | undefined}
-                />
-              )}
-            />
-          </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
-            <Controller
-              name='conceptoPago'
+              name="codigoRetencion"
               control={control}
               render={({ field: { value, onChange } }) => (
                 <TextField
                   fullWidth
+                  value={value}
+                  onChange={onChange}
+                  label='Codigo'
+                  variant='outlined'
+                  disabled
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid container sm={8} xs={12} sx={{ padding: 2 }}>
+            <TipoRetencion
+              id={retencionSeleccionado?.tipoRetencionId || 0}
+              onSelectionChange={(value: any) => setValue('tipoRetencionId', value.id)}
+            />
+          </Grid>
+
+          <Grid container sm={2} xs={12} sx={{ padding: 2 }}>
+            <Controller
+              name="codigo"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
+                  label='codigo'
+                  variant='outlined'
+                  error={!!errors.codigo}
+                  helperText={errors.codigo?.message as string | undefined}
+                />
+              )}
+            />
+          </Grid>
+          <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
+            <DatePickerWrapper>
+              <DatePicker
+                selected={retencionSeleccionado?.fechaIniObject ? getDateByObject(retencionSeleccionado.fechaIniObject) : null}
+                id='fechaIni'
+                dateFormat='dd/MM/yyyy'
+                onChange={(date: Date) => { handleFechaIniChange(date) }}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='fechaIni' />}
+              />
+            </DatePickerWrapper>
+          </Grid>
+
+          <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
+            <DatePickerWrapper>
+              <DatePicker
+                selected={retencionSeleccionado?.fechaFinObject ? getDateByObject(retencionSeleccionado.fechaFinObject) : null}
+                id='fechaFin'
+                dateFormat='dd/MM/yyyy'
+                onChange={(date: Date) => { handleFechaFinChange(date) }}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='fechaFin' />}
+              />
+            </DatePickerWrapper>
+          </Grid>
+
+          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+            <Controller
+              name="conceptoPago"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
                   label='Concepto Pago'
-                  value={value}
-                  onChange={onChange}
                   variant='outlined'
-                  size='small'
-                  error={!!errors.conceptoPago}
-                  helperText={errors.conceptoPago?.message as string | undefined}
+                  error={!!errors.conceptoPag}
+                  helperText={errors.conceptoPag?.message as string | undefined}
                 />
               )}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+
+          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
             <Controller
-              name='montoRetencion'
+              name="baseImponible"
               control={control}
               render={({ field: { value, onChange } }) => (
                 <TextField
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  label='Monto Retención'
+                  label='Base Imponible'
+                  variant='outlined'
+                  size='small'
+                  error={!!errors.baseImponible}
+                  helperText={errors.baseImponible?.message as string | undefined}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
+            <Controller
+              name="porRetencion"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextField
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
+                  label='Por Retencion'
                   variant='outlined'
                   size='small'
                   error={!!errors.montoRetencion}
@@ -193,55 +308,58 @@ const FormCreateRetenciones = () => {
               )}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+
+          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
             <Controller
-              name='montoRetenido'
+              name="montoRetencion"
               control={control}
               render={({ field: { value, onChange } }) => (
                 <TextField
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  label='Monto Retenido'
+                  label='Monto Retencion'
                   variant='outlined'
                   size='small'
-                  error={!!errors.montoRetenido}
-                  helperText={errors.montoRetenido?.message as string | undefined}
+                  error={!!errors.baseImponible}
+                  helperText={errors.baseImponible?.message as string | undefined}
                 />
               )}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
-            <Box> {message && (<FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message}</FormHelperText>)}</Box>
-          </Grid>
-          <CustomButtonDialog
-            saveButtonConfig={{
-              label: 'Guardar',
-              onClick: handleCreateOrden,
-              show: true,
-              confirm: true
-            }}
-            updateButtonConfig={{
-              label: 'Modificar',
-              onClick: handleUpdateOrden,
-              show: true,
-              confirm: true
-            }}
-            deleteButtonConfig={{
-              label: 'Eliminar',
-              onClick: handleDeleteOrden,
-              show: true,
-              confirm: true
-            }}
-            clearButtonConfig={{
-              label: 'Limpiar',
-              onClick: clearForm,
-              show: true
-            }}
-            loading={loading}
-          />
+
         </Grid>
       </form>
+      <Box sx={{ padding: 2 }}>
+        <CustomButtonDialog
+          saveButtonConfig={{
+            label: 'Crear',
+            onClick: handleCreateOrden,
+            show: true,
+            confirm: true
+          }}
+          updateButtonConfig={{
+            label: 'Modificar',
+            onClick: handleUpdateOrden,
+            show: true,
+            confirm: true
+          }}
+          deleteButtonConfig={{
+            label: 'Eliminar',
+            onClick: handleDeleteOrden,
+            show: true,
+            confirm: true
+          }}
+          clearButtonConfig={{
+            label: 'Limpiar',
+            onClick: clearForm,
+            show: true
+          }}
+          loading={loading}
+          isOpenDialog={isOpenDialogConfirmButtons}
+          setIsOpenDialog={setIsOpenDialogConfirmButtons}
+        />
+      </Box>
     </Box>
   )
 }

@@ -1,11 +1,13 @@
 import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import Component from '../../components/Datagrid/listRetenciones'
-import FormCreateRetenciones from '../../forms/create/FormCreateRetenciones'
+import Component from '../../components/Datagrid/listRetencionesOp'
+import FormCreateRetencionesOp from '../../forms/create/FormCreateRetencionesOp'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { setIsCollapseRetenciones } from 'src/store/apps/ordenPago'
 import { useDispatch } from 'react-redux'
+
+import DialogListRetenciones from '../../views/Dialog/ListRetenciones'
 
 const Retenciones = () => {
     const dispatch = useDispatch()
@@ -39,7 +41,8 @@ const Retenciones = () => {
                     marginBottom: '5px'
                 }}
             >
-                <FormCreateRetenciones />
+                <FormCreateRetencionesOp />
+                <DialogListRetenciones />
             </Collapse>
             <Box
                 sx={{

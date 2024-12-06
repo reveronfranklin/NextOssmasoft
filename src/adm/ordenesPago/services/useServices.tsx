@@ -14,7 +14,8 @@ interface IFilterDesciptiva {
 }
 
 interface IfilterByOrdenPago {
-    codigoOrdenPago: number
+    codigoOrdenPago: number,
+    codigoPresupuesto?: number
 }
 
 import { IUpdateOrdenPago } from '../interfaces/updateOrdenPago.interfaces'

@@ -1,22 +1,11 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-  DialogActions,
-  CircularProgress
-} from "@mui/material"
+import {Box, Button, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress } from "@mui/material"
 import React from 'react';
 import { useRef } from 'react';
 import { CleaningServices } from '@mui/icons-material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SaveIcon from '@mui/icons-material/Save'
 import EditIcon from '@mui/icons-material/Edit'
-import { RootState } from "src/store"
-import { useSelector, useDispatch } from "react-redux"
-import { setIsOpenDialogConfirmButtons } from "src/store/apps/ordenPago"
+import { useDispatch } from "react-redux"
 
 interface ButtonConfig<T> {
   label: string
@@ -34,23 +23,26 @@ const CustomButtonDialog = ({
   updateButtonConfig,
   deleteButtonConfig,
   clearButtonConfig,
-  loading
-}: {
+  loading,
+  isOpenDialog,
+  setIsOpenDialog
+} : {
   saveButtonConfig?: ButtonConfig<Promise<void>>,
   updateButtonConfig?: ButtonConfig<Promise<void>>,
   deleteButtonConfig?: ButtonConfig<Promise<void>>,
   clearButtonConfig?: ButtonConfig<Promise<void>>,
-  loading?: boolean
+  loading?: boolean,
+  isOpenDialog?: boolean,
+  setIsOpenDialog?: (open: boolean) => any
 }) => {
   const dynamicFunctionRef = useRef<((filters?: any) => any) | null>(null)
-  const { isOpenDialogConfirmButtons } = useSelector((state: RootState) => state.admOrdenPago)
   const dispatch = useDispatch();
 
   const handle = async (config: ButtonConfig<Promise<void>>) => {
     dynamicFunctionRef.current = config.onClick
 
     if (config.confirm) {
-      dispatch(setIsOpenDialogConfirmButtons(true))
+      dispatch(setIsOpenDialog?.(true))
 
       return
     }
@@ -65,63 +57,71 @@ const CustomButtonDialog = ({
   }
 
   const handleClose = () => {
-    dispatch(setIsOpenDialogConfirmButtons(false))
+    dispatch(setIsOpenDialog?.(false))
   }
 
   return (
     <>
-      <Box sx={{ paddingTop: 6 }}>
-        {saveButtonConfig?.show && (
-          <Button
-            variant={saveButtonConfig?.variant}
-            color={saveButtonConfig?.color}
-            size={saveButtonConfig?.size}
-            sx={{ ...saveButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(saveButtonConfig)}
-          >
-            <SaveIcon sx={{ marginRight: 1 }} />
-            {saveButtonConfig?.label}
-          </Button>
-        )}
-        {updateButtonConfig?.show && (
-          <Button
-            variant={updateButtonConfig?.variant}
-            color={updateButtonConfig?.color}
-            size={updateButtonConfig?.size}
-            sx={{ ...updateButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(updateButtonConfig)}
-          >
-            <EditIcon sx={{ marginRight: 1 }} />
-            {updateButtonConfig?.label}
-          </Button>
-        )}
-        {deleteButtonConfig?.show && (
-          <Button
-            variant={deleteButtonConfig?.variant}
-            color={deleteButtonConfig?.color}
-            size={deleteButtonConfig?.size}
-            sx={{ ...deleteButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(deleteButtonConfig)}
-          >
-            <DeleteIcon sx={{ marginRight: 1 }} />
-            {deleteButtonConfig?.label}
-          </Button>
-        )}
-        {clearButtonConfig?.show && (
-          <Button
-            variant={clearButtonConfig?.variant}
-            color={clearButtonConfig?.color}
-            size={clearButtonConfig?.size}
-            sx={{ ...clearButtonConfig?.sx, marginRight: 2 }}
-            onClick={() => handle(clearButtonConfig)}
-          >
-            <CleaningServices />
-            {clearButtonConfig?.label}
-          </Button>
-        )}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
+          {saveButtonConfig?.show && (
+            <Button
+              variant={saveButtonConfig?.variant}
+              color={saveButtonConfig?.color}
+              size={saveButtonConfig?.size}
+              sx={{ ...saveButtonConfig?.sx, marginRight: 2 }}
+              onClick={() => handle(saveButtonConfig)}
+            >
+              <SaveIcon sx={{ marginRight: 1 }} />
+              {saveButtonConfig?.label}
+            </Button>
+          )}
+        </Box>
+        <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
+          {updateButtonConfig?.show && (
+            <Button
+              variant={updateButtonConfig?.variant}
+              color={updateButtonConfig?.color}
+              size={updateButtonConfig?.size}
+              sx={{ ...updateButtonConfig?.sx, marginRight: 2 }}
+              onClick={() => handle(updateButtonConfig)}
+            >
+              <EditIcon sx={{ marginRight: 1 }} />
+              {updateButtonConfig?.label}
+            </Button>
+          )}
+        </Box>
+        <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
+          {deleteButtonConfig?.show && (
+            <Button
+              variant={deleteButtonConfig?.variant}
+              color={deleteButtonConfig?.color}
+              size={deleteButtonConfig?.size}
+              sx={{ ...deleteButtonConfig?.sx, marginRight: 2 }}
+              onClick={() => handle(deleteButtonConfig)}
+            >
+              <DeleteIcon sx={{ marginRight: 1 }} />
+              {deleteButtonConfig?.label}
+            </Button>
+          )}
+        </Box>
+        <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
+          {clearButtonConfig?.show && (
+            <Button
+              variant={clearButtonConfig?.variant}
+              color={clearButtonConfig?.color}
+              size={clearButtonConfig?.size}
+              sx={{ ...clearButtonConfig?.sx, marginRight: 2 }}
+              onClick={() => handle(clearButtonConfig)}
+            >
+              <CleaningServices />
+              {clearButtonConfig?.label}
+            </Button>
+          )}
+        </Box>
       </Box>
       <Dialog
-        open={isOpenDialogConfirmButtons}
+        open={isOpenDialog ?? false}
         onClose={handleClose}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
@@ -140,6 +140,7 @@ const CustomButtonDialog = ({
             color='primary'
             size='small'
             onClick={() => dynamicFunctionRef.current?.()}
+            disabled={loading}
           >
             { loading ? (
               <>

@@ -37,13 +37,12 @@ import {
   setVerIcpActive
 } from 'src/store/apps/ICP'
 import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterOnlyPresupuesto'
-import { setListpresupuestoDtoSeleccionado } from 'src/store/apps/presupuesto'
 
 import { IFilterClave } from 'src/interfaces/SIS/i-filter-clave'
 import { fetchDataPersonas } from 'src/store/apps/rh/thunks'
 import TreeViewIcp from 'src/presupuesto/Icp/components/TreViewIcp'
 import DialogPreIcpInfo from 'src/presupuesto/Icp/views/DialogPreIcpInfo'
-import { fetchData } from 'src/store/apps/presupuesto/thunks'
+
 
 interface CellType {
   row: IPreIndiceCategoriaProgramaticaGetDto
@@ -155,7 +154,7 @@ const PresupuestoList = () => {
   const dispatch = useDispatch()
 
   const { verIcpActive = false } = useSelector((state: RootState) => state.icp)
-  const { listpresupuestoDtoSeleccionado, listpresupuestoDto } = useSelector((state: RootState) => state.presupuesto)
+  const { listpresupuestoDtoSeleccionado } = useSelector((state: RootState) => state.presupuesto)
 
   const [loading, setLoading] = useState(false)
   const [viewTable, setViewTable] = useState(false)
@@ -179,6 +178,7 @@ const PresupuestoList = () => {
       if (responseAll.data.data == null) {
         setIcp([])
         setLoading(false)
+
         return
       }
       await dispatch(setListIcp(data))

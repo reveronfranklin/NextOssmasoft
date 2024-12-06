@@ -50,7 +50,7 @@ const DialogListPucByOrdenPago = () => {
                     <Box position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{ justifyContent: 'space-between', padding: 0 }}>
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Lista de PUC
+                                Lista de compromisos presupuestario
                             </Typography>
                             <IconButton
                                 size='small'

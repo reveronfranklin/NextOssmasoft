@@ -190,6 +190,7 @@ const PresupuestoList = () => {
       if (responseAll.data.data == null) {
         setPuc([])
         setLoading(false)
+
         return
       }
 

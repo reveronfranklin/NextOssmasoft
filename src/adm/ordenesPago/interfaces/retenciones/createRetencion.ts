@@ -1,15 +1,16 @@
-export interface IUpdateRetencionOp {
-  codigoRetencionOp: number
-  codigoOrdenPago: number
-  tipoRetencionId: number
+export interface ICreateRetencion {
   codigoRetencion: number
+  tipoRetencionId: number
+  conceptoPago: string
+  codigo: string
+  baseImponible: number
   porRetencion: number
   montoRetencion: number
-  codigoPresupuesto: number
-  baseImponible: number
+  fechaIni: null
+  fechaFin: null
 }
 
-export interface IResponseUpdateRetencion {
+export interface IResponseCreateRetencion {
   data: IRetencionData
   isValid: boolean
   linkData: null
@@ -25,16 +26,18 @@ export interface IResponseUpdateRetencion {
 }
 
 export interface IRetencionData {
-  codigoRetencionOp: number
-  codigoOrdenPago: number
+  codigoRetencion: number
   tipoRetencionId: number
   descripcionTipoRetencion: string
-  codigoRetencion: number
   conceptoPago: string
+  baseImponible: number
   porRetencion: number
   montoRetencion: number
-  montoRetenido: number
-  codigoPresupuesto: number
-  baseImponible: number
-  numeroComprobante: any
+  fechaIni: null
+  fechaIniString: string
+  fechaIniObject: null
+  fechaFin: null
+  fechaFinString: string
+  fechaFinObject: null,
+  codigo: string
 }
