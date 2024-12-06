@@ -2,7 +2,7 @@ export interface ICreateRetencion {
   codigoRetencion: number
   tipoRetencionId: number
   conceptoPago: string
-  tipoPersonaId: string
+  codigo: string
   baseImponible: number
   porRetencion: number
   montoRetencion: number
@@ -30,8 +30,6 @@ export interface IRetencionData {
   tipoRetencionId: number
   descripcionTipoRetencion: string
   conceptoPago: string
-  tipoPersonaId: string
-  descripcionTipoPersona: string
   baseImponible: number
   porRetencion: number
   montoRetencion: number
@@ -40,5 +38,6 @@ export interface IRetencionData {
   fechaIniObject: null
   fechaFin: null
   fechaFinString: string
-  fechaFinObject: null
+  fechaFinObject: null,
+  codigo: string
 }

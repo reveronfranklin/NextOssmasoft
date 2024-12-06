@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
-import { } from "src/store/apps/adm"
+import FormatNumber from 'src/utilities/format-numbers'
 
 function ColumnsDataGridListCompromisoByOrden() {
     return [
@@ -57,7 +57,7 @@ function ColumnsDataGridListCompromisoByOrden() {
             field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto === '' ? 'NO DISPONIBLE' : params.row.monto}
+                    {params.row.monto === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
                 </Typography>
             )
         }

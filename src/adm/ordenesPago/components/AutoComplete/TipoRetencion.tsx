@@ -17,7 +17,7 @@ const TipoRetencion = (props: any) => {
 
   const query = useQuery({
     queryKey: ['TipoRetencion'],
-    queryFn: () => fetchDescriptivaById({ tituloId: 14 }),
+    queryFn: () => fetchDescriptivaById({ tituloId: 19 }),
     retry: 3,
     staleTime: 5000 * 60 * 60,
   }, qc)

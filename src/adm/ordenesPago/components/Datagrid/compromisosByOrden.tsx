@@ -16,7 +16,8 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 interface IfilterByOrdenPago {
-    codigoOrdenPago: number
+    codigoOrdenPago: number,
+    codigoPresupuesto?: any
 }
 
 const DataGridComponent = () => {
@@ -30,9 +31,12 @@ const DataGridComponent = () => {
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
 
-    const { getCompromisoByOrden } = useServices()
+    const { getCompromisoByOrden, presupuestoSeleccionado } = useServices()
 
-    const filter: IfilterByOrdenPago = { codigoOrdenPago }
+    const filter: IfilterByOrdenPago = {
+        codigoOrdenPago,
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
+    }
 
     const query = useQuery({
         queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText],
@@ -48,9 +52,8 @@ const DataGridComponent = () => {
     const rowCount = rows.length || 0
 
     const handleDoubleClick = (data: any) => {
-        const { row } = data
+        console.log('handleDoubleClick', data)
         dispatch(setIsOpenDialogListPucOrdenPago(true))
-        console.log(row)
     }
 
     const handlePageChange = (newPage: number) => {

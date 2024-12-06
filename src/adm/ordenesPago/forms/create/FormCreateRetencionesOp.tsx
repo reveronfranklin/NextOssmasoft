@@ -6,7 +6,13 @@ import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useServicesRetencionesOp } from '../../services/index'
-import { setIsOpenDialogConfirmButtons, setRetencionSeleccionado } from "src/store/apps/ordenPago"
+import SearchIcon from '@mui/icons-material/Search';
+import {
+  setIsOpenDialogConfirmButtons,
+  setRetencionOpSeleccionado,
+  setIsOpenDialogListRetenciones
+} from "src/store/apps/ordenPago"
+
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
 
 import { ICreateRetencionOp } from '../../interfaces/retencionesOp/createRetencionOp'
@@ -26,16 +32,16 @@ const FormCreateRetencionesOp = () => {
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
 
-  const { retencionSeleccionado, isOpenDialogConfirmButtons } = useSelector((state: RootState) => state.admOrdenPago)
+  const { retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
 
   const { control, setValue, getValues, formState: { errors } } = useForm<any>({
     defaultValues: {
-      tipoRetencion: retencionSeleccionado?.tipoRetencionId || '',
-      conceptoPago: retencionSeleccionado?.conceptoPago || '',
-      montoRetencion: retencionSeleccionado?.montoRetencion || '',
-      montoRetenido: retencionSeleccionado?.montoRetenido || '',
-      descripcionTipoRetencion: retencionSeleccionado?.descripcionTipoRetencion || ''
+      tipoRetencion: retencionOpSeleccionado?.tipoRetencionId ?? '',
+      conceptoPago: retencionOpSeleccionado?.conceptoPago ?? '',
+      montoRetencion: retencionOpSeleccionado?.montoRetencion ?? '',
+      montoRetenido: retencionOpSeleccionado?.montoRetenido ?? '',
+      descripcionTipoRetencion: retencionOpSeleccionado?.descripcionTipoRetencion ?? ''
     },
     mode: 'onChange',
   })
@@ -46,7 +52,7 @@ const FormCreateRetencionesOp = () => {
     try {
       const payload: ICreateRetencionOp = {
         codigoRetencionOp: 0,
-        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
+        codigoOrdenPago: retencionOpSeleccionado.codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
         codigoRetencion: 39, //todo cambiar este valor
         porRetencion: 0,
@@ -61,7 +67,7 @@ const FormCreateRetencionesOp = () => {
       console.log(error)
     } finally {
       qc.invalidateQueries({
-        queryKey: ['retencionesTable']
+        queryKey: ['retencionesOpTable']
       })
       clearForm()
       dispatch(setIsOpenDialogConfirmButtons(false))
@@ -73,8 +79,8 @@ const FormCreateRetencionesOp = () => {
 
     try {
       const payload: IUpdateRetencionOp = {
-        codigoRetencionOp: retencionSeleccionado.codigoRetencionOp,
-        codigoOrdenPago: retencionSeleccionado.codigoOrdenPago,
+        codigoRetencionOp: retencionOpSeleccionado.codigoRetencionOp,
+        codigoOrdenPago: retencionOpSeleccionado.codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
         codigoRetencion: 39, //todo cambiar este valor
         porRetencion: 0,
@@ -89,7 +95,7 @@ const FormCreateRetencionesOp = () => {
       console.log(error)
     } finally {
       qc.invalidateQueries({
-        queryKey: ['retencionesTable']
+        queryKey: ['retencionesOpTable']
       })
       clearForm()
       dispatch(setIsOpenDialogConfirmButtons(false))
@@ -99,7 +105,7 @@ const FormCreateRetencionesOp = () => {
   const handleDeleteOrden = async (): Promise<void> => {
     try {
       const payload: IDeleteRetencionOp = {
-        codigoRetencionOp: retencionSeleccionado?.codigoRetencionOp ?? 0,
+        codigoRetencionOp: retencionOpSeleccionado?.codigoRetencionOp ?? 0,
       }
 
       const response = await deleteRetencionOp(payload)
@@ -108,7 +114,7 @@ const FormCreateRetencionesOp = () => {
       console.log(error)
     } finally {
       qc.invalidateQueries({
-        queryKey: ['retencionesTable']
+        queryKey: ['retencionesOpTable']
       })
       dispatch(setIsOpenDialogConfirmButtons(false))
     }
@@ -120,18 +126,31 @@ const FormCreateRetencionesOp = () => {
     setValue('montoRetencion', '')
     setValue('montoRetenido', '')
     setValue('descripcionTipoRetencion', '')
-    dispatch(setRetencionSeleccionado(null))
+    setValue('numeroComprobante', '')
+    dispatch(setRetencionOpSeleccionado(null))
+  }
+
+  const viewDialogListRetenciones = () => {
+    dispatch(setIsOpenDialogListRetenciones(true))
   }
 
   useEffect(() => {
-    if (retencionSeleccionado) {
-      setValue('tipoRetencion', retencionSeleccionado.tipoRetencionId)
-      setValue('conceptoPago', retencionSeleccionado.conceptoPago)
-      setValue('montoRetencion', retencionSeleccionado.montoRetencion)
-      setValue('montoRetenido', retencionSeleccionado.montoRetenido)
-      setValue('descripcionTipoRetencion', retencionSeleccionado.descripcionTipoRetencion)
+    if (retencionOpSeleccionado) {
+      setValue('tipoRetencion', retencionOpSeleccionado?.tipoRetencionId)
+      setValue('conceptoPago', retencionOpSeleccionado?.conceptoPago)
+      setValue('montoRetencion', retencionOpSeleccionado?.montoRetencion)
+      setValue('montoRetenido', retencionOpSeleccionado?.montoRetenido)
+      setValue('descripcionTipoRetencion', retencionOpSeleccionado?.descripcionTipoRetencion)
+      setValue('numeroComprobante', retencionOpSeleccionado?.numeroComprobante)
     }
-  }, [retencionSeleccionado, setValue])
+  }, [retencionOpSeleccionado, setValue])
+
+  useEffect(() => {
+    if (retencionSeleccionado) {
+      setValue('conceptoPago', retencionSeleccionado?.descripcionTipoRetencion);
+    }
+  }, [retencionSeleccionado, setValue]);
+
 
   return (
     <Box>
@@ -139,31 +158,43 @@ const FormCreateRetencionesOp = () => {
         <Grid container spacing={0} paddingTop={0} justifyContent="flex">
           <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
             <TipoRetencion
-              id={retencionSeleccionado?.tipoRetencionId || 0}
+              id={retencionOpSeleccionado?.tipoRetencionId || 0}
               onSelectionChange={(value: any) => setValue('tipoRetencion', value.id)}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2, display: 'flex', alignItems: 'center' }}>
+          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <Controller
-              name='conceptoPago'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  fullWidth
-                  label='Concepto Pago'
-                  value={value}
-                  onChange={onChange}
-                  variant='outlined'
-                  size='small'
-                  error={!!errors.conceptoPago}
-                  helperText={errors.conceptoPago?.message as string | undefined}
-                  sx={{ flexGrow: 1 }}
-                />
-              )}
-            />
-            <Button variant="contained" size="small" sx={{ marginLeft: 2, flex: '0 0 10%' }}>
-              ver
-            </Button>
+                name='conceptoPago'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    label='Concepto Pago'
+                    value={value}
+                    onChange={onChange}
+                    variant='outlined'
+                    error={!!errors.conceptoPago}
+                    helperText={errors.conceptoPago?.message as string | undefined}
+                    sx={{ flexGrow: 1 }}
+                  />
+                )}
+              />
+              <Button
+                onClick={viewDialogListRetenciones}
+                variant="contained"
+                sx={{
+                  marginLeft: 2,
+                  flexShrink: 0,
+                  height: '100%',
+                  minHeight: '48px',
+                  minWidth: '80px',
+                  justifyContent: 'flex-center',
+                }}
+              >
+                <SearchIcon />
+              </Button>
+            </Box>
           </Grid>
           <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
@@ -211,7 +242,7 @@ const FormCreateRetencionesOp = () => {
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  label='numero Comprobante'
+                  placeholder='Número Comprobante'
                   variant='outlined'
                   size='small'
                   error={!!errors.numeroComprobante}
@@ -235,13 +266,13 @@ const FormCreateRetencionesOp = () => {
         updateButtonConfig={{
           label: 'Modificar',
           onClick: handleUpdateOrden,
-          show: !!retencionSeleccionado?.codigoRetencionOp,
+          show: !!retencionOpSeleccionado?.codigoRetencionOp,
           confirm: true
         }}
         deleteButtonConfig={{
           label: 'Eliminar',
           onClick: handleDeleteOrden,
-          show: !!retencionSeleccionado?.codigoRetencionOp,
+          show: !!retencionOpSeleccionado?.codigoRetencionOp,
           confirm: true
         }}
         clearButtonConfig={{

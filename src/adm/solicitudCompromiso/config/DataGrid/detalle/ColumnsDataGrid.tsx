@@ -167,7 +167,7 @@ function ColumnsDetalleDataGrid() {
             renderCell: (params: GridRenderCellParams) => {
                 return (
                     <Typography variant='body2' sx={{ color: getRowColor(params.row) }}>
-                        {params.row.totalPuc}
+                        { formatNumber(params.row.totalPuc) }
                     </Typography>
                 )
             }

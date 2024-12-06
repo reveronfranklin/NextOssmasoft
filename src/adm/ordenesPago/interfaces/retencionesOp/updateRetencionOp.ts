@@ -1,7 +1,7 @@
 export interface IUpdateRetencionOp {
   codigoRetencionOp: number
   codigoOrdenPago: number
-  tipoRetencionId: number
+  tipoRetencionId: number //todo se pasa desde el seleccionado en la pantalla se muestra el concepto admretenciones
   codigoRetencion: number
   porRetencion: number
   montoRetencion: number

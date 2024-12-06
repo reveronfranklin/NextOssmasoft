@@ -2,7 +2,7 @@ export interface IUpdateRetencion {
   codigoRetencion: number
   tipoRetencionId: number
   conceptoPago: string
-  tipoPersonaId: string
+  codigo: string
   baseImponible: number
   porRetencion: number
   montoRetencion: number
@@ -30,8 +30,6 @@ export interface IRetencionData {
   tipoRetencionId: number
   descripcionTipoRetencion: string
   conceptoPago: string
-  tipoPersonaId: string
-  descripcionTipoPersona: string
   baseImponible: number
   porRetencion: number
   montoRetencion: number
@@ -41,4 +39,5 @@ export interface IRetencionData {
   fechaFin: null
   fechaFinString: string
   fechaFinObject: null
+  codigo: string
 }

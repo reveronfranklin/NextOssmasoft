@@ -392,6 +392,7 @@ const TableServerSideRhRelacionCargo = () => {
           onSortModelChange={handleSortModel}
           onPageChange={handlePageChange}
           onCellEditCommit={row => handleOnCellEditCommit(row)}
+
           //onPageChange={newPage => setPage(newPage)}
           components={{ Toolbar: ServerSideToolbar }}
           onPageSizeChange={newPageSize => setPageSize(newPageSize)}

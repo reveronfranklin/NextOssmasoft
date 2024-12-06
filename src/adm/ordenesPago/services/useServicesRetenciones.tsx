@@ -10,9 +10,9 @@ import { ICreateRetencion, IResponseCreateRetencion } from '../interfaces/retenc
 import { IUpdateRetencion, IResponseUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
 import { IDeleteRetencion, IResponseDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
 
-interface IfilterByOrdenPago {
-  codigoOrdenPago: number
-}
+// interface IfilterByOrdenPago {
+//   codigoOrdenPago: number
+// }
 
 const useServicesRetencionesOp = () => {
   const [error, setError] = useState<string>('')
@@ -20,10 +20,10 @@ const useServicesRetencionesOp = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getRetenciones = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+  const getRetenciones = useCallback(async (): Promise<any> => {
     try {
       setLoading(true)
-      const responseGetOrdenes = await ossmmasofApi.post<any>(UrlServices.GETADMRETENCIONES, filters)
+      const responseGetOrdenes = await ossmmasofApi.get<any>(UrlServices.GETADMRETENCIONES)
 
       if (responseGetOrdenes.data.isValid) {
         return responseGetOrdenes.data

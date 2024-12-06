@@ -1,29 +1,32 @@
 import Box from '@mui/material/Box'
 import { Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
+import FormatNumber from 'src/utilities/format-numbers'
 
-function ColumnsDataGridRetenciones() {
+function ColumnsDataGridBeneficioOp() {
   return [
     {
       flex: 1,
-      headerName: 'concepto',
-      field: 'conceptoPago',
+      headerName: 'proveedor',
+      field: 'nombreProveedor',
+      editable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.conceptoPago === '' ? 'NO DISPONIBLE' : params.row.conceptoPago}
+          {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
         </Typography>
       )
     },
     {
       flex: 1,
-      headerName: 'description',
-      field: 'descripcionTipoRetencion',
+      headerName: 'monto',
+      field: 'monto',
+      editable: true,
       renderCell: (params: GridRenderCellParams) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                {params.row.descripcionTipoRetencion === '' ? 'NO DISPONIBLE' : params.row.descripcionTipoRetencion}
+                {params.row.monto === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
               </Typography>
             </Box>
           </Box>
@@ -31,13 +34,13 @@ function ColumnsDataGridRetenciones() {
       }
     },
     {
-      flex: 0,
-      headerName: '%',
-      field: 'porRetencion',
-      editable: true,
+      flex: 1,
+      headerName: 'monto Pagado',
+      field: 'montoPagado',
+      editable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.porRetencion === 0 ? 0 : params.row.porRetencion}
+          {params.row.montoPagado === 0 ? 0 : FormatNumber(params.row.montoPagado)}
         </Typography>
       )
     }
@@ -45,4 +48,4 @@ function ColumnsDataGridRetenciones() {
 }
 
 
-export default ColumnsDataGridRetenciones
+export default ColumnsDataGridBeneficioOp

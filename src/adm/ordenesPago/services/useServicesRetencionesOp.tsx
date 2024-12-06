@@ -14,7 +14,16 @@ interface IfilterByOrdenPago {
   codigoOrdenPago: number
 }
 
-const useServicesRetencionesOp = () => {
+const useServicesRetencionesOp = (): {
+  error: string,
+  message: string,
+  loading: boolean,
+  presupuestoSeleccionado: any,
+  getRetencionesOpByOrdenPago: (filters: IfilterByOrdenPago) => Promise<any>,
+  createRetencionOp: (filters: ICreateRetencionOp) => Promise<any>,
+  updateRetencionOp: (filters: IUpdateRetencionOp) => Promise<any>,
+  deleteRetencionOp: (filters: IDeleteRetencionOp) => Promise<any>
+} => {
   const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)

@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
+import Spinner from 'src/@core/components/spinner'
+import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetencionesOp'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import { useServicesRetenciones } from '../../services/index'
-import { setRetencionSeleccionado } from 'src/store/apps/ordenPago'
+import { useServicesRetencionesOp } from '../../services/index'
+import { setIsCollapseRetenciones, setRetencionOpSeleccionado } from 'src/store/apps/ordenPago'
 import { useDispatch } from 'react-redux'
 import { Retencion } from '../../interfaces/responseRetenciones.interfaces'
-import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetenciones'
-import Spinner from 'src/@core/components/spinner'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 400,
 }))
+
+interface IfilterByOrdenPago {
+  codigoOrdenPago: number
+}
 
 const DataGridComponent = () => {
   const [pageNumber, setPage] = useState<number>(0)
@@ -20,13 +26,18 @@ const DataGridComponent = () => {
 
   const qc: QueryClient = useQueryClient()
   const dispatch = useDispatch()
-  const { getRetenciones } = useServicesRetenciones()
+  const { getRetencionesOpByOrdenPago } = useServicesRetencionesOp()
+
+  const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
+
+  const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
+  const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
-    queryKey: ['retencionesTable', pageSize, pageNumber, searchText],
-    queryFn: () => getRetenciones(),
+    queryKey: ['retencionesOpTable', pageSize, pageNumber, searchText],
+    queryFn: () => getRetencionesOpByOrdenPago(filter),
     initialData: () => {
-      return qc.getQueryData(['retencionesTable', pageSize, pageNumber, searchText])
+      return qc.getQueryData(['retencionesOpTable', pageSize, pageNumber, searchText])
     },
     staleTime: 1000 * 60,
     retry: 3,
@@ -46,11 +57,8 @@ const DataGridComponent = () => {
 
   const handleDoubleClick = (data: { row: Retencion }) => {
     const { row } = data
-
-    // dispatch(setIsCollapseRetenciones(true))
-    dispatch(setRetencionSeleccionado(row))
-
-    // dispatch(setIsOpenDialogListRetenciones(false))
+    dispatch(setIsCollapseRetenciones(true))
+    dispatch(setRetencionOpSeleccionado(row))
   }
 
   return (
@@ -61,7 +69,7 @@ const DataGridComponent = () => {
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoRetencion}
+              getRowId={(row) => row.codigoRetencionOp}
               rows={rows}
               rowCount={rowCount}
               columns={ColumnsDataGrid() as any}
@@ -74,6 +82,20 @@ const DataGridComponent = () => {
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
               onRowDoubleClick={row => handleDoubleClick(row)}
+
+              // components={{ Toolbar: ServerSideToolbar }}
+              // componentsProps={{
+              //   baseButton: {
+              //     variant: 'outlined'
+              //   },
+              //   toolbar: {
+              //     printOptions: { disableToolbarButton: true },
+              //     value: buffer,
+              //     clearSearch: () => handleSearch(''),
+              //     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
+              //     sx: { paddingLeft: 0, paddingRight: 0 }
+              //   }
+              // }}
             />
           </StyledDataGridContainer>
         )
