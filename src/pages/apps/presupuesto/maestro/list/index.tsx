@@ -128,6 +128,7 @@ const PresupuestoList = () => {
 
       const responseAll = await ossmmasofApi.post<any>('/ReportPreResumenSaldo/GeneratePdf', filter)
       const {data} = responseAll.data
+
       await downloadReportByName(data)
     } catch (e: any) {
       console.error(e)

@@ -7,7 +7,6 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
-import dayjs from 'dayjs'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -55,6 +54,8 @@ import DialogPreAsignacionesDetalleInfo from '../views/DialogPreAsignacionesDeta
 import { ReactDatePickerProps } from 'react-datepicker'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+
+import FormatNumber from 'src/utilities/format-numbers'
 
 /*interface StatusObj {
   [key: number]: {
@@ -130,7 +131,7 @@ const TableServerSide = () => {
 
   const columns: any = [
     {
-      flex: 0.05,
+      flex: 0,
       minWidth: 80,
       sortable: false,
       field: 'actions',
@@ -146,18 +147,22 @@ const TableServerSide = () => {
       )
     },
     {
+      flex: 0,
       with: 100,
       headerName: 'Fecha',
       field: 'Fecha',
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {dayjs(params.row.fechaDesembolsoString).format('DD/MM/YYYY')}
-        </Typography>
-      )
-    },
+      renderCell: (params: GridRenderCellParams) => {
+        const fecha = params.row.fechaDesembolsoString
 
+        return (
+          <Typography variant='body2' sx={{ color: 'text.primary' }}>
+            { fecha }
+          </Typography>
+        );
+      }
+    },
     {
-      flex: 0.25,
+      flex: 1,
       minWidth: 290,
       field: 'notas',
       headerName: 'Notas',
@@ -180,13 +185,13 @@ const TableServerSide = () => {
       }
     },
     {
-      flex: 0.075,
+      flex: 0,
       minWidth: 15,
       headerName: 'Monto',
       field: 'monto',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.monto}
+          {FormatNumber(params.row.monto)}
         </Typography>
       )
     }
