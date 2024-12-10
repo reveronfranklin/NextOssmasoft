@@ -61,6 +61,7 @@ import { IPreAsignacionesDeleteDto } from 'src/interfaces/Presupuesto/PreAsignac
 import TableServerSide from 'src/presupuesto/asignacionesDetalle/components/TableServerSide'
 import { IPreAsignacionesUpdateDto } from 'src/interfaces/Presupuesto/PreAsignaciones/PreAsignacionesUpdateDto'
 import { NumericFormat } from 'react-number-format'
+import { setVerPreAsignacionesActive } from 'src/store/apps/pre-asignaciones'
 
 interface FormInputs {
   codigoAsignacion: number
@@ -180,21 +181,23 @@ const FormPreAsignacionesUpdateAsync = ({
       fides: data.fides
     }
 
-    console.log('updateConceptoAcumulado', updateAsignacion)
-    const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/Update', updateAsignacion)
+    try {
+      const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/Update', updateAsignacion)
 
-    if (responseAll.data.isValid) {
-      dispatch(setRhConceptosAcumuladoSeleccionado(responseAll.data.data))
-      dispatch(setVerRhConceptosAcumuladoActive(false))
+      if (responseAll.data.isValid) {
+        dispatch(setRhConceptosAcumuladoSeleccionado(responseAll.data.data))
+        toast.success('Form Submitted')
+        setTimeout(() => {
+          dispatch(setVerPreAsignacionesActive(false))
+        }, 2000)
+      }
+
+      setErrorMessage(responseAll.data.message)
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setLoading(false)
     }
-
-    setErrorMessage(responseAll.data.message)
-
-    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-    //await sleep(2000)
-
-    setLoading(false)
-    toast.success('Form Submitted')
   }
 
   const handlePresupuestos = async (e: any, value: any) => {
@@ -381,207 +384,196 @@ const FormPreAsignacionesUpdateAsync = ({
                 renderInput={params => <TextField {...params} label='Puc' />}
               />
             </Grid>
-            {/* Presupuestado*/}
             <Grid item sm={2} xs={12}>
             <FormControl fullWidth>
-                                  <Controller
-                                      name='presupuestado'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Presupuestado"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerPresupuestado(value)
-                                              }}
-                                              placeholder='Presupuestado'
-                                              error={Boolean(errors.presupuestado)}
-                                              aria-describedby='validation-async-presupuestado'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.presupuestado && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-presupuestado'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
-              </FormControl>
+              <Controller
+                name='presupuestado'
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { value } }) => (
+                  <NumericFormat
+                    value={value}
+                    customInput={TextField}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label="Presupuestado"
+                    onValueChange={(values: any) => {
+                      const { value } = values
+                      handlerPresupuestado(value)
+                    }}
+                    placeholder='Presupuestado'
+                    error={Boolean(errors.presupuestado)}
+                    aria-describedby='validation-async-presupuestado'
+                    inputProps={{
+                      type: 'text',
+                    }}
+                  />
+                )}
+              />
+              { errors.presupuestado && (
+                <FormHelperText sx={{ color: 'error.main' }} id='validation-async-presupuestado'>
+                  This field is required
+                </FormHelperText>
+              )}
+            </FormControl>
             </Grid>
-            {/* Ordinario*/}
             <Grid item sm={2} xs={12}>
             <FormControl fullWidth>
-                                  <Controller
-                                      name='ordinario'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Ordinario"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerOrdinario(value)
-                                              }}
-                                              placeholder='ordinario'
-                                              error={Boolean(errors.ordinario)}
-                                              aria-describedby='validation-async-ordinario'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.ordinario && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-ordinario'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
-              </FormControl>
+              <Controller
+                name='ordinario'
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                render={({ field: { value } }) => (
+                  <NumericFormat
+                    value={value}
+                    customInput={TextField}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label="Ordinario"
+                    onValueChange={(values: any) => {
+                      const { value } = values
+                      handlerOrdinario(value)
+                    }}
+                    placeholder='ordinario'
+                    error={Boolean(errors.ordinario)}
+                    aria-describedby='validation-async-ordinario'
+                    inputProps={{
+                      type: 'text',
+                    }}
+                  />
+                )}
+              />
+                {errors.ordinario && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-ordinario'>
+                        This field is required
+                    </FormHelperText>
+                )}
+            </FormControl>
             </Grid>
-            {/* coordinado*/}
             <Grid item sm={2} xs={12}>
             <FormControl fullWidth>
-                                  <Controller
-                                      name='coordinado'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Coordinado"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerCoordinado(value)
-                                              }}
-                                              placeholder='Coordinado'
-                                              error={Boolean(errors.coordinado)}
-                                              aria-describedby='validation-async-coordinado'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.coordinado && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-coordinado'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
-              </FormControl>
+              <Controller
+                  name='coordinado'
+                  control={control}
+                  rules={{
+                    required: false,
+                  }}
+                  render={({ field: { value } }) => (
+                    <NumericFormat
+                      value={value}
+                      customInput={TextField}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                      label="Coordinado"
+                      onValueChange={(values: any) => {
+                        const { value } = values
+                        handlerCoordinado(value)
+                      }}
+                      placeholder='Coordinado'
+                      error={Boolean(errors.coordinado)}
+                      aria-describedby='validation-async-coordinado'
+                      inputProps={{
+                        type: 'text',
+                      }}
+                    />
+                  )}
+                />
+                {errors.coordinado && (
+                    <FormHelperText sx={{ color: 'error.main' }} id='validation-async-coordinado'>
+                      This field is required
+                    </FormHelperText>
+                )}
+            </FormControl>
             </Grid>
-            {/* LAEE*/}
             <Grid item sm={2} xs={12}>
             <FormControl fullWidth>
-                                  <Controller
-                                      name='laee'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Laee"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerLaee(value)
-                                              }}
-                                              placeholder='Laee'
-                                              error={Boolean(errors.laee)}
-                                              aria-describedby='validation-async-laee'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.laee && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-laee'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
-              </FormControl>
+              <Controller
+                name='laee'
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                  render={({ field: { value } }) => (
+                  <NumericFormat
+                    value={value}
+                    customInput={TextField}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label="Laee"
+                    onValueChange={(values: any) => {
+                      const { value } = values
+                      handlerLaee(value)
+                    }}
+                    placeholder='Laee'
+                    error={Boolean(errors.laee)}
+                    aria-describedby='validation-async-laee'
+                    inputProps={{
+                      type: 'text',
+                    }}
+                  />
+                  )}
+                />
+              {errors.laee && (
+                <FormHelperText sx={{ color: 'error.main' }} id='validation-async-laee'>
+                    This field is required
+                </FormHelperText>
+              )}
+            </FormControl>
             </Grid>
-            {/* fides*/}
             <Grid item sm={2} xs={12}>
             <FormControl fullWidth>
-                                  <Controller
-                                      name='fides'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Fides"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerFides(value)
-                                              }}
-                                              placeholder='Fides'
-                                              error={Boolean(errors.laee)}
-                                              aria-describedby='validation-async-fides'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.fides && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-fides'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
-              </FormControl>
+              <Controller
+                name='fides'
+                control={control}
+                rules={{
+                  required: false,
+                }}
+                  render={({ field: { value } }) => (
+                    <NumericFormat
+                      value={value}
+                      customInput={TextField}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                      label="Fides"
+                      onValueChange={(values: any) => {
+                        const { value } = values
+                        handlerFides(value)
+                      }}
+                      placeholder='Fides'
+                      error={Boolean(errors.laee)}
+                      aria-describedby='validation-async-fides'
+                      inputProps={{
+                        type: 'text',
+                      }}
+                    />
+                  )}
+                />
+              {errors.fides && (
+                <FormHelperText sx={{ color: 'error.main' }} id='validation-async-fides'>
+                  This field is required
+                </FormHelperText>
+              )}
+            </FormControl>
             </Grid>
-
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
                 {loading ? (

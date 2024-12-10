@@ -96,8 +96,8 @@ const DialogPreAsignacionesInfo = ({ popperPlacement }: { popperPlacement: React
         laee:0,
         fides:0,
         total:0,
-       totalDesembolso:0,
-       searchText:''
+        totalDesembolso:0,
+        searchText:''
 
       }
       console.log(defaultDateString,defaultDate)
