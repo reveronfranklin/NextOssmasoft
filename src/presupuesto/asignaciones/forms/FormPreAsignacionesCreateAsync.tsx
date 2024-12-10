@@ -183,22 +183,23 @@ const FormPreAsignacionesCreateAsync = ({
       fides: data.fides
     }
 
-    console.log('updateConceptoAcumulado', updateAsignacion)
-    const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/Create', updateAsignacion)
-    if (responseAll.data.isValid) {
-      console.log('registro agregado', responseAll.data.data)
+    try {
+      const responseAll = await ossmmasofApi.post<any>('/PreAsignaciones/Create', updateAsignacion)
 
-      const copyAsignaciones = [...listPreAsignacionesCreate]
-      copyAsignaciones.push(responseAll.data.data)
-      dispatch(setListPreAsignacionesCreate(copyAsignaciones))
+      if (responseAll.data.isValid) {
+        const copyAsignaciones = [...listPreAsignacionesCreate]
+        copyAsignaciones.push(responseAll.data.data)
+        dispatch(setListPreAsignacionesCreate(copyAsignaciones))
+        toast.success('Actualizado')
+      }
+
+      setErrorMessage(responseAll.data.message)
+
+    } catch(e: any) {
+      console.error(e)
+    } finally {
+      setLoading(false)
     }
-    setErrorMessage(responseAll.data.message)
-
-    //const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-    //await sleep(2000)
-
-    setLoading(false)
-    toast.success('Actualizado')
   }
 
   const handlePresupuestos = async (e: any, value: any) => {
@@ -367,7 +368,6 @@ const FormPreAsignacionesCreateAsync = ({
                                       control={control}
                                       rules={{
                                           required: false,
-                                          min: 0.001,
                                       }}
                                       render={({ field: { value } }) => (
                                           <NumericFormat
@@ -407,7 +407,6 @@ const FormPreAsignacionesCreateAsync = ({
                                       control={control}
                                       rules={{
                                           required: false,
-                                          min: 0.001,
                                       }}
                                       render={({ field: { value } }) => (
                                           <NumericFormat
@@ -447,7 +446,6 @@ const FormPreAsignacionesCreateAsync = ({
                                       control={control}
                                       rules={{
                                           required: false,
-                                          min: 0.001,
                                       }}
                                       render={({ field: { value } }) => (
                                           <NumericFormat
@@ -487,7 +485,6 @@ const FormPreAsignacionesCreateAsync = ({
                                       control={control}
                                       rules={{
                                           required: false,
-                                          min: 0.001,
                                       }}
                                       render={({ field: { value } }) => (
                                           <NumericFormat
@@ -527,7 +524,6 @@ const FormPreAsignacionesCreateAsync = ({
                                       control={control}
                                       rules={{
                                           required: false,
-                                          min: 0.001,
                                       }}
                                       render={({ field: { value } }) => (
                                           <NumericFormat
