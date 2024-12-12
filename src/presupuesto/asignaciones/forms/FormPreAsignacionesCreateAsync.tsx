@@ -138,8 +138,6 @@ const FormPreAsignacionesCreateAsync = ({
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-
   const handlerPresupuestado = (value: string) => {
     const valueInt = value === '' ? 0 : parseFloat(value)
 
@@ -168,6 +166,18 @@ const FormPreAsignacionesCreateAsync = ({
     setValue('fides', valueInt)
   }
 
+  const resetValue = () => {
+    const denominacionPuc: IListPreMtrDenominacionPuc = {
+      id: 0,
+      codigoPuc: 0,
+      codigoPucConcat: '',
+      denominacionPuc: '',
+      dercripcion: ''
+    }
+
+    dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc))
+  }
+
   const onSubmit = async (data: FormInputs) => {
     setLoading(true)
     setErrorMessage('')
@@ -190,6 +200,19 @@ const FormPreAsignacionesCreateAsync = ({
         const copyAsignaciones = [...listPreAsignacionesCreate]
         copyAsignaciones.push(responseAll.data.data)
         dispatch(setListPreAsignacionesCreate(copyAsignaciones))
+
+        resetValue()
+
+        // const denominacionPuc: IListPreMtrDenominacionPuc = {
+        //   id: 0,
+        //   codigoPuc: 0,
+        //   codigoPucConcat: '',
+        //   denominacionPuc: '',
+        //   dercripcion: ''
+        // }
+
+        // dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc))
+
         toast.success('Actualizado')
       }
 
@@ -232,15 +255,17 @@ const FormPreAsignacionesCreateAsync = ({
       setValue('codigoPuc', value.codigoPuc)
       setPuc(value)
     } else {
-      const denominacionPuc: IListPreMtrDenominacionPuc = {
-        id: 0,
-        codigoPuc: 0,
-        codigoPucConcat: '',
-        denominacionPuc: '',
-        dercripcion: ''
-      }
+      resetValue()
 
-      dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc))
+      // const denominacionPuc: IListPreMtrDenominacionPuc = {
+      //   id: 0,
+      //   codigoPuc: 0,
+      //   codigoPucConcat: '',
+      //   denominacionPuc: '',
+      //   dercripcion: ''
+      // }
+
+      // dispatch(setPreMtrDenominacionPucSeleccionado(denominacionPuc))
     }
   }
 
