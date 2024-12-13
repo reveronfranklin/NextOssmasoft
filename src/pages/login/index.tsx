@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
+import { useState, useEffect, ReactNode, MouseEvent } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -118,6 +118,7 @@ interface FormData {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [tituloMenu, setTituloMenu] = useState('')
 
   // ** Hooks
   const auth = useAuth()
@@ -152,6 +153,15 @@ const LoginPage = () => {
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
+
+  useEffect(() => {
+    const tituloGuardado = localStorage.getItem('tituloMenu')
+    if (tituloGuardado) {
+      setTituloMenu(tituloGuardado)
+    } else {
+      setTituloMenu(themeConfig.templateName)
+    }
+  }, [])
 
   return (
     <Box className='content-right'>
@@ -188,10 +198,10 @@ const LoginPage = () => {
                 justifyContent: 'center'
               }}
             >
-               <img
+              <img
                   width={102}
                   height={58}
-                  alt='Felicitaciones Chacao' src='/images/favicon.png' />
+                  alt={tituloMenu} src='/images/favicon.png' />
 {/*               <svg
                 width={35}
                 height={29}

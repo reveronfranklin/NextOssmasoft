@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 // ** Next Import
 import Link from 'next/link'
 
@@ -54,6 +56,8 @@ const StyledLink = styled(Link)({
 })
 
 const VerticalNavHeader = (props: Props) => {
+  const [tituloMenu, setTituloMenu] = useState('')
+
   // ** Props
   const {
     hidden,
@@ -90,6 +94,15 @@ const VerticalNavHeader = (props: Props) => {
 
   const MenuUnlockedIcon = () => userMenuUnlockedIcon || <Icon icon='mdi:radiobox-blank' />
 
+  useEffect(() => {
+    const tituloGuardado = localStorage.getItem('tituloMenu')
+    if (tituloGuardado) {
+      setTituloMenu(tituloGuardado)
+    } else {
+      setTituloMenu(themeConfig.templateName)
+    }
+  }, [])
+
   return (
     <MenuHeaderWrapper className='nav-header' sx={{ pl: menuHeaderPaddingLeft() }}>
       {userNavMenuBranding ? (
@@ -99,9 +112,9 @@ const VerticalNavHeader = (props: Props) => {
           <img
         width={102}
         height={58}
-        alt='Felicitaciones Chacao' src='/images/favicon.png' />
+        alt={tituloMenu} src='/images/favicon.png' />
 
-       {/*    <svg
+        {/*    <svg
             width={30}
             height={25}
             version='1.1'
@@ -161,7 +174,7 @@ const VerticalNavHeader = (props: Props) => {
             </g>
           </svg> */}
           <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 3 }) }}>
-            {themeConfig.templateName}
+              {tituloMenu}
           </HeaderTitle>
         </StyledLink>
       )}

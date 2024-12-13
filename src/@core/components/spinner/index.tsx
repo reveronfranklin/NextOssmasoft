@@ -1,14 +1,23 @@
-// ** MUI Import
+import { useState, useEffect } from 'react'
+import themeConfig from 'src/configs/themeConfig'
 
+// ** MUI Import
 import Box, { BoxProps } from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 
-
-
 const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
+  const [tituloMenu, setTituloMenu] = useState('')
 
 // d='M30,21.3918362 C30,21.7535219 29.9019196,22.1084381 29.7162004,22.4188007 C29.1490236,23.366632 27.9208668,23.6752135 26.9730355,23.1080366 L26.9730355,23.1080366 L23.714971,21.1584295 C23.1114106,20.7972624 22.7419355,20.1455972 22.7419355,19.4422291 L22.7419355,19.4422291 L22.741,12.7425689 L15,17.1774194 L7.258,12.7425689 L7.25806452,19.4422291 C7.25806452,20.1455972 6.88858935,20.7972624 6.28502902,21.1584295 L3.0269645,23.1080366 C2.07913318,23.6752135 0.850976404,23.366632 0.283799571,22.4188007 C0.0980803893,22.1084381 2.0190442e-15,21.7535219 0,21.3918362 L0,3.58469444 L0.00548573643,3.43543209 L0.00548573643,3.43543209 L0,3.5715689 C3.0881846e-16,2.4669994 0.8954305,1.5715689 2,1.5715689 C2.36889529,1.5715689 2.73060353,1.67359571 3.04512412,1.86636639 L15,9.19354839 L26.9548759,1.86636639 C27.2693965,1.67359571 27.6311047,1.5715689 28,1.5715689 C29.1045695,1.5715689 30,2.4669994 30,3.5715689 L30,3.5715689 Z'
 
+  useEffect(() => {
+    const tituloGuardado = localStorage.getItem('tituloMenu')
+    if (tituloGuardado) {
+      setTituloMenu(tituloGuardado)
+    } else {
+      setTituloMenu(themeConfig.templateName)
+    }
+  }, [])
 
   return (
     <Box
@@ -24,7 +33,7 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
     <img
         width={102}
         height={58}
-        alt='Felicitaciones Chacao' src='/images/favicon.png' />
+        alt={tituloMenu} src='/images/favicon.png' />
         <CircularProgress disableShrink sx={{ mt: 6 }} />
     {/*   <svg
         width={82}
