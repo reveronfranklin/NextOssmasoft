@@ -15,8 +15,6 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
     const parsedUserData = userData ? JSON.parse(userData) : null
     const tituloGuardado = parsedUserData?.tituloMenu ?? null
 
-    console.log(tituloGuardado)
-
     if (tituloGuardado) {
       setTituloMenu(tituloGuardado)
     } else {
