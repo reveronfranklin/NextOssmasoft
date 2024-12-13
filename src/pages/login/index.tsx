@@ -155,7 +155,10 @@ const LoginPage = () => {
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 
   useEffect(() => {
-    const tituloGuardado = localStorage.getItem('tituloMenu')
+    const userData = localStorage.getItem('userData')
+    const parsedUserData = userData ? JSON.parse(userData) : null
+    const tituloGuardado = parsedUserData?.tituloMenu ?? null
+
     if (tituloGuardado) {
       setTituloMenu(tituloGuardado)
     } else {

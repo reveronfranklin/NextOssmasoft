@@ -95,7 +95,10 @@ const VerticalNavHeader = (props: Props) => {
   const MenuUnlockedIcon = () => userMenuUnlockedIcon || <Icon icon='mdi:radiobox-blank' />
 
   useEffect(() => {
-    const tituloGuardado = localStorage.getItem('tituloMenu')
+    const userData = localStorage.getItem('userData')
+    const parsedUserData = userData ? JSON.parse(userData) : null
+    const tituloGuardado = parsedUserData?.tituloMenu ?? null
+
     if (tituloGuardado) {
       setTituloMenu(tituloGuardado)
     } else {
