@@ -252,7 +252,11 @@ const FormCreateRetencionesOp = () => {
             />
           </Grid>
           <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
-            <Box> {message && (<FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message}</FormHelperText>)}</Box>
+            {message && (
+              <Box>
+                <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message}</FormHelperText>
+              </Box>
+            )}
           </Grid>
         </Grid>
       </form>

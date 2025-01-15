@@ -10,6 +10,7 @@ const downloadReportByName = async (nameReport: string) => {
     const url = `${urlBase}/Files/GetPdfFiles/${nameReport}`
 
     const response = await fetch(url)
+
     const blob = await response.blob()
     const objectURL = URL.createObjectURL(blob)
     const newTab = window.open(objectURL, '_blank')
