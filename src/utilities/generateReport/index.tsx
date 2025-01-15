@@ -1,4 +1,7 @@
-const HandleReport = async (props: {filter: any, geReportUrl: (filter: any) => Promise<any>, downLoadReport: (url: string) => Promise<any>}): Promise<any> => {
+const HandleReport = async (props: {
+    filter: any,
+    geReportUrl: (filter: any) => Promise<any>,
+    downLoadReport: (url: string) => Promise<any> }): Promise<any> => {
     const { filter, geReportUrl, downLoadReport } = props
 
     if (!geReportUrl || !filter) {

@@ -9,6 +9,7 @@ import {
     setTypeOperation,
     setCompromisoSeleccionadoDetalle
 } from 'src/store/apps/ordenPago'
+import HandleReport from 'src/utilities/generateReport/download-report'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
@@ -17,6 +18,14 @@ function ColumnsDataGrid() {
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('update'))
+    }
+
+    const handleReportOrderPago = async (row: any) => {
+        try {
+            await HandleReport({ CodigoOrdenPago: row.codigoOrdenPago })
+        } catch (e: any) {
+            console.error(e)
+        }
     }
 
     return [
@@ -31,6 +40,14 @@ function ColumnsDataGrid() {
                     <Tooltip title='Editar'>
                         <IconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Reporte Orden de Pago">
+                        <IconButton
+                            size='small'
+                            onClick={() => handleReportOrderPago(row)}
+                        >
+                            <Icon icon='mdi:download' fontSize={20} />
                         </IconButton>
                     </Tooltip>
                 </Box>

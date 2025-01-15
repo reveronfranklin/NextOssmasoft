@@ -14,15 +14,16 @@ export enum UrlServices {
     UPDATERETENCIONESOP         = '/AdmRetencionesOp/Update',
     DELETERETENCIONESOP         = '/AdmRetencionesOp/Delete',
 
-    GETADMRETENCIONES    = '/AdmRetenciones/GetAll',
-    CREATEADMRETENCIONES = '/AdmRetenciones/Create',
-    UPDATEADMRETENCIONES = '/AdmRetenciones/Update',
-    DELETEADMRETENCIONES = '/AdmRetenciones/Delete',
+    GETADMRETENCIONES           = '/AdmRetenciones/GetAll',
+    CREATEADMRETENCIONES        = '/AdmRetenciones/Create',
+    UPDATEADMRETENCIONES        = '/AdmRetenciones/Update',
+    DELETEADMRETENCIONES        = '/AdmRetenciones/Delete',
 
-    GETBENEFICIARIO         = '/AdmBeneficiariosOp/GetByOrdenPago',
-    CREATEBENEFICIARIO      = '/AdmBeneficiariosOp/Update',
-    UPDATEBENEFICIARIO      = '/AdmBeneficiariosOp/Create',
-    DELETEBENEFICIARIO      = '/AdmBeneficiariosOp/Delete',
-    UPDATEBENEFICIARIOMONTO = '/AdmBeneficiariosOp/UpdateMonto',
+    GETBENEFICIARIO             = '/AdmBeneficiariosOp/GetByOrdenPago',
+    CREATEBENEFICIARIO          = '/AdmBeneficiariosOp/Update',
+    UPDATEBENEFICIARIO          = '/AdmBeneficiariosOp/Create',
+    DELETEBENEFICIARIO          = '/AdmBeneficiariosOp/Delete',
+    UPDATEBENEFICIARIOMONTO     = '/AdmBeneficiariosOp/UpdateMonto',
 
+    GETREPORTBYORDENPAGO        = '/api-v1.0/payment-orders/pdf/report'
 }
