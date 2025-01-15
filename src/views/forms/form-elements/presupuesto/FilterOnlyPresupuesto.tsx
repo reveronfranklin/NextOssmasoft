@@ -67,7 +67,7 @@ const FilterOnlyPresupuesto = () => {
                 <div>
                   <Autocomplete
                     sx={{ width: 450 }}
-                    options={listpresupuestoDto.filter(option => option !== undefined)}
+                    options={listpresupuestoDto && listpresupuestoDto.filter(option => option !== undefined)}
                     defaultValue={listpresupuestoDtoSeleccionado}
                     id='autocomplete-MaestroPresupuesto'
                     isOptionEqualToValue={(option, value) => option.codigoPresupuesto === value.codigoPresupuesto}

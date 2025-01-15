@@ -28,6 +28,7 @@ export interface solicitudCompromiso {
     denominacionSolicitante: string
     descripcionTipoSolicitud: string
     searchText: string
+    ordenServicio: boolean
 }
 
 export interface FechaSolicitud {

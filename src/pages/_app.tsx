@@ -132,10 +132,10 @@ const App = (props: ExtendedAppProps) => {
       <Provider store={store}>
         <CacheProvider value={emotionCache}>
           <Head>
-            <title>{`${themeConfig.templateName}-Ossmmasoft`}</title>
+            <title>{`Ossmmasoft`}</title>
             <meta
               name='description'
-              content={`${themeConfig.templateName}-Ossmmasoft`}
+              content={`Ossmmasoft`}
             />
             <meta name='keywords' content='Ossmmasoft' />
             <meta name='viewport' content='initial-scale=1, width=device-width' />

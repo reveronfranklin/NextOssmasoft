@@ -1,30 +1,24 @@
 import { Box, Card, CardActions, CardHeader, Grid, IconButton, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
 import { useTheme } from '@mui/material/styles'
-
-//import { usePresupuesto } from 'src/hooks/usePresupuesto';
-
 import { useDispatch } from 'react-redux'
 import { IPresupuesto } from 'src/interfaces/Presupuesto/i-presupuesto'
 import { setOperacionCrudPresupuesto, setPresupuesto, setVerPresupuestoActive } from 'src/store/apps/presupuesto'
-
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import Spinner from 'src/@core/components/spinner'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import dayjs from 'dayjs'
-import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { monthByIndex } from 'src/utilities/ge-date-by-object'
-import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import Icon from 'src/@core/components/icon'
+import Spinner from 'src/@core/components/spinner'
+import dayjs from 'dayjs'
+import DialogPrePresupuestoInfo from 'src/presupuesto/maestro/views/DialogPrePresupuestoInfo'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
+
+import downloadReportByName from 'src/utilities/generateReport/download-report-by-name'
 
 const PresupuestoList = () => {
   const theme = useTheme()
@@ -46,15 +40,14 @@ const PresupuestoList = () => {
   }
   const defaultDateString = fechaActual.toISOString()
 
-  console.log(monthByIndex(currentMonth))
   interface CellType {
     row: IPresupuesto
   }
 
   const columns = [
     {
-      flex: 0.02,
-      minWidth: 80,
+      flex: 0,
+      minWidth: 40,
       sortable: false,
       field: 'actions',
       headerName: 'Actions',
@@ -62,29 +55,31 @@ const PresupuestoList = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Reporte Resumen'>
             <IconButton size='small' onClick={() => reportView(row)}>
-              <Icon icon='mdi:eye-outline' fontSize={20} />
+              <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
         </Box>
       )
     },
     {
+      flex: 0,
+      width: 130,
       field: 'codigoPresupuesto',
       headerName: 'Codigo',
-      width: 130
     },
     {
+      flex: 1,
       field: 'denominacion',
       width: 430
     },
-
     {
-      headerName: '',
+      flex: 0,
+      width: 100,
+      headerName: 'AÑo',
       field: 'ano',
-      width: 100
     },
-
     {
+      flex: 0,
       with: 100,
       headerName: 'Desde',
       field: 'fechaDesde',
@@ -95,6 +90,7 @@ const PresupuestoList = () => {
       )
     },
     {
+      flex: 0,
       with: 100,
       headerName: 'Hasta',
       field: 'fechaHasta',
@@ -113,9 +109,11 @@ const PresupuestoList = () => {
     dispatch(setOperacionCrudPresupuesto(2))
     dispatch(setVerPresupuestoActive(true))
   }
+
   const handleClick = (row: any) => {
     dispatch(setPresupuesto(row))
   }
+
   const handleDoubleClick = (row: any) => {
     handleView(row.row)
   }
@@ -123,15 +121,20 @@ const PresupuestoList = () => {
   const reportView = async (row: IPresupuesto) => {
     setLoading(true)
 
-    const filter = {
-      codigoPresupuesto: row.codigoPresupuesto
-    }
-    const responseAll = await ossmmasofApi.post<any>('/ReportPreResumenSaldo/GeneratePdf', filter)
-    console.log(responseAll)
+    try {
+      const filter = {
+        codigoPresupuesto: row.codigoPresupuesto
+      }
 
-    dispatch(setReportName(responseAll.data))
-    dispatch(setVerReportViewActive(true))
-    setLoading(false)
+      const responseAll = await ossmmasofApi.post<any>('/ReportPreResumenSaldo/GeneratePdf', filter)
+      const {data} = responseAll.data
+
+      await downloadReportByName(data)
+    } catch (e: any) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleAdd = () => {
@@ -167,7 +170,6 @@ const PresupuestoList = () => {
 
   const dispatch = useDispatch()
 
-  // {presupuestos,isLoading,isError }= usePresupuesto('/PrePresupuesto/GetAll');
   const { verPresupuestoActive = false } = useSelector((state: RootState) => state.presupuesto)
   const [loading, setLoading] = useState(false)
 
@@ -191,7 +193,6 @@ const PresupuestoList = () => {
     <Grid item xs={12}>
       <Card>
         <CardHeader title='Maestro de Presupuesto' />
-
         <CardActions>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title='Agregar'>
@@ -201,8 +202,7 @@ const PresupuestoList = () => {
             </Tooltip>
           </Box>
         </CardActions>
-
-        {loading ? (
+        { loading ? (
           <Spinner sx={{ height: '100%' }} />
         ) : (
           <Box sx={{ height: 500 }}>

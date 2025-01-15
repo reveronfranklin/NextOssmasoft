@@ -21,7 +21,7 @@ function ColumnsDataGrid(props: any) {
         dispatch(setOperacionCrudAdmSolCompromiso(CrudOperation.EDIT))
     }
 
-    const handleReport = async (row: any) => {
+    const handleReportSolicitudCompromiso = async (row: any) => {
         const payload = {
             filter: {
                 PageSize: 0,
@@ -30,8 +30,22 @@ function ColumnsDataGrid(props: any) {
                 codigoPresupuesto: row.codigoPresupuesto,
                 SearchText: ''
             },
-            fetchSolicitudReportData: props.fetchSolicitudReportData,
-            downloadReportByName: props.downloadReportByName
+            geReportUrl: props.fetchNameReportSolicitudCompromiso,
+            downLoadReport: props.downloadReportByName
+        }
+
+        if (payload) {
+            await HandleReport(payload)
+        }
+    }
+
+    const handleReportOrderServicio = async (row: any) => {
+        const payload = {
+            filter: {
+                codigoSolModificacion: row.codigoSolicitud
+            },
+            geReportUrl: props.fetchNameReportOrderServicio,
+            downLoadReport: props.downloadReportByName
         }
 
         if (payload) {
@@ -49,15 +63,32 @@ function ColumnsDataGrid(props: any) {
             renderCell: ({ row }: CellType) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Editar'>
-                        <IconButton size='small' onClick={() => handleEdit(row)}>
+                        <IconButton
+                            size='small'
+                            onClick={() => handleEdit(row)}
+                        >
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Report">
-                        <IconButton size='small' onClick={() => handleReport(row)}>
+                    <Tooltip title="Solicitud de Compromiso">
+                        <IconButton
+                            size='small'
+                            onClick={() => handleReportSolicitudCompromiso(row)}
+                        >
                             <Icon icon='mdi:download' fontSize={20} />
                         </IconButton>
                     </Tooltip>
+                    {
+                        row.ordenServicio &&
+                        <Tooltip title="Orden de Servicio">
+                            <IconButton
+                                size='small'
+                                onClick={() => handleReportOrderServicio(row)}
+                            >
+                                <Icon icon='mdi:download' fontSize={20} />
+                            </IconButton>
+                        </Tooltip>
+                    }
                 </Box>
             )
         },

@@ -1,4 +1,5 @@
 const isProduction = process.env.NODE_ENV === 'production' || false
+const develop_url = process.env.NEXT_PUBLIC_BASE_URL_API_NET
 
 const commonSetting = {
   loginEndpoint1      : '/jwt/login',
@@ -17,9 +18,9 @@ const productionSetting = {
 
 const developSetting = {
   ...commonSetting,
-  meEndpoint          : 'http://localhost:5000/api/SisUsuarios/RefreshToken',
-  loginEndpoint       : 'http://localhost:5000/api/SisUsuarios/Login',
-  refreshEndPoint     : 'http://localhost:5000/api/SisUsuarios/RefreshToken',
+  meEndpoint          : `${develop_url}/SisUsuarios/RefreshToken`,
+  loginEndpoint       : `${develop_url}/SisUsuarios/Login`,
+  refreshEndPoint     : `${develop_url}/SisUsuarios/RefreshToken`,
 }
 
 const authConfig = !isProduction ? developSetting : productionSetting

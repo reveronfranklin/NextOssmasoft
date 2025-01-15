@@ -29,13 +29,15 @@ const DataGridComponent = () => {
     const {
         fetchTableData,
         presupuestoSeleccionado,
-        fetchSolicitudReportData,
         downloadReportByName,
-        generateReport
+        generateReport,
+        fetchNameReportSolicitudCompromiso,
+        fetchNameReportOrderServicio
     } = useServices()
 
     const actions = {
-        fetchSolicitudReportData,
+        fetchNameReportOrderServicio,
+        fetchNameReportSolicitudCompromiso,
         downloadReportByName
     }
 
