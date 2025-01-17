@@ -41,11 +41,12 @@ export interface IFechaDto {
     day: string | number;
 }
 
-const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any, titleButton?: string, message?: string, loading?: boolean }) => {
+const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any, onViewerPdf?: any, titleButton?: string, message?: string, loading?: boolean }) => {
     const {
         orden,
         onFormData,
         titleButton,
+        onViewerPdf,
         message,
         loading,
         onFormClear
@@ -436,6 +437,13 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         onClick={onFormClear}
                     >
                         <CleaningServices /> Limpiar
+                    </Button>
+                    <Button
+                        color='primary'
+                        size='small'
+                        onClick={onViewerPdf}
+                    >
+                        ver PDF
                     </Button>
                     <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                 </Box>
