@@ -15,6 +15,7 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogConfirmButtons: false,
         isOpenDialogListRetenciones: false,
         isOpenDialogListPucOrdenPagoEdit: false,
+        isOpenViewerPdf: false,
         compromisoSeleccionadoListaDetalle: {} as Orden,
         retencionOpSeleccionado: {} as Retencion,
         retencionSeleccionado: {} as IRetencionData,
@@ -33,6 +34,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setIsOpenDialogListPucOrdenPagoEdit: (state, action) => {
             state.isOpenDialogListPucOrdenPagoEdit = action.payload
+        },
+        setIsOpenViewerPdf: (state, action) => {
+            state.isOpenViewerPdf = action.payload
         },
         setIsOpenDialogConfirmButtons: (state, action) => {
             state.isOpenDialogConfirmButtons = action.payload
@@ -74,6 +78,7 @@ export const {
     setIsOpenDialogListPucOrdenPagoEdit,
     setIsOpenDialogConfirmButtons,
     setIsOpenDialogListRetenciones,
+    setIsOpenViewerPdf,
     setTypeOperation,
     resetCompromisoSeleccionadoDetalle,
     setPucSeleccionado,
