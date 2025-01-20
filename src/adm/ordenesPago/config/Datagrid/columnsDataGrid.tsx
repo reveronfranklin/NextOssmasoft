@@ -1,15 +1,10 @@
 import { useDispatch } from 'react-redux'
 import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
+import { setIsOpenDialogOrdenPagoDetalle, setIsOpenViewerPdf, setTypeOperation, setCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-import { } from "src/store/apps/adm"
-import {
-    setIsOpenDialogOrdenPagoDetalle,
-    setTypeOperation,
-    setCompromisoSeleccionadoDetalle
-} from 'src/store/apps/ordenPago'
-import HandleReport from 'src/utilities/generateReport/download-report'
+import { styled } from '@mui/material/styles'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
@@ -20,13 +15,18 @@ function ColumnsDataGrid() {
         dispatch(setTypeOperation('update'))
     }
 
-    const handleReportOrderPago = async (row: any) => {
-        try {
-            await HandleReport({ CodigoOrdenPago: row.codigoOrdenPago })
-        } catch (e: any) {
-            console.error(e)
-        }
+    const handleDialogViewerPdf = async (row: any) => {
+        dispatch(setCompromisoSeleccionadoDetalle(row))
+        dispatch(setIsOpenViewerPdf(true))
     }
+
+    const StyledIconButton = styled(IconButton)(({ theme }) => ({
+        '&:hover': {
+            color: theme.palette.primary.main,
+            transform: 'scale(1.5)',
+            transition: 'transform 0.2s ease-in-out',
+        },
+    }))
 
     return [
         {
@@ -38,17 +38,17 @@ function ColumnsDataGrid() {
             renderCell: ({ row }: any) => (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title='Editar'>
-                        <IconButton size='small' onClick={() => handleEdit(row)}>
+                        <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </IconButton>
+                        </StyledIconButton>
                     </Tooltip>
-                    <Tooltip title="Reporte Orden de Pago">
-                        <IconButton
+                    <Tooltip title="Ver PDF">
+                        <StyledIconButton
                             size='small'
-                            onClick={() => handleReportOrderPago(row)}
+                            onClick={() => handleDialogViewerPdf(row)}
                         >
-                            <Icon icon='mdi:download' fontSize={20} />
-                        </IconButton>
+                            <Icon icon='mdi:file-pdf-box' fontSize={20} />
+                        </StyledIconButton>
                     </Tooltip>
                 </Box>
             )

@@ -221,6 +221,7 @@ const FormPresupuestoUpdateAsync = ({
       codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
       fechaAprobacion: presupuestoSeleccionado.fechaAprobacionString
     }
+
     if (aprobarPresupuesto.fechaAprobacion.length == 0) {
       setErrorMessage('Fecha de Aprobacion Invalida')
 

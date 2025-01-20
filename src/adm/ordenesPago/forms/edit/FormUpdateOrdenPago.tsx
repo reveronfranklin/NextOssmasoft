@@ -6,7 +6,8 @@ import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import {
     resetCompromisoSeleccionadoDetalle,
-    setCompromisoSeleccionadoDetalle
+    setCompromisoSeleccionadoDetalle,
+    setIsOpenViewerPdf
 } from "src/store/apps/ordenPago"
 import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
@@ -60,7 +61,6 @@ const FormUpdateOrdenPago = () => {
                 conFactura
             }
 
-            console.log('payload', payload)
             const response = await updateOrden(payload)
 
             dispatch(setCompromisoSeleccionadoDetalle(response.data))
@@ -93,6 +93,7 @@ const FormUpdateOrdenPago = () => {
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
                         onFormClear={handleClearCompromiso}
+                        onViewerPdf={() => dispatch(setIsOpenViewerPdf(true))}
                         titleButton={'Actualizar'}
                         message={message}
                         loading={loading}

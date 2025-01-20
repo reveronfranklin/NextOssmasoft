@@ -6,7 +6,7 @@ const ReportViewAsync = (props: { url: string, width: string, height: string }) 
   const [base64, setBase64] = useState<any>(null)
 
   if (props.url == '' || props.url == null) {
-    return <div>Sentimos la demora, por favor espere...</div>
+    return <div>Debe Seleccionar un tipo de reporte o esperar la generación del mismo...</div>
   }
 
   ConvertToBase64(props.url).then((base64) => {
