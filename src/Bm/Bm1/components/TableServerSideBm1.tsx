@@ -249,7 +249,8 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     const filter: Bm1FilterDto = {
       fechaDesde: fechaDesde,
       fechaHasta: fechaHasta,
-      listIcpSeleccionado: listIcpSeleccionadoLocal
+      listIcpSeleccionado: listIcpSeleccionadoLocal,
+      searchValue: searchValue
     }
     console.log('filter bm1', filter)
     if (filter.listIcpSeleccionado.length > 0) {
@@ -301,7 +302,8 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       const filter: Bm1FilterDto = {
         fechaDesde: fechaDesde,
         fechaHasta: fechaHasta,
-        listIcpSeleccionado: listIcpSelelected
+        listIcpSeleccionado: listIcpSelelected,
+        searchValue: searchValue
       }
 
       const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
