@@ -344,7 +344,6 @@ const TableServerSidePreVSaldo = () => {
           paginationMode='server'
           onSortModelChange={handleSortModel}
           onPageChange={handlePageChange}
-          //onPageChange={newPage => setPage(newPage)}
           components={{ Toolbar: ServerSideToolbar }}
           onPageSizeChange={newPageSize => setPageSize(newPageSize)}
           componentsProps={{
