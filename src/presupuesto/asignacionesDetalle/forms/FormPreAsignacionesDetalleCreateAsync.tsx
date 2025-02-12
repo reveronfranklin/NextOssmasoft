@@ -141,7 +141,7 @@ const FormPreAsignacionesDetalleCreateAsync = ({
       notas: data.notas,
       fechaDesembolsoString: preAsignacionesDetalleSeleccionado.fechaDesembolsoString
     }
-
+    console.log('update', update)
     const responseAll = await ossmmasofApi.post<any>('/PreAsignacionesDetalle/Create', update)
 
     if (responseAll.data.isValid) {
@@ -221,42 +221,42 @@ const FormPreAsignacionesDetalleCreateAsync = ({
 
             {/* Presupuestado*/}
             <Grid item sm={2} xs={12}>
-            <FormControl fullWidth>
-                                  <Controller
-                                      name='monto'
-                                      control={control}
-                                      rules={{
-                                          required: false,
-                                          min: 0.001,
-                                      }}
-                                      render={({ field: { value } }) => (
-                                          <NumericFormat
-                                              value={value}
-                                              customInput={TextField}
-                                              thousandSeparator="."
-                                              decimalSeparator=","
-                                              allowNegative={false}
-                                              decimalScale={2}
-                                              fixedDecimalScale={true}
-                                              label="Monto"
-                                              onValueChange={(values: any) => {
-                                                  const { value } = values
-                                                  handlerMonto(value)
-                                              }}
-                                              placeholder='Fides'
-                                              error={Boolean(errors.monto)}
-                                              aria-describedby='validation-async-monto'
-                                              inputProps={{
-                                                  type: 'text',
-                                              }}
-                                          />
-                                      )}
-                                  />
-                                  {errors.monto && (
-                                      <FormHelperText sx={{ color: 'error.main' }} id='validation-async-monto'>
-                                          This field is required
-                                      </FormHelperText>
-                                  )}
+              <FormControl fullWidth>
+                <Controller
+                  name='monto'
+                  control={control}
+                  rules={{
+                    required: false,
+                    min: 0.001
+                  }}
+                  render={({ field: { value } }) => (
+                    <NumericFormat
+                      value={value}
+                      customInput={TextField}
+                      thousandSeparator='.'
+                      decimalSeparator=','
+                      allowNegative={false}
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                      label='Monto'
+                      onValueChange={(values: any) => {
+                        const { value } = values
+                        handlerMonto(value)
+                      }}
+                      placeholder='Fides'
+                      error={Boolean(errors.monto)}
+                      aria-describedby='validation-async-monto'
+                      inputProps={{
+                        type: 'text'
+                      }}
+                    />
+                  )}
+                />
+                {errors.monto && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-monto'>
+                    This field is required
+                  </FormHelperText>
+                )}
               </FormControl>
             </Grid>
             {/* descripcion*/}

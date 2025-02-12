@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridRenderCellParams, GridSortModel} from '@mui/x-data-grid'
+import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -29,15 +29,12 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 //import { getInitials } from 'src/@core/utils/get-initials'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { Button, IconButton, Tooltip} from '@mui/material'
-
+import { Button, IconButton, Tooltip } from '@mui/material'
 
 // ** Types
 
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-
-
 
 import { IListPreMtrDenominacionPuc } from 'src/interfaces/Presupuesto/i-pre-mtr-denominacion-puc'
 import { IListPreMtrUnidadEjecutora } from 'src/interfaces/Presupuesto/i-pre-mtr-unidad-ejecutora'
@@ -48,10 +45,7 @@ import { useDispatch } from 'react-redux'
 import { setPreVSAldoSeleccionado } from 'src/store/apps/presupuesto'
 import { setVerDetallePreVSaldoActive } from 'src/store/apps/presupuesto'
 import DialogPreVSaldoInfo from 'src/views/pages/presupuesto/DialogPreVSaldoInfo'
-import Spinner from 'src/@core/components/spinner';
-
-
-
+import Spinner from 'src/@core/components/spinner'
 
 /*interface StatusObj {
   [key: number]: {
@@ -59,7 +53,6 @@ import Spinner from 'src/@core/components/spinner';
     color: ThemeColor
   }
 }*/
-
 
 type SortType = 'asc' | 'desc' | undefined | null
 
@@ -88,8 +81,6 @@ type SortType = 'asc' | 'desc' | undefined | null
 interface CellType {
   row: IPreVSaldo
 }
-
-
 
 const defaultColumns = [
   {
@@ -180,15 +171,10 @@ const defaultColumns = [
         {params.row.modificadoFormat}
       </Typography>
     )
-  },
+  }
 ]
 
-
-
 const TableServerSidePreVSaldo = () => {
-
-
-
   // ** State
   const [page, setPage] = useState(0)
   const [linkData, setLinkData] = useState('')
@@ -200,19 +186,17 @@ const TableServerSidePreVSaldo = () => {
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
-  const dispatch = useDispatch();
-
-
+  const dispatch = useDispatch()
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('full_name')
 
-  const {preMtrDenominacionPucSeleccionado={} as IListPreMtrDenominacionPuc,
-        preMtrUnidadEjecutoraSeleccionado={} as IListPreMtrUnidadEjecutora,
-        listpresupuestoDtoSeleccionado={} as IListPresupuestoDto} =
-        useSelector((state: RootState) => state.presupuesto)
-
+  const {
+    preMtrDenominacionPucSeleccionado = {} as IListPreMtrDenominacionPuc,
+    preMtrUnidadEjecutoraSeleccionado = {} as IListPreMtrUnidadEjecutora,
+    listpresupuestoDtoSeleccionado = {} as IListPresupuestoDto
+  } = useSelector((state: RootState) => state.presupuesto)
 
   const columns = [
     ...defaultColumns,
@@ -226,90 +210,92 @@ const TableServerSidePreVSaldo = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='View'>
             <IconButton size='small' onClick={() => handleView(row)}>
-            <Icon icon='mdi:eye-outline' fontSize={20} />
+              <Icon icon='mdi:eye-outline' fontSize={20} />
             </IconButton>
           </Tooltip>
-
-
         </Box>
       )
     }
   ]
 
   function loadServerRows(currentPage: number, data: IPreVSaldo[]) {
-
-
     //if(currentPage<=0) currentPage=1;
-
 
     return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
   }
 
-
-
-  const handlePageChange = (newPage:number) => {
-
+  const handlePageChange = (newPage: number) => {
     setPage(newPage)
     setRows(loadServerRows(newPage, allRows))
-
   }
-  const handleView=  (row : IPreVSaldo)=>{
+  const handleView = (row: IPreVSaldo) => {
+    console.log('registro seleccionado', row)
     dispatch(setPreVSAldoSeleccionado(row))
     dispatch(setVerDetallePreVSaldoActive(true))
-
   }
-  const handleDoubleClick=(row:any)=>{
-
+  const handleDoubleClick = (row: any) => {
     handleView(row.row)
-}
+  }
   const fetchTableData = useCallback(
-    async (sort: SortType, column: string,codigoPresupuesto:number,codigoIPC:number,codigoPuc:number) => {
-
+    async (sort: SortType, column: string, codigoPresupuesto: number, codigoIPC: number, codigoPuc: number) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
       setMensaje('')
-      setLoading(true);
-      const filterPresupuesto:IFilterPresupuestoIpcPuc={codigoPresupuesto,codigoIPC,codigoPuc}
+      setLoading(true)
+      const filterPresupuesto: IFilterPresupuestoIpcPuc = { codigoPresupuesto, codigoIPC, codigoPuc }
 
+      const responseAll = await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc', filterPresupuesto)
 
-      const responseAll= await ossmmasofApi.post<any>('/PreVSaldos/GetAllByPresupuestoIpcPuc',filterPresupuesto);
-
-
-      if(responseAll.data.data){
-        setTotal(responseAll.data.data.length);
-        await setAllRows(responseAll.data.data);
+      if (responseAll.data.data) {
+        setTotal(responseAll.data.data.length)
+        await setAllRows(responseAll.data.data)
         await setRows(loadServerRows(page, responseAll.data.data))
 
         setLinkData(responseAll.data.linkData)
       }
 
       dispatch(setVerDetallePreVSaldoActive(false))
-      setLoading(false);
-      if( responseAll.data.data && responseAll.data.data.length>0){
+      setLoading(false)
+      if (responseAll.data.data && responseAll.data.data.length > 0) {
         setMensaje('')
-      }else{
+      } else {
         setMensaje('')
       }
-
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
-
-
   useEffect(() => {
-
-    fetchTableData(sort, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc);
+    fetchTableData(
+      sort,
+      sortColumn,
+      listpresupuestoDtoSeleccionado.codigoPresupuesto,
+      preMtrUnidadEjecutoraSeleccionado.codigoIcp,
+      preMtrDenominacionPucSeleccionado.codigoPuc
+    )
 
     //fetchTableExcel();
-  }, [fetchTableData, listpresupuestoDtoSeleccionado, preMtrDenominacionPucSeleccionado, preMtrUnidadEjecutoraSeleccionado, sort, sortColumn])
+  }, [
+    fetchTableData,
+    listpresupuestoDtoSeleccionado,
+    preMtrDenominacionPucSeleccionado,
+    preMtrUnidadEjecutoraSeleccionado,
+    sort,
+    sortColumn
+  ])
 
   const handleSortModel = (newModel: GridSortModel) => {
     if (newModel.length) {
       setSort(newModel[0].sort)
       setSortColumn(newModel[0].field)
-      fetchTableData(newModel[0].sort, newModel[0].field,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
+      fetchTableData(
+        newModel[0].sort,
+        newModel[0].field,
+        listpresupuestoDtoSeleccionado.codigoPresupuesto,
+        preMtrUnidadEjecutoraSeleccionado.codigoIcp,
+        preMtrDenominacionPucSeleccionado.codigoPuc
+      )
     } else {
       setSort('asc')
       setSortColumn('full_name')
@@ -317,76 +303,63 @@ const TableServerSidePreVSaldo = () => {
   }
 
   const handleSearch = (value: string) => {
-
-
     setSearchValue(value)
-    if(value=='') {
-      setRows(allRows);
-    }else{
-      const newRows= allRows.filter((el) => el.searchText.toLowerCase().includes(value.toLowerCase()));
-      setRows(newRows);
-
+    if (value == '') {
+      setRows(allRows)
+    } else {
+      const newRows = allRows.filter(el => el.searchText.toLowerCase().includes(value.toLowerCase()))
+      setRows(newRows)
     }
 
     //fetchTableData(sort, value, sortColumn,listpresupuestoDtoSeleccionado.codigoPresupuesto,preMtrUnidadEjecutoraSeleccionado.codigoIcp,preMtrDenominacionPucSeleccionado.codigoPuc)
   }
 
-
-
-
   return (
     <Card>
-      {
-         !loading && linkData.length>0 ?
-          <Box  m={2} pt={3}>
-          <Button variant='contained' href={linkData} size='large' >
+      {!loading && linkData.length > 0 ? (
+        <Box m={2} pt={3}>
+          <Button variant='contained' href={linkData} size='large'>
             Descargar Todo
           </Button>
         </Box>
-        : <Typography  m={2} pt={3}>{mensaje}</Typography>
-      }
- { loading  ? (
-       <Spinner sx={{ height: '100%' }} />
       ) : (
-
-      <DataGrid
-
-
-        getRowHeight={() => 'auto'}
-        autoHeight
-        rowHeight={38}
-        pagination
-        getRowId={(row) => row.codigoSaldo}
-        rows={rows}
-        rowCount={total}
-        columns={columns}
-        onRowDoubleClick={(row) => handleDoubleClick(row)}
-
-        sortingMode='server'
-        paginationMode='server'
-        onSortModelChange={handleSortModel}
-
-        onPageChange={handlePageChange}
-
-        //onPageChange={newPage => setPage(newPage)}
-        components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-
-        componentsProps={{
-          baseButton: {
-            variant: 'outlined'
-          },
-          toolbar: {
-            printOptions: { disableToolbarButton: true },
-            value: searchValue,
-            clearSearch: () => handleSearch(''),
-            onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
-          }
-        }}
-      />
+        <Typography m={2} pt={3}>
+          {mensaje}
+        </Typography>
       )}
-      <DialogPreVSaldoInfo/>
-
+      {loading ? (
+        <Spinner sx={{ height: '100%' }} />
+      ) : (
+        <DataGrid
+          getRowHeight={() => 'auto'}
+          autoHeight
+          rowHeight={38}
+          pagination
+          getRowId={row => row.codigoSaldo}
+          rows={rows}
+          rowCount={total}
+          columns={columns}
+          onRowDoubleClick={row => handleDoubleClick(row)}
+          sortingMode='server'
+          paginationMode='server'
+          onSortModelChange={handleSortModel}
+          onPageChange={handlePageChange}
+          components={{ Toolbar: ServerSideToolbar }}
+          onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+          componentsProps={{
+            baseButton: {
+              variant: 'outlined'
+            },
+            toolbar: {
+              printOptions: { disableToolbarButton: true },
+              value: searchValue,
+              clearSearch: () => handleSearch(''),
+              onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+            }
+          }}
+        />
+      )}
+      <DialogPreVSaldoInfo />
     </Card>
   )
 }
