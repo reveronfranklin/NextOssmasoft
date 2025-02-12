@@ -1,8 +1,11 @@
-import {Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
-    Checkbox, FormControlLabel } from "@mui/material"
+import {
+    Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
+    Checkbox, FormControlLabel,Typography
+} from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from 'react-hook-form'
 import FormaPago from '../components/AutoComplete/FormaPago'
+import TipoOrden from '../components/AutoComplete/TipoOrden'
 import FrecuenciaPago from '../components/AutoComplete/FrecuenciaPago'
 import { CleaningServices } from '@mui/icons-material'
 import { useSelector } from 'react-redux'
@@ -14,7 +17,8 @@ import dayjs from 'dayjs'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
-import { setCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
+import { setCompromisoSeleccionadoDetalle, resetCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
+import WarningIcon from '@mui/icons-material/Warning';
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -24,6 +28,7 @@ export interface FormInputs {
     fechaOrdenPagoString: string | Date,
     origenDescripcion: string,
     tipoPagoId: number,
+    tipoOrdenId: number,
     frecuenciaPagoId: number,
     cantidadPago: number,
     fecha: string,
@@ -52,6 +57,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         onFormClear
     } = props
 
+    const [isFormEnabled, setIsFormEnabled] = useState(false)
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
@@ -64,7 +70,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         descripcionStatus: '',
         frecuenciaPagoId: 0,
         tipoPagoId: 0,
-        iva: 0,
+        tipoOrdenId: 0,        iva: 0,
         numeroOrdenPago: 0,
         islr: 0,
         fechaOrdenPagoString: '',
@@ -86,6 +92,14 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
 
     const onSubmit = async (data: FormInputs) => {
         onFormData({ ...data })
+    }
+
+    useEffect(() => {
+        dispatch(resetCompromisoSeleccionadoDetalle())
+    }, [])
+
+    const handleTipoOrden = (tipoOrdenId: number) => {
+        setValue('tipoOrdenId', tipoOrdenId)
     }
 
     const handleFormaPago = (formaPagoId: number) => {
@@ -123,7 +137,11 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     }
 
     useEffect(() => {
-        if (orden) {
+        if (Object.keys(orden).length) {
+            setIsFormEnabled(true)
+        }
+
+        if (orden && Object.keys(orden).length) {
             setValue('descripcionStatus', orden.descripcionStatus ?? '')
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
             setValue('cantidadPago', orden.cantidadPago ?? 0)
@@ -132,6 +150,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
             setValue('fechaOrdenPagoString', orden.fechaOrdenPagoString ?? null, { shouldValidate: true })
             setValue('tipoPagoId', orden.tipoPagoId ?? 0)
+            setValue('tipoOrdenId', orden.tipoOrdenId ?? 0) //todo validar que este llegando esta propiedad
             setValue('frecuenciaPagoId', orden.frecuenciaPagoId ?? 0)
             setValue('conFactura', orden.conFactura ?? false)
         }
@@ -141,8 +160,8 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
 
     return (
         <Box>
-            <form>
-                <Grid container spacing={0} paddingTop={5} justifyContent="flex">
+            {!!isFormEnabled ? <form>
+                <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                     <Grid container sm={12} xs={12} sx={{ paddingTop: 1 }}>
                         <FormControlLabel
                             control={
@@ -159,7 +178,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                     )}
                                 />
                             }
-                            label={ true ? 'con Factura' : 'sin Factura'}
+                            label={ true ? 'con Factura' : 'sin Factura'} //todo pendiente por revisar
                         />
                     </Grid>
                     <Grid container sm={6} xs={12}>
@@ -220,7 +239,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                                 dateFormat='dd/MM/yyyy'
                                                 onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
                                                 placeholderText='Fecha de la orden'
-                                                customInput={<CustomInput label='Fecha Solicitud' />}
+                                                customInput={<CustomInput label='Fecha Orden Pago' />}
                                             />
                                         </DatePickerWrapper>
                                     </FormControl>
@@ -229,7 +248,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         </Grid>
                     </Grid>
                     <Grid container sm={6} xs={12}>
-                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '5px' }}>
                             <FormControl fullWidth>
                                 <Controller
                                     name="origenDescripcion"
@@ -237,23 +256,31 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
                                             fullWidth
-                                            label="Tipo de Orden"
-                                            placeholder="Tipo de Orden"
+                                            label="Origen de compromiso"
+                                            placeholder="Origen de compromiso"
                                             value={value || ''}
                                             onChange={onChange}
+                                            disabled={true}
                                         />
                                     )}
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
+                            <TipoOrden
+                                id={orden?.tipoOrdenId ?? ''}
+                                autocompleteRef={autocompleteRef}
+                                onSelectionChange={(value: any) => { handleTipoOrden(value.id) }}
+                            />
+                        </Grid>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
                             <FormaPago
                                 id={orden?.tipoPagoId ?? ''}
                                 autocompleteRef={autocompleteRef}
                                 onSelectionChange={(value: any) => { handleFormaPago(value.id) }}
                             />
                         </Grid>
-                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
                             <FrecuenciaPago
                                 id={orden?.frecuenciaPagoId ?? ''}
                                 autocompleteRef={autocompleteRef}
@@ -261,7 +288,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                             />
                         </Grid>
                         <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
-                            <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                            <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
                                 <FormControl fullWidth>
                                     <Controller
                                         name="cantidadPago"
@@ -302,10 +329,10 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Grid container direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
                             {typeOperation === 'update' && (
                                 <>
-                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
                                         <FormControl fullWidth>
                                             <DatePickerWrapper>
                                                 <DatePicker
@@ -320,7 +347,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                             </DatePickerWrapper>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
                                         <FormControl fullWidth>
                                             <DatePickerWrapper>
                                                 <DatePicker
@@ -339,8 +366,8 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                             )}
                         </Grid>
                     </Grid>
-                    <Grid container sm={12} xs={12}>
-                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                    <Grid container sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '5px' }}>
                             <FormControl fullWidth>
                                 <Controller
                                     name="nombreProveedor"
@@ -360,7 +387,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                        <Grid item sm={12} xs={12} sx={{ paddingTop: '15px' }}>
                             <FormControl fullWidth>
                                 <Controller
                                     name="motivo"
@@ -447,7 +474,17 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                     </Button>
                     <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                 </Box>
-            </form>
+            </form> : (
+                <Box sx={{ textAlign: 'center', padding: 10 }}>
+                    <WarningIcon color="error" />
+                    <Typography variant="h6" gutterBottom>
+                        No hay un compromiso seleccionado
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        Por favor, seleccione uno de la lista haciendo clic en el botón de "Ver Compromisos".
+                    </Typography>
+                </Box>
+            )}
         </Box>
     )
 }

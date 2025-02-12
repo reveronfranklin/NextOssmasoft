@@ -27,7 +27,7 @@ const LayoutOrdenPago = () => {
                             <IconButton color='primary' size='small' onClick={handleCreateOrden}>
                                 <Icon icon='ci:add-row' fontSize={20} />
                             </IconButton>
-                        </Tooltip> )
+                        </Tooltip>)
                     }
                 </Grid>
             </CardContent>

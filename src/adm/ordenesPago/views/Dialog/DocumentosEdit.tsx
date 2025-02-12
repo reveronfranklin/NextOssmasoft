@@ -1,28 +1,27 @@
 import { Ref, forwardRef, ReactElement } from 'react'
 import Fade, { FadeProps } from '@mui/material/Fade'
 import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from "@mui/material"
-import Icon from 'src/@core/components/icon'
 import IconButton from '@mui/material/IconButton'
 import { useSelector } from 'react-redux'
-import { RootState } from 'src/store';
+import { RootState } from 'src/store'
+import Icon from 'src/@core/components/icon'
 import { useDispatch } from "react-redux"
-import { setIsOpenDialogListRetenciones } from "src/store/apps/ordenPago"
-import Component from '../../components/Datagrid/listRetenciones'
-import FormCreateRetenciones from '../../forms/create/FormCreateRetenciones'
+import { setIsOpenDialogDocumentosEdit } from "src/store/apps/ordenPago"
+import FormCreateDocumentosOp from '../../forms/create/FormCreateDocumentos'
 
 const Transition = forwardRef(function Transition(
-  props: FadeProps & { children?: ReactElement<any, any> },
-  ref: Ref<unknown>
+    props: FadeProps & { children?: ReactElement<any, any> },
+    ref: Ref<unknown>
 ) {
-  return <Fade ref={ref} {...props} />
+    return <Fade ref={ref} {...props} />
 })
 
-const DialogListRetenciones = () => {
+const DialogDocumentosEdit = () => {
   const dispatch = useDispatch()
-  const { isOpenDialogListRetenciones } = useSelector((state: RootState) => state.admOrdenPago)
+  const { isOpenDialogDocumentosEdit, typeOperationDocumento } = useSelector((state: RootState) => state.admOrdenPago)
 
   const handleClose = () => {
-    dispatch(setIsOpenDialogListRetenciones(false))
+    dispatch(setIsOpenDialogDocumentosEdit(false))
   }
 
   return (
@@ -31,7 +30,7 @@ const DialogListRetenciones = () => {
         fullWidth
         maxWidth={'lg'}
         scroll='body'
-        open={isOpenDialogListRetenciones}
+        open={isOpenDialogDocumentosEdit}
         TransitionComponent={Transition}
         onClose={() => handleClose()}
         aria-labelledby='modal-modal-title'
@@ -39,18 +38,22 @@ const DialogListRetenciones = () => {
         sx={{
           '& .MuiDialog-paper': {
             width: '100%',
-            height: '90vh',
+            height: '75vh',
             margin: 0,
             borderRadius: 0,
-            padding: 0,
+            padding: 10,
           },
         }}
       >
         <Grid spacing={0} >
           <Box position="static" sx={{ boxShadow: 'none' }}>
-            <Toolbar sx={{ justifyContent: 'space-between', padding: 0 }}>
+            <Toolbar sx={{
+              justifyContent: 'space-between',
+              padding: 0,
+            }}
+            >
               <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                Lista de Retenciones
+                Documentos ({typeOperationDocumento === 'update' ? 'Editar' : 'Crear'})
               </Typography>
               <IconButton
                 size='small'
@@ -62,17 +65,7 @@ const DialogListRetenciones = () => {
             </Toolbar>
           </Box>
           <DialogContent>
-            <FormCreateRetenciones />
-            <Box
-              sx={{
-                marginTop: '0px',
-                maxHeight: '400px',
-                overflowY: 'auto',
-                padding: '10px',
-              }}
-            >
-              <Component />
-            </Box>
+            <FormCreateDocumentosOp />
           </DialogContent>
         </Grid>
       </Dialog>
@@ -80,4 +73,4 @@ const DialogListRetenciones = () => {
   )
 }
 
-export default DialogListRetenciones
+export default DialogDocumentosEdit

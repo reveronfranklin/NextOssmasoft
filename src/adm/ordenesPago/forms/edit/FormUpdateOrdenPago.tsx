@@ -79,14 +79,15 @@ const FormUpdateOrdenPago = () => {
 
     return (
         <>
-            <Grid container spacing={5} paddingTop={1}>
+            <Grid container spacing={0} paddingLeft={0} paddingBottom={0}>
                 <Grid sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
                     </Box>
                 </Grid>
                 <Grid sm={6} xs={12} sx={{
                     overflow: 'auto',
-                    padding: '0 1rem',
+                    padding: '10px',
+                    paddingBottom: '0px',
                     borderRight: '1px solid #e0e0e0',
                 }}>
                     <FormOrdenPago

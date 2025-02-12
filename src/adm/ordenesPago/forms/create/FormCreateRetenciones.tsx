@@ -28,7 +28,7 @@ const FormCreateRetenciones = () => {
   const { isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
 
-  const { control, setValue, getValues, formState: { errors } } = useForm<any>({
+  const { control, setValue, getValues, formState: { errors, isValid } } = useForm<any>({
     defaultValues: {
       codigoRetencion: 0,
       codigo: 0,
@@ -167,8 +167,6 @@ const FormCreateRetenciones = () => {
   }
 
   useEffect(() => {
-    console.log('retencionSeleccionado', retencionSeleccionado)
-
     if (retencionSeleccionado && Object.keys(retencionSeleccionado).length > 0) {
       setValue('codigoRetencion', retencionSeleccionado.codigoRetencion)
       setValue('tipoRetencionId', retencionSeleccionado.tipoRetencionId)
@@ -358,6 +356,7 @@ const FormCreateRetenciones = () => {
           loading={loading}
           isOpenDialog={isOpenDialogConfirmButtons}
           setIsOpenDialog={setIsOpenDialogConfirmButtons}
+          isFormValid={isValid}
         />
       </Box>
     </Box>
