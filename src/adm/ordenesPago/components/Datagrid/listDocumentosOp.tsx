@@ -19,7 +19,7 @@ const StyledDataGridContainer = styled(Box)(() => ({
 const DataGridComponent = () => {
   const [pageNumber, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(5)
-  
+
   // const [searchText, setSearchText] = useState<string>('')
   // const [buffer, setBuffer] = useState<string>('')
   // const debounceTimeoutRef = useRef<any>(null)
@@ -33,10 +33,10 @@ const DataGridComponent = () => {
   const filter: IGetListByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
-    queryKey: ['documentosTable', pageSize, pageNumber, searchText],
+    queryKey: ['documentosTable', pageSize, pageNumber],
     queryFn: () => getListDocumentos(filter),
     initialData: () => {
-      return qc.getQueryData(['documentosTable', pageSize, pageNumber, searchText])
+      return qc.getQueryData(['documentosTable', pageSize, pageNumber])
     },
     staleTime: 1000 * 60,
     retry: 3,
