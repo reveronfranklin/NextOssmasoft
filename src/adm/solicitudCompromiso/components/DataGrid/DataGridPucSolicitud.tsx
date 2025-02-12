@@ -44,7 +44,7 @@ const DataGridPucDetalleSolicitud = (props: any) => {
         setPageSize(newPageSize)
     }
 
-    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize);
+    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
 
     return (
         <>
