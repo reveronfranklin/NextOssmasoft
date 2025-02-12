@@ -10,7 +10,7 @@ import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetenciones'
 import Spinner from 'src/@core/components/spinner'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-  height: 400,
+  height: 'auto',
 }))
 
 const DataGridComponent = () => {
@@ -46,12 +46,10 @@ const DataGridComponent = () => {
 
   const handleDoubleClick = (data: { row: Retencion }) => {
     const { row } = data
-
-    // dispatch(setIsCollapseRetenciones(true))
     dispatch(setRetencionSeleccionado(row))
-
-    // dispatch(setIsOpenDialogListRetenciones(false))
   }
+
+  const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
 
   return (
     <>
@@ -62,7 +60,7 @@ const DataGridComponent = () => {
               autoHeight
               pagination
               getRowId={(row) => row.codigoRetencion}
-              rows={rows}
+              rows={paginatedRows}
               rowCount={rowCount}
               columns={ColumnsDataGrid() as any}
               pageSize={pageSize}

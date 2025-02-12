@@ -1,16 +1,23 @@
-import { useDispatch } from 'react-redux'
-import { IconButton, Tooltip, Typography } from "@mui/material"
-import { GridRenderCellParams } from '@mui/x-data-grid'
-import { setIsOpenDialogOrdenPagoDetalle, setIsOpenViewerPdf, setTypeOperation, setCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
 import { styled } from '@mui/material/styles'
+import { useDispatch } from 'react-redux'
+import { IconButton, Tooltip, Typography } from "@mui/material"
+import { GridRenderCellParams } from '@mui/x-data-grid'
+import {
+    setIsOpenDialogOrdenPagoDetalle,
+    setIsOpenViewerPdf,
+    setTypeOperation,
+    setCompromisoSeleccionadoDetalle,
+    setCodigoOrdenPago
+} from 'src/store/apps/ordenPago'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
         dispatch(setCompromisoSeleccionadoDetalle(row))
+        dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('update'))
     }

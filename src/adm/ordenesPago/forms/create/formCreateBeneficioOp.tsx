@@ -21,7 +21,7 @@ const FormCreateBeneficioOp = () => {
   const { beneficioOpSeleccionado, isOpenDialogConfirmButtons } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, createBeneficiarioOp, updateBeneficiarioOp, deleteBeneficiarioOp } = useServicesBeneficiarioOp()
 
-  const { control, setValue, getValues } = useForm<any>({
+  const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
       defaultValues: {
         monto: 0,
         montoPagado: 0,
@@ -206,6 +206,7 @@ const FormCreateBeneficioOp = () => {
           loading={loading}
           isOpenDialog={isOpenDialogConfirmButtons}
           setIsOpenDialog={setIsOpenDialogConfirmButtons}
+          isFormValid={isValid}
         />
       </Box>
     </Box>

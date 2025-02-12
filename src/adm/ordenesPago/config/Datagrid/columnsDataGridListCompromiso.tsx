@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
-import { } from "src/store/apps/adm"
 
 function ColumnsDataGrid() {
     return [
@@ -51,6 +50,16 @@ function ColumnsDataGrid() {
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: 'Monto total',
+            field: 'montoTotal',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row?.montoTotal === null ? 'NO DISPONIBLE' : params.row.montoTotal}
                 </Typography>
             )
         }

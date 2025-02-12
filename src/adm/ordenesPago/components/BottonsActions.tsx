@@ -16,6 +16,7 @@ interface ButtonConfig<T> {
   size?: 'small' | 'medium' | 'large'
   sx?: React.CSSProperties
   confirm?: boolean
+  disabled?: boolean
 }
 
 const CustomButtonDialog = ({
@@ -25,7 +26,8 @@ const CustomButtonDialog = ({
   clearButtonConfig,
   loading,
   isOpenDialog,
-  setIsOpenDialog
+  setIsOpenDialog,
+  isFormValid
 } : {
   saveButtonConfig?: ButtonConfig<Promise<void>>,
   updateButtonConfig?: ButtonConfig<Promise<void>>,
@@ -33,7 +35,8 @@ const CustomButtonDialog = ({
   clearButtonConfig?: ButtonConfig<Promise<void>>,
   loading?: boolean,
   isOpenDialog?: boolean,
-  setIsOpenDialog?: (open: boolean) => any
+  setIsOpenDialog?: (open: boolean) => any,
+  isFormValid: boolean;
 }) => {
   const dynamicFunctionRef = useRef<((filters?: any) => any) | null>(null)
   const dispatch = useDispatch();
@@ -70,11 +73,12 @@ const CustomButtonDialog = ({
         <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
           {saveButtonConfig?.show && (
             <Button
-              variant={saveButtonConfig?.variant}
-              color={saveButtonConfig?.color}
-              size={saveButtonConfig?.size}
-              sx={{ ...saveButtonConfig?.sx, marginRight: 2 }}
+              variant={saveButtonConfig.variant}
+              color={saveButtonConfig.color}
+              size={saveButtonConfig.size}
+              sx={{ ...saveButtonConfig.sx, marginRight: 2 }}
               onClick={() => handle(saveButtonConfig)}
+              disabled={saveButtonConfig.disabled}
             >
               <SaveIcon sx={{ marginRight: 1 }} />
               {saveButtonConfig?.label}
@@ -84,11 +88,12 @@ const CustomButtonDialog = ({
         <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
           {updateButtonConfig?.show && (
             <Button
-              variant={updateButtonConfig?.variant}
-              color={updateButtonConfig?.color}
-              size={updateButtonConfig?.size}
-              sx={{ ...updateButtonConfig?.sx, marginRight: 2 }}
+              variant={updateButtonConfig.variant}
+              color={updateButtonConfig.color}
+              size={updateButtonConfig.size}
+              sx={{ ...updateButtonConfig.sx, marginRight: 2 }}
               onClick={() => handle(updateButtonConfig)}
+              disabled={updateButtonConfig.disabled || !isFormValid}
             >
               <EditIcon sx={{ marginRight: 1 }} />
               {updateButtonConfig?.label}
@@ -98,11 +103,12 @@ const CustomButtonDialog = ({
         <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
           {deleteButtonConfig?.show && (
             <Button
-              variant={deleteButtonConfig?.variant}
-              color={deleteButtonConfig?.color}
-              size={deleteButtonConfig?.size}
-              sx={{ ...deleteButtonConfig?.sx, marginRight: 2 }}
+              variant={deleteButtonConfig.variant}
+              color={deleteButtonConfig.color}
+              size={deleteButtonConfig.size}
+              sx={{ ...deleteButtonConfig.sx, marginRight: 2 }}
               onClick={() => handle(deleteButtonConfig)}
+              disabled={deleteButtonConfig.disabled || !isFormValid}
             >
               <DeleteIcon sx={{ marginRight: 1 }} />
               {deleteButtonConfig?.label}
@@ -112,11 +118,12 @@ const CustomButtonDialog = ({
         <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
           {clearButtonConfig?.show && (
             <Button
-              variant={clearButtonConfig?.variant}
-              color={clearButtonConfig?.color}
-              size={clearButtonConfig?.size}
-              sx={{ ...clearButtonConfig?.sx, marginRight: 2 }}
+              variant={clearButtonConfig.variant}
+              color={clearButtonConfig.color}
+              size={clearButtonConfig.size}
+              sx={{ ...clearButtonConfig.sx, marginRight: 2 }}
               onClick={() => handle(clearButtonConfig)}
+              disabled={clearButtonConfig.disabled || !isFormValid}
             >
               <CleaningServices />
               {clearButtonConfig?.label}

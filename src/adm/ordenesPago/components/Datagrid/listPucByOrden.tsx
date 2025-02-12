@@ -49,7 +49,7 @@ const DataGridComponent = () => {
     }, qc)
 
     const rows = query?.data?.data || []
-    const rowCount = query?.data?.cantidadRegistros || 0
+    const rowCount = query?.data?.data.length
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -100,6 +100,8 @@ const DataGridComponent = () => {
         }, 2500)
     }
 
+    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
+
     return (
         <>
             {
@@ -109,7 +111,7 @@ const DataGridComponent = () => {
                             autoHeight
                             pagination
                             getRowId={(row) => row.codigoPucOrdenPago}
-                            rows={rows}
+                            rows={paginatedRows}
                             rowCount={rowCount}
                             columns={ColumnsDataGridListPucByOrden() as any}
                             pageSize={pageSize}

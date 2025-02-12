@@ -19,6 +19,7 @@ const FormViewerPdf: React.FC = () => {
   const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
   const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
 
+  console.log(codigoOrdenPago)
   const fetchReport = async (reportType: string) => {
     try {
       const objectURL = await HandleReport({ tipoReporte: reportType, CodigoOrdenPago: codigoOrdenPago }) || '';
