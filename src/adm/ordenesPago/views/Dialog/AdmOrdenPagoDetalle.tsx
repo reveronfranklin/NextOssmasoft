@@ -1,19 +1,14 @@
 import { Ref, forwardRef, ReactElement } from 'react'
 import Fade, { FadeProps } from '@mui/material/Fade'
-
 import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from "@mui/material"
 import Icon from 'src/@core/components/icon'
 import IconButton from '@mui/material/IconButton'
-
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
-
 import { setIsOpenDialogOrdenPagoDetalle } from "src/store/apps/ordenPago"
-
 import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPAgo'
 import FormUpdateOrdenPago from '../../forms/edit/FormUpdateOrdenPago'
-
 import ListaCompromiso from '../../components/ListCompromiso/listaCompromisos'
 
 const Transition = forwardRef(function Transition(
@@ -25,7 +20,6 @@ const Transition = forwardRef(function Transition(
 
 const DialogAdmOrdenPagoDetalle = () => {
     const dispatch = useDispatch()
-
     const { isOpenDialogOrdenPagoDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago )
 
     const handleClose = () => {
@@ -56,7 +50,7 @@ const DialogAdmOrdenPagoDetalle = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '90vh',
+                        height: '95vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0,

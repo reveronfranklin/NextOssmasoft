@@ -10,7 +10,7 @@ import { setCompromisoSeleccionadoDetalle, setIsOpenDialogListCompromiso } from 
 import { useDispatch } from 'react-redux'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 500,
+    height: 600,
     overflowY: 'auto',
 }))
 
@@ -50,8 +50,6 @@ const DataGridComponent = () => {
 
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
-
-    console.log('rows', rows)
 
     const handleDoubleClick = (data: any) => {
         const {row} = data

@@ -6,10 +6,8 @@ import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 
 const reportOptions = [
-  { value: 'report',      label: 'Orden de Pago' },
-  { value: 'retenciones', label: 'Retenciones' },
-  { value: 'report3',     label: 'Reporte 3' },
-  { value: 'report4',     label: 'Reporte 4' },
+  { value: 'payment-orders/pdf/report', label: 'Orden de Pago' },
+  { value: 'income-tax-withholding-voucher/pdf/report', label: 'Retenciones' },
 ]
 
 const FormViewerPdf: React.FC = () => {

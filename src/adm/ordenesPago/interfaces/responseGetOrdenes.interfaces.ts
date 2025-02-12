@@ -14,7 +14,6 @@ export interface ResponseGetOrdenes {
 export interface Orden {
     fechaCompromisoString: string;
     fechaCompromiso: string;
-
     codigoOrdenPago: number;
     ano: number;
     codigoCompromiso: string;

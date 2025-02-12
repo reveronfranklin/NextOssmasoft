@@ -19,6 +19,11 @@ export enum UrlServices {
     UPDATEADMRETENCIONES        = '/AdmRetenciones/Update',
     DELETEADMRETENCIONES        = '/AdmRetenciones/Delete',
 
+    GETDOCUMENTOSOPBYORDENPAGO  = '/AdmDocumentosOp/GetByCodigoOrdenPago',
+    CREATEDOCUMENTOSOP          = '/AdmDocumentosOp/Create',
+    UPDATEDOCUMENTOSOP          = '/AdmDocumentosOp/Update',
+    DELETEDOCUMENTOSOP          = '/AdmDocumentosOp/Delete',
+
     GETBENEFICIARIO             = '/AdmBeneficiariosOp/GetByOrdenPago',
     CREATEBENEFICIARIO          = '/AdmBeneficiariosOp/Update',
     UPDATEBENEFICIARIO          = '/AdmBeneficiariosOp/Create',

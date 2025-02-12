@@ -3,7 +3,7 @@ import Icon from 'src/@core/components/icon'
 import Component from '../../components/Datagrid/listRetencionesOp'
 import FormCreateRetencionesOp from '../../forms/create/FormCreateRetencionesOp'
 import { useSelector } from 'react-redux'
-import { RootState } from 'src/store';
+import { RootState } from 'src/store'
 import { setIsCollapseRetenciones } from 'src/store/apps/ordenPago'
 import { useDispatch } from 'react-redux'
 
@@ -46,9 +46,10 @@ const Retenciones = () => {
             </Collapse>
             <Box
                 sx={{
-                    marginTop: '10px',
-                    maxHeight: '400px',
-                    overflowY: 'auto'
+                    marginTop: '0px',
+                    maxHeight: 'auto',
+                    overflowY: 'auto',
+                    padding: '10px',
                 }}
             >
                 <Component />

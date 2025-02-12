@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { Box, Button, FormHelperText, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { RootState } from "src/store"
@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { useEffect } from "react"
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useServicesRetencionesOp } from '../../services/index'
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from '@mui/icons-material/Search'
 import {
   setIsOpenDialogConfirmButtons,
   setRetencionOpSeleccionado,
@@ -35,7 +35,7 @@ const FormCreateRetencionesOp = () => {
   const { retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
 
-  const { control, setValue, getValues, formState: { errors } } = useForm<any>({
+  const { control, setValue, getValues, formState: { errors, isValid } } = useForm<any>({
     defaultValues: {
       tipoRetencion: retencionOpSeleccionado?.tipoRetencionId ?? '',
       conceptoPago: retencionOpSeleccionado?.conceptoPago ?? '',
@@ -287,6 +287,7 @@ const FormCreateRetencionesOp = () => {
         loading={loading}
         isOpenDialog={isOpenDialogConfirmButtons}
         setIsOpenDialog={setIsOpenDialogConfirmButtons}
+        isFormValid={isValid}
       />
     </Box>
   )

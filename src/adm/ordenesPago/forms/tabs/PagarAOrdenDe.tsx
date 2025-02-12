@@ -1,7 +1,7 @@
 import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import Component from '../../components/Datagrid/listBeneficiosOp'
-import FormCreateBeneficioOp from '../../forms/create/formCreateBeneficioOp'
+import FormCreateBeneficioOp from '../create/FormCreateBeneficioOp'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { setIsCollapseRetenciones } from 'src/store/apps/ordenPago'
@@ -18,7 +18,7 @@ const PagarAOrdenDe = () => {
                     <Toolbar
                         sx={{ justifyContent: 'flex-start' }}
                     >
-                        <Tooltip title=''>
+                        <Tooltip title='Agregar nuevo'>
                             <IconButton
                                 size='small'
                                 color='primary'
@@ -43,9 +43,10 @@ const PagarAOrdenDe = () => {
             </Collapse>
             <Box
                 sx={{
-                    marginTop: '10px',
-                    maxHeight: '400px',
-                    overflowY: 'auto'
+                    marginTop: '0px',
+                    maxHeight: 'auto',
+                    overflowY: 'auto',
+                    padding: '10px',
                 }}
             >
                 <Component />

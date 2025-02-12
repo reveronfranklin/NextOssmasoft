@@ -43,6 +43,7 @@ const DataGridComponent = () => {
     retry: 3,
   }, qc)
 
+  console.log(query?.data?.data)
   const rows = query?.data?.data || []
   const rowCount = query?.data?.data?.length || 0
 

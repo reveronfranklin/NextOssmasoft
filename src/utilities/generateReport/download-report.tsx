@@ -9,7 +9,7 @@ const DownloadReport = async (props: any) => {
   //const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
 
   //const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
-  const url = `http://216.244.81.115:4000/api-v1.0/payment-orders/pdf/${tipoReporte}`
+  const url = `http://216.244.81.115:4000/api-v1.0/${tipoReporte}`
 
   // const url = 'http://localhost:4000/api-v1.0/payment-orders/pdf/report'
 
