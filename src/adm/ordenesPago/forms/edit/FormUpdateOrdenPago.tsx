@@ -101,9 +101,7 @@ const FormUpdateOrdenPago = () => {
                     />
                 </Grid>
                 <Grid sm={6} xs={12}>
-                    <TabsComponent
-                        orden={compromisoSeleccionadoListaDetalle}
-                    />
+                    <TabsComponent />
                 </Grid>
             </Grid>
         </>
