@@ -26,6 +26,7 @@ export const admOrdenPagoSlice = createSlice({
         documentoOpSeleccionado: {} as Documentos,
         pucSeleccionado: {} as any,
         codigoOrdenPago: 0,
+        conFactura: null
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -87,6 +88,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setCodigoOrdenPago: (state, action) => {
             state.codigoOrdenPago = action.payload
+        },
+        setConFactura: (state, action) => {
+            state.conFactura = action.payload
         }
     }
 })
@@ -110,5 +114,6 @@ export const {
     setRetencionOpSeleccionado,
     setBeneficioOpSeleccionado,
     setDocumentoOpSeleccionado,
-    setCodigoOrdenPago
+    setCodigoOrdenPago,
+    setConFactura
 } = admOrdenPagoSlice.actions

@@ -4,8 +4,6 @@ import {
     Retenciones,
     Documentos,
     PagarAOrdenDe
-
-    // Impuestos,
 } from '../forms/index'
 
 export const tabs = [
@@ -32,12 +30,5 @@ export const tabs = [
         icon: <Icon icon='mdi:cash-100' fontSize='2rem' />,
         component: <PagarAOrdenDe />,
         show: ['with-invoice', 'without-invoice']
-    },
-
-    // {
-    //     label: 'Impuestos',
-    //     icon: <Icon icon='mdi:finance' fontSize='1.5rem' />,
-    //     component: <Impuestos />,
-    //     show: ['with-invoice']
-    // }
+    }
 ]
