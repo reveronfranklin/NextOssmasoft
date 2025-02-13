@@ -9,15 +9,19 @@ import {
     setIsOpenViewerPdf,
     setTypeOperation,
     setCompromisoSeleccionadoDetalle,
-    setCodigoOrdenPago
+    setCodigoOrdenPago,
+    setConFactura
 } from 'src/store/apps/ordenPago'
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
+        console.log(row)
+
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
+        dispatch(setConFactura(row.conFactura))
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('update'))
     }
