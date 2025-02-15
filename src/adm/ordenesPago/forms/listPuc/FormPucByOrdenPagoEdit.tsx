@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast'
 import { setIsOpenDialogListPucOrdenPagoEdit } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
 import { useDispatch } from 'react-redux'
+import { NumericFormat } from 'react-number-format'
 
 interface FormInputs {
     monto: number
@@ -61,10 +62,14 @@ const FormPucByOrdenPagoEdit = () => {
                         min: { value: 0, message: 'El monto debe ser mayor o igual a 0' }
                     }}
                     render={({ field }) => (
-                        <TextField
+                        <NumericFormat
                             {...field}
+                            customInput={TextField}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            allowNegative={false}
+                            decimalScale={2}
                             label="Monto"
-                            type="number"
                             fullWidth
                             error={!!errors.monto}
                             helperText={errors.monto?.message}

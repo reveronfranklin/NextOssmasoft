@@ -28,7 +28,7 @@ const ViewerPdf = () => {
     <Card>
       <Dialog
         fullWidth
-        maxWidth={'lg'}
+        maxWidth={'xl'}
         scroll='body'
         open={isOpenViewerPdf}
         TransitionComponent={Transition}

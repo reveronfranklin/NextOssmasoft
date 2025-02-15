@@ -88,7 +88,16 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     const dispatch = useDispatch()
     const { typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
 
-    const { control, handleSubmit, setValue, formState: { errors, isValid } } = useForm<FormInputs>({ defaultValues, mode: 'onChange' })
+    const {
+        control,
+        handleSubmit,
+        reset,
+        setValue,
+        formState: { errors, isValid }
+    } = useForm<FormInputs>({
+        defaultValues,
+        mode: 'onChange'
+    })
 
     const onSubmit = async (data: FormInputs) => {
         onFormData({ ...data })
@@ -137,11 +146,8 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     }
 
     useEffect(() => {
-        if (Object.keys(orden).length) {
-            setIsFormEnabled(true)
-        }
-
         if (orden && Object.keys(orden).length) {
+            setIsFormEnabled(true)
             setValue('descripcionStatus', orden.descripcionStatus ?? '')
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
             setValue('cantidadPago', orden.cantidadPago ?? 0)
@@ -294,12 +300,13 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                         name="cantidadPago"
                                         control={control}
                                         rules={{ required: 'Estatus is required' }}
+                                        defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
                                         render={({ field: { value, onChange } }) => (
                                             <TextField
                                                 fullWidth
                                                 label="Cantidad de Pagos"
                                                 placeholder="Cantidad de Pagos"
-                                                value={value || ''}
+                                                value={value}
                                                 onChange={onChange}
                                                 error={!!errors.cantidadPago}
                                                 helperText={errors.cantidadPago?.message}
@@ -314,12 +321,13 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                         name="cantidadPago"
                                         control={control}
                                         rules={{ required: 'Este campo es requerido' }}
+                                        defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
                                         render={({ field: { value, onChange } }) => (
                                             <TextField
                                                 fullWidth
                                                 label="N°"
                                                 placeholder="N°"
-                                                value={value || ''}
+                                                value={value}
                                                 onChange={onChange}
                                                 error={!!errors.cantidadPago}
                                                 helperText={errors.cantidadPago?.message}
@@ -465,16 +473,18 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                     >
                         <CleaningServices /> Limpiar
                     </Button>
-                    <Button
-                        color='primary'
-                        size='small'
-                        onClick={onViewerPdf}
-                    >
-                        ver PDF
-                    </Button>
+                    {typeOperation === 'update' && (
+                        <Button
+                            color='primary'
+                            size='small'
+                            onClick={onViewerPdf}
+                        >
+                            ver PDF
+                        </Button>
+                    )}
                     <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                 </Box>
-            </form> : (
+            </form> : typeOperation === 'create' ? (
                 <Box sx={{ textAlign: 'center', padding: 10 }}>
                     <WarningIcon color="error" />
                     <Typography variant="h6" gutterBottom>
@@ -484,7 +494,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         Por favor, seleccione uno de la lista haciendo clic en el botón de "Ver Compromisos".
                     </Typography>
                 </Box>
-            )}
+            ) : null }
         </Box>
     )
 }
