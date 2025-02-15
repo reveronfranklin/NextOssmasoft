@@ -133,6 +133,7 @@ const useServices = () => {
         try {
             setLoading(true)
             const responseGetOrdenes = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
+            console.log('responseGetOrdenes', responseGetOrdenes)
 
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data

@@ -151,7 +151,6 @@ const FormCreateRetencionesOp = () => {
     }
   }, [retencionSeleccionado, setValue]);
 
-
   return (
     <Box>
       <form>

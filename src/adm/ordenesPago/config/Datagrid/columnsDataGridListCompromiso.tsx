@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
+import FormatNumber from 'src/utilities/format-numbers'
 
 function ColumnsDataGrid() {
     return [
@@ -55,11 +56,11 @@ function ColumnsDataGrid() {
         },
         {
             flex: 1,
-            headerName: 'Monto total',
-            field: 'montoTotal',
+            headerName: 'Monto',
+            field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row?.montoTotal === null ? 'NO DISPONIBLE' : params.row.montoTotal}
+                    {FormatNumber(params.row?.monto) ?? 0}
                 </Typography>
             )
         }
