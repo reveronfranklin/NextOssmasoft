@@ -30,8 +30,14 @@ const TipoDocumento = (props: any) => {
 
       return
     }
-    setSelectedValue(TipoDocumento.filter((item: { id: number }) => item?.id == props?.id)[0])
-  }, [props.id])
+
+    const value = TipoDocumento.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+    if (value) {
+      handleChange(null, value)
+    }
+
+  }, [props.id, TipoDocumento])
 
   const handleChange = (e: any, newValue: any) => {
     if (newValue) {

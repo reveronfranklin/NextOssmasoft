@@ -31,8 +31,14 @@ const TipoRetencion = (props: any) => {
 
       return
     }
-    setSelectedValue(ListFrecuenciaPago.filter((item: { id: number }) => item?.id == props?.id)[0])
-  }, [props.id])
+
+    const value = ListFrecuenciaPago.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+    if (value) {
+      handleChange(null, value)
+    }
+
+  }, [props.id, ListFrecuenciaPago])
 
   const handleChange = (e: any, newValue: any) => {
     if (newValue) {

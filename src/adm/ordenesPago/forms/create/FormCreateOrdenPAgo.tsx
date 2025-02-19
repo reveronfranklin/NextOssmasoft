@@ -31,11 +31,11 @@ const FormCreateOrdenPago = () => {
     }
 
     const handleCreateOrden = async (dataFormOrder: any) => {
+        console.log('dataFormOrder', dataFormOrder)
         try {
             const {
                 codigoCompromiso,
                 codigoPresupuesto,
-                origenId,
                 fechaCompromiso
             } = compromisoSeleccionadoListaDetalle
 
@@ -44,6 +44,7 @@ const FormCreateOrdenPago = () => {
                 frecuenciaPagoId,
                 tipoPagoId,
                 cantidadPago,
+                tipoOrdenId,
                 conFactura
             } = dataFormOrder
 
@@ -54,7 +55,7 @@ const FormCreateOrdenPago = () => {
                 codigoPresupuesto,
                 codigoCompromiso,
                 fechaOrdenPago: fechaCompromiso,
-                tipoOrdenPagoId: origenId,
+                tipoOrdenPagoId: tipoOrdenId,
                 cantidadPago: cantidadPagoNumber,
                 frecuenciaPagoId,
                 tipoPagoId,

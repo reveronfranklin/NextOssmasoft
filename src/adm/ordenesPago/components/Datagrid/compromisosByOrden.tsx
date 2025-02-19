@@ -28,9 +28,8 @@ const DataGridComponent = () => {
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
-    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
 
+    const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
     const { getCompromisoByOrden, presupuestoSeleccionado } = useServices()
 
     const filter: IfilterByOrdenPago = {

@@ -15,7 +15,6 @@ const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
     overflowY: 'auto',
 }))
-
 interface IfilterByOrdenPago {
     codigoOrdenPago: number
 }
@@ -34,8 +33,7 @@ const DataGridComponent = () => {
         fetchUpdatePucByOrdenPago
     } = useServices()
 
-    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
+    const { codigoOrdenPago} = useSelector((state: RootState) => state.admOrdenPago)
     const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
     const query = useQuery({

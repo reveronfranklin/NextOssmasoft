@@ -4,10 +4,21 @@ import ReportViewAsync from 'src/share/components/Reports/forms/ReportViewAsync'
 import HandleReport from 'src/utilities/generateReport/download-report'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
+import { UrlServices } from '../../enums/UrlServices.enum'
 
 const reportOptions = [
-  { value: 'payment-orders/pdf/report', label: 'Orden de Pago' },
-  { value: 'income-tax-withholding-voucher/pdf/report', label: 'Retenciones' },
+  {
+    label: 'Orden de Pago',
+    value: UrlServices.GETREPORTBYORDENPAGO,
+  },
+  {
+    label: 'Retenciones',
+    value: UrlServices.GETREPORTBYRETENCIONES,
+  },
+  {
+    label: 'Comprobante Retenciones',
+    value: UrlServices.GETREPORTBYCOMPROBANTE,
+  }
 ]
 
 const FormViewerPdf: React.FC = () => {
@@ -32,7 +43,8 @@ const FormViewerPdf: React.FC = () => {
 
   const handleReportChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const reportType = event.target.value
-    setSelectedReport(reportType)
+
+    setSelectedReport(reportType as UrlServices)
     fetchReport(reportType)
   }
 

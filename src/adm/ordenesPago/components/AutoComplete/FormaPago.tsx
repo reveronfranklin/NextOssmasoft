@@ -30,8 +30,13 @@ const FormaPago = (props: any) => {
 
             return
         }
-        setSelectedValue(ListFormaPago.filter((item: { id: number }) => item?.id == props?.id)[0])
-    }, [props.id])
+
+        const value = ListFormaPago.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+        if (value) {
+            handleChange(null, value)
+        }
+    }, [props.id, ListFormaPago])
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {

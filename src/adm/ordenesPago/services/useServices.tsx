@@ -83,6 +83,7 @@ const useServices = () => {
     }, [])
 
     const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<any> => {
+        console.log(filters)
         try {
             setLoading(true)
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
@@ -133,6 +134,7 @@ const useServices = () => {
         try {
             setLoading(true)
             const responseGetOrdenes = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
+            console.log('responseGetOrdenes', responseGetOrdenes)
 
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data

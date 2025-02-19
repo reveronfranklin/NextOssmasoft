@@ -53,6 +53,7 @@ const DataGridComponent = () => {
 
     const handleDoubleClick = (data: any) => {
         const {row} = data
+
         dispatch(setCompromisoSeleccionadoDetalle(row))
         setTimeout(() => {
             dispatch(setIsOpenDialogListCompromiso(false))

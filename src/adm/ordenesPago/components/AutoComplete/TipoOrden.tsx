@@ -26,13 +26,21 @@ const TipoOrden = (props: any) => {
   const [selectedValue, setSelectedValue] = useState<ITipoOrden | null>(null)
 
   useEffect(() => {
+    console.log('tipo de orden', props.id)
+
     if (props.id === 0) {
       setSelectedValue(null)
 
       return
     }
-    setSelectedValue(ListTipoOrden.filter((item: { id: number }) => item?.id == props?.id)[0])
-  }, [props.id])
+
+    const value = ListTipoOrden.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+    if (value) {
+      handleChange(null, value)
+    }
+
+  }, [props.id, ListTipoOrden])
 
   const handleChange = (e: any, newValue: any) => {
     if (newValue) {

@@ -30,8 +30,14 @@ const EstatusFisico = (props: any) => {
 
         return
       }
-      setSelectedValue(EstatusFisico.filter((item: { id: number }) => item?.id == props?.id)[0])
-    }, [props.id])
+
+      const value = EstatusFisico.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+      if (value) {
+        handleChange(null, value)
+      }
+
+    }, [props.id, EstatusFisico])
 
     const handleChange = (e: any, newValue: any) => {
       if (newValue) {
