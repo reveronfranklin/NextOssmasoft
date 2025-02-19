@@ -83,6 +83,7 @@ const useServices = () => {
     }, [])
 
     const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<any> => {
+        console.log(filters)
         try {
             setLoading(true)
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)

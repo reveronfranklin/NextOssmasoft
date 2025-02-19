@@ -24,56 +24,62 @@ const TipoImpuesto = (props: any) => {
   const TipoImpuesto: ITipoImpuesto[] = query.data?.data ?? [];
   const [selectedValue, setSelectedValue] = useState<ITipoImpuesto | null>(null)
 
-    useEffect(() => {
-      if (props.id === 0) {
-        setSelectedValue(null)
+  const handleChange = (e: any, newValue: any) => {
+    if (newValue) {
+      props.onSelectionChange(newValue)
+      setSelectedValue(newValue)
+    } else {
+      props.onSelectionChange({
+        id: 0,
+        value: 0
+      })
+      setSelectedValue(null)
+    }
+  }
 
-        return
-      }
-      setSelectedValue(TipoImpuesto.filter((item: { id: number }) => item?.id == props?.id)[0])
-    }, [props.id])
+  useEffect(() => {
+    if (props.id === 0) {
+      setSelectedValue(null)
 
-    const handleChange = (e: any, newValue: any) => {
-      if (newValue) {
-        props.onSelectionChange(newValue)
-        setSelectedValue(newValue)
-      } else {
-        props.onSelectionChange({
-          id: 0,
-          value: 0
-        })
-        setSelectedValue(null)
-      }
+      return
     }
 
-    return (
-      <>
-        {
-          query.isLoading ? (
-            <Skeleton
-              width={300}
-              height={70}
-              style={{
-                border: '1px solid #ccc',
-                backgroundColor: '#fff',
-                borderRadius: 10,
-                padding: 0,
-              }}
-            />
-          ) : (
-            <Autocomplete
-              ref={props.autocompleteRef}
-              options={TipoImpuesto}
-              value={selectedValue}
-              id='autocomplete-TipoImpuesto'
-              getOptionLabel={(option) => option.id + '-' + option.descripcion}
-              onChange={handleChange}
-              renderInput={(params) => <TextField {...params} label="TipoImpuesto" />}
-            />
-          )
-        }
-      </>
-    )
+    const value = TipoImpuesto.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+    if (value) {
+      handleChange(null, value)
+    }
+
+  }, [props.id, TipoImpuesto])
+
+  return (
+    <>
+      {
+        query.isLoading ? (
+          <Skeleton
+            width={300}
+            height={70}
+            style={{
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              borderRadius: 10,
+              padding: 0,
+            }}
+          />
+        ) : (
+          <Autocomplete
+            ref={props.autocompleteRef}
+            options={TipoImpuesto}
+            value={selectedValue}
+            id='autocomplete-TipoImpuesto'
+            getOptionLabel={(option) => option.id + '-' + option.descripcion}
+            onChange={handleChange}
+            renderInput={(params) => <TextField {...params} label="TipoImpuesto" />}
+          />
+        )
+      }
+    </>
+  )
 }
 
 export default TipoImpuesto

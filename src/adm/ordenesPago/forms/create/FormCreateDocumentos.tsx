@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect, useRef } from "react"
 import { Box, Grid, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
@@ -28,7 +28,17 @@ import { ICreateDocumentosOp } from '../../interfaces/documentosOp/createDocumen
 import { IUpdateDocumentosOp } from '../../interfaces/documentosOp/updateDocumentosOp'
 import { IDeleteDocumentoOp } from '../../interfaces/documentosOp/deleteDocumentosOp'
 
+import calcularBaseImponible from '../../helpers/baseImponible'
+import calculoImpuesto from '../../helpers/calculoImpuesto'
+import { NumericFormat } from 'react-number-format'
+
 const FormCreateDocumentosOp = () => {
+  const [montoDocumento, setMontoDocumento] = useState<number>(0)
+  const [baseImponible, setBaseImponible] = useState<number>(0)
+  const [montoImpuesto, setMontoImpuesto] = useState<number>(0)
+
+  const [impuesto, setImpuesto] = useState<number>(0)
+
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
   const autocompleteRef = useRef()
@@ -74,7 +84,35 @@ const FormCreateDocumentosOp = () => {
   const { control, handleSubmit, setValue, getValues, formState: { errors, isValid }, reset } = useForm({
     mode: 'onChange',
     defaultValues
-  });
+  })
+
+  useEffect(() => {
+    console.log(montoDocumento)
+    console.log(impuesto)
+
+    const impuestoAbsoluto = Math.abs(impuesto)
+
+    if (montoDocumento > 0 && impuestoAbsoluto !== 0) {
+      const base = calcularBaseImponible(montoDocumento, impuestoAbsoluto)
+      setBaseImponible(base)
+
+      if (base && base > 0) {
+        const calculoMontoImpuesto = calculoImpuesto(base, impuestoAbsoluto)
+        setMontoImpuesto(calculoMontoImpuesto)
+      }
+
+      return
+    }
+
+    setBaseImponible(0)
+    setMontoImpuesto(0)
+
+  }, [montoDocumento, impuesto])
+
+  const handleTipoImpuestoChange = (tipoImpuesto: any) => {
+    setValue('tipoImpuestoId', tipoImpuesto.id)
+    setImpuesto(tipoImpuesto.value)
+  }
 
   useEffect(() => {
     if (typeOperationDocumento === 'create') {
@@ -112,9 +150,9 @@ const FormCreateDocumentosOp = () => {
         estatusFiscoId: getValues('estatusFiscoId'),
         numeroDocumento: getValues('numeroDocumento'),
         numeroControlDocumento: getValues('numeroControlDocumento'),
-        montoDocumento: getValues('montoDocumento'),
-        baseImponible: getValues('baseImponible'),
-        montoImpuesto: getValues('montoImpuesto'),
+        montoDocumento: Number(montoDocumento),
+        baseImponible: Number(baseImponible),
+        montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
         montoImpuestoExento: getValues('montoImpuestoExento'),
         montoRetenido: getValues('montoRetenido'),
@@ -147,9 +185,9 @@ const FormCreateDocumentosOp = () => {
         fechaDocumento: getValues('fechaDocumento'),
         numeroDocumento: getValues('numeroDocumento'),
         numeroControlDocumento: getValues('numeroControlDocumento'),
-        montoDocumento: getValues('montoDocumento'),
-        baseImponible: getValues('baseImponible'),
-        montoImpuesto: getValues('montoImpuesto'),
+        montoDocumento: Number(montoDocumento),
+        baseImponible: Number(baseImponible),
+        montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
         montoImpuestoExento: getValues('montoImpuestoExento'),
         montoRetenido: getValues('montoRetenido'),
@@ -247,6 +285,8 @@ const FormCreateDocumentosOp = () => {
   }
 
   useEffect(() => {
+    console.log(documentoOpSeleccionado)
+
     if (documentoOpSeleccionado && typeOperationDocumento !== 'create') {
       setValue('fechaComprobante', documentoOpSeleccionado['fechaComprobante'])
       setValue('fechaDocumento', documentoOpSeleccionado['fechaDocumento'])
@@ -274,7 +314,7 @@ const FormCreateDocumentosOp = () => {
   }, [documentoOpSeleccionado])
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    console.log(data)
   }
 
   return (
@@ -407,18 +447,18 @@ const FormCreateDocumentosOp = () => {
 
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
             <Grid item xs={6}>
-              <TipoImpuesto
-                id={documentoOpSeleccionado?.tipoImpuestoId ?? 0}
-                autocompleteRef={autocompleteRef}
-                onSelectionChange={(value: any) => { setValue('tipoImpuestoId', value.id) }}
-              />
-            </Grid>
-
-            <Grid item xs={6}>
               <EstatusFisico
                 id={documentoOpSeleccionado?.estatusFiscoId ?? 0}
                 autocompleteRef={autocompleteRef}
                 onSelectionChange={(value: any) => { setValue('estatusFiscoId', value.id) }}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TipoImpuesto
+                id={documentoOpSeleccionado?.tipoImpuestoId ?? 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={handleTipoImpuestoChange}
               />
             </Grid>
           </Grid>
@@ -505,7 +545,33 @@ const FormCreateDocumentosOp = () => {
             </Grid>
 
             <Grid item xs={2}>
-              <Controller
+              <NumericFormat
+                value={montoDocumento}
+                customInput={TextField}
+                thousandSeparator="."
+                decimalSeparator=","
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label="Monto"
+                onFocus={(event) => {
+                  event.target.select()
+                }}
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setMontoDocumento(value)
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.montoDocumento)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: false
+                }}
+                disabled={false}
+              />
+              {/* <Controller
                 name="montoDocumento"
                 control={control}
                 rules={{
@@ -523,18 +589,47 @@ const FormCreateDocumentosOp = () => {
                   <TextField
                     fullWidth
                     value={value}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      setMontoDocumento(Number(e.target.value))
+                      onChange(e.target.value)
+                    }}
                     label='Monto Documento'
                     variant='outlined'
                     error={!!errors.montoDocumento}
                     helperText={errors.montoDocumento ? errors.montoDocumento.message : null}
                   />
                 )}
-              />
+              /> */}
             </Grid>
 
             <Grid item xs={2}>
-              <Controller
+              <NumericFormat
+                value={baseImponible}
+                customInput={TextField}
+                thousandSeparator="."
+                decimalSeparator=","
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label="Base"
+                onFocus={(event) => {
+                  event.target.select()
+                }}
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setBaseImponible(value)
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.baseImponible)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
+                disabled={true}
+              />
+              {/* <Controller
                 name="baseImponible"
                 control={control}
                 rules={{
@@ -544,7 +639,7 @@ const FormCreateDocumentosOp = () => {
                     message: 'Solo se permiten números',
                   },
                   minLength: {
-                    value: 1, // Mínimo 1 dígito
+                    value: 1,
                     message: 'Mínimo 1 dígito requerido',
                   },
                 }}
@@ -552,18 +647,43 @@ const FormCreateDocumentosOp = () => {
                   <TextField
                     fullWidth
                     value={value}
-                    onChange={onChange}
+                    onChange={(e) => {
+                      setBaseImponible(Number(e.target.value))
+                      onChange(e.target.value)
+                    }}
                     label='Base Imponible'
                     variant='outlined'
                     error={!!errors.baseImponible}
                     helperText={errors.baseImponible ? errors.baseImponible.message : null}
                   />
                 )}
-              />
+              /> */}
             </Grid>
 
             <Grid item xs={2}>
-              <Controller
+              <NumericFormat
+                value={montoImpuesto}
+                customInput={TextField}
+                thousandSeparator="."
+                decimalSeparator=","
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label="% Impuesto"
+                onFocus={(event) => {
+                  event.target.select()
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.montoImpuesto)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
+                disabled={true}
+              />
+              {/* <Controller
                 name="montoImpuesto"
                 control={control}
                 rules={{
@@ -588,7 +708,7 @@ const FormCreateDocumentosOp = () => {
                     helperText={errors.montoImpuesto ? errors.montoImpuesto.message : null}
                   />
                 )}
-              />
+              /> */}
             </Grid>
           </Grid>
 

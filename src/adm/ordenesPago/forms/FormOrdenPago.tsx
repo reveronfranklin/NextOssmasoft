@@ -57,9 +57,19 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         onFormClear
     } = props
 
+    const [tipoOrdenPagoId, setTipoOrdenPago] = useState<number>(0)
+    const [tipoPagoId, setTipoPagoId] = useState<number>(0)
+    const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
+
     const [isFormEnabled, setIsFormEnabled] = useState(false)
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: new Date().getDate(),
+    })
+
+    const [fechaOrdenPago, setFechaOrdenPago] = useState<IFechaDto>({
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
         day: new Date().getDate(),
@@ -91,7 +101,6 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     const {
         control,
         handleSubmit,
-        reset,
         setValue,
         formState: { errors, isValid }
     } = useForm<FormInputs>({
@@ -107,16 +116,19 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         dispatch(resetCompromisoSeleccionadoDetalle())
     }, [])
 
-    const handleTipoOrden = (tipoOrdenId: number) => {
-        setValue('tipoOrdenId', tipoOrdenId)
+    const handleTipoOrden = (tipoOrden: any) => {
+        setValue('tipoOrdenId', tipoOrden.id)
+        setTipoOrdenPago(tipoOrden.id)
     }
 
-    const handleFormaPago = (formaPagoId: number) => {
-        setValue('tipoPagoId', formaPagoId)
+    const handleFormaPago = (formaPago: any) => {
+        setValue('tipoPagoId', formaPago.id)
+        setTipoPagoId(formaPago.id)
     }
 
-    const handleFrecuenciaPago = (frecuenciaPagoId: number) => {
-        setValue('frecuenciaPagoId', frecuenciaPagoId)
+    const handleFrecuenciaPago = (frecuenciaPago: any) => {
+        setValue('frecuenciaPagoId', frecuenciaPago.id)
+        setFrecuenciaPagoId(frecuenciaPago.id)
     }
 
     const handleDialogOpen = () => {
@@ -146,8 +158,11 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     }
 
     useEffect(() => {
+        console.log(orden)
+
         if (orden && Object.keys(orden).length) {
             setIsFormEnabled(true)
+
             setValue('descripcionStatus', orden.descripcionStatus ?? '')
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
             setValue('cantidadPago', orden.cantidadPago ?? 0)
@@ -156,9 +171,15 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
             setValue('fechaOrdenPagoString', orden.fechaOrdenPagoString ?? null, { shouldValidate: true })
             setValue('tipoPagoId', orden.tipoPagoId ?? 0)
-            setValue('tipoOrdenId', orden.tipoOrdenId ?? 0) //todo validar que este llegando esta propiedad
+            setValue('tipoOrdenId', orden.tipoOrdenId ?? 0)
             setValue('frecuenciaPagoId', orden.frecuenciaPagoId ?? 0)
             setValue('conFactura', orden.conFactura ?? false)
+
+            setFechaOrdenPago(orden.fechaOrdenPagoObj)
+
+            setTipoPagoId(orden.tipoPagoId)
+            setTipoOrdenPago(orden.tipoOrdenPagoId)
+            setFrecuenciaPagoId(orden.frecuenciaPagoId)
         }
 
         if (open && !loading) handleClose()
@@ -240,7 +261,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                     <FormControl fullWidth>
                                         <DatePickerWrapper>
                                             <DatePicker
-                                                selected={getDateByObject(orden.fechaOrdenPagoObj)}
+                                                selected={fechaOrdenPago ? getDateByObject(fechaOrdenPago) : null}
                                                 id='date-time-picker-desde'
                                                 dateFormat='dd/MM/yyyy'
                                                 onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
@@ -274,23 +295,23 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                         </Grid>
                         <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
                             <TipoOrden
-                                id={orden?.tipoOrdenId ?? ''}
+                                id={tipoOrdenPagoId}
                                 autocompleteRef={autocompleteRef}
-                                onSelectionChange={(value: any) => { handleTipoOrden(value.id) }}
+                                onSelectionChange={handleTipoOrden}
                             />
                         </Grid>
                         <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
                             <FormaPago
-                                id={orden?.tipoPagoId ?? ''}
+                                id={tipoPagoId}
                                 autocompleteRef={autocompleteRef}
-                                onSelectionChange={(value: any) => { handleFormaPago(value.id) }}
+                                onSelectionChange={handleFormaPago}
                             />
                         </Grid>
                         <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
                             <FrecuenciaPago
-                                id={orden?.frecuenciaPagoId ?? ''}
+                                id={frecuenciaPagoId}
                                 autocompleteRef={autocompleteRef}
-                                onSelectionChange={(value: any) => { handleFrecuenciaPago(value.id) }}
+                                onSelectionChange={handleFrecuenciaPago}
                             />
                         </Grid>
                         <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
