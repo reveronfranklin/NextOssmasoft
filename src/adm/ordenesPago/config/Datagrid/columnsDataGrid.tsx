@@ -67,11 +67,11 @@ function ColumnsDataGrid() {
         {
             flex: 0,
             minWidth: 180,
-            headerName: 'codigoOrdenPago',
-            field: 'codigoOrdenPago',
+            headerName: 'NumeroOrdenPago',
+            field: 'numeroOrdenPago',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigoOrdenPago}
+                    {params.row?.numeroOrdenPago ?? 'NO DISPONIBLE'}
                 </Typography>
             )
         },
@@ -100,14 +100,14 @@ function ColumnsDataGrid() {
         {
             flex: 0.25,
             minWidth: 300,
-            headerName: 'Frecuencia',
-            field: 'descripcionFrecuencia',
+            headerName: 'Proveedor',
+            field: 'nombreProveedor',
             renderCell: (params: GridRenderCellParams) => {
                 return (
                     <Box sx={{ display: 'flex', alignItems: 'left' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                                {params.row.descripcionFrecuencia === '' ? 'NO DISPONIBLE' : params.row.descripcionFrecuencia}
+                                {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
                             </Typography>
                         </Box>
                     </Box>

@@ -30,8 +30,14 @@ const TipoOperacion = (props: any) => {
 
       return
     }
-    setSelectedValue(TipoOperacion.filter((item: { id: number }) => item?.id == props?.id)[0])
-  }, [props.id])
+
+    const value = TipoOperacion.filter((item: { id: number }) => item?.id == props?.id)[0]
+
+    if (value) {
+      handleChange(null, value)
+    }
+
+  }, [props.id, TipoOperacion])
 
   const handleChange = (e: any, newValue: any) => {
     if (newValue) {

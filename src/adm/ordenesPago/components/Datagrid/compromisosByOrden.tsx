@@ -51,6 +51,7 @@ const DataGridComponent = () => {
     const rowCount = rows.length || 0
 
     const handleDoubleClick = (data: any) => {
+        console.log(data)
         dispatch(setIsOpenDialogListPucOrdenPago(true))
     }
 
