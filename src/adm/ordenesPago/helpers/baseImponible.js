@@ -4,14 +4,16 @@
  * @param {number} porcentajeIva - El porcentaje de IVA.
  * @returns {number} - La base imponible.
  */
-function calcularBaseImponible(montoDocumento, porcentajeIva) {
-  if (montoDocumento > 0 || null || '') {
-    const baseImponible = Math.round((montoDocumento / (1 + (porcentajeIva / 100))) * 100) / 100;
 
-    return baseImponible;
-  }
-
-  return 0
+const calcularBaseImponible = async (montoDocumento, porcentajeIva) => {
+  return new Promise((resolve, reject) => {
+    if (montoDocumento > 0) {
+      const baseImponible = Math.round((montoDocumento / (1 + (porcentajeIva / 100))) * 100) / 100
+      resolve(baseImponible)
+    } else {
+      resolve(0)
+    }
+  })
 }
 
 export default calcularBaseImponible

@@ -54,7 +54,7 @@ const FormCreateRetencionesOp = () => {
         codigoRetencionOp: 0,
         codigoOrdenPago: retencionOpSeleccionado.codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
-        codigoRetencion: 39, //todo cambiar este valor
+        codigoRetencion: formData.tipoRetencion,
         porRetencion: 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
@@ -82,7 +82,7 @@ const FormCreateRetencionesOp = () => {
         codigoRetencionOp: retencionOpSeleccionado.codigoRetencionOp,
         codigoOrdenPago: retencionOpSeleccionado.codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
-        codigoRetencion: 39, //todo cambiar este valor
+        codigoRetencion: formData.tipoRetencion,
         porRetencion: 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,

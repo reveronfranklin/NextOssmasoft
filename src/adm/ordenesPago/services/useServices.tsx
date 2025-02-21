@@ -34,7 +34,8 @@ const useServices = () => {
     const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<any> => {
         try {
             setLoading(true)
-            const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSBYPRESUPUESTO, filters)
+            // const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSBYPRESUPUESTO, filters)
+            const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSPENDIENTEBYPRESUPUESTO, filters)
 
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data
