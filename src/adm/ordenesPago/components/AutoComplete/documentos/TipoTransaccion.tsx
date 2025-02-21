@@ -36,7 +36,7 @@ const TipoTransaction = (props: any) => {
     if (value) {
       handleChange(null, value)
     }
-  
+
   }, [props.id, TipoTransaction])
 
   const handleChange = (e: any, newValue: any) => {

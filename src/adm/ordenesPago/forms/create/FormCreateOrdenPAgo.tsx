@@ -10,6 +10,7 @@ import {
     resetCompromisoSeleccionadoDetalle,
     setCompromisoSeleccionadoDetalle,
     setTypeOperation,
+    setConFactura,
 } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
 import FormOrdenPago from '../../forms/FormOrdenPago'
@@ -72,6 +73,7 @@ const FormCreateOrdenPago = () => {
 
             if (response) {
                 dispatch(setCompromisoSeleccionadoDetalle(response.data))
+                dispatch(setConFactura(response.data.conFactura))
                 changeViewToEdit()
             }
         } catch (e: any) {

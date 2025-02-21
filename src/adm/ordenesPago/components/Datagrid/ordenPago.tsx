@@ -56,7 +56,6 @@ const DataGridComponent = () => {
     const rows = query?.data?.data || []
     const rowCount = query?.data?.cantidadRegistros || 0
 
-    console.log('rows', rows)
     useEffect(() => {
         if (presupuestoSeleccionado.codigoPresupuesto > 0) {
             setIsPresupuestoSeleccionado(true)

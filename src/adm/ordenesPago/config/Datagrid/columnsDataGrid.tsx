@@ -17,8 +17,6 @@ function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
     const handleEdit = (row: any) => {
-        console.log(row)
-
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
         dispatch(setConFactura(row.conFactura))
@@ -27,6 +25,7 @@ function ColumnsDataGrid() {
     }
 
     const handleDialogViewerPdf = async (row: any) => {
+        dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setIsOpenViewerPdf(true))
     }
@@ -66,11 +65,11 @@ function ColumnsDataGrid() {
         },
         {
             flex: 0,
-            minWidth: 180,
-            headerName: 'NumeroOrdenPago',
+            minWidth: 150,
+            headerName: '# OrdenPago',
             field: 'numeroOrdenPago',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                <Typography variant='body2' sx={{ color: 'text.primary', textAlign: 'center', width: '100%' }}>
                     {params.row?.numeroOrdenPago ?? 'NO DISPONIBLE'}
                 </Typography>
             )
