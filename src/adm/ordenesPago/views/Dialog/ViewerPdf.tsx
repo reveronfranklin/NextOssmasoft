@@ -49,7 +49,7 @@ const ViewerPdf = () => {
           <Box position="static" sx={{ boxShadow: 'none' }}>
             <Toolbar sx={{ justifyContent: 'space-between', padding: 0 }}>
               <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                Visor
+                Reportes
               </Typography>
               <IconButton
                 size='small'

@@ -158,8 +158,6 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     }
 
     useEffect(() => {
-        console.log(orden)
-
         if (orden && Object.keys(orden).length) {
             setIsFormEnabled(true)
 
