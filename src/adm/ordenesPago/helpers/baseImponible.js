@@ -6,7 +6,7 @@
  */
 
 const calcularBaseImponible = async (montoDocumento, porcentajeIva) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (montoDocumento > 0) {
       const baseImponible = Math.round((montoDocumento / (1 + (porcentajeIva / 100))) * 100) / 100
       resolve(baseImponible)
