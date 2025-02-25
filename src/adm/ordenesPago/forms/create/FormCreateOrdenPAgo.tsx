@@ -19,7 +19,7 @@ const FormCreateOrdenPago = () => {
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
-    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
+    const { compromisoSeleccionadoListaDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
 
     const {
         createOrden,
@@ -32,7 +32,6 @@ const FormCreateOrdenPago = () => {
     }
 
     const handleCreateOrden = async (dataFormOrder: any) => {
-        console.log('dataFormOrder', dataFormOrder)
         try {
             const {
                 codigoCompromiso,
@@ -92,11 +91,17 @@ const FormCreateOrdenPago = () => {
     }
 
     const handleClearCompromiso = () => {
-        dispatch(resetCompromisoSeleccionadoDetalle())
+        if (typeOperation === 'create') {
+            dispatch(resetCompromisoSeleccionadoDetalle())
+        }
     }
 
     useEffect(() => {
-        dispatch(resetCompromisoSeleccionadoDetalle())
+        console.log(typeOperation === 'create')
+
+        if (typeOperation === 'create') {
+            dispatch(resetCompromisoSeleccionadoDetalle())
+        }
     }, [])
 
     return (
