@@ -33,6 +33,7 @@ import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
 import { NumericFormat } from 'react-number-format'
+import moment from 'moment';
 
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
@@ -62,12 +63,17 @@ const FormCreateDocumentosOp = () => {
     codigoOrdenPago
   } = useSelector((state: RootState) => state.admOrdenPago)
 
+  const generatePImpositivo = () => {
+    const fecha = moment()
+    return fecha.format('YYYYMM')
+  }
+
   const defaultValues: ICreateDocumentosOp = {
     codigoDocumentoOp: 0,
     codigoOrdenPago: codigoOrdenPago,
     codigoPresupuesto: presupuestoSeleccionado?.codigoPresupuesto ?? 0,
     fechaComprobante: '',
-    periodoImpositivo: '',
+    periodoImpositivo: generatePImpositivo(),
     tipoOperacionId: null,
     tipoDocumentoId: null,
     tipoTransaccionId: null,
@@ -123,8 +129,8 @@ const FormCreateDocumentosOp = () => {
 
   useEffect(() => {
     const calculateMontoRetenido = async () => {
-      if (impuesto > 0) {
-        const montoRetenido = await calcularMontoRetenido(impuesto, estatusFisico)
+      if (montoImpuesto > 0) {
+        const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico)
         setRetencionMonto(montoRetenido)
       }
 
@@ -185,7 +191,7 @@ const FormCreateDocumentosOp = () => {
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
         montoImpuestoExento: getValues('montoImpuestoExento'),
-        montoRetenido: Number(retencionMonto),
+        montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
       }
@@ -220,7 +226,7 @@ const FormCreateDocumentosOp = () => {
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
         montoImpuestoExento: getValues('montoImpuestoExento'),
-        montoRetenido: Number(retencionMonto),
+        montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
       }
@@ -393,7 +399,7 @@ const FormCreateDocumentosOp = () => {
                     <TextField
                       fullWidth
                       value={value}
-                      onChange={(e) => onChange(Number(e.target.value) || '')}
+                      onChange={(e) => onChange(parseFloat(e.target.value) || '')}
                       label='Código Documento OP'
                       variant='outlined'
                       disabled

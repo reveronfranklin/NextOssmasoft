@@ -46,7 +46,7 @@ const FormUpdateOrdenPago = () => {
             const payload: IUpdateOrdenPago = {
                 codigoOrdenPago,
                 codigoPresupuesto,
-                codigoCompromiso: 15,
+                codigoCompromiso: 15, //todo esto debe acomodarse
                 fechaOrdenPago: new Date(fechaOrdenPagoString),
                 tipoOrdenPagoId,
                 cantidadPago,
