@@ -63,17 +63,12 @@ const FormCreateDocumentosOp = () => {
     codigoOrdenPago
   } = useSelector((state: RootState) => state.admOrdenPago)
 
-  const generatePImpositivo = () => {
-    const fecha = moment()
-    return fecha.format('YYYYMM')
-  }
-
   const defaultValues: ICreateDocumentosOp = {
     codigoDocumentoOp: 0,
     codigoOrdenPago: codigoOrdenPago,
     codigoPresupuesto: presupuestoSeleccionado?.codigoPresupuesto ?? 0,
     fechaComprobante: '',
-    periodoImpositivo: generatePImpositivo(),
+    periodoImpositivo: '',
     tipoOperacionId: null,
     tipoDocumentoId: null,
     tipoTransaccionId: null,
@@ -105,23 +100,22 @@ const FormCreateDocumentosOp = () => {
 
   useEffect(() => {
     const calculateValues = async () => {
-      const impuestoAbsoluto = Math.abs(impuesto)
-
-      if (montoDocumento > 0 && impuestoAbsoluto !== 0) {
-        const base = await calcularBaseImponible(montoDocumento, impuestoAbsoluto)
+      if (montoDocumento > 0 && impuesto !== 0) {
+        const base = await calcularBaseImponible(montoDocumento, impuesto)
         setBaseImponible(base)
 
-        if (base && base > 0) {
-          const calculoMontoImpuesto = await calculoImpuesto(base, impuestoAbsoluto)
+        if (base > 0) {
+          const calculoMontoImpuesto = await calculoImpuesto(base, impuesto)
           setMontoImpuesto(calculoMontoImpuesto)
+        } else {
+          setMontoImpuesto(0)
+          setRetencionMonto(0)
         }
-
-        return
+      } else {
+        setBaseImponible(0)
+        setMontoImpuesto(0)
+        setRetencionMonto(0)
       }
-
-      setBaseImponible(0)
-      setMontoImpuesto(0)
-      setRetencionMonto(0)
     }
 
     calculateValues()
@@ -132,9 +126,9 @@ const FormCreateDocumentosOp = () => {
       if (montoImpuesto > 0) {
         const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico)
         setRetencionMonto(montoRetenido)
+      } else {
+        setRetencionMonto(0)
       }
-
-      return
     }
 
     calculateMontoRetenido()
@@ -302,6 +296,12 @@ const FormCreateDocumentosOp = () => {
     }
   }
 
+  const generatePImpositivo = (fecha: Date | null) => {
+    if (fecha) {
+      setValue('periodoImpositivo', dayjs(fecha).format('YYYYMM'))
+    }
+  }
+
   const handleFechaDocumentoObjChange = (fecha: Date | null) => {
     if (fecha && dayjs(fecha).isValid()) {
       const fechaDocumentoObj = fechaToFechaObj(fecha)
@@ -317,6 +317,8 @@ const FormCreateDocumentosOp = () => {
 
       dispatch(setDocumentoOpSeleccionado(documentoUpdate))
       setValue('fechaDocumento', fechaDocumento)
+
+      generatePImpositivo(fecha)
     }
   }
 
@@ -444,6 +446,7 @@ const FormCreateDocumentosOp = () => {
                       variant='outlined'
                       error={!!errors.periodoImpositivo}
                       helperText={errors.periodoImpositivo ? errors.periodoImpositivo.message : null}
+                      disabled={true}
                     />
                   )}
                 />
@@ -606,35 +609,6 @@ const FormCreateDocumentosOp = () => {
                   }}
                   disabled={false}
                 />
-                {/* <Controller
-                  name="montoDocumento"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={(e) => {
-                        setMontoDocumento(Number(e.target.value))
-                        onChange(e.target.value)
-                      }}
-                      label='Monto Documento'
-                      variant='outlined'
-                      error={!!errors.montoDocumento}
-                      helperText={errors.montoDocumento ? errors.montoDocumento.message : null}
-                    />
-                  )}
-                /> */}
               </Grid>
 
               <Grid item xs={2}>
@@ -664,35 +638,6 @@ const FormCreateDocumentosOp = () => {
                   }}
                   disabled={true}
                 />
-                {/* <Controller
-                  name="baseImponible"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={(e) => {
-                        setBaseImponible(Number(e.target.value))
-                        onChange(e.target.value)
-                      }}
-                      label='Base Imponible'
-                      variant='outlined'
-                      error={!!errors.baseImponible}
-                      helperText={errors.baseImponible ? errors.baseImponible.message : null}
-                    />
-                  )}
-                /> */}
               </Grid>
 
               <Grid item xs={2}>
@@ -718,32 +663,6 @@ const FormCreateDocumentosOp = () => {
                   }}
                   disabled={true}
                 />
-                {/* <Controller
-                  name="montoImpuesto"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
-                    minLength: {
-                      value: 1, // Mínimo 1 dígito
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Monto Impuesto'
-                      variant='outlined'
-                      error={!!errors.montoImpuesto}
-                      helperText={errors.montoImpuesto ? errors.montoImpuesto.message : null}
-                    />
-                  )}
-                /> */}
               </Grid>
             </Grid>
 
@@ -821,31 +740,6 @@ const FormCreateDocumentosOp = () => {
                   }}
                   disabled={true}
                 />
-                {/* <Controller
-                  name="montoRetenido"
-                  control={control}
-                  rules={{
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Monto Retenido'
-                      variant='outlined'
-                      error={!!errors.montoRetenido}
-                      helperText={errors.montoRetenido ? errors.montoRetenido.message : null}
-                    />
-                  )}
-                /> */}
               </Grid>
 
               <Grid item xs={3}>
