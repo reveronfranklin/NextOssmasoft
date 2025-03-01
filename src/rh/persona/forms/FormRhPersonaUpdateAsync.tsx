@@ -451,6 +451,8 @@ const FormRhPersonaUpdateAsync = ({
     setLoading(true)
 
     if (archivos.length > 0) {
+      dispatch(setPersonaSeleccionado({ ...personasDtoSeleccionado, avatar: null }));
+
       console.log('data si tiene archivo cargado', data)
       const form = new FormData()
       for (let index = 0; index < archivosSend.length; index++) {

@@ -13,8 +13,10 @@ const LayoutOrdenPago = () => {
     const { presupuestoSeleccionado } = useServices()
 
     const handleCreateOrden = async () => {
-        dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('create'))
+        setTimeout(() => {
+            dispatch(setIsOpenDialogOrdenPagoDetalle(true))
+        }, 1500)
     }
 
     return (

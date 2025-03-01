@@ -103,6 +103,7 @@ const PersonaViewLeft = () => {
   const theme = useTheme()
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+  const { personasDtoSeleccionado } = useSelector((state: RootState) => state.nomina)
 
   // ** States
   const [openEdit, setOpenEdit] = useState<boolean>(false)
@@ -114,6 +115,8 @@ const PersonaViewLeft = () => {
   const dispatch = useDispatch()
   const [personas, setPersonas] = useState<IListSimplePersonaDto[]>([])
   const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
+  const [avatar, setAvatar] = useState<string | undefined>(personasDtoSeleccionado.avatar ?? undefined)
+  const [avatarKey, setAvatarKey] = useState<number>(0)
 
   //const fechaActual = new Date()
 
@@ -256,6 +259,15 @@ const PersonaViewLeft = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
+  useEffect(() => {
+    if (personasDtoSeleccionado.avatar === null) {
+      setAvatar(undefined)
+    } else {
+      setAvatar(personasDtoSeleccionado.avatar)
+      setAvatarKey(prevKey => prevKey + 1)
+    }
+  }, [personasDtoSeleccionado.avatar])
+
   if (data) {
     return (
       <Grid container spacing={6}>
@@ -280,7 +292,8 @@ const PersonaViewLeft = () => {
               <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
                 {data.avatar.length ? (
                   <CustomAvatar
-                    src={personaSeleccionado.avatar}
+                    key={avatarKey}
+                    src={avatar + '?v=' + Date.now()}
                     variant='rounded'
                     alt={personaSeleccionado.nombreCompleto}
                     sx={{ width: 260, height: 320, fontWeight: 600, mb: 4, fontSize: '3rem' }}

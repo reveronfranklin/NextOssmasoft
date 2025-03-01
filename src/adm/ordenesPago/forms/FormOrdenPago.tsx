@@ -113,7 +113,9 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
     }
 
     useEffect(() => {
-        dispatch(resetCompromisoSeleccionadoDetalle())
+        if (typeOperation !== 'update') {
+            dispatch(resetCompromisoSeleccionadoDetalle())
+        }
     }, [])
 
     const handleTipoOrden = (tipoOrden: any) => {
