@@ -38,4 +38,5 @@ export enum UrlServices {
     GETREPORTBYORDENPAGO        = 'payment-orders/pdf/report',
     GETREPORTBYRETENCIONES      = 'income-tax-withholding-voucher/pdf/report',
     GETREPORTBYCOMPROBANTE      = 'vat-withholding-voucher/pdf/report',
+    TIMBREFISCAL                = 'tax-stamp-voucher/pdf/report'
 }

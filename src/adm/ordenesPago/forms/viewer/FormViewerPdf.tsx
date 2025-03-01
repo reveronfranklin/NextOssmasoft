@@ -25,6 +25,12 @@ const reportOptions = [
     value: UrlServices.GETREPORTBYCOMPROBANTE,
     icon: 'mdi:file-document-outline',
     color: 'primary.main',
+  },
+  {
+    label: 'Timbre Fiscal',
+    value: UrlServices.TIMBREFISCAL,
+    icon: 'mdi:file-document-outline',
+    color: 'primary.main',
   }
 ]
 
@@ -73,7 +79,7 @@ const FormViewerPdf: React.FC = () => {
             {reportOptions.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Icon icon={option.icon} fontSize={20} sx={{ marginRight: 2, color: option.color }} />
+                  <Icon icon={option.icon} fontSize={20} />
                   {option.label}
                 </Box>
               </MenuItem>
