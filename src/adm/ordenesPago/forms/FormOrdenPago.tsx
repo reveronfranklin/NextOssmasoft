@@ -1,6 +1,19 @@
 import {
-    Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
-    Checkbox, FormControlLabel,Typography
+    Box,
+    Grid,
+    TextField,
+    FormControl,
+    Button,
+    FormHelperText,
+    Dialog,
+    DialogTitle,
+    DialogContentText,
+    DialogContent,
+    DialogActions,
+    CircularProgress,
+    Checkbox,
+    FormControlLabel,
+    Typography
 } from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from 'react-hook-form'
@@ -18,7 +31,8 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
 import { setCompromisoSeleccionadoDetalle, resetCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
-import WarningIcon from '@mui/icons-material/Warning';
+import WarningIcon from '@mui/icons-material/Warning'
+import useServicesDocumentosOp from './../services/useServicesDocumentosOp'
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -39,14 +53,22 @@ export interface FormInputs {
     numeroOrdenPago: number | string,
     conFactura: boolean
 }
-
 export interface IFechaDto {
     year: string | number;
     month: string | number;
     day: string | number;
 }
 
-const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any, onViewerPdf?: any, titleButton?: string, message?: string, loading?: boolean }) => {
+const FormOrdenPago = (props: {
+        orden?: any,
+        onFormData: any,
+        onFormClear?: any,
+        onViewerPdf?: any,
+        titleButton?: string,
+        message?: string,
+        loading?: boolean
+    }) => {
+
     const {
         orden,
         onFormData,
@@ -54,8 +76,10 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
         onViewerPdf,
         message,
         loading,
-        onFormClear
+        onFormClear,
     } = props
+
+    const { getListDocumentos } = useServicesDocumentosOp()
 
     const [tipoOrdenPagoId, setTipoOrdenPago] = useState<number>(0)
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
@@ -96,7 +120,7 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
 
     const autocompleteRef = useRef()
     const dispatch = useDispatch()
-    const { typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
+    const { typeOperation, documentCount } = useSelector((state: RootState) => state.admOrdenPago)
 
     const {
         control,
@@ -117,6 +141,12 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
             dispatch(resetCompromisoSeleccionadoDetalle())
         }
     }, [])
+
+    useEffect(() => {
+        if (orden && orden.codigoOrdenPago) {
+            getListDocumentos({ codigoOrdenPago: orden.codigoOrdenPago });
+        }
+    }, [orden, documentCount])
 
     const handleTipoOrden = (tipoOrden: any) => {
         setValue('tipoOrdenId', tipoOrden.id)
@@ -201,11 +231,12 @@ const FormOrdenPago = (props: { orden?: any, onFormData: any, onFormClear?: any,
                                             onChange={() => setValue('conFactura', !value)}
                                             color='primary'
                                             size='small'
+                                            disabled={documentCount >= 1}
                                         />
                                     )}
                                 />
                             }
-                            label={ true ? 'con Factura' : 'sin Factura'} //todo pendiente por revisar
+                            label={ true ? 'con Factura' : 'sin Factura'}
                         />
                     </Grid>
                     <Grid container sm={6} xs={12}>

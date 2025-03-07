@@ -6,7 +6,12 @@ import { useSelector } from "react-redux"
 
 const TabsComponent = () => {
     const [value, setValue] = useState('Compromiso')
-    const { conFactura } = useSelector((state: RootState) => state.admOrdenPago)
+
+    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
+    const { conFactura } = compromisoSeleccionadoListaDetalle
+
+    // console.log(compromisoSeleccionadoListaDetalle)
+    // console.log(conFactura)
 
     const handleChange = (event: any, newValue: any) => {
         setValue(newValue)
