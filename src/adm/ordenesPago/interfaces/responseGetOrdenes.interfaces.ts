@@ -42,6 +42,7 @@ export interface Orden {
     numeroComprobante3: null;
     numeroComprobante4: null;
     origenId: number;
+    conFactura: boolean;
 }
 
 export interface FechaOrdenPagoObj {
