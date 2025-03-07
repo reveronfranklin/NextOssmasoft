@@ -5,11 +5,12 @@ import Spinner from 'src/@core/components/spinner'
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import ColumnsDataGridListCompromiso from '../../config/Datagrid/columnsDataGridListDocumentosOp'
-import { setDocumentoOpSeleccionado, setIsOpenDialogDocumentosEdit } from "src/store/apps/ordenPago"
-import { useDispatch } from 'react-redux'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 import { Documentos, IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
+import {
+  setDocumentCount
+} from "src/store/apps/ordenPago"
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 600,
@@ -25,7 +26,6 @@ const DataGridComponent = () => {
   // const debounceTimeoutRef = useRef<any>(null)
 
   const qc: QueryClient = useQueryClient()
-  const dispatch = useDispatch()
 
   const { getListDocumentos } = useServicesDocumentosOp()
 
@@ -45,13 +45,15 @@ const DataGridComponent = () => {
   const rows: Documentos[] = query?.data?.data || []
   const rowCount = rows && Array.isArray(rows) ? rows.length : 0
 
-  const handleDoubleClick = (data: any) => {
-    const { row } = data
-    dispatch(setDocumentoOpSeleccionado(row))
-    setTimeout(() => {
-      dispatch(setIsOpenDialogDocumentosEdit(true))
-    }, 1500)
-  }
+  setDocumentCount(rowCount)
+
+  // const handleDoubleClick = (data: any) => {
+  //   const { row } = data
+  //   dispatch(setDocumentoOpSeleccionado(row))
+  //   setTimeout(() => {
+  //     dispatch(setIsOpenDialogDocumentosEdit(true))
+  //   }, 1500)
+  // }
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
@@ -103,8 +105,8 @@ const DataGridComponent = () => {
               rowsPerPageOptions={[5, 10, 50]}
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
-              onRowDoubleClick={row => handleDoubleClick(row)}
 
+              // onRowDoubleClick={row => handleDoubleClick(row)}
               // components={{ Toolbar: ServerSideToolbar }}
               // componentsProps={{
               //   baseButton: {

@@ -19,14 +19,15 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogListPucOrdenPagoEdit: false,
         isOpenDialogDocumentosEdit: false,
         isOpenViewerPdf: false,
-        compromisoSeleccionadoListaDetalle: {} as Orden,
+        compromisoSeleccionadoListaDetalle: {} as Orden, //orden de pago de la grid principal
         retencionOpSeleccionado: {} as Retencion,
         retencionSeleccionado: {} as IRetencionData,
         beneficioOpSeleccionado: {} as BeneficiarioOp,
         documentoOpSeleccionado: {} as Documentos,
         pucSeleccionado: {} as any,
         codigoOrdenPago: 0,
-        conFactura: null
+        conFactura: null,
+        documentCount: 0
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -91,6 +92,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setConFactura: (state, action) => {
             state.conFactura = action.payload
+        },
+        setDocumentCount: (state, action) => {
+            state.documentCount = action.payload
         }
     }
 })
@@ -115,5 +119,6 @@ export const {
     setBeneficioOpSeleccionado,
     setDocumentoOpSeleccionado,
     setCodigoOrdenPago,
-    setConFactura
+    setConFactura,
+    setDocumentCount
 } = admOrdenPagoSlice.actions

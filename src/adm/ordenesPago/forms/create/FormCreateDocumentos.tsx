@@ -33,7 +33,6 @@ import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
 import { NumericFormat } from 'react-number-format'
-import moment from 'moment';
 
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
@@ -413,12 +412,12 @@ const FormCreateDocumentosOp = () => {
               <Grid item xs={3} style={{ marginLeft: 'auto' }}>
                 <DatePickerWrapper>
                   <DatePicker
-                    selected={documentoOpSeleccionado?.fechaComprobanteObj ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj) : null}
-                    id='Fecha-comprobante'
+                    selected={documentoOpSeleccionado?.fechaDocumentoObj ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj) : null}
+                    id='Fecha-documento'
                     dateFormat='dd/MM/yyyy'
-                    onChange={(date: Date) => { handleFechaComprobanteObjChange(date) }}
-                    placeholderText='Fecha Comprobante'
-                    customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
+                    onChange={(date: Date) => { handleFechaDocumentoObjChange(date) }}
+                    placeholderText='Fecha Documento'
+                    customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
                     disabled={false}
                   />
                 </DatePickerWrapper>
@@ -505,12 +504,12 @@ const FormCreateDocumentosOp = () => {
               <Grid item xs={2}>
                 <DatePickerWrapper>
                   <DatePicker
-                    selected={documentoOpSeleccionado?.fechaDocumentoObj ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj) : null}
-                    id='Fecha-documento'
+                    selected={documentoOpSeleccionado?.fechaComprobanteObj ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj) : null}
+                    id='Fecha-comprobante'
                     dateFormat='dd/MM/yyyy'
-                    onChange={(date: Date) => { handleFechaDocumentoObjChange(date) }}
-                    placeholderText='Fecha Documento'
-                    customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
+                    onChange={(date: Date) => { handleFechaComprobanteObjChange(date) }}
+                    placeholderText='Fecha Comprobante'
+                    customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
                     disabled={false}
                   />
                 </DatePickerWrapper>
