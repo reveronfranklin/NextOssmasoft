@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback, ChangeEvent } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
+
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
@@ -14,16 +14,15 @@ import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 
 // ** Custom Components
 //import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 
 // ** Types Imports
-import { ThemeColor } from 'src/@core/layouts/types'
 
 //import { DataGridRowType } from 'src/@fake-db/types'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
+
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 
@@ -42,12 +41,6 @@ import {
   IRhVTitularBeneficiariosResponseDto
 } from 'src/interfaces/rh/RhVTitularBeneficiariosResponseDto'
 
-/*interface StatusObj {
-  [key: number]: {
-    title: string
-    color: ThemeColor
-  }
-}*/
 interface FilterTipoNomina {
   codigoTipoNomina: IListTipoNominaDto[]
 }
@@ -55,34 +48,6 @@ interface FilterTipoNomina {
 type SortType = 'asc' | 'desc' | undefined | null
 
 // ** renders client column
-const renderClient = (params: GridRenderCellParams) => {
-  const { row } = params
-  const stateNum = Math.floor(Math.random() * 6)
-  const states = ['success', 'error', 'warning', 'info', 'primary', 'secondary']
-  const color = states[stateNum]
-
-  if (row.avatar.length) {
-    return <CustomAvatar src={`/images/avatars/${row.avatar}`} sx={{ mr: 3, width: '1.875rem', height: '1.875rem' }} />
-  } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={color as ThemeColor}
-        sx={{ mr: 3, fontSize: '.8rem', width: '1.875rem', height: '1.875rem' }}
-      >
-        {getInitials(row.nombre ? row.apellido : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
-}
-
-/*const statusObj: StatusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}*/
 
 const columns: any = [
   {
@@ -240,6 +205,7 @@ const TableServerSideBeneficiarios = () => {
 
       if (codigoTipoNomina.length == 0) {
         setLoading(false)
+
         return
       }
 
@@ -367,9 +333,7 @@ const TableServerSideBeneficiarios = () => {
           sortingMode='server'
           paginationMode='server'
           onSortModelChange={handleSortModel}
-          //rowsPerPageOptions={[7, 10, 25, 50]}
           onPageChange={handlePageChange}
-          //onPageChange={newPage => setPage(newPage)}
           components={{ Toolbar: ServerSideToolbar }}
           onPageSizeChange={newPageSize => setPageSize(newPageSize)}
           componentsProps={{

@@ -13,7 +13,6 @@ import PageHeader from 'src/@core/components/page-header'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import FilterHistoricoNominaMasivo from 'src/rh/historico/masivo/component/FilterHistoricoNominaMasivo'
 import TableServerSideBeneficiarios from 'src/rh/persona/beneficiarios/components/TableServerSideBeneficiarios'
 import FilterTipoNomina from 'src/rh/persona/beneficiarios/component/FilterTipoNomina'
 
