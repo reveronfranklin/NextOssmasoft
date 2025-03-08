@@ -6,33 +6,7 @@ import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 import { UrlServices } from '../../enums/UrlServices.enum'
 import Icon from 'src/@core/components/icon'
-
-const reportOptions = [
-  {
-    label: 'Orden de Pago',
-    value: UrlServices.GETREPORTBYORDENPAGO,
-    icon: 'mdi:file-document-outline',
-    color: 'primary.main',
-  },
-  {
-    label: 'Retenciones ISLR',
-    value: UrlServices.GETREPORTBYRETENCIONES,
-    icon: 'mdi:file-document-outline',
-    color: 'primary.main',
-  },
-  {
-    label: 'Retenciones IVA',
-    value: UrlServices.GETREPORTBYCOMPROBANTE,
-    icon: 'mdi:file-document-outline',
-    color: 'primary.main',
-  },
-  {
-    label: 'Timbre Fiscal',
-    value: UrlServices.TIMBREFISCAL,
-    icon: 'mdi:file-document-outline',
-    color: 'primary.main',
-  }
-]
+import { reportOptions } from '../../config/reportOptions'
 
 const FormViewerPdf: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState(reportOptions[0].value)
