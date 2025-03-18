@@ -18,13 +18,13 @@ const useServicesRetencionesOp = () => {
   const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
   const getRetenciones = useCallback(async (): Promise<any> => {
     try {
       setLoading(true)
       const responseGetOrdenes = await ossmmasofApi.get<any>(UrlServices.GETADMRETENCIONES)
-
       if (responseGetOrdenes.data.isValid) {
         return responseGetOrdenes.data
       }
@@ -46,6 +46,7 @@ const useServicesRetencionesOp = () => {
       if (responseCreateRetencion.data.isValid) {
         return responseCreateRetencion.data
       }
+
       setMessage(responseCreateRetencion.data.message)
     } catch (e: any) {
       setError(e.message)
