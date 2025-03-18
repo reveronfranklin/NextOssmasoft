@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useEffect, useRef } from "react"
+import React, { useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Box, Grid, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import { useDispatch } from "react-redux"
+import { useDispatch } from 'react-redux'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import dayjs from 'dayjs'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
@@ -21,8 +21,8 @@ import TipoTransaction from '../../components/AutoComplete/documentos/TipoTransa
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import CustomButtonDialog from './../../components/BottonsActions'
 
-import { setIsOpenDialogConfirmButtons, setIsOpenDialogDocumentosEdit } from "src/store/apps/ordenPago"
-import { resetDocumentoOpSeleccionado, setDocumentoOpSeleccionado } from "src/store/apps/ordenPago"
+import { setIsOpenDialogConfirmButtons, setIsOpenDialogDocumentosEdit } from 'src/store/apps/ordenPago'
+import { resetDocumentoOpSeleccionado, setDocumentoOpSeleccionado } from 'src/store/apps/ordenPago'
 
 import { ICreateDocumentosOp } from '../../interfaces/documentosOp/createDocumentosOp'
 import { IUpdateDocumentosOp } from '../../interfaces/documentosOp/updateDocumentosOp'
@@ -47,20 +47,12 @@ const FormCreateDocumentosOp = () => {
   const qc: QueryClient = useQueryClient()
   const autocompleteRef = useRef()
 
-  const {
-    presupuestoSeleccionado,
-    loading,
-    createDocumentos,
-    updateDocumentos,
-    deleteDocumentos
-  } = useServicesDocumentosOp()
+  const { presupuestoSeleccionado, loading, createDocumentos, updateDocumentos, deleteDocumentos } =
+    useServicesDocumentosOp()
 
-  const {
-    documentoOpSeleccionado,
-    typeOperationDocumento,
-    isOpenDialogConfirmButtons,
-    codigoOrdenPago
-  } = useSelector((state: RootState) => state.admOrdenPago)
+  const { documentoOpSeleccionado, typeOperationDocumento, isOpenDialogConfirmButtons, codigoOrdenPago } = useSelector(
+    (state: RootState) => state.admOrdenPago
+  )
 
   const defaultValues: ICreateDocumentosOp = {
     codigoDocumentoOp: 0,
@@ -82,7 +74,7 @@ const FormCreateDocumentosOp = () => {
     numeroExpediente: '',
     numeroDocumentoAfectado: '',
     montoImpuestoExento: 0,
-    montoRetenido: 0,
+    montoRetenido: 0
   }
 
   const {
@@ -146,7 +138,7 @@ const FormCreateDocumentosOp = () => {
   useEffect(() => {
     if (typeOperationDocumento === 'create') {
       dispatch(resetDocumentoOpSeleccionado({}))
-      reset(defaultValues);
+      reset(defaultValues)
     }
   }, [setValue, typeOperationDocumento, reset])
 
@@ -196,7 +188,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
-    } finally {}
+    } finally {
+    }
   }
 
   const handleUpdateDocumento = async (): Promise<void> => {
@@ -233,7 +226,8 @@ const FormCreateDocumentosOp = () => {
       invalidateAndReset('documentosTable')
     } catch (e: any) {
       console.error(e)
-    } finally {}
+    } finally {
+    }
   }
 
   const handleDeleteDocumento = async (): Promise<void> => {
@@ -265,8 +259,8 @@ const FormCreateDocumentosOp = () => {
     setValue('tipoImpuestoId', null)
     setValue('estatusFiscoId', null)
     setValue('fechaDocumento', '')
-    setValue('numeroDocumento', "0")
-    setValue('numeroControlDocumento', "0")
+    setValue('numeroDocumento', '0')
+    setValue('numeroControlDocumento', '0')
     setValue('montoDocumento', 0)
     setValue('baseImponible', 0)
     setValue('montoImpuesto', 0)
@@ -356,423 +350,437 @@ const FormCreateDocumentosOp = () => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2} paddingTop={0} justifyContent="flex-start">
-            <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-              <Grid item xs={2}>
-                <Controller
-                  name="codigoPresupuesto"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Código Presupuesto'
-                      variant='outlined'
-                      disabled={true}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={2}>
-                <Controller
-                  name="codigoOrdenPago"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Código Orden Pago'
-                      variant='outlined'
-                      disabled
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={2}>
-                <Controller
-                  name="codigoDocumentoOp"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={(e) => onChange(parseFloat(e.target.value) || '')}
-                      label='Código Documento OP'
-                      variant='outlined'
-                      disabled
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={3} style={{ marginLeft: 'auto' }}>
-                <DatePickerWrapper>
-                  <DatePicker
-                    selected={documentoOpSeleccionado?.fechaDocumentoObj ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj) : null}
-                    id='Fecha-documento'
-                    dateFormat='dd/MM/yyyy'
-                    onChange={(date: Date) => { handleFechaDocumentoObjChange(date) }}
-                    placeholderText='Fecha Documento'
-                    customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
-                    disabled={false}
+        <Grid container spacing={2} paddingTop={0} justifyContent='flex-start'>
+          <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            <Grid item xs={2}>
+              <Controller
+                name='codigoPresupuesto'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Código Presupuesto'
+                    variant='outlined'
+                    disabled={true}
                   />
-                </DatePickerWrapper>
-              </Grid>
+                )}
+              />
             </Grid>
 
-            <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-              <Grid item xs={3}>
-                <Controller
-                  name="periodoImpositivo"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^\d{4}\d{2}$/, // Formato YYYY-MM
-                      message: 'El período debe tener el formato YYYYMM'
-                    }
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Periodo Impositivo'
-                      variant='outlined'
-                      error={!!errors.periodoImpositivo}
-                      helperText={errors.periodoImpositivo ? errors.periodoImpositivo.message : null}
-                      disabled={true}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <Controller
-                  name="tipoOperacionId"
-                  control={control}
-                  render={({ field: { } }) => (
-                    <TipoOperacion
-                      id={documentoOpSeleccionado?.tipoOperacionId ?? 0}
-                      autocompleteRef={autocompleteRef}
-                      onSelectionChange={(value: any) => { setValue('tipoOperacionId', value.id) }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <TipoDocumento
-                  id={documentoOpSeleccionado?.tipoDocumentoId ?? 0}
-                  autocompleteRef={autocompleteRef}
-                  onSelectionChange={(value: any) => { setValue('tipoDocumentoId', value.id) }}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <TipoTransaction
-                  id={documentoOpSeleccionado?.tipoTransaccionId ?? 0}
-                  autocompleteRef={autocompleteRef}
-                  onSelectionChange={(value: any) => { setValue('tipoTransaccionId', value.id) }}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-              <Grid item xs={6}>
-                <EstatusFisico
-                  id={documentoOpSeleccionado?.estatusFiscoId ?? 0}
-                  autocompleteRef={autocompleteRef}
-                  onSelectionChange={handleEstatusFisicoChange}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <TipoImpuesto
-                  id={documentoOpSeleccionado?.tipoImpuestoId ?? 0}
-                  autocompleteRef={autocompleteRef}
-                  onSelectionChange={handleTipoImpuestoChange}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-              <Grid item xs={2}>
-                <DatePickerWrapper>
-                  <DatePicker
-                    selected={documentoOpSeleccionado?.fechaComprobanteObj ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj) : null}
-                    id='Fecha-comprobante'
-                    dateFormat='dd/MM/yyyy'
-                    onChange={(date: Date) => { handleFechaComprobanteObjChange(date) }}
-                    placeholderText='Fecha Comprobante'
-                    customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
-                    disabled={false}
+            <Grid item xs={2}>
+              <Controller
+                name='codigoOrdenPago'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Código Orden Pago'
+                    variant='outlined'
+                    disabled
                   />
-                </DatePickerWrapper>
-              </Grid>
+                )}
+              />
+            </Grid>
 
-              <Grid item xs={2}>
-                <Controller
-                  name="numeroDocumento"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^[a-zA-Z0-9]+$/,
-                      message: 'hay un caracter no permitido',
-                    },
-                    maxLength: {
-                      value: 20,
-                      message: 'Máximo 20 dígitos permitidos',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Número Documento'
-                      variant='outlined'
-                      error={!!errors.numeroDocumento}
-                      helperText={errors.numeroDocumento ? errors.numeroDocumento.message : null}
-                    />
-                  )}
-                />
-              </Grid>
+            <Grid item xs={2}>
+              <Controller
+                name='codigoDocumentoOp'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={e => onChange(parseFloat(e.target.value) || '')}
+                    label='Código Documento OP'
+                    variant='outlined'
+                    disabled
+                  />
+                )}
+              />
+            </Grid>
 
-              <Grid item xs={2}>
-                <Controller
-                  name="numeroControlDocumento"
-                  control={control}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    pattern: {
-                      value: /^[a-zA-Z0-9]+$/,
-                      message: 'hay un caracter no permitido',
-                    },
-                    maxLength: {
-                      value: 20,
-                      message: 'Máximo 20 dígitos permitidos',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
+            <Grid item xs={3} style={{ marginLeft: 'auto' }}>
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={
+                    documentoOpSeleccionado?.fechaComprobanteObj
+                      ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj)
+                      : null
+                  }
+                  id='Fecha-comprobante'
+                  dateFormat='dd/MM/yyyy'
+                  onChange={(date: Date) => {
+                    handleFechaComprobanteObjChange(date)
                   }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Número Control Documento'
-                      variant='outlined'
-                      error={!!errors.numeroControlDocumento}
-                      helperText={errors.numeroControlDocumento ? errors.numeroControlDocumento.message : null}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={2}>
-                <NumericFormat
-                  value={montoDocumento}
-                  customInput={TextField}
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  allowNegative={false}
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                  label="Monto"
-                  onFocus={(event) => {
-                    event.target.select()
-                  }}
-                  onValueChange={(values: any) => {
-                    const { value } = values
-                    setMontoDocumento(value)
-                  }}
-                  placeholder='0,00'
-                  error={Boolean(errors.montoDocumento)}
-                  aria-describedby='validation-async-cantidad'
-                  inputProps={{
-                    type: 'text',
-                    inputMode: 'numeric',
-                    autoFocus: false
-                  }}
+                  placeholderText='Fecha Comprobante'
+                  customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
                   disabled={false}
                 />
-              </Grid>
-
-              <Grid item xs={2}>
-                <NumericFormat
-                  value={baseImponible}
-                  customInput={TextField}
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  allowNegative={false}
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                  label="Base"
-                  onFocus={(event) => {
-                    event.target.select()
-                  }}
-                  onValueChange={(values: any) => {
-                    const { value } = values
-                    setBaseImponible(value)
-                  }}
-                  placeholder='0,00'
-                  error={Boolean(errors.baseImponible)}
-                  aria-describedby='validation-async-cantidad'
-                  inputProps={{
-                    type: 'text',
-                    inputMode: 'numeric',
-                    autoFocus: true
-                  }}
-                  disabled={true}
-                />
-              </Grid>
-
-              <Grid item xs={2}>
-                <NumericFormat
-                  value={montoImpuesto}
-                  customInput={TextField}
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  allowNegative={false}
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                  label="% Impuesto"
-                  onFocus={(event) => {
-                    event.target.select()
-                  }}
-                  placeholder='0,00'
-                  error={Boolean(errors.montoImpuesto)}
-                  aria-describedby='validation-async-cantidad'
-                  inputProps={{
-                    type: 'text',
-                    inputMode: 'numeric',
-                    autoFocus: true
-                  }}
-                  disabled={true}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-              <Grid item xs={3}>
-                <Controller
-                  name="numeroDocumentoAfectado"
-                  control={control}
-                  rules={{
-                    pattern: {
-                      value: /^[a-zA-Z0-9]+$/,
-                      message: 'Solo se permiten números',
-                    }
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Número Documento Afectado'
-                      variant='outlined'
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <Controller
-                  name="montoImpuestoExento"
-                  control={control}
-                  rules={{
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Mínimo 1 dígito requerido',
-                    },
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Monto Impuesto Exento'
-                      variant='outlined'
-                      error={!!errors.montoImpuestoExento}
-                      helperText={errors.montoImpuestoExento ? errors.montoImpuestoExento.message : null}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <NumericFormat
-                  value={retencionMonto}
-                  customInput={TextField}
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  allowNegative={false}
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                  label="% Retenido"
-                  onFocus={(event) => {
-                    event.target.select()
-                  }}
-                  placeholder='0,00'
-                  error={Boolean(errors.montoImpuesto)}
-                  aria-describedby='validation-async-cantidad'
-                  inputProps={{
-                    type: 'text',
-                    inputMode: 'numeric',
-                    autoFocus: true
-                  }}
-                  disabled={true}
-                />
-              </Grid>
-
-              <Grid item xs={3}>
-                <Controller
-                  name="numeroExpediente"
-                  control={control}
-                  rules={{
-                    pattern: {
-                      value: /^[a-zA-Z0-9]+$/,
-                      message: 'Solo se permiten números',
-                    }
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      fullWidth
-                      value={value}
-                      onChange={onChange}
-                      label='Número Expediente'
-                      variant='outlined'
-                    />
-                  )}
-                />
-              </Grid>
+              </DatePickerWrapper>
             </Grid>
           </Grid>
+
+          <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            <Grid item xs={3}>
+              <Controller
+                name='periodoImpositivo'
+                control={control}
+                rules={{
+                  required: 'Este campo es requerido',
+                  pattern: {
+                    value: /^\d{4}\d{2}$/, // Formato YYYY-MM
+                    message: 'El período debe tener el formato YYYYMM'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Periodo Impositivo'
+                    variant='outlined'
+                    error={!!errors.periodoImpositivo}
+                    helperText={errors.periodoImpositivo ? errors.periodoImpositivo.message : null}
+                    disabled={true}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <Controller
+                name='tipoOperacionId'
+                control={control}
+                render={({ field: {} }) => (
+                  <TipoOperacion
+                    id={documentoOpSeleccionado?.tipoOperacionId ?? 0}
+                    autocompleteRef={autocompleteRef}
+                    onSelectionChange={(value: any) => {
+                      setValue('tipoOperacionId', value.id)
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <TipoDocumento
+                id={documentoOpSeleccionado?.tipoDocumentoId ?? 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={(value: any) => {
+                  setValue('tipoDocumentoId', value.id)
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <TipoTransaction
+                id={documentoOpSeleccionado?.tipoTransaccionId ?? 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={(value: any) => {
+                  setValue('tipoTransaccionId', value.id)
+                }}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            <Grid item xs={6}>
+              <EstatusFisico
+                id={documentoOpSeleccionado?.estatusFiscoId ?? 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={handleEstatusFisicoChange}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TipoImpuesto
+                id={documentoOpSeleccionado?.tipoImpuestoId ?? 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={handleTipoImpuestoChange}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            <Grid item xs={2}>
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={
+                    documentoOpSeleccionado?.fechaDocumentoObj
+                      ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj)
+                      : null
+                  }
+                  id='Fecha-documento'
+                  dateFormat='dd/MM/yyyy'
+                  onChange={(date: Date) => {
+                    handleFechaDocumentoObjChange(date)
+                  }}
+                  placeholderText='Fecha Documento'
+                  customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
+                  disabled={false}
+                />
+              </DatePickerWrapper>
+            </Grid>
+
+            <Grid item xs={2}>
+              <Controller
+                name='numeroDocumento'
+                control={control}
+                rules={{
+                  required: 'Este campo es requerido',
+                  pattern: {
+                    value: /^[a-zA-Z0-9]+$/,
+                    message: 'hay un caracter no permitido'
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: 'Máximo 20 dígitos permitidos'
+                  },
+                  minLength: {
+                    value: 1,
+                    message: 'Mínimo 1 dígito requerido'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Número Documento'
+                    variant='outlined'
+                    error={!!errors.numeroDocumento}
+                    helperText={errors.numeroDocumento ? errors.numeroDocumento.message : null}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={2}>
+              <Controller
+                name='numeroControlDocumento'
+                control={control}
+                rules={{
+                  required: 'Este campo es requerido',
+                  pattern: {
+                    value: /^[a-zA-Z0-9]+$/,
+                    message: 'hay un caracter no permitido'
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: 'Máximo 20 dígitos permitidos'
+                  },
+                  minLength: {
+                    value: 1,
+                    message: 'Mínimo 1 dígito requerido'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Número Control Documento'
+                    variant='outlined'
+                    error={!!errors.numeroControlDocumento}
+                    helperText={errors.numeroControlDocumento ? errors.numeroControlDocumento.message : null}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={2}>
+              <NumericFormat
+                value={montoDocumento}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='Monto'
+                onFocus={event => {
+                  event.target.select()
+                }}
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setMontoDocumento(value)
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.montoDocumento)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: false
+                }}
+                disabled={false}
+              />
+            </Grid>
+
+            <Grid item xs={2}>
+              <NumericFormat
+                value={baseImponible}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='Base'
+                onFocus={event => {
+                  event.target.select()
+                }}
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setBaseImponible(value)
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.baseImponible)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
+                disabled={true}
+              />
+            </Grid>
+
+            <Grid item xs={2}>
+              <NumericFormat
+                value={montoImpuesto}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='% Impuesto'
+                onFocus={event => {
+                  event.target.select()
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.montoImpuesto)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
+                disabled={true}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            <Grid item xs={3}>
+              <Controller
+                name='numeroDocumentoAfectado'
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^[a-zA-Z0-9]+$/,
+                    message: 'Solo se permiten números'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Número Documento Afectado'
+                    variant='outlined'
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <Controller
+                name='montoImpuestoExento'
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: 'Solo se permiten números'
+                  },
+                  minLength: {
+                    value: 1,
+                    message: 'Mínimo 1 dígito requerido'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                    label='Monto Impuesto Exento'
+                    variant='outlined'
+                    error={!!errors.montoImpuestoExento}
+                    helperText={errors.montoImpuestoExento ? errors.montoImpuestoExento.message : null}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <NumericFormat
+                value={retencionMonto}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='% Retenido'
+                onFocus={event => {
+                  event.target.select()
+                }}
+                placeholder='0,00'
+                error={Boolean(errors.montoImpuesto)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
+                disabled={true}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
+              <Controller
+                name='numeroExpediente'
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^[a-zA-Z0-9]+$/,
+                    message: 'Solo se permiten números'
+                  }
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField fullWidth value={value} onChange={onChange} label='Número Expediente' variant='outlined' />
+                )}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
       </form>
-      <Box sx={{
-        padding: 2,
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-end',
-        height: '100%',
-        flexGrow: 1
-      }}>
+      <Box
+        sx={{
+          padding: 2,
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-end',
+          height: '100%',
+          flexGrow: 1
+        }}
+      >
         <CustomButtonDialog
           saveButtonConfig={{
             label: 'Crear',

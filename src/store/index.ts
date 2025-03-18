@@ -43,6 +43,7 @@ import { prePucSolModificacionSlice } from './apps/pre-puc-sol-modificacion'
 import { preSaldoDisponibleSlice } from './apps/pre-saldo-disponible'
 import { admSolicitudCompromisoSlice } from './apps/adm'
 import { admOrdenPagoSlice } from './apps/ordenPago'
+import { bmPlacaCuarentenaSlice } from './apps/bmPlacaCuarentena'
 
 export const store = configureStore({
   reducer: {
@@ -87,6 +88,7 @@ export const store = configureStore({
     preSaldoDisponible: preSaldoDisponibleSlice.reducer,
     admSolicitudCompromiso: admSolicitudCompromisoSlice.reducer,
     admOrdenPago: admOrdenPagoSlice.reducer,
+    bmPlacaCuarentena: bmPlacaCuarentenaSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
