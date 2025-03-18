@@ -36,7 +36,7 @@ const Retenciones = () => {
                 in={isCollapseRetenciones}
                 sx={{
                     padding: '2px',
-                    maxHeight: '300px',
+                    maxHeight: '350px',
                     overflowY: 'auto',
                     marginBottom: '5px'
                 }}
