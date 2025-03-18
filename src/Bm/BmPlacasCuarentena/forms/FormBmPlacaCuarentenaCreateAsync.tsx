@@ -13,7 +13,6 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 
 import CircularProgress from '@mui/material/CircularProgress'
-import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 
 // ** Third Party Imports
 
@@ -38,36 +37,15 @@ import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import { Autocomplete, Box } from '@mui/material'
 
 // ** Third Party Imports
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 
-import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
-import { setPersonaSeleccionado, setPersonasDtoSeleccionado } from 'src/store/apps/rh'
-import { fetchDataPersonasDto } from 'src/store/apps/rh/thunks'
-import { IListSimplePersonaDto } from 'src/interfaces/rh/i-list-personas'
-import { IFechaDto } from 'src/interfaces/fecha-dto'
-import { IBmConteoUpdateDto } from 'src/interfaces/Bm/BmConteo/BmConteoUpdateDto'
-import {
-  setBmConteoSeleccionado,
-  setListBmConteoResponseDto,
-  setListIcp,
-  setListIcpSeleccionado,
-  setVerBmConteoActive
-} from 'src/store/apps/bmConteo'
-import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
-import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-import { IBmConteoDeleteDto } from 'src/interfaces/Bm/BmConteo/BmConteoDeleteDto'
 import { IBmPlacaCuarentenaUpdateDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacaCuarentenaUpdateDto'
 import { setBmPlacaCuarentenaSeleccionado, setVerBmPlacaCuarentenaActive } from 'src/store/apps/bmPlacaCuarentena'
-import { get } from 'http'
-import { IBmPlacaDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacas'
-import { set } from 'nprogress'
 
 interface FormInputs {
   codigoPlacaCuarentena: number
@@ -82,22 +60,10 @@ const FormBmPlacaCuarentenaCreateAsync = ({
   // ** States
   const dispatch = useDispatch()
 
-  const getPlaca = (id: number) => {
-    const result = listPlacas?.filter((elemento: any) => {
-      return elemento.id == id
-    })
-
-    console.log('result', result)
-
-    return result[0]
-  }
-
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [open, setOpen] = useState(false)
-  const [placa, setPlaca] = useState<IBmPlacaDto>({} as IBmPlacaDto)
   const { bmPlacaCuarentenaSeleccionado, listPlacas } = useSelector((state: RootState) => state.bmPlacaCuarentena)
 
   const defaultValues = {
@@ -118,18 +84,7 @@ const FormBmPlacaCuarentenaCreateAsync = ({
     console.log(value)
     if (value != null) {
       setValue('numeroPlaca', value.numeroPlaca)
-      setPlaca(value)
     }
-  }
-
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-    dispatch(setVerBmPlacaCuarentenaActive(false))
-    dispatch(setBmPlacaCuarentenaSeleccionado({}))
   }
 
   const onSubmit = async (data: FormInputs) => {
@@ -197,38 +152,12 @@ const FormBmPlacaCuarentenaCreateAsync = ({
                 )}
               </FormControl>
             </Grid>
-            {/* Titulo */}
-            {/*  <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='numeroPlaca'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange } }) => (
-                    <TextField
-                      value={value || ''}
-                      label='numeroPlaca'
-                      onChange={onChange}
-                      placeholder='Titulo'
-                      error={Boolean(errors.numeroPlaca)}
-                      aria-describedby='validation-async-titulo'
-                    />
-                  )}
-                />
-                {errors.numeroPlaca && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-titulo'>
-                    This field is required
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid> */}
+
             {listPlacas.length > 0 && (
               <Grid item sm={10} xs={12}>
                 <Autocomplete
                   options={listPlacas}
-                  //value={placa}
                   id='autocomplete-padre'
-                  //isOptionEqualToValue={(option, value) => option.id === value.id}
                   getOptionLabel={option => option.numeroPlaca}
                   onChange={handlerPlaca}
                   renderInput={params => <TextField {...params} label='Placas' />}

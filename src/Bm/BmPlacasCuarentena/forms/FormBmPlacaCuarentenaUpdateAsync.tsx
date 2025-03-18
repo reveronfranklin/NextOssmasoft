@@ -13,7 +13,6 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 
 import CircularProgress from '@mui/material/CircularProgress'
-import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 
 // ** Third Party Imports
 
@@ -38,28 +37,15 @@ import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 
 // ** Third Party Imports
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
+import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 
-import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
-import { IFechaDto } from 'src/interfaces/fecha-dto'
-import { IBmConteoUpdateDto } from 'src/interfaces/Bm/BmConteo/BmConteoUpdateDto'
-import {
-  setBmConteoSeleccionado,
-  setListBmConteoDetalleResponseDto,
-  setListBmConteoResponseDto,
-  setVerBmConteoActive
-} from 'src/store/apps/bmConteo'
-import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-import { IBmConteoDeleteDto } from 'src/interfaces/Bm/BmConteo/BmConteoDeleteDto'
-import { IBmConteoCerrarDto } from 'src/interfaces/Bm/BmConteo/BmConteoCerrarDto'
-import { setListIcp } from 'src/store/apps/ICP'
+import { setListBmConteoResponseDto, setVerBmConteoActive } from 'src/store/apps/bmConteo'
+
 import { IBmPlacaCuarentenaDeleteDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacaCuarentenaDeleteDto'
 import { setBmPlacaCuarentenaSeleccionado, setVerBmPlacaCuarentenaActive } from 'src/store/apps/bmPlacaCuarentena'
 import { IBmPlacaCuarentenaUpdateDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacaCuarentenaUpdateDto'
@@ -84,7 +70,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [open, setOpen] = useState(false)
-  const [openCerrarButton, setOpenCerrarButton] = useState(false)
 
   const defaultValues = {
     codigoPlacaCuarentena: bmPlacaCuarentenaSeleccionado.codigoPlacaCuarentena,
@@ -96,8 +81,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
   const {
     control,
     handleSubmit,
-    setValue,
-    getValues,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
@@ -107,14 +90,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
 
   const handleClose = () => {
     setOpen(false)
-  }
-
-  const handleClickOpenCerrarButton = () => {
-    setOpenCerrarButton(true)
-  }
-
-  const handleCloseCerrarButton = () => {
-    setOpenCerrarButton(false)
   }
 
   const handleDelete = async () => {
@@ -227,20 +202,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
             </Grid>
 
             <Grid item xs={12}>
-              {/*  <Button size='large' type='submit' variant='contained'>
-                {loading ? (
-                  <CircularProgress
-                    sx={{
-                      color: 'common.white',
-                      width: '20px !important',
-                      height: '20px !important',
-                      mr: theme => theme.spacing(2)
-                    }}
-                  />
-                ) : null}
-                Guardar
-              </Button> */}
-
               <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
                 {loading ? (
                   <CircularProgress
@@ -276,26 +237,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
                   </Button>
                 </DialogActions>
               </Dialog>
-
-              {/*   <Button
-                variant='outlined'
-                size='large'
-                onClick={handleClickOpenCerrarButton}
-                sx={{ color: 'secundary', ml: 2 }}
-              >
-                {loading ? (
-                  <CircularProgress
-                    sx={{
-                      color: 'common.white',
-                      width: '20px !important',
-                      height: '20px !important',
-                      mr: theme => theme.spacing(2)
-                    }}
-                  />
-                ) : null}
-                Cerrar Conteo
-              </Button>
- */}
             </Grid>
           </Grid>
           <Box>

@@ -30,11 +30,9 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 // ** Third Party Imports
 import { ReactDatePickerProps } from 'react-datepicker'
 
-import { setBmConteoSeleccionado, setVerBmConteoActive } from 'src/store/apps/bmConteo'
 import FormBmPlacaCuarentenaCreateAsync from '../forms/FormBmPlacaCuarentenaCreateAsync'
 import FormBmPlacaCuarentenaUpdateAsync from '../forms/FormBmPlacaCuarentenaUpdateAsync'
 import { setBmPlacaCuarentenaSeleccionado, setVerBmPlacaCuarentenaActive } from 'src/store/apps/bmPlacaCuarentena'
-import { set } from 'nprogress'
 
 // ** Custom Component Imports
 

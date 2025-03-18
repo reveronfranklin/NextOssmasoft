@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material'
 import React from 'react'
-import ConteoList from 'src/Bm/BmConteo/views/ConteoList'
 import PlacasCuarentenaList from 'src/Bm/BmPlacasCuarentena/views/PlacasCuarentenaList'
 
 const TipoNomina = () => {

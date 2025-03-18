@@ -110,7 +110,7 @@ const PlacasCuarentenaList = () => {
 
     const responseAll = await ossmmasofApi.get<any>('/BmPlacaCuarentena/GetAll')
     console.log(responseAll.data)
-    const data = responseAll.data.data
+
     if (responseAll.data.isValid && responseAll.data.data != null) {
       setData(responseAll.data.data)
     } else {
@@ -138,7 +138,7 @@ const PlacasCuarentenaList = () => {
 
       const responseAll = await ossmmasofApi.get<any>('/BmPlacaCuarentena/GetAll')
       console.log(responseAll.data)
-      const data = responseAll.data.data
+
       if (responseAll.data.isValid && responseAll.data.data != null) {
         setData(responseAll.data.data)
       } else {
