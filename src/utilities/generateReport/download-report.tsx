@@ -6,6 +6,7 @@ const DownloadReport = async (props: any) => {
 
   const urlProduction  = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
   const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
+
   const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
 
   try {
