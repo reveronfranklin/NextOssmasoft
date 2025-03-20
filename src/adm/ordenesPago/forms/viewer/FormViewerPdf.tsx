@@ -19,6 +19,7 @@ const FormViewerPdf: React.FC = () => {
 
   const fetchReport = async (reportType: string) => {
     try {
+
       // const objectURL = await HandleReport({ tipoReporte: reportType, CodigoOrdenPago: codigoOrdenPago }) || '' //todo apunta a la api de reporte original
       const objectURL = await HandleReportApiTo({ tipoReporte: reportType, CodigoOrdenPago: codigoOrdenPago }) || '' //todo hace el bypass primero a la api
 
