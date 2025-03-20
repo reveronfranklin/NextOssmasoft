@@ -9,12 +9,8 @@ const DownloadReport = async (props: any) => {
 
   const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
 
-  const url = `${urlBase}/api-v1.0/${tipoReporte}`
-
-  // const url = `http://216.244.81.115:4000/api-v1.0/${tipoReporte}`
-  // const url = 'http://localhost:4000/api-v1.0/payment-orders/pdf/report'
-
   try {
+    const url = `${urlBase}${tipoReporte}`
     const response = await axios.post(url, { CodigoOrdenPago }, {
       responseType: 'blob',
       headers: {
@@ -23,6 +19,8 @@ const DownloadReport = async (props: any) => {
         'x-refresh-token': window.localStorage.getItem('refreshToken')!,
       }
     })
+
+    console.log('response', response.data)
 
     const blob = new Blob([response.data], { type: 'application/pdf' })
 

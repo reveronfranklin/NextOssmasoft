@@ -11,9 +11,9 @@ const commonSetting = {
 
 const productionSetting = {
   ...commonSetting,
-  meEndpoint: 'http://216.244.81.115:5000/api/SisUsuarios/RefreshToken',
-  loginEndpoint: 'http://216.244.81.115:5000/api/SisUsuarios/Login',
-  refreshEndPoint: 'http://216.244.81.115:5000/api/SisUsuarios/RefreshToken'
+  meEndpoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/RefreshToken',
+  loginEndpoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/Login',
+  refreshEndPoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/RefreshToken'
 }
 
 /*const productionSetting = {

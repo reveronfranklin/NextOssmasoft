@@ -34,10 +34,21 @@ function ColumnsDataGridRetenciones() {
       flex: 0,
       headerName: '%',
       field: 'porRetencion',
-      editable: true,
+      editable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
           {params.row.porRetencion === 0 ? 0 : params.row.porRetencion}
+        </Typography>
+      )
+    },
+    {
+      flex: 0,
+      headerName: 'CodigoRetencion',
+      field: 'CodigoRetencion',
+      editable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.codigoRetencion === 0 ? 0 : params.row.codigoRetencion}
         </Typography>
       )
     }

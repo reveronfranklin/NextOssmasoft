@@ -293,7 +293,7 @@ const PersonaViewLeft = () => {
                 {data.avatar.length ? (
                   <CustomAvatar
                     key={avatarKey}
-                    src={avatar + '?v=' + Date.now()}
+                    src={avatar}
                     variant='rounded'
                     alt={personaSeleccionado.nombreCompleto}
                     sx={{ width: 260, height: 320, fontWeight: 600, mb: 4, fontSize: '3rem' }}
@@ -316,7 +316,10 @@ const PersonaViewLeft = () => {
               /> */}
 
                 <Typography variant='h6' sx={{ mb: 4 }}>
-                  {personaSeleccionado.nombreCompleto} - {personaSeleccionado.avatar}
+                  {personaSeleccionado.nombreCompleto}
+                </Typography>
+                <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
+                  {personaSeleccionado.avatar}
                 </Typography>
                 <CustomChip
                   skin='light'
