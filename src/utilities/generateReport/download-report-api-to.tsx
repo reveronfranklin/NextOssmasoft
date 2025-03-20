@@ -1,11 +1,10 @@
 import axios from 'axios'
 import authConfig from 'src/configs/auth'
-import { number } from 'yup/lib/locale'
 
 interface IReportApiTo {
   CodigoOrdenPago: number;
-  Report: String;
-  Usuario: String;
+  Report: string;
+  Usuario: string;
 }
 
 const DownloadReportApiTo = async (props: any) => {
