@@ -1,20 +1,32 @@
 import axios from 'axios'
 import authConfig from 'src/configs/auth'
+import { number } from 'yup/lib/locale'
+
+interface IReportApiTo {
+  CodigoOrdenPago: number;
+  Report: String;
+  Usuario: String;
+}
 
 const DownloadReportApiTo = async (props: any) => {
   const { tipoReporte, CodigoOrdenPago } = props
 
-  const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
-  const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
+  const urlProductionReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
+  const urlDevelopmentReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
+
+  const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+  const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_NET
+
+  const urlReportBase: string | undefined = !authConfig.isProduction ? urlDevelopmentReport : urlProductionReport
   const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
 
   try {
-    const urlReport = `${urlBase}${tipoReporte}`
-    const urlApi = `https://ossmmasoft.com.ve:5001/api/AdmOrdenPago/Report`
+    const urlReport = `${urlReportBase}${tipoReporte}`
+    const urlApi = `${urlBase}/AdmOrdenPago/Report`
 
-    const payload = {
+    const payload: IReportApiTo = {
       CodigoOrdenPago,
-      Reporte: urlReport,
+      Report: urlReport,
       Usuario: JSON.parse(window.localStorage.getItem('userData') || '{}').username || '',
     }
 
@@ -26,8 +38,6 @@ const DownloadReportApiTo = async (props: any) => {
       }
     })
 
-    //todo verificar que el blob tenga un size con data y que no text/plain
-    console.log('response', response)
     const blob = new Blob([response.data], { type: 'application/pdf' })
 
     return URL.createObjectURL(blob)
