@@ -18,6 +18,7 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogListRetenciones: false,
         isOpenDialogListPucOrdenPagoEdit: false,
         isOpenDialogDocumentosEdit: false,
+        isOpenDialogImpuestoDocumentosEdit: false,
         isOpenViewerPdf: false,
         compromisoSeleccionadoListaDetalle: {} as Orden, //orden de pago de la grid principal
         retencionOpSeleccionado: {} as Retencion,
@@ -95,6 +96,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setDocumentCount: (state, action) => {
             state.documentCount = action.payload
+        },
+        setIsOpenDialogImpuestoDocumentosEdit: (state, action) => {
+            state.isOpenDialogImpuestoDocumentosEdit = action.payload
         }
     }
 })
@@ -107,6 +111,7 @@ export const {
     setIsOpenDialogConfirmButtons,
     setIsOpenDialogListRetenciones,
     setIsOpenDialogDocumentosEdit,
+    setIsOpenDialogImpuestoDocumentosEdit,
     setIsOpenViewerPdf,
     setTypeOperation,
     setTypeOperationDocumento,
