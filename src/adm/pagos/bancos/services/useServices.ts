@@ -2,8 +2,7 @@ import { useCallback, useState } from "react"
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { UrlServices } from '../enums/UrlServices.enum'
-import { IResponse } from '../interfaces/Response'
-import { SisBancoResponseDto, SisBancoFilterDto } from '../interfaces/SisBanco'
+import { IResponse, SisBancoResponseDto, SisBancoFilterDto } from '../interfaces'
 
 const useServices = () => {
     const [error, setError] = useState<string>('')

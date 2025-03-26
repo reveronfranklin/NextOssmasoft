@@ -6,7 +6,6 @@ import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import {
     setIsOpenDialogOrdenPagoDetalle,
-    setIsOpenViewerPdf,
     setTypeOperation,
     setCompromisoSeleccionadoDetalle,
     setCodigoOrdenPago,
@@ -22,12 +21,6 @@ function ColumnsDataGrid() {
         dispatch(setConFactura(row.conFactura))
         dispatch(setIsOpenDialogOrdenPagoDetalle(true))
         dispatch(setTypeOperation('update'))
-    }
-
-    const handleDialogViewerPdf = async (row: any) => {
-        dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
-        dispatch(setCompromisoSeleccionadoDetalle(row))
-        dispatch(setIsOpenViewerPdf(true))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -50,14 +43,6 @@ function ColumnsDataGrid() {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </StyledIconButton>
-                    </Tooltip>
-                    <Tooltip title="Ver PDF">
-                        <StyledIconButton
-                            size='small'
-                            onClick={() => handleDialogViewerPdf(row)}
-                        >
-                            <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>
