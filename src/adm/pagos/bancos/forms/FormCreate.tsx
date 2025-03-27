@@ -1,24 +1,49 @@
 import { Grid, Button, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from "src/store"
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { RootState } from 'src/store';
+import { setMaestroBancoSeleccionadoDetalle, resetMaestroBancoSeleccionadoDetalle } from 'src/store/apps/pagos/bancos'
+import { SisBancoCreateDto } from '../../bancos/interfaces';
+import useServices from '../services/useServices';
 import FormMaestroBanco from './FormMaestroBanco';
 
-
 const FormCreate = () => {
+    const qc: QueryClient = useQueryClient()
+    const dispatch = useDispatch()
 
     const { maestroBanco, typeOperation } = useSelector((state: RootState) => state.admMaestroBanco)
 
-    const handleCreateMaestroBanco = async (dataFormOrder: any) => {
+    const {
+        createMaestroBanco,
+        message,
+        loading
+    } = useServices()
+
+    const handleCreateMaestroBanco = async (dataFormMaestroBanco: any) => {
         try {
+            const payload: SisBancoCreateDto = {
+                codigoBanco: dataFormMaestroBanco.codigoBanco,
+                nombre: dataFormMaestroBanco.nombre,
+                codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
+            }
+
+            const response = await createMaestroBanco(payload)
+
+            if (response) {
+                dispatch(setMaestroBancoSeleccionadoDetalle(response.data))
+            }
         } catch (e: any) {
             console.error(e)
         } finally {
+            qc.invalidateQueries({
+                queryKey: ['maestroBancoTable']
+            })
         }
     }
 
     const handleClearMaestroBanco = () => {
         if (typeOperation === 'create') {
-            /* dispatch(resetCompromisoSeleccionadoDetalle()) */
+            dispatch(resetMaestroBancoSeleccionadoDetalle())
         }
     }
 
@@ -38,8 +63,8 @@ const FormCreate = () => {
                         onFormData={handleCreateMaestroBanco}
                         onFormClear={handleClearMaestroBanco}
                         titleButton={'Crear'}
-                        message={''}
-                        loading={true}
+                        message={message}
+                        loading={loading}
                     />
                 </Grid>
             </Grid>

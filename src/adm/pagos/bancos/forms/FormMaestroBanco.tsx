@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
 import { CleaningServices } from '@mui/icons-material'
 import {
     Box,
@@ -17,19 +16,16 @@ import {
     CircularProgress,
 } from '@mui/material';
 
-import { FormInput, SisBancoUpdateDto } from '../interfaces'
+import { SisBancoCreateDto } from '../interfaces'
 
 const FormMaestroBanco = (props: {
-    maestroBanco?: SisBancoUpdateDto,
-    onFormData: any,
+    maestroBanco?: SisBancoCreateDto,
+    onFormData?: any,
     onFormClear?: any,
     titleButton?: string,
     message?: string,
     loading?: boolean
 }) => {
-    const autocompleteRef = useRef()
-    const dispatch = useDispatch()
-
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
     const [open, setOpen] = useState<boolean>(false)
 
@@ -42,7 +38,7 @@ const FormMaestroBanco = (props: {
         loading
     } = props
 
-    const defaultValues: SisBancoUpdateDto = {
+    const defaultValues: SisBancoCreateDto = {
         codigoBanco: 0,
         nombre: '',
         codigoInterbancario: ''
@@ -53,12 +49,12 @@ const FormMaestroBanco = (props: {
         handleSubmit,
         setValue,
         formState: { errors, isValid }
-    } = useForm<FormInput>({
+    } = useForm<SisBancoCreateDto>({
         defaultValues,
         mode: 'onChange'
     })
 
-    const onSubmit = async (data: FormInput) => {
+    const onSubmit = async (data: SisBancoCreateDto) => {
         onFormData({ ...data })
     }
 
