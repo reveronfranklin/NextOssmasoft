@@ -29,7 +29,7 @@ const DialogAdmMaestroBancoDetalle = () => {
         return (
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
-                    {typeOperation === 'update' ? <FormCreate /> : <FormUpdate />}
+                    {typeOperation === 'update' ? <FormUpdate /> : <FormCreate /> }
                 </div>
             </Fade>
         )
@@ -55,11 +55,11 @@ const DialogAdmMaestroBancoDetalle = () => {
                     }
                 }}
             >
-                <Grid spacing={0} >
+                <Grid>
                     <Box position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{
-                            justifyContent: 'space-between',
-                            padding: 0,
+                                justifyContent: 'space-between',
+                                padding: 0,
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>

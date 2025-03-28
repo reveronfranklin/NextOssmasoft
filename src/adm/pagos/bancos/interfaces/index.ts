@@ -1,4 +1,4 @@
-export * from './Response'
+export * from './response/Response'
 export * from './SisBanco/SisBancoResponseDto';
 export * from './SisBanco/SisBancoFilterDto';
 export * from './SisBanco/SisBancoUpdateDto';

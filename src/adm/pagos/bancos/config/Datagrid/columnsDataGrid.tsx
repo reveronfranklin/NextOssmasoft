@@ -1,26 +1,31 @@
-import Box from '@mui/material/Box'
-import Icon from 'src/@core/components/icon'
-import { styled } from '@mui/material/styles'
-import { useDispatch } from 'react-redux'
-import { IconButton, Tooltip, Typography } from "@mui/material"
-import { GridRenderCellParams } from '@mui/x-data-grid'
+import Box from '@mui/material/Box';
+import Icon from 'src/@core/components/icon';
+import { styled } from '@mui/material/styles';
+import { useDispatch } from 'react-redux';
+import { IconButton, Tooltip, Typography } from '@mui/material';
+import { GridRenderCellParams } from '@mui/x-data-grid';
+import { SisBancoUpdateDto, SisBancoDeleteDto } from '../../interfaces'
 import {
-    setIsOpenDialogOrdenPagoDetalle,
-    setTypeOperation,
-    setCompromisoSeleccionadoDetalle,
-    setCodigoOrdenPago,
-    setConFactura
-} from 'src/store/apps/ordenPago'
+    setIsOpenDialogMaestroBancoDetalle,
+    setIsOpenDialogMaestroBancoDelete,
+    setMaestroBancoSeleccionadoDetalle,
+    setCodigoBanco,
+    setTypeOperation
+} from 'src/store/apps/pagos/bancos';
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
-    const handleEdit = (row: any) => {
-        dispatch(setCompromisoSeleccionadoDetalle(row))
-        dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
-        dispatch(setConFactura(row.conFactura))
-        dispatch(setIsOpenDialogOrdenPagoDetalle(true))
+    const handleEdit = (maestroBanco: SisBancoUpdateDto) => {
         dispatch(setTypeOperation('update'))
+        dispatch(setIsOpenDialogMaestroBancoDetalle(true))
+        dispatch(setMaestroBancoSeleccionadoDetalle(maestroBanco))
+    }
+
+    const handleDelete = (codigoBanco: SisBancoDeleteDto) => {
+        dispatch(setTypeOperation('delete'))
+        dispatch(setIsOpenDialogMaestroBancoDelete(true))
+        dispatch(setCodigoBanco(codigoBanco))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -31,7 +36,7 @@ function ColumnsDataGrid() {
         },
     }))
 
-    return [
+    const columns = [
         {
             flex: 0,
             minWidth: 40,
@@ -43,6 +48,11 @@ function ColumnsDataGrid() {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                        </StyledIconButton>
+                    </Tooltip>
+                    <Tooltip title='Delete'>
+                        <StyledIconButton size='small' onClick={() => handleDelete(row.codigoBanco)}>
+                            <Icon icon='mdi:delete' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>
@@ -69,6 +79,8 @@ function ColumnsDataGrid() {
             )
         }
     ]
+
+    return columns
 }
 
 
