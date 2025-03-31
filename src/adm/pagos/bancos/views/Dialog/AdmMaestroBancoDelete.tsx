@@ -24,17 +24,17 @@ const AdmMaestroBancoDelete = () => {
 
     const {
         deleteMaestroBanco,
+        setMessage,
         message,
         loading
     } = useServices()
 
     const handleClose = () => {
+        setMessage('')
         dispatch(setIsOpenDialogMaestroBancoDelete(false))
     }
 
     const handleDelete = async () => {
-        console.log('handleDelete', codigoBanco)
-
         try {
             const payload: SisBancoDeleteDto = {
                 codigoBanco
@@ -42,7 +42,7 @@ const AdmMaestroBancoDelete = () => {
 
             const response = await deleteMaestroBanco(payload)
 
-            if (response.isValid) {
+            if (response?.isValid) {
                 dispatch(setIsOpenDialogMaestroBancoDelete(false))
             }
         } catch (e: any) {
@@ -66,10 +66,20 @@ const AdmMaestroBancoDelete = () => {
                     <DialogTitle id='alert-dialog-title'>
                         {'Esta usted seguro de realizar esta acción?'}
                     </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id='alert-dialog-description'>
-                        </DialogContentText>
-                    </DialogContent>
+                    {   message &&
+                        <DialogContent>
+                            <DialogContentText id='alert-dialog-description'>
+                                <FormHelperText
+                                sx={{
+                                    color: 'error.main',
+                                    fontSize: 20
+                                }}
+                                >
+                                    {message}
+                                </FormHelperText>
+                            </DialogContentText>
+                        </DialogContent>
+                    }
                     <DialogActions>
                         <Button onClick={handleClose}>No</Button>
                         <Button
@@ -98,7 +108,6 @@ const AdmMaestroBancoDelete = () => {
                     </DialogActions>
                 </Dialog>
             </Card>
-            <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
         </Box>
     )
 }
