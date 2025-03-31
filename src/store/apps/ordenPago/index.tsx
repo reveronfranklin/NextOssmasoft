@@ -25,6 +25,7 @@ export const admOrdenPagoSlice = createSlice({
         retencionSeleccionado: {} as IRetencionData,
         beneficioOpSeleccionado: {} as BeneficiarioOp,
         documentoOpSeleccionado: {} as Documentos,
+        impuestoDocumentoOpSeleccionado: {} as any,
         pucSeleccionado: {} as any,
         codigoOrdenPago: 0,
         conFactura: null,
@@ -88,6 +89,12 @@ export const admOrdenPagoSlice = createSlice({
         resetDocumentoOpSeleccionado: (state, action): void => {
             state.documentoOpSeleccionado = action.payload
         },
+        setImpuestoDocumentoOpSeleccionado: (state, action) => {
+            state.impuestoDocumentoOpSeleccionado = action.payload
+        },
+        resetImpuestoDocumentoOpSeleccionado: (state) => {
+            state.impuestoDocumentoOpSeleccionado = {} as any
+        },
         setCodigoOrdenPago: (state, action) => {
             state.codigoOrdenPago = action.payload
         },
@@ -123,6 +130,8 @@ export const {
     setRetencionOpSeleccionado,
     setBeneficioOpSeleccionado,
     setDocumentoOpSeleccionado,
+    setImpuestoDocumentoOpSeleccionado,
+    resetImpuestoDocumentoOpSeleccionado,
     setCodigoOrdenPago,
     setConFactura,
     setDocumentCount

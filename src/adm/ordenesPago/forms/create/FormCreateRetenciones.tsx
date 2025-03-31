@@ -226,27 +226,27 @@ const FormCreateRetenciones = () => {
             />
           </Grid>
           <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
-            <DatePickerWrapper>
+            <DatePickerWrapper sx={{ width: '100%' }}>
               <DatePicker
                 selected={retencionSeleccionado?.fechaIniObject ? getDateByObject(retencionSeleccionado.fechaIniObject) : null}
                 id='fechaIni'
                 dateFormat='dd/MM/yyyy'
                 onChange={(date: Date) => { handleFechaIniChange(date) }}
                 placeholderText='Click to select a date'
-                customInput={<CustomInput label='fechaIni' />}
+                customInput={<CustomInput label='fecha Hasta' />}
               />
             </DatePickerWrapper>
           </Grid>
 
           <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
-            <DatePickerWrapper>
+            <DatePickerWrapper sx={{ width: '100%' }}>
               <DatePicker
                 selected={retencionSeleccionado?.fechaFinObject ? getDateByObject(retencionSeleccionado.fechaFinObject) : null}
                 id='fechaFin'
                 dateFormat='dd/MM/yyyy'
                 onChange={(date: Date) => { handleFechaFinChange(date) }}
                 placeholderText='Click to select a date'
-                customInput={<CustomInput label='fechaFin' />}
+                customInput={<CustomInput label='Fecha hasta' />}
               />
             </DatePickerWrapper>
           </Grid>

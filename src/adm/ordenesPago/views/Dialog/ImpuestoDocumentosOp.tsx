@@ -10,6 +10,8 @@ import { setIsOpenDialogImpuestoDocumentosEdit } from "src/store/apps/ordenPago"
 import FormImpuestoDocumentosOp from '../../forms/create/FormImpuestoDocumentosOp'
 import Component from '../../components/Datagrid/listImpuestoDocumentoOp'
 
+import DialogListRetenciones from '../../views/Dialog/ListRetenciones'
+
 const Transition = forwardRef(function Transition(
   props: FadeProps & { children?: ReactElement<any, any> },
   ref: Ref<unknown>
@@ -39,7 +41,7 @@ const DialogImpuestoDocumentosEdit = () => {
         sx={{
           '& .MuiDialog-paper': {
             width: '100%',
-            height: '75vh',
+            height: '90vh',
             margin: 0,
             borderRadius: 0,
             padding: 10,
@@ -68,6 +70,7 @@ const DialogImpuestoDocumentosEdit = () => {
           <DialogContent>
             <>
               <FormImpuestoDocumentosOp />
+              <DialogListRetenciones />
               <Component />
             </>
           </DialogContent>

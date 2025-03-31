@@ -10,6 +10,8 @@ import { setIsOpenDialogDocumentosEdit } from "src/store/apps/ordenPago"
 import FormCreateDocumentosOp from '../../forms/create/FormCreateDocumentos'
 import DialogImpuestoDocumentosEdit from './ImpuestoDocumentosOp'
 
+import Component from '../../components/Datagrid/listImpuestoDocumentoOp'
+
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
     ref: Ref<unknown>
@@ -39,7 +41,7 @@ const DialogDocumentosEdit = () => {
         sx={{
           '& .MuiDialog-paper': {
             width: '100%',
-            height: '75vh',
+            height: '95vh',
             margin: 0,
             borderRadius: 0,
             padding: 10,
@@ -68,6 +70,7 @@ const DialogDocumentosEdit = () => {
           <DialogContent>
             <FormCreateDocumentosOp />
             <DialogImpuestoDocumentosEdit />
+            <Component />
           </DialogContent>
         </Grid>
       </Dialog>

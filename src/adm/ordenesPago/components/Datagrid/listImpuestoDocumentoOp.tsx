@@ -5,17 +5,16 @@ import Spinner from 'src/@core/components/spinner'
 import { useServicesImpuestosDocumentosOp } from '../../services/index'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import columnsDataGridListImpuestoDocumentoOp from '../../config/Datagrid/columnsDataGridListImpuestoDocumentoOp'
-
-// import { RootState } from "src/store"
-// import { useSelector } from "react-redux"
-// import { Documentos, IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
-// import {
-//   setDocumentCount
-// } from "src/store/apps/ordenPago"
+import { setImpuestoDocumentoOpSeleccionado } from "src/store/apps/ordenPago"
+import FormatNumber from 'src/utilities/format-numbers'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from 'src/store'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-  height: 600,
+  height: '100%',
+  maxHeight: 600,
   overflowY: 'auto',
+  width: '100%',
 }))
 
 const DataGridComponent = () => {
@@ -23,12 +22,15 @@ const DataGridComponent = () => {
   const [pageSize, setPageSize] = useState<number>(5)
 
   const qc: QueryClient = useQueryClient()
+  const dispatch = useDispatch()
   const {
-    message, loading,
     getListImpuestoDocumentosOp
   } = useServicesImpuestosDocumentosOp()
 
-  const filter: any = { codigoDocumentoOp: 23275 }
+  const { documentoOpSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
+
+  const filter: any = { codigoDocumentoOp: documentoOpSeleccionado.codigoDocumentoOp }
+  console.log(filter)
 
   const query = useQuery({
     queryKey: ['impuestoDocumentosTable', pageSize, pageNumber],
@@ -43,16 +45,14 @@ const DataGridComponent = () => {
   const rows: any[] = query.data?.data || []
   const rowCount = query.data?.cantidadRegistros ?? 0
 
-  const total1 = query.data?.total1 ?? 0
-  const total2 = query.data?.total2 ?? 0
-  const total3 = query.data?.total3 ?? 0
-  const total4 = query.data?.total4 ?? 0
+  const total1 = query.data?.total1 ?? 0 //base Imponible
+  const total2 = query.data?.total2 ?? 0 //total MontoImpuesto
+  const total3 = query.data?.total3 ?? 0 //impuesto exento
+  const total4 = query.data?.total4 ?? 0 //monto retenido
 
   const handleDoubleClick = (data: any) => {
     const { row } = data
-    console.log(row)
-
-  //   dispatch(setDocumentoOpSeleccionado(row))
+    dispatch(setImpuestoDocumentoOpSeleccionado(row))
   }
 
   const handlePageChange = (newPage: number) => {
@@ -70,22 +70,22 @@ const DataGridComponent = () => {
         <Grid item xs={2} sm={6}>
           <small style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
-              <label style={{ marginRight: '5px' }}><b>Por imputar:</b></label>
-              { total1 }
+              <label style={{ marginRight: '5px' }}><b>Base Imponible:</b></label>
+              { FormatNumber(total1) }
             </div>
           </small>
           <small style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
-              <label style={{ marginRight: '5px' }}><b>Total:</b></label>
-              <label>{ total2 } </label>
+              <label style={{ marginRight: '5px' }}><b>Monto Impuesto:</b></label>
+              <label>{ FormatNumber(total2) } </label>
             </div>
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
-              <label style={{ marginRight: '5px' }}><b>Impuesto:</b></label>
-              { total3 }
+              <label style={{ marginRight: '5px' }}><b>Impuesto Exento:</b></label>
+              { FormatNumber(total3) }
             </div>
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
-              <label style={{ marginRight: '5px' }}><b>Total más Impuesto:</b></label>
-              { total4 }
+              <label style={{ marginRight: '5px' }}><b>Monto Retenido:</b></label>
+              { FormatNumber(total4) }
             </div>
           </small>
         </Grid>
@@ -109,6 +109,11 @@ const DataGridComponent = () => {
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
               onRowDoubleClick={row => handleDoubleClick(row)}
+              sx={{
+                '& .MuiDataGrid-row': {
+                  cursor: 'pointer'
+                }
+              }}
             />
           </StyledDataGridContainer>
         )

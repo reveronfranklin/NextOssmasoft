@@ -1,6 +1,7 @@
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
 import { Typography } from "@mui/material"
+import FormatNumber from 'src/utilities/format-numbers'
 
 function columnsDataGridListImpuestoDocumentoOp() {
   return [
@@ -23,7 +24,7 @@ function columnsDataGridListImpuestoDocumentoOp() {
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                {params.row.baseImponible === '' ? 'NO DISPONIBLE' : params.row.baseImponible}
+                {params.row.baseImponible === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.baseImponible)}
               </Typography>
             </Box>
           </Box>
@@ -36,7 +37,7 @@ function columnsDataGridListImpuestoDocumentoOp() {
       field: 'montoImpuesto',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.montoImpuesto === '' ? 'NO DISPONIBLE' : params.row.montoImpuesto}
+          {params.row.montoImpuesto === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.montoImpuesto)}
         </Typography>
       )
     },
@@ -46,7 +47,7 @@ function columnsDataGridListImpuestoDocumentoOp() {
       field: 'montoImpuestoExento',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.montoImpuestoExento === '' ? 'NO DISPONIBLE' : params.row.montoImpuestoExento}
+          {params.row.montoImpuestoExento === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.montoImpuestoExento)}
         </Typography>
       )
     },
@@ -56,7 +57,7 @@ function columnsDataGridListImpuestoDocumentoOp() {
       field: 'montoRetenido',
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
-          {params.row.montoRetenido === '' ? 'NO DISPONIBLE' : params.row.montoRetenido}
+          {params.row.montoRetenido === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.montoRetenido)}
         </Typography>
       )
     }

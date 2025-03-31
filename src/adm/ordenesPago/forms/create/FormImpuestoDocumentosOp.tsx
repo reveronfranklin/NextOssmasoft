@@ -1,20 +1,36 @@
 import React, { useState } from 'react'
 import { useEffect, useRef } from 'react'
-import { Button, Box, Grid, TextField, FormHelperText } from '@mui/material'
+import { Box, Button, Grid, TextField, FormHelperText } from '@mui/material'
 import CustomButtonDialog from './../../components/BottonsActions'
 import { useServicesImpuestosDocumentosOp } from '../../services/index'
 import { setIsOpenDialogConfirmButtons } from 'src/store/apps/ordenPago'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
-import { useDispatch } from 'react-redux'
 import { Controller, useForm } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
+import TipoRetencion from 'src/adm/ordenesPago/components/AutoComplete/TipoRetencion'
 
 import { ICreateImpuestoDocumentosOp } from './../../interfaces/impuestoDocumentosOp/createImpuestoDocumentosOp'
 import { IUpdateImpuestoDocumentosOp } from './../../interfaces/impuestoDocumentosOp/updateImpuestoDocumentosOp'
 import { IDeleteImpuestoDocumentosOp } from './../../interfaces/impuestoDocumentosOp/deleteImpuestoDocumentosOp'
 
+import SearchIcon from '@mui/icons-material/Search'
+import {
+  setIsOpenDialogListRetenciones,
+  resetImpuestoDocumentoOpSeleccionado
+} from "src/store/apps/ordenPago"
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
+
+interface IRetencion {
+  id: number,
+  value: number
+}
+
 const FormImpuestoDocumentosOp = () => {
+  const [retencion, setRetencion] = useState<IRetencion>({id: 0, value: 0})
+  const [porRetencion, setPorRetencion] = useState<number>(0)
+  const [validationError, setValidationError] = useState<string | null>(null)
+
   const {
     error, message, loading,
     createImpuestoDocumentosOp,
@@ -22,16 +38,30 @@ const FormImpuestoDocumentosOp = () => {
     deleteImpuestoDocumentosOp,
   } = useServicesImpuestosDocumentosOp()
 
+  const dispatch = useDispatch()
+  const qc: QueryClient = useQueryClient()
+  const autocompleteRef = useRef()
+
+  const {
+    impuestoDocumentoOpSeleccionado,
+    retencionSeleccionado,
+    documentoOpSeleccionado,
+    isOpenDialogConfirmButtons
+  } = useSelector((state: RootState) => state.admOrdenPago)
+
+  const showOnlyCreate = impuestoDocumentoOpSeleccionado?.codigoDocumentoOp ?? false
+
   const defaultValues: any = {
     codigoImpuestoDocumentoOp: 0,
-    codigoDocumentoOp: 23275,
+    codigoDocumentoOp: 0,
     codigoRetencion: 0,
     tipoRetencionId: 0,
-    periodoImpositivo: "202303",
+    periodoImpositivo: '',
     baseImponible: 0,
     montoImpuesto: 0,
     montoImpuestoExento: 0,
-    montoRetenido: 0
+    montoRetenido: 0,
+    conceptoPago: ''
   }
 
   const {
@@ -39,6 +69,7 @@ const FormImpuestoDocumentosOp = () => {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors, isValid },
     reset
   } = useForm({
@@ -46,57 +77,121 @@ const FormImpuestoDocumentosOp = () => {
     defaultValues
   })
 
-  const { documentoOpSeleccionado, isOpenDialogConfirmButtons } = useSelector((state: RootState) => state.admOrdenPago)
+  const baseImponible = watch('baseImponible')
+  const montoImpuestoExento = watch('montoImpuestoExento')
+  const montoImpuesto = watch('montoImpuesto')
+  const montoRetenido = watch('montoRetenido')
 
-  const handleCreateImpuestoDocumentosOp = async (): Promise<void> => {
-    const newCreate: ICreateImpuestoDocumentosOp = {
-      codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp'),
-      codigoDocumentoOp: getValues('codigoDocumentoOp'),
-      codigoRetencion: getValues('codigoRetencion'),
-      tipoRetencionId: getValues('tipoRetencionId'),
-      periodoImpositivo: getValues('periodoImpositivo'),
-      baseImponible: getValues('baseImponible'),
-      montoImpuesto: getValues('montoImpuesto'),
-      montoImpuestoExento: getValues('montoImpuestoExento'),
-      montoRetenido: getValues('montoRetenido'),
+  const baseImponibleRules = {
+    required: 'Este campo es obligatorio',
+    validate: (value: number) => value > 0 || 'El monto debe ser mayor a cero'
+  }
+
+  const invalidateAndReset = (nameTable: string) => {
+    if (nameTable && nameTable !== null) {
+      qc.invalidateQueries({
+        queryKey: [nameTable]
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (porRetencion) {
+      const montoImpuestoCalculado = (baseImponible * porRetencion) / 100
+      const valorFinal = montoImpuestoCalculado > 0 ? montoImpuestoCalculado : 0
+      setValue('montoImpuesto', valorFinal)
+
+      calcularMontoRetenido(valorFinal, montoImpuestoExento)
+    }
+  }, [baseImponible, setValue])
+
+  const calcularMontoRetenido = (impuesto: number, exento: number) => {
+    if (exento < 0) {
+      setValidationError('El monto exento no puede ser negativo')
+      return
     }
 
-    console.log(newCreate)
+    const nuevoMontoRetenido = exento > 0 && impuesto > 0 && impuesto > exento
+      ? impuesto - exento
+      : impuesto
 
-    return
+    setValue('montoRetenido', nuevoMontoRetenido)
+    setValidationError(null)
+  }
 
-    await createImpuestoDocumentosOp(newCreate)
+  useEffect(()=> {
+    if (retencionSeleccionado && Object.keys(retencionSeleccionado).length > 0) {
+      setValue('codigoRetencion', retencionSeleccionado.codigoRetencion)
+      setValue('conceptoPago', retencionSeleccionado.conceptoPago)
+      setPorRetencion(retencionSeleccionado.porRetencion)
+    }
+  }, [retencionSeleccionado])
 
+  useEffect(() => {
+    calcularMontoRetenido(montoImpuesto, montoImpuestoExento)
+  }, [montoImpuestoExento, montoImpuesto])
+
+  const handleCreateImpuestoDocumentosOp = async (): Promise<void> => {
+    try {
+      const newCreate: ICreateImpuestoDocumentosOp = {
+        codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp') || 0,
+        codigoDocumentoOp: getValues('codigoDocumentoOp') ?? documentoOpSeleccionado.codigoDocumentoOp,
+        codigoRetencion: getValues('codigoRetencion'),
+        tipoRetencionId: getValues('tipoRetencionId'),
+        periodoImpositivo: getValues('periodoImpositivo') ?? documentoOpSeleccionado.periodoImpositivo,
+        baseImponible: getValues('baseImponible'),
+        montoImpuesto: getValues('montoImpuesto'),
+        montoImpuestoExento: getValues('montoImpuestoExento') ?? 0,
+        montoRetenido: getValues('montoRetenido'),
+      }
+
+      await createImpuestoDocumentosOp(newCreate)
+      invalidateAndReset('impuestoDocumentosTable')
+      clearForm()
+    } catch (e: any) {
+      console.log(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
+    }
   }
 
   const handleUpdateImpuestoDocumentosOp = async (): Promise<void> => {
-    const payload: IUpdateImpuestoDocumentosOp = {
-      codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp'),
-      codigoDocumentoOp: getValues('codigoDocumentoOp'),
-      codigoRetencion: getValues('codigoRetencion'),
-      tipoRetencionId: getValues('tipoRetencionId'),
-      periodoImpositivo: getValues('periodoImpositivo'),
-      baseImponible: getValues('baseImponible'),
-      montoImpuesto: getValues('montoImpuesto'),
-      montoImpuestoExento: getValues('montoImpuestoExento'),
-      montoRetenido: getValues('montoRetenido'),
+    try {
+      const payload: IUpdateImpuestoDocumentosOp = {
+        codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp'),
+        codigoDocumentoOp: getValues('codigoDocumentoOp'),
+        codigoRetencion: getValues('codigoRetencion'),
+        tipoRetencionId: getValues('tipoRetencionId'),
+        periodoImpositivo: getValues('periodoImpositivo'),
+        baseImponible: getValues('baseImponible'),
+        montoImpuesto: getValues('montoImpuesto'),
+        montoImpuestoExento: getValues('montoImpuestoExento'),
+        montoRetenido: getValues('montoRetenido'),
+      }
+
+      await updateImpuestoDocumentosOp(payload)
+      invalidateAndReset('impuestoDocumentosTable')
+    } catch (e: any) {
+      console.log(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
-
-    console.log(payload)
-
-    return
-
-    await updateImpuestoDocumentosOp(payload)
   }
 
   const handleDeleteImpuestoDocumentosOp = async (): Promise<void> => {
-    const payload: IDeleteImpuestoDocumentosOp = {
-      codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp')
+    try {
+      const payload: IDeleteImpuestoDocumentosOp = {
+        codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp')
+      }
+
+      await deleteImpuestoDocumentosOp(payload)
+      invalidateAndReset('impuestoDocumentosTable')
+    } catch (e: any) {
+      console.log(e)
+    } finally {
+      clearForm()
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
-
-    console.log(payload)
-
-    await deleteImpuestoDocumentosOp(payload)
   }
 
   const clearForm: () => Promise<void> = async () => {
@@ -109,7 +204,45 @@ const FormImpuestoDocumentosOp = () => {
     setValue('montoImpuesto', 0)
     setValue('montoImpuestoExento', 0)
     setValue('montoRetenido', 0)
+    setValue('conceptoPago', '')
+
+    dispatch(resetImpuestoDocumentoOpSeleccionado())
+    setValidationError(null)
   }
+
+  useEffect(() => {
+    return () => {
+      clearForm()
+      reset(defaultValues)
+      setValidationError(null)
+      setPorRetencion(0)
+    }
+  }, [reset, dispatch])
+
+  const viewDialogListRetenciones = () => {
+    dispatch(setIsOpenDialogListRetenciones(true))
+  }
+
+  useEffect(() => {
+    console.log(documentoOpSeleccionado.codigoDocumentoOp)
+    setValue('periodoImpositivo', documentoOpSeleccionado.periodoImpositivo)
+    setValue('codigoDocumentoOp', documentoOpSeleccionado.codigoDocumentoOp)
+  }, [])
+
+  useEffect(() => {
+    if (impuestoDocumentoOpSeleccionado) {
+      setValue('codigoImpuestoDocumentoOp', impuestoDocumentoOpSeleccionado['codigoImpuestoDocumentoOp'])
+      setValue('codigoDocumentoOp', impuestoDocumentoOpSeleccionado['codigoDocumentoOp'])
+      setValue('codigoRetencion', impuestoDocumentoOpSeleccionado['codigoRetencion'])
+      setValue('tipoRetencionId', impuestoDocumentoOpSeleccionado['tipoRetencionId'])
+      setValue('periodoImpositivo', impuestoDocumentoOpSeleccionado['periodoImpositivo'])
+
+      setValue('baseImponible', impuestoDocumentoOpSeleccionado['baseImponible'])
+      setValue('montoImpuesto', impuestoDocumentoOpSeleccionado['montoImpuesto'])
+      setValue('montoImpuestoExento', impuestoDocumentoOpSeleccionado['montoImpuestoExento'])
+      setValue('montoRetenido', impuestoDocumentoOpSeleccionado['montoRetenido'])
+    }
+  }, [impuestoDocumentoOpSeleccionado])
 
   const onSubmit = (data: any) => {
     console.log(data)
@@ -120,40 +253,54 @@ const FormImpuestoDocumentosOp = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2} paddingTop={0} justifyContent='flex-start'>
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
+            {/* codigo de impuesto */}
             <Grid item xs={4}>
               <Controller
                 name='codigoImpuestoDocumentoOp'
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                render={({ field: { value, onChange, ref } }) => (
                   <TextField
                     fullWidth
-                    value={value}
+                    value={value || 0}
                     onChange={onChange}
                     label='Codigo Impuesto'
                     variant='outlined'
-                    disabled={false}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        color: 'text.disabled'
+                      }
+                    }}
+                    inputRef={ref}
                   />
                 )}
               />
             </Grid>
 
+            {/* codigo Documento*/}
             <Grid item xs={4}>
               <Controller
                 name='codigoDocumentoOp'
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                render={({ field: { value, onChange, ref } }) => (
                   <TextField
                     fullWidth
-                    value={value}
+                    value={value || documentoOpSeleccionado.codigoDocumentoOp}
                     onChange={onChange}
                     label='Codigo Documento'
                     variant='outlined'
-                    disabled={false}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    inputRef={ref}
                   />
                 )}
               />
             </Grid>
 
+            {/* Codigo Retencion */}
             <Grid item xs={4}>
               <Controller
                 name='codigoRetencion'
@@ -165,43 +312,75 @@ const FormImpuestoDocumentosOp = () => {
                     onChange={onChange}
                     label='Codigo Retencion'
                     variant='outlined'
-                    disabled={false}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               />
+            </Grid>
+
+            <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                <Controller
+                  name='conceptoPago'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <TextField
+                      fullWidth
+                      label='Concepto Pago'
+                      value={value}
+                      onChange={onChange}
+                      variant='outlined'
+                      error={!!errors.conceptoPago}
+                      helperText={errors.conceptoPago?.message as string | undefined}
+                      sx={{ flexGrow: 1 }}
+                    />
+                  )}
+                />
+                <Button
+                  onClick={viewDialogListRetenciones}
+                  variant="contained"
+                  sx={{
+                    marginLeft: 2,
+                    flexShrink: 0,
+                    height: '100%',
+                    minHeight: '48px',
+                    minWidth: '80px',
+                    justifyContent: 'flex-center',
+                  }}
+                >
+                  <SearchIcon />
+                </Button>
+              </Box>
             </Grid>
 
           </Grid>
+
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-            <Grid item xs={4}>
-              <Controller
-                name='tipoRetencionId'
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    fullWidth
-                    value={value}
-                    onChange={onChange}
-                    label='Codigo Retencion Id'
-                    variant='outlined'
-                    disabled={false}
-                  />
-                )}
+            <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+              <TipoRetencion
+                id={ impuestoDocumentoOpSeleccionado?.tipoRetencionId || 0}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={(value: any) => setValue('tipoRetencionId', value.id)}
               />
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <Controller
                 name='periodoImpositivo'
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                   <TextField
                     fullWidth
-                    value={value}
+                    value={value || documentoOpSeleccionado.periodoImpositivo}
                     onChange={onChange}
                     label='periodo Impositivo'
                     variant='outlined'
-                    disabled={false}
+                    InputProps={{
+                      readOnly: false,
+                    }}
+                    inputRef={ref}
                   />
                 )}
               />
@@ -209,16 +388,29 @@ const FormImpuestoDocumentosOp = () => {
 
             <Grid item xs={4}>
               <Controller
-                name='baseImponible'
+                name="baseImponible"
                 control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    fullWidth
+                rules={baseImponibleRules}
+                render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
+                  <NumericFormat
                     value={value}
-                    onChange={onChange}
-                    label='base Imponible'
-                    variant='outlined'
-                    disabled={false}
+                    onValueChange={(values) => onChange(values.floatValue)}
+                    customInput={TextField}
+                    thousandSeparator='.'
+                    decimalSeparator=','
+                    decimalScale={2}
+                    fixedDecimalScale
+                    label='Base Imponible'
+                    fullWidth
+                    error={!!error}
+                    inputProps={{
+                      type: 'text',
+                      inputMode: 'numeric'
+                    }}
+                    getInputRef={ref}
+                    onFocus={(e) => {
+                      e.target.setSelectionRange(0, 0);
+                    }}
                   />
                 )}
               />
@@ -228,16 +420,32 @@ const FormImpuestoDocumentosOp = () => {
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
             <Grid item xs={4}>
               <Controller
-                name='montoImpuesto'
+                name="montoImpuesto"
                 control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
+                render={({ field: { value, ref } }) => (
+                  <NumericFormat
                     fullWidth
                     value={value}
-                    onChange={onChange}
-                    label='monto Impuesto'
-                    variant='outlined'
-                    disabled={false}
+                    customInput={TextField}
+                    thousandSeparator='.'
+                    decimalSeparator=','
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label='Impuesto'
+                    onFocus={event => event.target.select()}
+                    placeholder='0,00'
+                    error={!!error}
+                    aria-describedby='validation-async-cantidad'
+                    inputProps={{
+                      type: 'text',
+                      inputMode: 'numeric',
+                      readOnly: true
+                    }}
+                    getInputRef={ref}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               />
@@ -245,16 +453,39 @@ const FormImpuestoDocumentosOp = () => {
 
             <Grid item xs={4}>
               <Controller
-                name='montoImpuestoExento'
+                name="montoImpuestoExento"
                 control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
+                render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
+                  <NumericFormat
                     fullWidth
                     value={value}
-                    onChange={onChange}
-                    label='monto Impuesto Exento'
-                    variant='outlined'
-                    disabled={false}
+                    onValueChange={(values) => {
+                      const newValue = values.floatValue || 0;
+                      onChange(newValue);
+                      const impuesto = getValues('montoImpuesto');
+                      const nuevoRetenido = newValue > 0 && impuesto > 0
+                        ? impuesto - newValue
+                        : impuesto;
+                      setValue('montoRetenido', nuevoRetenido);
+                    }}
+                    customInput={TextField}
+                    thousandSeparator='.'
+                    decimalSeparator=','
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label='Impuesto Exento'
+                    placeholder='0,00'
+                    error={!!error}
+                    aria-describedby='validation-async-exento'
+                    inputProps={{
+                      type: 'text',
+                      inputMode: 'numeric'
+                    }}
+                    getInputRef={ref}
+                    onFocus={(e) => {
+                      e.target.setSelectionRange(0, 0);
+                    }}
                   />
                 )}
               />
@@ -262,26 +493,44 @@ const FormImpuestoDocumentosOp = () => {
 
             <Grid item xs={4}>
               <Controller
-                name='montoRetenido'
+                name="montoRetenido"
                 control={control}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
+                render={({ field: { value, ref } }) => (
+                  <NumericFormat
                     fullWidth
                     value={value}
-                    onChange={onChange}
-                    label='monto Retenido'
-                    variant='outlined'
-                    disabled={false}
+                    customInput={TextField}
+                    thousandSeparator='.'
+                    decimalSeparator=','
+                    allowNegative={false}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    label='Monto Retenido'
+                    onFocus={event => event.target.select()}
+                    placeholder='0,00'
+                    error={!!error}
+                    aria-describedby='validation-async-retenido'
+                    inputProps={{
+                      type: 'text',
+                      inputMode: 'numeric',
+                      readOnly: true
+                    }}
+                    getInputRef={ref}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 )}
               />
             </Grid>
+
           </Grid>
         </Grid>
+
         <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
-          {error && (
+          {message || validationError && (
             <Box>
-              <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{error}</FormHelperText>
+              <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message} {validationError}</FormHelperText>
             </Box>
           )}
         </Grid>
@@ -290,21 +539,21 @@ const FormImpuestoDocumentosOp = () => {
         saveButtonConfig={{
           label: 'Crear',
           onClick: handleCreateImpuestoDocumentosOp,
-          show: true,
+          show: !showOnlyCreate,
           confirm: true,
-          disabled: false
+          disabled: !isValid || loading
         }}
         updateButtonConfig={{
           label: 'Actualizar',
           onClick: handleUpdateImpuestoDocumentosOp,
-          show: true,
+          show: showOnlyCreate,
           confirm: true,
-          disabled: false
+          disabled: !isValid || loading
         }}
         deleteButtonConfig={{
           label: 'Eliminar',
           onClick: handleDeleteImpuestoDocumentosOp,
-          show: true,
+          show: showOnlyCreate,
           confirm: true,
           disabled: false
         }}
