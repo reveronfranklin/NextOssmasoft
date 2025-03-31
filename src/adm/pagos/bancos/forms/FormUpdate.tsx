@@ -19,9 +19,9 @@ import {
 } from '@mui/material';
 
 import { RootState } from 'src/store';
-import useServices from '../services/useServices';
-import { SisBancoCreateDto } from '../interfaces';
+import { SisBancoCreateDto, SisBancoDeleteDto } from '../interfaces';
 import { setIsOpenDialogMaestroBancoDetalle, resetMaestroBancoSeleccionadoDetalle } from 'src/store/apps/pagos/bancos'
+import useServices from '../services/useServices';
 
 const FormUpdate = () => {
     const dispatch = useDispatch()
@@ -29,10 +29,12 @@ const FormUpdate = () => {
 
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
     const [open, setOpen] = useState<boolean>(false)
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const qc: QueryClient = useQueryClient()
 
     const {
         updateMaestroBanco,
+        deleteMaestroBanco,
         message,
         loading
     } = useServices()
@@ -82,6 +84,34 @@ const FormUpdate = () => {
             console.error(e)
         } finally {
             setIsFormEnabled(true)
+            qc.invalidateQueries({
+                queryKey: ['maestroBancoTable']
+            })
+        }
+    }
+
+    const handleDeleteDialogOpen = () => {
+        setOpenDeleteDialog(true)
+    }
+
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false)
+    }
+
+    const handleDelete = async () => {
+        try {
+            const payload: SisBancoDeleteDto = {
+                codigoBanco: maestroBanco.codigoBanco
+            }
+
+            const response = await deleteMaestroBanco(payload)
+
+            if (response?.isValid) {
+                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+            }
+        } catch (e: any) {
+            console.error(e)
+        } finally {
             qc.invalidateQueries({
                 queryKey: ['maestroBancoTable']
             })
@@ -260,15 +290,62 @@ const FormUpdate = () => {
                                     </DialogActions>
                                 </Dialog>
 
+                                <Dialog
+                                    open={openDeleteDialog}
+                                    onClose={handleDeleteDialogClose}
+                                    aria-labelledby='alert-dialog-title'
+                                    aria-describedby='alert-dialog-description'
+                                >
+                                    <DialogTitle id='alert-dialog-title'>
+                                        {'Esta usted seguro de realizar esta acción?'}
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id='alert-dialog-description'>
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleDeleteDialogClose}>No</Button>
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            size='small'
+                                            onClick={handleSubmit(handleDelete)}
+                                        >
+                                            { loading ? (
+                                                <>
+                                                    <CircularProgress
+                                                        sx={{
+                                                            color: 'common.white',
+                                                            width: '20px !important',
+                                                            height: '20px !important',
+                                                            mr: theme => theme.spacing(2)
+                                                        }}
+                                                    />
+                                                    Eliminando el registro, un momento...
+                                                </>
+                                            ) : 'Si' }
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
                                         onClick={handleDialogOpen}
-                                        disabled={!isValid}
+                                        disabled={!isValid && loading}
                                     >
-                                        { 'Actualizar' }
+                                        Actualizar
+                                    </Button>
+                                    <Button
+                                        sx={{ mx: 4 }}
+                                        variant='outlined'
+                                        size='small'
+                                        onClick={handleDeleteDialogOpen}
+                                        disabled={!isValid && loading}
+                                    >
+                                        Eliminar
                                     </Button>
                                     <Button
                                         color='primary'
