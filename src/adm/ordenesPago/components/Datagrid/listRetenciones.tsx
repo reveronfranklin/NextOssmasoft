@@ -33,14 +33,11 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
   const { getRetenciones } = useServicesRetenciones()
 
   const query = useQuery({
-    queryKey: ['retencionesTable', pageSize, pageNumber, searchText],
+    queryKey: ['retencionesTable'],
     queryFn: () => getRetenciones(),
-    initialData: () => {
-      return qc.getQueryData(['retencionesTable', pageSize, pageNumber, searchText])
-    },
+    initialData: () => qc.getQueryData(['retencionesTable']),
     staleTime: 1000 * 60,
-    retry: 3,
-  }, qc)
+  })
 
   const rows = query?.data?.data || []
   const rowCount = query?.data?.data?.length || 0

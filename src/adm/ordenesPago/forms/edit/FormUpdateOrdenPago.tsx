@@ -1,9 +1,10 @@
+import { useEffect } from 'react'
 import { Grid, Box } from "@mui/material"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
-import { useQueryClient, QueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import {
     resetCompromisoSeleccionadoDetalle,
     setCompromisoSeleccionadoDetalle,
@@ -13,11 +14,22 @@ import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
 
+import { useServicesRetenciones } from '../../services/index'
+
 const FormUpdateOrdenPago = () => {
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
+    const { getRetenciones } = useServicesRetenciones()
+
+    const { data } = useQuery({
+        queryKey: ['retencionesTable'],
+        queryFn: () => getRetenciones(),
+        staleTime: 60 * 1000,
+        retry: 3,
+    }, qc)
 
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
+    console.log(compromisoSeleccionadoListaDetalle) //todo revisar
 
     const {
         updateOrden,
@@ -32,6 +44,7 @@ const FormUpdateOrdenPago = () => {
                 codigoPresupuesto,
                 tipoOrdenPagoId,
                 fechaComprobante,
+                codigoCompromiso
             } = compromisoSeleccionadoListaDetalle
 
             const {
@@ -46,7 +59,7 @@ const FormUpdateOrdenPago = () => {
             const payload: IUpdateOrdenPago = {
                 codigoOrdenPago,
                 codigoPresupuesto,
-                codigoCompromiso: 15, //todo esto debe acomodarse
+                codigoCompromiso: codigoCompromiso, //todo Revisar
                 fechaOrdenPago: new Date(fechaOrdenPagoString),
                 tipoOrdenPagoId,
                 cantidadPago,

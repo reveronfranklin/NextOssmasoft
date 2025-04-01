@@ -19,7 +19,10 @@ import {
   setIsOpenDialogListRetenciones,
   resetImpuestoDocumentoOpSeleccionado
 } from "src/store/apps/ordenPago"
+
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { useServicesRetenciones } from '../../services/index'
 
 interface IRetencion {
   id: number,
@@ -50,6 +53,12 @@ const FormImpuestoDocumentosOp = () => {
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const showOnlyCreate = impuestoDocumentoOpSeleccionado?.codigoDocumentoOp ?? false
+
+  const { getRetenciones } = useServicesRetenciones()
+  const { data } = useQuery({
+    queryKey: ['retencionesTable'],
+    queryFn: () => getRetenciones(),
+  })
 
   const defaultValues: any = {
     codigoImpuestoDocumentoOp: 0,
@@ -224,7 +233,6 @@ const FormImpuestoDocumentosOp = () => {
   }
 
   useEffect(() => {
-    console.log(documentoOpSeleccionado.codigoDocumentoOp)
     setValue('periodoImpositivo', documentoOpSeleccionado.periodoImpositivo)
     setValue('codigoDocumentoOp', documentoOpSeleccionado.codigoDocumentoOp)
   }, [])
@@ -241,6 +249,15 @@ const FormImpuestoDocumentosOp = () => {
       setValue('montoImpuesto', impuestoDocumentoOpSeleccionado['montoImpuesto'])
       setValue('montoImpuestoExento', impuestoDocumentoOpSeleccionado['montoImpuestoExento'])
       setValue('montoRetenido', impuestoDocumentoOpSeleccionado['montoRetenido'])
+
+      const retencionesFiltradas = data?.data?.find(
+        (retencion: any) => retencion?.codigoRetencion === impuestoDocumentoOpSeleccionado['codigoRetencion']
+      )
+
+      if (retencionesFiltradas) {
+        setPorRetencion(retencionesFiltradas?.porRetencion)
+        setValue('conceptoPago', retencionesFiltradas?.conceptoPago)
+      }
     }
   }, [impuestoDocumentoOpSeleccionado])
 
