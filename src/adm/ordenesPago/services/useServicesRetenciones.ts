@@ -5,14 +5,9 @@ import { useCallback, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 
-// import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
 import { ICreateRetencion, IResponseCreateRetencion } from '../interfaces/retenciones/createRetencion'
 import { IUpdateRetencion, IResponseUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
 import { IDeleteRetencion, IResponseDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
-
-// interface IfilterByOrdenPago {
-//   codigoOrdenPago: number
-// }
 
 const useServicesRetencionesOp = () => {
   const [error, setError] = useState<string>('')

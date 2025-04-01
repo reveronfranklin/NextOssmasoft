@@ -5,7 +5,7 @@ import { Autocomplete, TextField } from "@mui/material"
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import useServices from '../../services/useServices'
 
-interface IFrecuenciaPago {
+interface ITipoRetencion {
   id: number
   descripcion: string,
   value: number
@@ -22,8 +22,10 @@ const TipoRetencion = (props: any) => {
     staleTime: 5000 * 60 * 60,
   }, qc)
 
-  const ListFrecuenciaPago: IFrecuenciaPago[] = query.data?.data ?? [];
-  const [selectedValue, setSelectedValue] = useState<IFrecuenciaPago | null>(null)
+  console.log(query.data?.data)
+
+  const ListTipoRetencion: ITipoRetencion[] = query.data?.data ?? []
+  const [selectedValue, setSelectedValue] = useState<ITipoRetencion | null>(null)
 
   useEffect(() => {
     if (props.id === 0) {
@@ -32,13 +34,13 @@ const TipoRetencion = (props: any) => {
       return
     }
 
-    const value = ListFrecuenciaPago.filter((item: { id: number }) => item?.id == props?.id)[0]
+    const value = ListTipoRetencion.filter((item: { id: number }) => item?.id == props?.id)[0]
 
     if (value) {
       handleChange(null, value)
     }
 
-  }, [props.id, ListFrecuenciaPago])
+  }, [props.id, ListTipoRetencion])
 
   const handleChange = (e: any, newValue: any) => {
     if (newValue) {
@@ -70,7 +72,7 @@ const TipoRetencion = (props: any) => {
         ) : (
           <Autocomplete
             ref={props.autocompleteRef}
-            options={ListFrecuenciaPago}
+            options={ListTipoRetencion}
             value={selectedValue}
             id='autocomplete-TipoImpuesto'
             getOptionLabel={(option) => option.id + '-' + option.descripcion}
