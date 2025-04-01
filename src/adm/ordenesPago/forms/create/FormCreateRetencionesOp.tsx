@@ -150,6 +150,7 @@ const FormCreateRetencionesOp = () => {
   }, [retencionOpSeleccionado, setValue])
 
   useEffect(() => {
+    console.log(retencionSeleccionado)
     if (retencionSeleccionado) {
       setValue('conceptoPago', retencionSeleccionado?.descripcionTipoRetencion ?? '')
       setValue('codigoRetencion', retencionSeleccionado?.codigoRetencion ?? 0)
@@ -168,7 +169,7 @@ const FormCreateRetencionesOp = () => {
           </Grid>
           <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-            <Controller
+              <Controller
                 name='conceptoPago'
                 control={control}
                 render={({ field: { value, onChange } }) => (

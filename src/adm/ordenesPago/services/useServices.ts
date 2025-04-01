@@ -41,6 +41,7 @@ const useServices = () => {
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data
             }
+
             setMessage(responseGetOrdenes.data.message)
         } catch (e: any) {
             setError(e.message)
@@ -58,6 +59,7 @@ const useServices = () => {
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data
             }
+
             setMessage(responseGetOrdenes.data.message)
         } catch (e: any) {
             setError(e.message)
@@ -75,6 +77,7 @@ const useServices = () => {
             if (responsePucOrdenPago.data.isValid) {
                 return responsePucOrdenPago.data
             }
+
             setMessage(responsePucOrdenPago.data.message)
         } catch (e: any) {
             setError(e.message)
@@ -85,7 +88,6 @@ const useServices = () => {
     }, [])
 
     const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<any> => {
-        console.log(filters)
         try {
             setLoading(true)
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
@@ -93,6 +95,7 @@ const useServices = () => {
             if (responseCreatetOrden.data.isValid) {
                 return responseCreatetOrden.data
             }
+
             setMessage(responseCreatetOrden.data.message)
         } catch (e: any) {
             setError(e.message)
@@ -136,11 +139,11 @@ const useServices = () => {
         try {
             setLoading(true)
             const responseGetOrdenes = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
-            console.log('responseGetOrdenes', responseGetOrdenes)
 
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data
             }
+
             setMessage(responseGetOrdenes.data.message)
         } catch (e: any) {
             setError(e.message)
@@ -158,6 +161,7 @@ const useServices = () => {
             if (responseGetOrdenes.data.isValid) {
                 return responseGetOrdenes.data
             }
+
             setMessage(responseGetOrdenes.data.message)
         } catch (e: any) {
             setError(e.message)

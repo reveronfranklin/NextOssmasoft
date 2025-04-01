@@ -18,12 +18,14 @@ export const admOrdenPagoSlice = createSlice({
         isOpenDialogListRetenciones: false,
         isOpenDialogListPucOrdenPagoEdit: false,
         isOpenDialogDocumentosEdit: false,
+        isOpenDialogImpuestoDocumentosEdit: false,
         isOpenViewerPdf: false,
         compromisoSeleccionadoListaDetalle: {} as Orden, //orden de pago de la grid principal
         retencionOpSeleccionado: {} as Retencion,
         retencionSeleccionado: {} as IRetencionData,
         beneficioOpSeleccionado: {} as BeneficiarioOp,
         documentoOpSeleccionado: {} as Documentos,
+        impuestoDocumentoOpSeleccionado: {} as any,
         pucSeleccionado: {} as any,
         codigoOrdenPago: 0,
         conFactura: null,
@@ -87,6 +89,12 @@ export const admOrdenPagoSlice = createSlice({
         resetDocumentoOpSeleccionado: (state, action): void => {
             state.documentoOpSeleccionado = action.payload
         },
+        setImpuestoDocumentoOpSeleccionado: (state, action) => {
+            state.impuestoDocumentoOpSeleccionado = action.payload
+        },
+        resetImpuestoDocumentoOpSeleccionado: (state) => {
+            state.impuestoDocumentoOpSeleccionado = {} as any
+        },
         setCodigoOrdenPago: (state, action) => {
             state.codigoOrdenPago = action.payload
         },
@@ -95,6 +103,9 @@ export const admOrdenPagoSlice = createSlice({
         },
         setDocumentCount: (state, action) => {
             state.documentCount = action.payload
+        },
+        setIsOpenDialogImpuestoDocumentosEdit: (state, action) => {
+            state.isOpenDialogImpuestoDocumentosEdit = action.payload
         }
     }
 })
@@ -107,6 +118,7 @@ export const {
     setIsOpenDialogConfirmButtons,
     setIsOpenDialogListRetenciones,
     setIsOpenDialogDocumentosEdit,
+    setIsOpenDialogImpuestoDocumentosEdit,
     setIsOpenViewerPdf,
     setTypeOperation,
     setTypeOperationDocumento,
@@ -118,6 +130,8 @@ export const {
     setRetencionOpSeleccionado,
     setBeneficioOpSeleccionado,
     setDocumentoOpSeleccionado,
+    setImpuestoDocumentoOpSeleccionado,
+    resetImpuestoDocumentoOpSeleccionado,
     setCodigoOrdenPago,
     setConFactura,
     setDocumentCount

@@ -6,25 +6,25 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from "react-redux"
-import { setIsOpenDialogDocumentosEdit } from "src/store/apps/ordenPago"
-import FormCreateDocumentosOp from '../../forms/create/FormCreateDocumentos'
-import DialogImpuestoDocumentosEdit from './ImpuestoDocumentosOp'
-
+import { setIsOpenDialogImpuestoDocumentosEdit } from "src/store/apps/ordenPago"
+import FormImpuestoDocumentosOp from '../../forms/create/FormImpuestoDocumentosOp'
 import Component from '../../components/Datagrid/listImpuestoDocumentoOp'
 
+import DialogListRetenciones from '../../views/Dialog/ListRetenciones'
+
 const Transition = forwardRef(function Transition(
-    props: FadeProps & { children?: ReactElement<any, any> },
-    ref: Ref<unknown>
+  props: FadeProps & { children?: ReactElement<any, any> },
+  ref: Ref<unknown>
 ) {
-    return <Fade ref={ref} {...props} />
+  return <Fade ref={ref} {...props} />
 })
 
-const DialogDocumentosEdit = () => {
+const DialogImpuestoDocumentosEdit = () => {
   const dispatch = useDispatch()
-  const { isOpenDialogDocumentosEdit, typeOperationDocumento } = useSelector((state: RootState) => state.admOrdenPago)
+  const { isOpenDialogImpuestoDocumentosEdit } = useSelector((state: RootState) => state.admOrdenPago)
 
   const handleClose = () => {
-    dispatch(setIsOpenDialogDocumentosEdit(false))
+    dispatch(setIsOpenDialogImpuestoDocumentosEdit(false))
   }
 
   return (
@@ -33,7 +33,7 @@ const DialogDocumentosEdit = () => {
         fullWidth
         maxWidth={'lg'}
         scroll='body'
-        open={isOpenDialogDocumentosEdit}
+        open={isOpenDialogImpuestoDocumentosEdit}
         TransitionComponent={Transition}
         onClose={() => handleClose()}
         aria-labelledby='modal-modal-title'
@@ -41,7 +41,7 @@ const DialogDocumentosEdit = () => {
         sx={{
           '& .MuiDialog-paper': {
             width: '100%',
-            height: '95vh',
+            height: '90vh',
             margin: 0,
             borderRadius: 0,
             padding: 10,
@@ -56,7 +56,7 @@ const DialogDocumentosEdit = () => {
             }}
             >
               <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                Documentos ({typeOperationDocumento === 'update' ? 'Editar' : 'Crear'})
+                Editar Impuestos Documentos
               </Typography>
               <IconButton
                 size='small'
@@ -68,9 +68,11 @@ const DialogDocumentosEdit = () => {
             </Toolbar>
           </Box>
           <DialogContent>
-            <FormCreateDocumentosOp />
-            <DialogImpuestoDocumentosEdit />
-            <Component />
+            <>
+              <FormImpuestoDocumentosOp />
+              <DialogListRetenciones />
+              <Component />
+            </>
           </DialogContent>
         </Grid>
       </Dialog>
@@ -78,4 +80,4 @@ const DialogDocumentosEdit = () => {
   )
 }
 
-export default DialogDocumentosEdit
+export default DialogImpuestoDocumentosEdit

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEffect, useRef } from 'react'
-import { Box, Grid, TextField } from '@mui/material'
+import { Button, Box, Grid, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -23,6 +23,7 @@ import CustomButtonDialog from './../../components/BottonsActions'
 
 import { setIsOpenDialogConfirmButtons, setIsOpenDialogDocumentosEdit } from 'src/store/apps/ordenPago'
 import { resetDocumentoOpSeleccionado, setDocumentoOpSeleccionado } from 'src/store/apps/ordenPago'
+import { setIsOpenDialogImpuestoDocumentosEdit } from "src/store/apps/ordenPago"
 
 import { ICreateDocumentosOp } from '../../interfaces/documentosOp/createDocumentosOp'
 import { IUpdateDocumentosOp } from '../../interfaces/documentosOp/updateDocumentosOp'
@@ -47,8 +48,7 @@ const FormCreateDocumentosOp = () => {
   const qc: QueryClient = useQueryClient()
   const autocompleteRef = useRef()
 
-  const { presupuestoSeleccionado, loading, createDocumentos, updateDocumentos, deleteDocumentos } =
-    useServicesDocumentosOp()
+  const { presupuestoSeleccionado, loading, createDocumentos, updateDocumentos, deleteDocumentos } = useServicesDocumentosOp()
 
   const { documentoOpSeleccionado, typeOperationDocumento, isOpenDialogConfirmButtons, codigoOrdenPago } = useSelector(
     (state: RootState) => state.admOrdenPago
@@ -781,39 +781,48 @@ const FormCreateDocumentosOp = () => {
           flexGrow: 1
         }}
       >
-        <CustomButtonDialog
-          saveButtonConfig={{
-            label: 'Crear',
-            onClick: handleCreateDocumento,
-            show: typeOperationDocumento === 'create' ? true : false,
-            confirm: true,
-            disabled: !isValid
-          }}
-          updateButtonConfig={{
-            label: 'Actualizar',
-            onClick: handleUpdateDocumento,
-            show: typeOperationDocumento !== 'create' ? true : false,
-            confirm: true,
-            disabled: !isValid
-          }}
-          deleteButtonConfig={{
-            label: 'Eliminar',
-            onClick: handleDeleteDocumento,
-            show: typeOperationDocumento !== 'create' ? true : false,
-            confirm: true,
-            disabled: false
-          }}
-          clearButtonConfig={{
-            label: 'Limpiar',
-            onClick: async () => clearForm(),
-            show: true,
-            disabled: false
-          }}
-          loading={loading}
-          isOpenDialog={isOpenDialogConfirmButtons}
-          setIsOpenDialog={setIsOpenDialogConfirmButtons}
-          isFormValid={isValid}
-        />
+        <>
+          <CustomButtonDialog
+            saveButtonConfig={{
+              label: 'Crear',
+              onClick: handleCreateDocumento,
+              show: typeOperationDocumento === 'create' ? true : false,
+              confirm: true,
+              disabled: !isValid
+            }}
+            updateButtonConfig={{
+              label: 'Actualizar',
+              onClick: handleUpdateDocumento,
+              show: typeOperationDocumento !== 'create' ? true : false,
+              confirm: true,
+              disabled: !isValid
+            }}
+            deleteButtonConfig={{
+              label: 'Eliminar',
+              onClick: handleDeleteDocumento,
+              show: typeOperationDocumento !== 'create' ? true : false,
+              confirm: true,
+              disabled: false
+            }}
+            clearButtonConfig={{
+              label: 'Limpiar',
+              onClick: async () => clearForm(),
+              show: true,
+              disabled: false
+            }}
+            loading={loading}
+            isOpenDialog={isOpenDialogConfirmButtons}
+            setIsOpenDialog={setIsOpenDialogConfirmButtons}
+            isFormValid={isValid}
+          />
+          <Button
+            onClick={() => dispatch(setIsOpenDialogImpuestoDocumentosEdit(true))}
+            variant='outlined'
+            size='small'
+          >
+            ver impuestos
+          </Button>
+        </>
       </Box>
     </>
   )

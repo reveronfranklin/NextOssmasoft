@@ -26,8 +26,6 @@ const TipoOrden = (props: any) => {
   const [selectedValue, setSelectedValue] = useState<ITipoOrden | null>(null)
 
   useEffect(() => {
-    console.log('tipo de orden', props.id)
-
     if (props.id === 0) {
       setSelectedValue(null)
 

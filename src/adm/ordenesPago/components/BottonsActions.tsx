@@ -123,7 +123,7 @@ const CustomButtonDialog = ({
               size={clearButtonConfig.size}
               sx={{ ...clearButtonConfig.sx, marginRight: 2 }}
               onClick={() => handle(clearButtonConfig)}
-              disabled={clearButtonConfig.disabled || !isFormValid}
+              disabled={clearButtonConfig.disabled}
             >
               <CleaningServices />
               {clearButtonConfig?.label}
