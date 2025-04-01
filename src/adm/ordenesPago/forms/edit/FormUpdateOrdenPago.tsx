@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Grid, Box } from "@mui/material"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -30,6 +29,7 @@ const FormUpdateOrdenPago = () => {
 
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     console.log(compromisoSeleccionadoListaDetalle) //todo revisar
+    console.log(data)
 
     const {
         updateOrden,

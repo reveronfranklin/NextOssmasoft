@@ -1,9 +1,6 @@
 import { UrlServices } from '../enums/UrlServices.enum'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useCallback, useState } from "react"
-
-import { useSelector } from "react-redux"
-import { RootState } from "src/store"
 import { useDispatch } from 'react-redux'
 
 import { IListImpuestoByOrdenPago, IResponseListImpuestoByOrdenPago } from '../interfaces/impuestoDocumentosOp/listImpuestoDocumentosOp'
@@ -12,7 +9,6 @@ import { IUpdateImpuestoDocumentosOp, IResponseUpdateImpuestoDocumentosOp } from
 import { IDeleteImpuestoDocumentosOp, IResponseDeleteImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/deleteImpuestoDocumentosOp'
 
 const useServicesImpuestosDocumentosOp = () => {
-  const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -34,6 +30,7 @@ const useServicesImpuestosDocumentosOp = () => {
     } finally {
       setLoading(false)
     }
+
     return null
   }, [dispatch])
 
@@ -52,6 +49,7 @@ const useServicesImpuestosDocumentosOp = () => {
     } finally {
       setLoading(false)
     }
+
     return null
   }, [dispatch])
 
@@ -69,6 +67,7 @@ const useServicesImpuestosDocumentosOp = () => {
     } finally {
       setLoading(false)
     }
+
     return null
   }, [dispatch])
 
@@ -86,11 +85,12 @@ const useServicesImpuestosDocumentosOp = () => {
     } finally {
       setLoading(false)
     }
+
     return null
   }, [dispatch])
 
   return {
-    error,message, loading,
+    message, loading,
     getListImpuestoDocumentosOp,
     createImpuestoDocumentosOp,
     updateImpuestoDocumentosOp,

@@ -24,18 +24,12 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useServicesRetenciones } from '../../services/index'
 
-interface IRetencion {
-  id: number,
-  value: number
-}
-
 const FormImpuestoDocumentosOp = () => {
-  const [retencion, setRetencion] = useState<IRetencion>({id: 0, value: 0})
   const [porRetencion, setPorRetencion] = useState<number>(0)
   const [validationError, setValidationError] = useState<string | null>(null)
 
   const {
-    error, message, loading,
+    message, loading,
     createImpuestoDocumentosOp,
     updateImpuestoDocumentosOp,
     deleteImpuestoDocumentosOp,
@@ -89,7 +83,6 @@ const FormImpuestoDocumentosOp = () => {
   const baseImponible = watch('baseImponible')
   const montoImpuestoExento = watch('montoImpuestoExento')
   const montoImpuesto = watch('montoImpuesto')
-  const montoRetenido = watch('montoRetenido')
 
   const baseImponibleRules = {
     required: 'Este campo es obligatorio',
@@ -117,6 +110,7 @@ const FormImpuestoDocumentosOp = () => {
   const calcularMontoRetenido = (impuesto: number, exento: number) => {
     if (exento < 0) {
       setValidationError('El monto exento no puede ser negativo')
+
       return
     }
 
@@ -387,7 +381,7 @@ const FormImpuestoDocumentosOp = () => {
               <Controller
                 name='periodoImpositivo'
                 control={control}
-                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                render={({ field: { value, onChange, ref }, fieldState: { } }) => (
                   <TextField
                     fullWidth
                     value={value || documentoOpSeleccionado.periodoImpositivo}
@@ -408,7 +402,7 @@ const FormImpuestoDocumentosOp = () => {
                 name="baseImponible"
                 control={control}
                 rules={baseImponibleRules}
-                render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
+                render={({ field: { onChange, value, ref }, fieldState: { } }) => (
                   <NumericFormat
                     value={value}
                     onValueChange={(values) => onChange(values.floatValue)}
@@ -452,7 +446,6 @@ const FormImpuestoDocumentosOp = () => {
                     label='Impuesto'
                     onFocus={event => event.target.select()}
                     placeholder='0,00'
-                    error={!!error}
                     aria-describedby='validation-async-cantidad'
                     inputProps={{
                       type: 'text',
@@ -472,7 +465,7 @@ const FormImpuestoDocumentosOp = () => {
               <Controller
                 name="montoImpuestoExento"
                 control={control}
-                render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
+                render={({ field: { onChange, value, ref }, fieldState: { } }) => (
                   <NumericFormat
                     fullWidth
                     value={value}
@@ -525,7 +518,6 @@ const FormImpuestoDocumentosOp = () => {
                     label='Monto Retenido'
                     onFocus={event => event.target.select()}
                     placeholder='0,00'
-                    error={!!error}
                     aria-describedby='validation-async-retenido'
                     inputProps={{
                       type: 'text',

@@ -24,8 +24,6 @@ const LegendContainer = styled(Box)(({ theme }) => ({
 const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void }) => {
   const [pageNumber, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(5)
-  const [searchText] = useState<string>('')
-
   const [selectedRow, setSelectedRow] = useState<Retencion | null>(null)
 
   const qc: QueryClient = useQueryClient()
