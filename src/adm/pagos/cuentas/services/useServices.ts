@@ -1,33 +1,37 @@
-import { useCallback, useState } from "react"
+import { useCallback, useState } from 'react'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { UrlServices } from '../enums/urlServices.enum'
+
 //import { IResponse, SisBancoResponseDto, SisBancoFilterDto, SisBancoCreateDto, SisBancoUpdateDto, SisBancoDeleteDto } from '../interfaces'
 import { IResponse, IBancoFilter, IBancoResponse } from '../interfaces'
 
 const useServices = () => {
-    const [error, setError] = useState<string>('')
-    const [message, setMessage] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>('')
+  const [message, setMessage] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
-    const getMaestroBanco = useCallback(async (filters: IBancoFilter): Promise<any> => {
-        try {
-            setLoading(true)
-            const responseGetMaestroBanco = await ossmmasofApi.post<IResponse<IBancoResponse>>(UrlServices.GETMAESTROBANCO , filters)
+  const getMaestroBanco = useCallback(async (filters: IBancoFilter): Promise<any> => {
+    try {
+      setLoading(true)
+      const responseGetMaestroBanco = await ossmmasofApi.post<IResponse<IBancoResponse>>(
+        UrlServices.GETMAESTROBANCO,
+        filters
+      )
 
-            if (responseGetMaestroBanco.data.isValid) {
-                return responseGetMaestroBanco.data
-            }
+      if (responseGetMaestroBanco.data.isValid) {
+        return responseGetMaestroBanco.data
+      }
 
-            setMessage(responseGetMaestroBanco.data.message)
-        } catch (e: any) {
-            setError(e.message)
-            console.error(e)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+      setMessage(responseGetMaestroBanco.data.message)
+    } catch (e: any) {
+      setError(e.message)
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-    /* const createMaestroBanco = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
+  /* const createMaestroBanco = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
         try {
             setLoading(true)
             const responseCreateMaestroBanco = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
@@ -81,13 +85,13 @@ const useServices = () => {
         }
     }, [])
  */
-    return {
-        error,
-        message,
-        loading,
-        setMessage,
-        getMaestroBanco
-    }
+  return {
+    error,
+    message,
+    loading,
+    setMessage,
+    getMaestroBanco
+  }
 }
 
 export default useServices
