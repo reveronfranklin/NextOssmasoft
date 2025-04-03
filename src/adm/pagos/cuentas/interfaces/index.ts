@@ -1,3 +1,3 @@
-export * from './response/response.interface'
-export * from './bancos/banco-filter.interface'
-export * from './bancos/banco-response.interface'
+export * from './response/response.dto'
+export * from './bancos/banco-filter.dto'
+export * from './bancos/banco-response.dto'

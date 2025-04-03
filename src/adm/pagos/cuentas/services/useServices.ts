@@ -2,17 +2,17 @@ import { useCallback, useState } from "react"
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { UrlServices } from '../enums/urlServices.enum'
 //import { IResponse, SisBancoResponseDto, SisBancoFilterDto, SisBancoCreateDto, SisBancoUpdateDto, SisBancoDeleteDto } from '../interfaces'
-import { IResponse, IBancoFilter, IBancoResponse } from '../interfaces'
+import { ResponseDto, BancoFilterDto, BancoResponseDto } from '../interfaces'
 
 const useServices = () => {
     const [error, setError] = useState<string>('')
     const [message, setMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
-    const getMaestroBanco = useCallback(async (filters: IBancoFilter): Promise<any> => {
+    const getMaestroBanco = useCallback(async (filters: BancoFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const responseGetMaestroBanco = await ossmmasofApi.post<IResponse<IBancoResponse>>(UrlServices.GETMAESTROBANCO , filters)
+            const responseGetMaestroBanco = await ossmmasofApi.post<ResponseDto<BancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
 
             if (responseGetMaestroBanco.data.isValid) {
                 return responseGetMaestroBanco.data
