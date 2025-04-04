@@ -40,6 +40,9 @@ export enum UrlServices {
     DELETEBENEFICIARIO          = '/AdmBeneficiariosOp/Delete',
     UPDATEBENEFICIARIOMONTO     = '/AdmBeneficiariosOp/UpdateMonto',
 
+    APROBARORDENPAGO            = 'AdmOrdenPago/Aprobar',
+    ANULARORDENPAGO             = 'AdmOrdenPago/Anular',
+
     //Urls Reports
     GETREPORTBYORDENPAGO        = '/api-v1.0/payment-orders/pdf/report',
     GETREPORTBYRETENCIONES      = '/api-v1.0/income-tax-withholding-voucher/pdf/report',

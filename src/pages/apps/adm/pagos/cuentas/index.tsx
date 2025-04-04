@@ -1,5 +1,6 @@
 import Grid from '@mui/material/Grid'
-import Layout from 'src/adm/pagos/bancos/views/Layout'
+
+// import Layout from 'src/adm/pagos/bancos/views/Layout'
 
 const Bancos = () => {
   return (
