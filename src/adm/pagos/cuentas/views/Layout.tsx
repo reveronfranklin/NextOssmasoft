@@ -1,4 +1,4 @@
-import LayoutCuentas from './LayoutCuentas'
+import LayoutCuentas from './LayoutCuentas';
 /* import DialogAdmMaestroBancoDetalle from './Dialog/AdmMaestroBancoDetalle'
 import DialogAdmMaestroBancoDelete from './Dialog/AdmMaestroBancoDelete' */
 

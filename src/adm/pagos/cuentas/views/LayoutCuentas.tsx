@@ -1,7 +1,8 @@
-import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material'
-import Icon from 'src/@core/components/icon'
-import { useDispatch } from 'react-redux'
-/* import DataGridBancosComponent from '../components/Datagrid/bancos'
+import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material';
+import Icon from 'src/@core/components/icon';
+import { useDispatch } from 'react-redux';
+import DataGridCuentasComponent from '../components/dataGrid/Cuentas';
+/*
 import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos' */
 
 const LayoutCuentas = () => {
@@ -29,7 +30,7 @@ const LayoutCuentas = () => {
             <CardContent>
                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                     test pago cuentas
-                    {/* <DataGridBancosComponent /> */}
+                    <DataGridCuentasComponent />
                 </Grid>
             </CardContent>
         </Card>
