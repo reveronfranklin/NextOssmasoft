@@ -1,10 +1,10 @@
 export enum UrlServices {
-    GETMAESTROCUENTAS           = '/SisCuentaBanco/GetAll',
-    CREATEMAESTROCUENTAS        = '/SisCuentaBanco/Create',
-    UPDATEMAESTROCUENTAS        = '/SisCuentaBanco/Update',
-    DELETEMAESTROCUENTAS        = '/SisCuentaBanco/Delete',
+    GETMAESTROCUENTAS          = '/SisCuentaBanco/GetAll',
+    CREATEMAESTROCUENTA        = '/SisCuentaBanco/Create',
+    UPDATEMAESTROCUENTA        = '/SisCuentaBanco/Update',
+    DELETEMAESTROCUENTA        = '/SisCuentaBanco/Delete',
 
-    GETMAESTROBANCO             = '/SisBanco/GetAll',
+    GETMAESTROBANCO            = '/SisBanco/GetAll',
 
-    GETDESCRIPTIVAS             = '/SisDescriptivas/GetAllByTitulo'
+    GETDESCRIPTIVAS            = '/SisDescriptivas/GetAllByTitulo'
 }

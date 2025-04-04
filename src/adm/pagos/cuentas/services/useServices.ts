@@ -1,24 +1,29 @@
 import { useCallback, useState } from "react"
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { UrlServices } from '../enums/urlServices.enum'
-//import { IResponse, SisBancoResponseDto, SisBancoFilterDto, SisBancoCreateDto, SisBancoUpdateDto, SisBancoDeleteDto } from '../interfaces'
-import { ResponseDto, BancoFilterDto, BancoResponseDto } from '../interfaces'
+import {
+    ResponseDto,
+    CuentaFilterDto,
+    CuentaResponseDto,
+    CuentaDto,
+    CuentaDeleteDto
+} from '../interfaces'
 
 const useServices = () => {
-    const [error, setError] = useState<string>('')
+    const [error, setError]     = useState<string>('')
     const [message, setMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
-    const getMaestroBanco = useCallback(async (filters: BancoFilterDto): Promise<any> => {
+    const getList = useCallback(async (payload: CuentaFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const responseGetMaestroBanco = await ossmmasofApi.post<ResponseDto<BancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GETMAESTROCUENTAS, payload)
 
-            if (responseGetMaestroBanco.data.isValid) {
-                return responseGetMaestroBanco.data
+            if (response.data.isValid) {
+                return response.data
             }
 
-            setMessage(responseGetMaestroBanco.data.message)
+            setMessage(response.data.message)
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -27,16 +32,16 @@ const useServices = () => {
         }
     }, [])
 
-    /* const createMaestroBanco = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
+    const store = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const responseCreateMaestroBanco = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATEMAESTROCUENTA, payload)
 
-            if (responseCreateMaestroBanco.data.isValid) {
-                return responseCreateMaestroBanco.data
+            if (response.data.isValid) {
+                return response.data
             }
 
-            setMessage(responseCreateMaestroBanco.data.message)
+            setMessage(response.data.message)
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -45,16 +50,16 @@ const useServices = () => {
         }
     }, [])
 
-    const updateMaestroBanco = useCallback(async (payload: SisBancoUpdateDto): Promise<any> => {
+    const update = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const responseUpdateMaestroBanco = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATEMAESTROBANCO, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATEMAESTROCUENTA, payload)
 
-            if (responseUpdateMaestroBanco.data.isValid) {
-                return responseUpdateMaestroBanco.data
+            if (response.data.isValid) {
+                return response.data
             }
 
-            setMessage(responseUpdateMaestroBanco.data.message)
+            setMessage(response.data.message)
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -63,16 +68,16 @@ const useServices = () => {
         }
     }, [])
 
-    const deleteMaestroBanco = useCallback(async (payload: SisBancoDeleteDto): Promise<any> => {
+    const destroy = useCallback(async (payload: CuentaDeleteDto): Promise<any> => {
         try {
             setLoading(true)
-            const responseDeleteMaestroBanco = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETEMAESTROBANCO, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETEMAESTROCUENTA, payload)
 
-            if (responseDeleteMaestroBanco.data.isValid) {
-                return responseDeleteMaestroBanco.data
+            if (response.data.isValid) {
+                return response.data
             }
 
-            setMessage(responseDeleteMaestroBanco.data.message)
+            setMessage(response.data.message)
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -80,13 +85,16 @@ const useServices = () => {
             setLoading(false)
         }
     }, [])
- */
+
     return {
         error,
         message,
         loading,
         setMessage,
-        getMaestroBanco
+        getList,
+        store,
+        update,
+        destroy
     }
 }
 
