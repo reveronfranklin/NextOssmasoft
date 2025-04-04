@@ -33,6 +33,7 @@ import { useDispatch } from 'react-redux'
 import { setCompromisoSeleccionadoDetalle, resetCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
 import WarningIcon from '@mui/icons-material/Warning'
 import useServicesDocumentosOp from './../services/useServicesDocumentosOp'
+import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -63,6 +64,7 @@ const FormOrdenPago = (props: {
         orden?: any,
         onFormData: any,
         onFormClear?: any,
+        handleGestionOrdenPago?: any,
         onViewerPdf?: any,
         titleButton?: string,
         message?: string,
@@ -72,6 +74,7 @@ const FormOrdenPago = (props: {
     const {
         orden,
         onFormData,
+        handleGestionOrdenPago,
         titleButton,
         onViewerPdf,
         message,
@@ -525,14 +528,25 @@ const FormOrdenPago = (props: {
                     >
                         <CleaningServices /> Limpiar
                     </Button>
-                    {typeOperation === 'update' && (
+                    { typeOperation === 'update' && (
                         <Button
                             color='primary'
                             size='small'
                             onClick={onViewerPdf}
                         >
-                            ver PDF
+                            VER PDF
                         </Button>
+                    )}
+                    { handleGestionOrdenPago?.showButton && (
+                        <ButtonWithConfirm
+                            color="primary"
+                            onAction={() => handleGestionOrdenPago?.handle()}
+                            confirmMessage={handleGestionOrdenPago?.message}
+                            showLoading={true}
+                            disableBackdropClick={true}
+                        >
+                            {handleGestionOrdenPago?.nameButton}
+                        </ButtonWithConfirm>
                     )}
                     <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                 </Box>
