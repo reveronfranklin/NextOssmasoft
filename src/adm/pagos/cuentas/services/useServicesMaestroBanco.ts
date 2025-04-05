@@ -11,7 +11,7 @@ const useServicesMaestroBanco = () => {
     const getList = useCallback(async (filters: BancoFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<BancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
+            const response = await ossmmasofApi.post<ResponseDto<BancoResponseDto>>(UrlServices.GET_MAESTRO_BANCOS, filters)
 
             if (response.data.isValid) {
                 return response.data

@@ -17,7 +17,7 @@ const useServices = () => {
     const getList = useCallback(async (payload: CuentaFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GETMAESTROCUENTAS, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
 
             if (response.data.isValid) {
                 return response.data
@@ -35,7 +35,7 @@ const useServices = () => {
     const store = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATEMAESTROCUENTA, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
 
             if (response.data.isValid) {
                 return response.data
@@ -53,7 +53,7 @@ const useServices = () => {
     const update = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATEMAESTROCUENTA, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
 
             if (response.data.isValid) {
                 return response.data
@@ -71,7 +71,7 @@ const useServices = () => {
     const destroy = useCallback(async (payload: CuentaDeleteDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETEMAESTROCUENTA, payload)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
 
             if (response.data.isValid) {
                 return response.data

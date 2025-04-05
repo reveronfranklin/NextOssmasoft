@@ -11,7 +11,7 @@ const useServicesDescriptivas = () => {
     const getList = useCallback(async (filters: DescriptivaFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<DescriptivaResponseDto>>(UrlServices.GETDESCRIPTIVAS , filters)
+            const response = await ossmmasofApi.post<ResponseDto<DescriptivaResponseDto>>(UrlServices.GET_DESCRIPTIVAS, filters)
 
             if (response.data.isValid) {
                 return response.data

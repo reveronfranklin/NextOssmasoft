@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
-import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
+import { CuentaDto, CuentaDeleteDto } from '../../../interfaces';
 import {
     setIsOpenDialogMaestroBancoDetalle,
     setIsOpenDialogMaestroBancoDelete,
@@ -60,11 +60,21 @@ function ColumnsDataGrid() {
         },
         {
             flex: 1,
-            headerName: 'Codigo del Banco',
-            field: 'codigoBanco',
+            headerName: 'Descripción',
+            field: 'descripcionBanco',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigoBanco === '' ? 'NO DISPONIBLE' : params.row.codigoBanco}
+                    {params.row.descripcionBanco === '' ? 'NO DISPONIBLE' : params.row.descripcionBanco}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: 'Tipo de cuenta',
+            field: 'descripcionTipoCuenta',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.descripcionTipoCuenta === '' ? 'NO DISPONIBLE' : params.row.descripcionTipoCuenta}
                 </Typography>
             )
         },
@@ -75,6 +85,36 @@ function ColumnsDataGrid() {
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.noCuenta === '' ? 'NO DISPONIBLE' : params.row.noCuenta}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: 'Denominación Funcional',
+            field: 'descripcionDenominacionFuncional',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.descripcionDenominacionFuncional === '' ? 'NO DISPONIBLE' : params.row.descripcionDenominacionFuncional}
+                </Typography>
+            )
+        },
+        {
+            flex: 0.5,
+            headerName: 'Código',
+            field: 'codigo',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.codigo === null ? 'NO DISPONIBLE' : params.row.codigo}
+                </Typography>
+            )
+        },
+        {
+            flex: 0.5,
+            headerName: 'Cuenta Principal',
+            field: 'principal',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.principal ? 'SI' :'NO'}
                 </Typography>
             )
         }
