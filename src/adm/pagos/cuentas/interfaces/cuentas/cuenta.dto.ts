@@ -1,13 +1,13 @@
 export interface CuentaDto {
     codigoCuentaBanco: number,
-    codigoBanco: number,
-    tipoCuentaId: number,
-    noCuenta: string,
+    codigoBanco: number | null,
+    tipoCuentaId: number | null,
+    noCuenta: string | null,
     formatoMascara: string | null,
-    denominacionFuncionalId: number,
-    codigo: string,
+    denominacionFuncionalId: number | null,
+    codigo: string | null,
     principal: boolean,
     recaudadora: boolean,
-    codigoMayor: number,
-    codigoAuxiliar: number
+    codigoMayor: number | null,
+    codigoAuxiliar: number | null
 }

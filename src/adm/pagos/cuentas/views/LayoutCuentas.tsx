@@ -2,23 +2,22 @@ import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/ma
 import Icon from 'src/@core/components/icon';
 import { useDispatch } from 'react-redux';
 import DataGridCuentasComponent from '../components/dataGrid/Cuentas';
-/*
-import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos' */
+import { setIsOpenDialogCreate, setTypeOperation } from 'src/store/apps/pagos/cuentas';
 
 const LayoutCuentas = () => {
     const dispatch = useDispatch()
 
-   /*  const handleCreate = async () => {
+    const handleCreate = async () => {
         dispatch(setTypeOperation('create'))
         setTimeout(() => {
-            dispatch(setIsOpenDialogMaestroBancoDetalle(true))
+            dispatch(setIsOpenDialogCreate(true))
         }, 1500)
-    } */
+    }
 
     return (
         <Card>
             <CardHeader title='Maestro Cuentas'/>
-            {/* <CardContent>
+            <CardContent>
                 <Grid item justifyContent='flex-end'>
                     <Tooltip title='Agregar Maestro Banco'>
                         <IconButton color='primary' size='small' onClick={ handleCreate }>
@@ -26,10 +25,9 @@ const LayoutCuentas = () => {
                         </IconButton>
                     </Tooltip>
                 </Grid>
-            </CardContent> */}
+            </CardContent>
             <CardContent>
                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
-                    test pago cuentas
                     <DataGridCuentasComponent />
                 </Grid>
             </CardContent>

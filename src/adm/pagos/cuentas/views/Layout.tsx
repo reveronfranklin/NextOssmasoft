@@ -1,13 +1,11 @@
 import LayoutCuentas from './LayoutCuentas';
-/* import DialogAdmMaestroBancoDetalle from './Dialog/AdmMaestroBancoDetalle'
-import DialogAdmMaestroBancoDelete from './Dialog/AdmMaestroBancoDelete' */
+import DialogMaestroCuenta from '../components/dialog/DialogMaestroCuenta';
 
 const LayoutComponent = () => {
     return (
         <>
             <LayoutCuentas />
-            {/* <DialogAdmMaestroBancoDetalle />
-            <DialogAdmMaestroBancoDelete /> */}
+            <DialogMaestroCuenta />
         </>
     )
 }

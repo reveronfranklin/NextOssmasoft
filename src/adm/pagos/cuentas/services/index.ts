@@ -2,7 +2,7 @@
 export { default as useServices } from './useServices'
 
 /* Services 'Descriptivas' */
-export * from './useServicesDescriptivas'
+export { default as useServicesDescriptivas } from './useServicesDescriptivas'
 
 /* Services 'Maestro Banco' */
-export * from './useServicesMaestroBanco'
+export { default as useServicesMaestroBanco } from './useServicesMaestroBanco'

@@ -4,8 +4,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
-import ColumnsDataGrid from './Headers/ColumnsDataGrid';
-import useServices from '../../services/useServices';
+import ColumnsDataGrid from './headers/ColumnsDataGrid';
+import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,

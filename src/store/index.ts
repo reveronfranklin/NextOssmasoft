@@ -45,6 +45,7 @@ import { admSolicitudCompromisoSlice } from './apps/adm'
 import { admOrdenPagoSlice } from './apps/ordenPago'
 import { bmPlacaCuarentenaSlice } from './apps/bmPlacaCuarentena'
 import { admMaestroBancoSlice } from './apps/pagos/bancos'
+import { admMaestroCuentaSlice } from './apps/pagos/cuentas'
 
 export const store = configureStore({
   reducer: {
@@ -90,7 +91,8 @@ export const store = configureStore({
     admSolicitudCompromiso: admSolicitudCompromisoSlice.reducer,
     admOrdenPago: admOrdenPagoSlice.reducer,
     bmPlacaCuarentena: bmPlacaCuarentenaSlice.reducer,
-    admMaestroBanco: admMaestroBancoSlice.reducer
+    admMaestroBanco: admMaestroBancoSlice.reducer,
+    admMaestroCuenta: admMaestroCuentaSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
