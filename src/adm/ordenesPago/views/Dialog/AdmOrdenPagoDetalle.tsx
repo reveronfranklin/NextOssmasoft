@@ -1,4 +1,4 @@
-import { Ref, forwardRef, ReactElement } from 'react'
+import { Ref, forwardRef, ReactElement, useState, useEffect } from 'react'
 import Fade, { FadeProps } from '@mui/material/Fade'
 import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from "@mui/material"
 import Icon from 'src/@core/components/icon'
@@ -19,19 +19,32 @@ const Transition = forwardRef(function Transition(
 })
 
 const DialogAdmOrdenPagoDetalle = () => {
+    const [isClosing, setIsClosing] = useState(false)
     const dispatch = useDispatch()
+
     const { isOpenDialogOrdenPagoDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago )
 
     const handleClose = () => {
+        setIsClosing(true)
         dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-        dispatch(setTypeOperation(null))
-        dispatch(setConFactura(null))
-        dispatch(setCodigoOrdenPago(0))
+
+        setTimeout(() => {
+            dispatch(setTypeOperation(null))
+            dispatch(setConFactura(null))
+            dispatch(setCodigoOrdenPago(0))
+            setIsClosing(false)
+        }, 300)
     }
+
+    useEffect(() => {
+        if (isOpenDialogOrdenPagoDetalle) {
+            setIsClosing(false)
+        }
+    }, [isOpenDialogOrdenPagoDetalle])
 
     const setFormComponent = () => {
         return (
-            <Fade in={true} timeout={500}>
+            <Fade in={!isClosing} timeout={500}>
                 <div key={typeOperation}>
                     {typeOperation === 'update' ? <FormUpdateOrdenPago /> : <FormCreateOrdenPago />}
                 </div>
