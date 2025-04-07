@@ -144,7 +144,6 @@ const LoginPage = () => {
   const onSubmit = (data: FormData) => {
     const { email, password } = data
     auth.login({ email, password, rememberMe }, () => {
-
       setError('email', {
         type: 'manual',
         message: 'Email or Password es invalido'
@@ -201,11 +200,8 @@ const LoginPage = () => {
                 justifyContent: 'center'
               }}
             >
-              <img
-                  width={102}
-                  height={58}
-                  alt={tituloMenu} src='/images/favicon.png' />
-{/*               <svg
+              <img width={102} height={58} alt={tituloMenu} src='/images/favicon.png' />
+              {/*               <svg
                 width={35}
                 height={29}
                 version='1.1'
@@ -283,9 +279,9 @@ const LoginPage = () => {
             </Box>
             <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
               <Typography variant='caption' sx={{ mb: 2, display: 'block', color: 'primary.main' }}>
-                <strong>xxxxxx@osmasoft.com</strong> / Pass: <strong>XXXXX (Minimo 5 Caracteres)</strong>
+                <strong>xxxxxx@ossmmasoft.com</strong> / Pass: <strong>XXXXX (Minimo 5 Caracteres)</strong>
               </Typography>
-             {/*  <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
+              {/*  <Typography variant='caption' sx={{ display: 'block', color: 'primary.main' }}>
                 Client: <strong>client@materio.com</strong> / Pass: <strong>client</strong>
               </Typography> */}
             </Alert>

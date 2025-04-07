@@ -413,7 +413,6 @@ const FormImpuestoDocumentosOp = () => {
                     fixedDecimalScale
                     label='Base Imponible'
                     fullWidth
-                    error={!!error}
                     inputProps={{
                       type: 'text',
                       inputMode: 'numeric'
@@ -486,7 +485,6 @@ const FormImpuestoDocumentosOp = () => {
                     fixedDecimalScale={true}
                     label='Impuesto Exento'
                     placeholder='0,00'
-                    error={!!error}
                     aria-describedby='validation-async-exento'
                     inputProps={{
                       type: 'text',
