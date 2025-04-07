@@ -8,7 +8,7 @@ interface IGestionOrdenPago {
 }
 
 const useGestionOrdenPago = () => {
-  const [message, setMessage] = useState<string>('')
+  const [messageGestion, setMessageGestion] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -22,7 +22,7 @@ const useGestionOrdenPago = () => {
         return response.data
       }
 
-      setMessage(response.data.message)
+      setMessageGestion(response.data.message)
     } catch (e: any) {
       console.log(e)
     } finally {
@@ -41,7 +41,7 @@ const useGestionOrdenPago = () => {
         return response.data
       }
 
-      setMessage(response.data.message)
+      setMessageGestion(response.data.message)
     } catch (e: any) {
       console.log(e)
     } finally {
@@ -52,7 +52,7 @@ const useGestionOrdenPago = () => {
   }, [dispatch])
 
   return {
-    message, loading,
+    messageGestion, loading,
     anularOrdenPago,
     aprobarOrdenPago
   }

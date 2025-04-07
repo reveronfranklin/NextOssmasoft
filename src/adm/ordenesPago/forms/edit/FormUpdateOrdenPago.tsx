@@ -1,4 +1,5 @@
-import { Grid, Box } from "@mui/material"
+import { Grid, Box, Alert, Collapse, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -26,12 +27,13 @@ const FormUpdateOrdenPago = () => {
     }
 
     const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
+    const [showMessage, setShowMessage] = useState(false)
 
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
     const { getRetenciones } = useServicesRetenciones()
-    const { anularOrdenPago, aprobarOrdenPago } = useGestionOrdenPago()
+    const { anularOrdenPago, aprobarOrdenPago, messageGestion } = useGestionOrdenPago()
 
     const { data } = useQuery({
         queryKey: ['retencionesTable'],
@@ -133,6 +135,16 @@ const FormUpdateOrdenPago = () => {
     }
 
     useEffect(() => {
+        if (messageGestion) {
+            setShowMessage(true)
+            const timer = setTimeout(() => {
+                setShowMessage(false)
+            }, 30000)
+            return () => clearTimeout(timer)
+        }
+    }, [messageGestion])
+
+    useEffect(() => {
         setGestionConfig(handleGestionOrdenPago())
     }, [compromisoSeleccionadoListaDetalle])
 
@@ -148,6 +160,7 @@ const FormUpdateOrdenPago = () => {
                     padding: '10px',
                     paddingBottom: '0px',
                     borderRight: '1px solid #e0e0e0',
+                    position: 'relative',
                 }}>
                     <FormOrdenPago
                         orden={compromisoSeleccionadoListaDetalle}
@@ -159,6 +172,36 @@ const FormUpdateOrdenPago = () => {
                         message={message}
                         loading={loading}
                     />
+                    <Box sx={{
+                        position: 'fixed',
+                        bottom: 20,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 1,
+                        width: '80%',
+                        maxWidth: '600px'
+                    }}>
+                        <Collapse in={showMessage}>
+                            <Alert
+                                severity="error"
+                                action={
+                                    <IconButton
+                                        aria-label="close"
+                                        color="inherit"
+                                        size="small"
+                                        onClick={() => setShowMessage(false)}
+                                    >
+                                        <CloseIcon fontSize="inherit" />
+                                    </IconButton>
+                                }
+                                sx={{
+                                    boxShadow: 3
+                                }}
+                            >
+                                {messageGestion}
+                            </Alert>
+                        </Collapse>
+                    </Box>
                 </Grid>
                 <Grid sm={6} xs={12}>
                     <TabsComponent />
