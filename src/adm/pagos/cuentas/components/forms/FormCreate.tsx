@@ -89,7 +89,6 @@ const FormCreate = () => {
         reset(defaultValues)
     }
 
-    /* Selectors - AutoComplete start */
     const handleMaestroBanco = (maestroBanco: any) => {
         setValue('codigoBanco', maestroBanco.codigoBanco)
         setCodigoBanco(maestroBanco.codigoBanco)
@@ -104,7 +103,6 @@ const FormCreate = () => {
         setValue('denominacionFuncionalId', denominacionFuncional.descripcionId)
         setDenominacionFuncional(denominacionFuncional.descripcionId)
     }
-    /* Selectors - AutoComplete end */
 
     const handleCreateMaestroCuenta = async (data: CuentaDto) => {
         setIsFormEnabled(false)

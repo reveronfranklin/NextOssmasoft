@@ -24,22 +24,21 @@ const TipoCuenta = (props: any) => {
     const [selectedValue, setSelectedValue] = useState<DescriptivaResponseDto | null>(null)
 
     useEffect(() => {
-        // No hacer nada si no hay ID o si ya hay un valor seleccionado que coincide
         if (props.id === 0) {
             setSelectedValue(null)
+
             return
         }
 
         if (selectedValue && selectedValue.descripcionId === props.id) {
+
             return
         }
 
         const value = ListTipoCuenta.find((item) => item?.descripcionId === props.id)
 
         if (value && (!selectedValue || selectedValue.descripcionId !== value.descripcionId)) {
-            // Usar una bandera para evitar la actualización circular
             setSelectedValue(value)
-            // Solo llamar a onSelectionChange si el valor es diferente
             props.onSelectionChange(value)
         }
     }, [props.id, ListTipoCuenta])

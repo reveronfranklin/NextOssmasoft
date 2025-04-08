@@ -24,22 +24,21 @@ const MaestroBanco = (props: any) => {
     const [selectedValue, setSelectedValue] = useState<BancoResponseDto | null>(null)
 
     useEffect(() => {
-        // No hacer nada si no hay ID o si ya hay un valor seleccionado que coincide
         if (props.id === 0) {
             setSelectedValue(null)
+
             return
         }
 
         if (selectedValue && selectedValue.codigoBanco === props.id) {
+
             return
         }
 
         const value = ListBanco.find((item) => item?.codigoBanco === props.id)
 
         if (value && (!selectedValue || selectedValue.codigoBanco !== value.codigoBanco)) {
-            // Usar una bandera para evitar la actualización circular
             setSelectedValue(value)
-            // Solo llamar a onSelectionChange si el valor es diferente
             props.onSelectionChange(value)
         }
     }, [props.id, ListBanco])
