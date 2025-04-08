@@ -7,14 +7,13 @@ import { useSelector } from "react-redux"
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import {
-    resetCompromisoSeleccionadoDetalle,
+    setIsOpenDialogOrdenPagoDetalle,
     setCompromisoSeleccionadoDetalle,
     setIsOpenViewerPdf
 } from "src/store/apps/ordenPago"
 import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
-
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
 
 const FormUpdateOrdenPago = () => {
@@ -26,8 +25,17 @@ const FormUpdateOrdenPago = () => {
         showButton: boolean;
     }
 
+    interface IAlertMessage {
+        text: string;
+        severity: 'error' | 'warning' | 'info' | 'success';
+    }
+
     const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
     const [showMessage, setShowMessage] = useState(false)
+    const [currentMessage, setCurrentMessage] = useState<IAlertMessage>({
+        text: '',
+        severity: 'info'
+    })
 
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
@@ -100,16 +108,26 @@ const FormUpdateOrdenPago = () => {
     }
 
     const handleClearCompromiso = () => {
-        dispatch(resetCompromisoSeleccionadoDetalle())
+        console.log('handleClearCompromiso')
+        setShowMessage(false)
     }
 
     const handleGestionOrdenPago = () => {
         const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
         const filter = { codigoOrdenPago }
 
+        setShowMessage(false)
+
         if (status === 'PE') {
             return {
-                handle: () => aprobarOrdenPago(filter),
+                handle: () => aprobarOrdenPago(filter, () => {
+                    qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] })
+                    qc.invalidateQueries({ queryKey: ['retencionesTable'] })
+
+                    setTimeout(() => {
+                        dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+                    }, 2500)
+                }),
                 message: `¿Esta usted seguro de APROBAR la orden (${codigoOrdenPago}) ?`,
                 nameButton: 'Aprobar',
                 showButton: true
@@ -118,7 +136,14 @@ const FormUpdateOrdenPago = () => {
 
         if (status === 'AP') {
             return {
-                handle: () => anularOrdenPago(filter),
+                handle: () => anularOrdenPago(filter, () => {
+                    qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] })
+                    qc.invalidateQueries({ queryKey: ['retencionesTable'] })
+
+                    setTimeout(() => {
+                        dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+                    }, 2500)
+                }),
                 message: `¿ Esta usted seguro de ANULAR la orden (${codigoOrdenPago}) ?`,
                 nameButton: 'Anular',
                 status: 'AN',
@@ -135,10 +160,17 @@ const FormUpdateOrdenPago = () => {
     }
 
     useEffect(() => {
-        if (messageGestion) {
+        if (messageGestion.text) {
+            setCurrentMessage({
+                    text: messageGestion.text,
+                    severity: messageGestion.isValid ? 'success' : 'error'
+                })
+
             setShowMessage(true)
+
             const timer = setTimeout(() => {
                 setShowMessage(false)
+                setCurrentMessage({ text: '', severity: 'info' })
             }, 30000)
 
             return () => clearTimeout(timer)
@@ -175,7 +207,7 @@ const FormUpdateOrdenPago = () => {
                     />
                     <Box sx={{
                         position: 'fixed',
-                        bottom: 20,
+                        bottom: 80,
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 1,
@@ -184,7 +216,7 @@ const FormUpdateOrdenPago = () => {
                     }}>
                         <Collapse in={showMessage}>
                             <Alert
-                                severity="error"
+                                severity={currentMessage.severity}
                                 action={
                                     <IconButton
                                         aria-label="close"
@@ -196,10 +228,10 @@ const FormUpdateOrdenPago = () => {
                                     </IconButton>
                                 }
                                 sx={{
-                                    boxShadow: 3
+                                    boxShadow: 3,
                                 }}
                             >
-                                {messageGestion}
+                                {currentMessage.text}
                             </Alert>
                         </Collapse>
                     </Box>
