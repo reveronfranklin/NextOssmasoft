@@ -8,21 +8,39 @@ interface IGestionOrdenPago {
 }
 
 const useGestionOrdenPago = () => {
-  const [messageGestion, setMessageGestion] = useState<string>('')
+  const [messageGestion, setMessageGestion] = useState({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
 
   const dispatch = useDispatch()
 
-  const aprobarOrdenPago = useCallback(async (filters: IGestionOrdenPago): Promise<any | null> => {
+  const aprobarOrdenPago = useCallback(async (filters: IGestionOrdenPago, onSuccess?: () => void): Promise<any | null> => {
     try {
       setLoading(true)
       const response = await ossmmasofApi.post<any>(UrlServices.APROBARORDENPAGO, filters)
+
       if (response.data.isValid) {
+        setMessageGestion({
+          text: 'Orden de pago APROBADA exitosamente',
+          timestamp: Date.now(),
+          isValid: true
+        })
+
+        if (onSuccess) {
+          onSuccess()
+        }
 
         return response.data
       }
 
-      setMessageGestion(response.data.message)
+      setMessageGestion({
+        text: response.data.message || 'Error al aprobar la orden de pago',
+        timestamp: Date.now(),
+        isValid: false
+      })
     } catch (e: any) {
       console.log(e)
     } finally {
@@ -32,16 +50,30 @@ const useGestionOrdenPago = () => {
     return null
   }, [dispatch])
 
-  const anularOrdenPago = useCallback(async (filters: IGestionOrdenPago): Promise<any | null> => {
+  const anularOrdenPago = useCallback(async (filters: IGestionOrdenPago, onSuccess?: () => void): Promise<any | null> => {
     try {
       setLoading(true)
       const response = await ossmmasofApi.post<any>(UrlServices.ANULARORDENPAGO, filters)
+
       if (response.data.isValid) {
+        setMessageGestion({
+          text: 'Orden de pago ANULADA exitosamente',
+          timestamp: Date.now(),
+          isValid: true
+        })
+
+        if (onSuccess) {
+          onSuccess()
+        }
 
         return response.data
       }
 
-      setMessageGestion(response.data.message)
+      setMessageGestion({
+        text: response.data.message,
+        timestamp: Date.now(),
+        isValid: false
+      })
     } catch (e: any) {
       console.log(e)
     } finally {
