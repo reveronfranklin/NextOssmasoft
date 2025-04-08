@@ -20,8 +20,8 @@ const TipoCuenta = (props: any) => {
         staleTime: 5000 * 60 * 60
     }, qc)
 
-    const ListTipoCuenta: DescriptivaResponseDto[]     = query.data?.data ?? [];
-    const [selectedValue, setSelectedValue] = useState<DescriptivaResponseDto | null>(null)
+    const ListTipoCuenta: DescriptivaResponseDto[]  = query.data?.data ?? [];
+    const [selectedValue, setSelectedValue]         = useState<DescriptivaResponseDto | null>(null)
 
     useEffect(() => {
         if (props.id === 0) {

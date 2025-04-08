@@ -10,12 +10,6 @@ import {
     FormControl,
     Button,
     FormHelperText,
-    Dialog,
-    DialogTitle,
-    DialogContentText,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
     Select,
     MenuItem,
     InputLabel
@@ -25,19 +19,19 @@ import { useServices } from '../../services';
 import { CuentaDto } from '../../interfaces';
 import { setIsOpenDialogCreate } from 'src/store/apps/pagos/cuentas'
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
+import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
 
 const FormCreate = () => {
     const dispatch                          = useDispatch()
-    const rules                             = getRules()
     const qc: QueryClient                   = useQueryClient()
+    const rules                             = getRules()
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [open, setOpen]                   = useState<boolean>(false)
+    const [dialogOpen, setDialogOpen]       = useState(false)
 
-    const [codigoBanco, setCodigoBanco]                             = useState<number>(0)
-    const [tipoCuenta, setTipoCuenta]                               = useState<number>(0)
-    const [denominacionFuncional, setDenominacionFuncional]         = useState<number>(0)
-
+    const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
+    const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
+    const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
 
     const {
         store,
@@ -70,12 +64,12 @@ const FormCreate = () => {
         mode: 'onChange'
     })
 
-    const handleDialogOpen = () => {
-        setOpen(true)
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
     }
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
     }
 
     const changeToBoolean = (value: any) : boolean => {
@@ -104,20 +98,17 @@ const FormCreate = () => {
         setDenominacionFuncional(denominacionFuncional.descripcionId)
     }
 
-    const handleCreateMaestroCuenta = async (data: CuentaDto) => {
+    const handleCreateMaestroCuenta = async (cuenta: CuentaDto) => {
         setIsFormEnabled(false)
-        handleClose()
+        handleCloseDialog()
 
         try {
             const payload: CuentaDto = {
-                ...data,
+                ...cuenta,
                 codigoCuentaBanco: 0,
-                codigoBanco: codigoBanco,
-                principal: changeToBoolean(data.principal),
-                recaudadora: changeToBoolean(data.recaudadora)
+                principal: changeToBoolean(cuenta.principal),
+                recaudadora: changeToBoolean(cuenta.recaudadora)
             }
-
-            console.log('handleCreateMaestroCuenta', payload)
 
             const response = await store(payload)
 
@@ -125,7 +116,7 @@ const FormCreate = () => {
                 dispatch(setIsOpenDialogCreate(false))
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('handleCreateMaestroCuenta', e)
         } finally {
             setIsFormEnabled(true)
             qc.invalidateQueries({
@@ -272,51 +263,21 @@ const FormCreate = () => {
                                     </Grid>
                                 </Grid>
 
-
-                                <Dialog
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleCreateMaestroCuenta)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Espere un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogOpen}
+                                    onClose={handleCloseDialog}
+                                    onConfirm={handleSubmit(handleCreateMaestroCuenta)}
+                                    loading={loading}
+                                    title="Crear nuevo registro"
+                                    content="¿Desea continuar con la creación del registro?"
+                                />
 
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
-                                        onClick={handleDialogOpen}
+                                        onClick={handleOpenDialog}
                                         disabled={!isValid}
                                     >
                                         { 'Crear' }
