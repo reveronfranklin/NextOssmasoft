@@ -29,7 +29,7 @@ const DialogMaestroCuenta = () => {
         return (
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
-                    {typeOperation === 'update' ? 'update' : <FormCreate /> }
+                    {typeOperation === 'update' ? <FormUpdate /> : <FormCreate /> }
                 </div>
             </Fade>
         )

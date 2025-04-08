@@ -14,3 +14,6 @@ export * from './cuentas/cuenta-filter.dto'
 export * from './cuentas/cuenta-response.dto'
 export * from './cuentas/cuenta.dto'
 export * from './cuentas/cuenta-delete.dto'
+
+/* Interface Dialog Confirmation */
+export * from './dialog/dialog-confirmation-props.interface'
