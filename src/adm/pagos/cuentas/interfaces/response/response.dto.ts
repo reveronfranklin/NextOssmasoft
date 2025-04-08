@@ -1,4 +1,4 @@
-export interface IResponse<T> {
+export interface ResponseDto<T> {
     data: T[]
     isValid: boolean
     linkData: null

@@ -16,9 +16,14 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { useDispatch } from 'react-redux'
 import { setCompromisoSeleccionadoDetalle, resetCompromisoSeleccionadoDetalle } from 'src/store/apps/ordenPago'
-import WarningIcon from '@mui/icons-material/Warning'
 import useServicesDocumentosOp from './../services/useServicesDocumentosOp'
 import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
+
+import WarningIcon from '@mui/icons-material/Warning'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
+import BlockIcon from '@mui/icons-material/Block'; // Para anular
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -202,6 +207,14 @@ const FormOrdenPago = (props: {
 
         if (open && !loading) handleClose()
     }, [orden, loading, setValue ])
+
+    const getActionIcon = (actionName: string) => {
+        switch (actionName?.toLowerCase()) {
+            case 'aprobar': return <CheckCircleIcon />;
+            case 'anular': return <BlockIcon />;
+            default: return <SettingsIcon />;
+        }
+    }
 
     return (
         <Box>
@@ -520,19 +533,24 @@ const FormOrdenPago = (props: {
                                 size='small'
                                 onClick={onViewerPdf}
                             >
+                                <PictureAsPdfIcon />
                                 VER PDF
                             </Button>
                         )}
                         { handleGestionOrdenPago?.showButton && (
-                            <ButtonWithConfirm
-                                color="primary"
-                                onAction={() => handleGestionOrdenPago?.handle()}
-                                confirmMessage={handleGestionOrdenPago?.message}
-                                showLoading={true}
-                                disableBackdropClick={true}
-                            >
-                                {handleGestionOrdenPago?.nameButton}
-                            </ButtonWithConfirm>
+                            <span>
+                                <ButtonWithConfirm
+                                    color="primary"
+                                    onAction={() => handleGestionOrdenPago?.handle()}
+                                    confirmMessage={handleGestionOrdenPago?.message}
+                                    showLoading={true}
+                                    disableBackdropClick={true}
+                                    startIcon={getActionIcon(handleGestionOrdenPago?.nameButton)}
+                                    sx={{ minWidth: '120px' }}
+                                >
+                                    {handleGestionOrdenPago?.nameButton}
+                                </ButtonWithConfirm>
+                            </span>
                         )}
                         <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                     </Box>

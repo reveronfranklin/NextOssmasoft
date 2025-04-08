@@ -40,7 +40,6 @@ export const ButtonWithConfirm = ({
   }
 
   const handleConfirm = async () => {
-    console.log("Confirmar acción")
     if (!onAction) {
       handleClose()
 
@@ -97,5 +96,5 @@ export const ButtonWithConfirm = ({
         </DialogActions>
       </Dialog>
     </>
-  );
-};
+  )
+}
