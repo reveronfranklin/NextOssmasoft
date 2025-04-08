@@ -16,19 +16,28 @@ import {
     DialogContent,
     DialogActions,
     CircularProgress,
+    Select,
+    MenuItem,
+    InputLabel
 } from '@mui/material';
 
 import { useServices } from '../../services';
 import { CuentaDto } from '../../interfaces';
 import { setIsOpenDialogCreate } from 'src/store/apps/pagos/cuentas'
+import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
 import getRules from './rules';
 
 const FormCreate = () => {
     const dispatch                          = useDispatch()
+    const rules                             = getRules()
+    const qc: QueryClient                   = useQueryClient()
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
     const [open, setOpen]                   = useState<boolean>(false)
-    const qc: QueryClient                   = useQueryClient()
-    const rules                             = getRules()
+
+    const [codigoBanco, setCodigoBanco]                             = useState<number>(0)
+    const [tipoCuenta, setTipoCuenta]                               = useState<number>(0)
+    const [denominacionFuncional, setDenominacionFuncional]         = useState<number>(0)
+
 
     const {
         store,
@@ -54,6 +63,7 @@ const FormCreate = () => {
         control,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors, isValid }
     } = useForm<CuentaDto>({
         defaultValues,
@@ -68,14 +78,48 @@ const FormCreate = () => {
         setOpen(false)
     }
 
+    const changeToBoolean = (value: any) : boolean => {
+        return (value == 'true')
+    }
+
+    const handleClearMaestroCuenta = () => {
+        setCodigoBanco(0)
+        setTipoCuenta(0)
+        setDenominacionFuncional(0)
+        reset(defaultValues)
+    }
+
+    /* Selectors - AutoComplete start */
+    const handleMaestroBanco = (maestroBanco: any) => {
+        setValue('codigoBanco', maestroBanco.codigoBanco)
+        setCodigoBanco(maestroBanco.codigoBanco)
+    }
+
+    const handleTipoCuenta = (tipoCuenta: any) => {
+        setValue('tipoCuentaId', tipoCuenta.descripcionId)
+        setTipoCuenta(tipoCuenta.descripcionId)
+    }
+
+    const handleDenominacionFuncionalId = (denominacionFuncional: any) => {
+        setValue('denominacionFuncionalId', denominacionFuncional.descripcionId)
+        setDenominacionFuncional(denominacionFuncional.descripcionId)
+    }
+    /* Selectors - AutoComplete end */
+
     const handleCreateMaestroCuenta = async (data: CuentaDto) => {
         setIsFormEnabled(false)
         handleClose()
 
         try {
             const payload: CuentaDto = {
-                ...data
+                ...data,
+                codigoCuentaBanco: 0,
+                codigoBanco: codigoBanco,
+                principal: changeToBoolean(data.principal),
+                recaudadora: changeToBoolean(data.recaudadora)
             }
+
+            console.log('handleCreateMaestroCuenta', payload)
 
             const response = await store(payload)
 
@@ -90,10 +134,6 @@ const FormCreate = () => {
                 queryKey: ['maestroCuentaTable']
             })
         }
-    }
-
-    const handleClearMaestroBanco = () => {
-        reset()
     }
 
     return (
@@ -113,72 +153,17 @@ const FormCreate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="codigoCuentaBanco"
-                                                    control={control}
-                                                    rules={ rules.codigoCuentaBanco }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
-                                                            fullWidth
-                                                            label="Código Cuenta Banco"
-                                                            placeholder="Código Cuenta Banco"
-                                                            value={value || 0}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.codigoCuentaBanco}
-                                                            helperText={errors.codigoCuentaBanco?.message}
-                                                            disabled={true}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormControl>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <MaestroBanco
+                                                id={codigoBanco}
+                                                onSelectionChange={handleMaestroBanco}
+                                            />
                                         </Grid>
-                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="codigoBanco"
-                                                    control={control}
-                                                    rules={ rules.codigoBanco }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
-                                                            fullWidth
-                                                            label="Código Banco"
-                                                            placeholder="Código Banco"
-                                                            value={value || null}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.codigoBanco}
-                                                            helperText={errors.codigoBanco?.message}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="tipoCuentaId"
-                                                    control={control}
-                                                    rules={ rules.tipoCuentaId }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
-                                                            fullWidth
-                                                            label="Tipo de cuenta"
-                                                            placeholder="Tipo de cuenta"
-                                                            value={value || null}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.tipoCuentaId}
-                                                            helperText={errors.tipoCuentaId?.message}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormControl>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <TipoCuenta
+                                                id={tipoCuenta}
+                                                onSelectionChange={handleTipoCuenta}
+                                            />
                                         </Grid>
                                     </Grid>
 
@@ -195,7 +180,7 @@ const FormCreate = () => {
                                                             fullWidth
                                                             label="Número de cuenta"
                                                             placeholder="Número de cuenta"
-                                                            value={value || null}
+                                                            value={value || ''}
                                                             multiline
                                                             onChange={onChange}
                                                             error={!!errors.noCuenta}
@@ -206,26 +191,10 @@ const FormCreate = () => {
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="denominacionFuncionalId"
-                                                    control={control}
-                                                    rules={ rules.denominacionFuncionalId }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
-                                                            fullWidth
-                                                            label="Denominación Funcional"
-                                                            placeholder="Denominación Funcional"
-                                                            value={value || null}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.denominacionFuncionalId}
-                                                            helperText={errors.denominacionFuncionalId?.message}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormControl>
+                                            <DenominacionFuncional
+                                                id={denominacionFuncional}
+                                                onSelectionChange={handleDenominacionFuncionalId}
+                                            />
                                         </Grid>
                                     </Grid>
 
@@ -242,7 +211,7 @@ const FormCreate = () => {
                                                             fullWidth
                                                             label="Código"
                                                             placeholder="Código"
-                                                            value={value || null}
+                                                            value={value || ''}
                                                             multiline
                                                             onChange={onChange}
                                                             error={!!errors.codigo}
@@ -254,46 +223,52 @@ const FormCreate = () => {
                                         </Grid>
                                         <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
+                                                <InputLabel id="principal-label">¿Cuenta principal?</InputLabel>
                                                 <Controller
                                                     name="principal"
                                                     control={control}
-                                                    rules={ rules.principal }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
+                                                    rules={rules.principal}
+                                                    render={({ field: { onChange, value } }) => (
+                                                        <Select
+                                                            labelId="principal-label"
+                                                            label="¿Cuenta principal?"
                                                             fullWidth
-                                                            label="¿ Cuenta principal ?"
-                                                            placeholder="¿ Cuenta principal ?"
-                                                            value={value || null}
-                                                            multiline
+                                                            value={value || false}
                                                             onChange={onChange}
-                                                            error={!!errors.principal}
-                                                            helperText={errors.principal?.message}
-                                                        />
+                                                        >
+                                                            <MenuItem value="true">Sí</MenuItem>
+                                                            <MenuItem value="false">No</MenuItem>
+                                                        </Select>
                                                     )}
                                                 />
+                                                {errors.principal && (
+                                                    <FormHelperText error>{errors.principal.message}</FormHelperText>
+                                                )}
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
+                                                <InputLabel id="recaudadora-label">¿Cuenta recaudadora?</InputLabel>
                                                 <Controller
                                                     name="recaudadora"
                                                     control={control}
-                                                    rules={ rules.recaudadora }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
+                                                    rules={rules.recaudadora}
+                                                    render={({ field: { onChange, value } }) => (
+                                                        <Select
+                                                            labelId="recaudadora-label"
+                                                            label="¿Cuenta recaudadora?"
                                                             fullWidth
-                                                            label="¿ Cuenta recaudadora ?"
-                                                            placeholder="¿ Cuenta recaudadora ?"
-                                                            value={value || null}
-                                                            multiline
+                                                            value={value || false}
                                                             onChange={onChange}
-                                                            error={!!errors.recaudadora}
-                                                            helperText={errors.recaudadora?.message}
-                                                        />
+                                                        >
+                                                            <MenuItem value="true">Sí</MenuItem>
+                                                            <MenuItem value="false">No</MenuItem>
+                                                        </Select>
                                                     )}
                                                 />
+                                                {errors.recaudadora && (
+                                                    <FormHelperText error>{errors.recaudadora.message}</FormHelperText>
+                                                )}
                                             </FormControl>
                                         </Grid>
                                     </Grid>
@@ -351,7 +326,7 @@ const FormCreate = () => {
                                     <Button
                                         color='primary'
                                         size='small'
-                                        onClick={handleClearMaestroBanco}
+                                        onClick={handleClearMaestroCuenta}
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
