@@ -23,7 +23,7 @@ import {
 
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
-import { setIsOpenDialogCreate, setMaestroCuentaShow, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
+import { setIsOpenDialogCreate, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
 import { useServices } from '../../services';
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
 import DialogConfirmation from '../dialog/DialogConfirmation';
