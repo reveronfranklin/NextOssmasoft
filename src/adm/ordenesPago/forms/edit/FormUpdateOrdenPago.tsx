@@ -126,7 +126,7 @@ const FormUpdateOrdenPago = () => {
 
                     setTimeout(() => {
                         dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                    }, 2500)
+                    }, 5000)
                 }),
                 message: `¿Esta usted seguro de APROBAR la orden (${codigoOrdenPago}) ?`,
                 nameButton: 'Aprobar',
@@ -142,7 +142,7 @@ const FormUpdateOrdenPago = () => {
 
                     setTimeout(() => {
                         dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                    }, 2500)
+                    }, 5000)
                 }),
                 message: `¿ Esta usted seguro de ANULAR la orden (${codigoOrdenPago}) ?`,
                 nameButton: 'Anular',
