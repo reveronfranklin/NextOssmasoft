@@ -1,5 +1,4 @@
-import { Grid, Box, Alert, Collapse, IconButton } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -15,6 +14,7 @@ import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormUpdateOrdenPago = () => {
     interface GestionConfig {
@@ -115,47 +115,50 @@ const FormUpdateOrdenPago = () => {
     const handleGestionOrdenPago = () => {
         const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
         const filter = { codigoOrdenPago }
-
         setShowMessage(false)
 
-        if (status === 'PE') {
-            return {
-                handle: () => aprobarOrdenPago(filter, () => {
-                    qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] })
-                    qc.invalidateQueries({ queryKey: ['retencionesTable'] })
-
-                    setTimeout(() => {
-                        dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                    }, 5000)
-                }),
-                message: `¿Esta usted seguro de APROBAR la orden (${codigoOrdenPago}) ?`,
+        const actionConfigs = {
+            PE: {
+                action: aprobarOrdenPago,
+                message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Aprobar',
+                newStatus: 'AP',
+                showButton: true
+            },
+            AP: {
+                action: anularOrdenPago,
+                message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
+                nameButton: 'Anular',
+                newStatus: 'AN',
                 showButton: true
             }
         }
 
-        if (status === 'AP') {
-            return {
-                handle: () => anularOrdenPago(filter, () => {
-                    qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] })
-                    qc.invalidateQueries({ queryKey: ['retencionesTable'] })
+        const config = actionConfigs[status as keyof typeof actionConfigs] || {
+            action: () => console.log('No disponible'),
+            message: 'Orden de pago no disponible para gestionar',
+            nameButton: 'Gestionar',
+            newStatus: status,
+            showButton: false
+        }
 
-                    setTimeout(() => {
-                        dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                    }, 5000)
-                }),
-                message: `¿ Esta usted seguro de ANULAR la orden (${codigoOrdenPago}) ?`,
-                nameButton: 'Anular',
-                status: 'AN',
-                showButton: true
-            }
+        const handleAction = (actionFn: typeof aprobarOrdenPago) => {
+            return () => actionFn(filter, () => {
+                qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] });
+                qc.invalidateQueries({ queryKey: ['retencionesTable'] });
+
+                setTimeout(() => {
+                    dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+                }, 5000)
+            })
         }
 
         return {
-            handle: () => console.log('No disponible'),
-            message: 'Orden de pago no disponible para gestionar',
-            nameButton: 'Gestionar',
-            showButton: false,
+            handle: handleAction(config.action),
+            message: config.message,
+            nameButton: config.nameButton,
+            status: config.newStatus,
+            showButton: config.showButton !== false
         }
     }
 
@@ -205,36 +208,13 @@ const FormUpdateOrdenPago = () => {
                         message={message}
                         loading={loading}
                     />
-                    <Box sx={{
-                        position: 'fixed',
-                        bottom: 80,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 1,
-                        width: '80%',
-                        maxWidth: '600px'
-                    }}>
-                        <Collapse in={showMessage}>
-                            <Alert
-                                severity={currentMessage.severity}
-                                action={
-                                    <IconButton
-                                        aria-label="close"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={() => setShowMessage(false)}
-                                    >
-                                        <CloseIcon fontSize="inherit" />
-                                    </IconButton>
-                                }
-                                sx={{
-                                    boxShadow: 3,
-                                }}
-                            >
-                                {currentMessage.text}
-                            </Alert>
-                        </Collapse>
-                    </Box>
+                    <AlertMessage
+                        message={currentMessage.text}
+                        severity={currentMessage.severity}
+                        duration={30000}
+                        show={showMessage}
+                        onClose={() => setShowMessage(false)}
+                    />
                 </Grid>
                 <Grid sm={6} xs={12}>
                     <TabsComponent />

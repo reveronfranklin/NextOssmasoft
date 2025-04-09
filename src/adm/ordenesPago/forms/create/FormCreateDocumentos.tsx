@@ -34,6 +34,7 @@ import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
 import { NumericFormat } from 'react-number-format'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
@@ -48,7 +49,7 @@ const FormCreateDocumentosOp = () => {
   const qc: QueryClient = useQueryClient()
   const autocompleteRef = useRef()
 
-  const { presupuestoSeleccionado, loading, createDocumentos, updateDocumentos, deleteDocumentos } = useServicesDocumentosOp()
+  const { presupuestoSeleccionado, message, loading, createDocumentos, updateDocumentos, deleteDocumentos } = useServicesDocumentosOp()
 
   const { documentoOpSeleccionado, typeOperationDocumento, isOpenDialogConfirmButtons, codigoOrdenPago } = useSelector(
     (state: RootState) => state.admOrdenPago
@@ -153,7 +154,7 @@ const FormCreateDocumentosOp = () => {
 
     setTimeout(() => {
       dispatch(setIsOpenDialogDocumentosEdit(false))
-    }, 1000)
+    }, 10000)
   }
 
   const handleCreateDocumento = async (): Promise<void> => {
@@ -823,6 +824,12 @@ const FormCreateDocumentosOp = () => {
             ver impuestos
           </Button>
         </>
+        <AlertMessage
+          message={message?.text ?? ''}
+          severity={message?.isValid ? 'success' : 'error'}
+          duration={8000}
+          show={message?.text ? true : false}
+        />
       </Box>
     </>
   )
