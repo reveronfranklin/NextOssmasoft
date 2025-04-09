@@ -1,32 +1,39 @@
-import { useCallback, useState } from "react"
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { UrlServices } from '../enums/urlServices.enum'
+import { useCallback, useState } from 'react'
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { createApiHandlers } from "../../utils/api-handlers"
+import { UrlServices } from '../enums/urlServices.enum';
 import {
     ResponseDto,
     CuentaFilterDto,
     CuentaResponseDto,
     CuentaDto,
     CuentaDeleteDto
-} from '../interfaces'
+} from '../interfaces';
 
 const useServices = () => {
-    const [error, setError]     = useState<string>('')
-    const [message, setMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError]     = useState<string>('')
+    const [message, setMessage] = useState<IAlertMessageDto>({
+        text: '',
+        timestamp: Date.now(),
+        isValid: true
+    })
+
+    const { handleApiError, handleApiResponse } = createApiHandlers(setError, setMessage)
 
     const getList = useCallback(async (payload: CuentaFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
 
-            if (response.data.isValid) {
-                return response.data
+            if (response?.data?.isValid === false) {
+                return handleApiError(response?.data)
             }
 
-            setMessage(response.data.message)
+            return handleApiResponse(response)
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
@@ -35,16 +42,16 @@ const useServices = () => {
     const store = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
+            const message   = 'Cuenta creada exitosamente'
 
-            if (response.data.isValid) {
-                return response.data
+            if (response?.data?.isValid === false) {
+                return handleApiError(response?.data)
             }
 
-            setMessage(response.data.message)
+            return handleApiResponse(response, message)
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
@@ -53,34 +60,34 @@ const useServices = () => {
     const update = useCallback(async (payload: CuentaDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
+            const message   = 'Cuenta actualizada exitosamente'
 
-            if (response.data.isValid) {
-                return response.data
+            if (response?.data?.isValid === false) {
+                return handleApiError(response?.data)
             }
 
-            setMessage(response.data.message)
+            return handleApiResponse(response, message)
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
     }, [])
 
-    const destroy = useCallback(async (payload: CuentaDeleteDto): Promise<any> => {
+    const remove = useCallback(async (payload: CuentaDeleteDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
+            const message   = 'Cuenta eliminada exitosamente'
 
-            if (response.data.isValid) {
-                return response.data
+            if (response?.data?.isValid === false) {
+                return handleApiError(response?.data)
             }
 
-            setMessage(response.data.message)
+            return handleApiResponse(response, message)
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
@@ -94,7 +101,7 @@ const useServices = () => {
         getList,
         store,
         update,
-        destroy
+        remove
     }
 }
 

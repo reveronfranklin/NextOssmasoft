@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
 import {
     Box,
     Grid,
@@ -15,9 +14,9 @@ import {
     InputLabel
 } from '@mui/material';
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
 import { CuentaDto } from '../../interfaces';
-import { setIsOpenDialogCuenta } from 'src/store/apps/pagos/cuentas'
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
 import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
@@ -29,9 +28,8 @@ const FormCreate = () => {
     const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
     const [dialogOpen, setDialogOpen]                       = useState(false)
 
-    const dispatch                          = useDispatch()
-    const qc: QueryClient                   = useQueryClient()
-    const rules                             = getRules()
+    const qc: QueryClient   = useQueryClient()
+    const rules             = getRules()
 
     const {
         store,
@@ -112,8 +110,8 @@ const FormCreate = () => {
 
             const response = await store(payload)
 
-            if (response.isValid) {
-                dispatch(setIsOpenDialogCuenta(false))
+            if (response?.isValid) {
+                handleClearMaestroCuenta()
             }
         } catch (e: any) {
             console.error('handleCreateMaestroCuenta', e)
@@ -202,7 +200,10 @@ const FormCreate = () => {
                                                             placeholder="Código"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={onChange}
+                                                            onChange={(e) => {
+                                                                const textUpperCase = e.target.value.toUpperCase()
+                                                                onChange(textUpperCase)
+                                                            }}
                                                             error={!!errors.codigo}
                                                             helperText={errors.codigo?.message}
                                                         />
@@ -293,7 +294,6 @@ const FormCreate = () => {
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                                 </Box>
                             </form>
                             : null
@@ -301,6 +301,12 @@ const FormCreate = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
         </>
     )
 }

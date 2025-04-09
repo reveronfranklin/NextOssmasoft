@@ -15,6 +15,7 @@ import {
     InputLabel
 } from '@mui/material';
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
 import { setIsOpenDialogCuenta, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
@@ -38,7 +39,7 @@ const FormUpdate = () => {
 
     const {
         update,
-        destroy,
+        remove,
         message,
         loading
     } = useServices()
@@ -119,12 +120,7 @@ const FormUpdate = () => {
                 recaudadora: changeToBoolean(cuenta.recaudadora)
             }
 
-            const response = await update(payload)
-
-            if (response?.isValid) {
-                dispatch(setIsOpenDialogCuenta(false))
-                dispatch(resetMaestroCuentaShow())
-            }
+            await update(payload)
         } catch (e: any) {
             console.error('handleUpdateMaestroCuenta', e)
         } finally {
@@ -152,11 +148,11 @@ const FormUpdate = () => {
                 codigoCuentaBanco: maestroCuenta.codigoCuentaBanco
             }
 
-            const response = await destroy(payload)
+            const response = await remove(payload)
 
             if (response?.isValid) {
                 dispatch(setIsOpenDialogCuenta(false))
-                dispatch(resetMaestroCuentaShow())
+                handleClearMaestroCuenta()
             }
         } catch (e: any) {
             console.error('handleDelete', e)
@@ -251,7 +247,10 @@ const FormUpdate = () => {
                                                             placeholder="Código"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={onChange}
+                                                            onChange={(e) => {
+                                                                const textUpperCase = e.target.value.toUpperCase()
+                                                                onChange(textUpperCase)
+                                                            }}
                                                             error={!!errors.codigo}
                                                             helperText={errors.codigo?.message}
                                                         />
@@ -326,7 +325,7 @@ const FormUpdate = () => {
                                 <DialogConfirmation
                                     open={dialogDeleteOpen}
                                     onClose={handleCloseDialogDelete}
-                                    onConfirm={handleSubmit(handleDelete)}
+                                    onConfirm={handleDelete}
                                     loading={loading}
                                     title="Eliminar registro"
                                     content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
@@ -358,7 +357,6 @@ const FormUpdate = () => {
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                                 </Box>
                             </form>
                             : null
@@ -366,6 +364,12 @@ const FormUpdate = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
         </>
     )
 }
