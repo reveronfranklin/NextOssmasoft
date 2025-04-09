@@ -1,11 +1,11 @@
 import { Ref, forwardRef, ReactElement } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from '@mui/material';
 import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
-import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'src/store';
 import Icon from 'src/@core/components/icon';
-import { setIsOpenDialogCreate, setTypeOperation } from 'src/store/apps/pagos/cuentas';
+import { RootState } from 'src/store';
+import { setIsOpenDialogCuenta, setTypeOperation } from 'src/store/apps/pagos/cuentas';
 import FormCreate from '../forms/FormCreate';
 import FormUpdate from '../forms/FormUpdate';
 
@@ -18,10 +18,10 @@ const Transition = forwardRef(function Transition(
 
 const DialogMaestroCuenta = () => {
     const dispatch = useDispatch()
-    const { typeOperation, isOpenDialogCreate } = useSelector((state: RootState) => state.admMaestroCuenta )
+    const { typeOperation, isOpenDialogCuenta } = useSelector((state: RootState) => state.admMaestroCuenta )
 
     const handleClose = () => {
-        dispatch(setIsOpenDialogCreate(false))
+        dispatch(setIsOpenDialogCuenta(false))
         dispatch(setTypeOperation(null))
     }
 
@@ -41,7 +41,7 @@ const DialogMaestroCuenta = () => {
                 fullWidth
                 maxWidth="md"
                 scroll='body'
-                open={isOpenDialogCreate}
+                open={isOpenDialogCuenta}
                 TransitionComponent={Transition}
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'

@@ -2,7 +2,7 @@ import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/ma
 import Icon from 'src/@core/components/icon';
 import { useDispatch } from 'react-redux';
 import DataGridCuentasComponent from '../components/dataGrid/Cuentas';
-import { setIsOpenDialogCreate, setTypeOperation } from 'src/store/apps/pagos/cuentas';
+import { setIsOpenDialogCuenta, setTypeOperation } from 'src/store/apps/pagos/cuentas';
 
 const LayoutCuentas = () => {
     const dispatch = useDispatch()
@@ -10,7 +10,7 @@ const LayoutCuentas = () => {
     const handleCreate = async () => {
         dispatch(setTypeOperation('create'))
         setTimeout(() => {
-            dispatch(setIsOpenDialogCreate(true))
+            dispatch(setIsOpenDialogCuenta(true))
         }, 1500)
     }
 

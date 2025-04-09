@@ -10,12 +10,6 @@ import {
     FormControl,
     Button,
     FormHelperText,
-    Dialog,
-    DialogTitle,
-    DialogContentText,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
     Select,
     MenuItem,
     InputLabel
@@ -23,24 +17,24 @@ import {
 
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
-import { setIsOpenDialogCreate, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
+import { setIsOpenDialogCuenta, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
 import { useServices } from '../../services';
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
 import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
 
 const FormUpdate = () => {
-    const dispatch                                  = useDispatch()
-    const qc: QueryClient                           = useQueryClient()
-    const rules                                     = getRules()
-    const { maestroCuenta }                         = useSelector((state: RootState) => state.admMaestroCuenta )
-    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]               = useState(false)
-    const [openDeleteDialog, setOpenDeleteDialog]   = useState<boolean>(false)
-
+    const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]                       = useState(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]           = useState<boolean>(false)
     const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
     const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
     const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
+
+    const dispatch          = useDispatch()
+    const qc: QueryClient   = useQueryClient()
+    const { maestroCuenta } = useSelector((state: RootState) => state.admMaestroCuenta )
+    const rules             = getRules()
 
     const {
         update,
@@ -65,15 +59,15 @@ const FormUpdate = () => {
     })
 
     const handleOpenDialog = () => {
-        setDialogOpen(true);
+        setDialogOpen(true)
     }
 
     const handleCloseDialog = () => {
-        setDialogOpen(false);
+        setDialogOpen(false)
     }
 
     const changeToBoolean = (value: any) : boolean => {
-        return (value == 'true')
+        return (value == 'true' || value == true)
     }
 
     const clearDefaultValues = () => {
@@ -128,7 +122,7 @@ const FormUpdate = () => {
             const response = await update(payload)
 
             if (response?.isValid) {
-                dispatch(setIsOpenDialogCreate(false))
+                dispatch(setIsOpenDialogCuenta(false))
                 dispatch(resetMaestroCuentaShow())
             }
         } catch (e: any) {
@@ -141,15 +135,18 @@ const FormUpdate = () => {
         }
     }
 
-    const handleDeleteDialogOpen = () => {
-        setOpenDeleteDialog(true)
+    const handleOpenDialogDelete = () => {
+        setDialogDeleteOpen(true)
     }
 
-    const handleDeleteDialogClose = () => {
-        setOpenDeleteDialog(false)
+    const handleCloseDialogDelete = () => {
+        setDialogDeleteOpen(false)
     }
 
     const handleDelete = async () => {
+        setIsFormEnabled(false)
+        handleCloseDialogDelete()
+
         try {
             const payload: CuentaDeleteDto = {
                 codigoCuentaBanco: maestroCuenta.codigoCuentaBanco
@@ -158,12 +155,13 @@ const FormUpdate = () => {
             const response = await destroy(payload)
 
             if (response?.isValid) {
-                dispatch(setIsOpenDialogCreate(false))
+                dispatch(setIsOpenDialogCuenta(false))
                 dispatch(resetMaestroCuentaShow())
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('handleDelete', e)
         } finally {
+            setIsFormEnabled(true)
             qc.invalidateQueries({
                 queryKey: ['maestroCuentaTable']
             })
@@ -268,13 +266,14 @@ const FormUpdate = () => {
                                                     name="principal"
                                                     control={control}
                                                     rules={rules.principal}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="principal-label"
                                                             label="¿Cuenta principal?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            {...rest}
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>
@@ -293,13 +292,14 @@ const FormUpdate = () => {
                                                     name="recaudadora"
                                                     control={control}
                                                     rules={rules.recaudadora}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="recaudadora-label"
                                                             label="¿Cuenta recaudadora?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            { ...rest }
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>
@@ -323,43 +323,14 @@ const FormUpdate = () => {
                                     content="¿Desea continuar con la actualización de este registro?"
                                 />
 
-                                <Dialog
-                                    open={openDeleteDialog}
-                                    onClose={handleDeleteDialogClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleDeleteDialogClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleDelete)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Eliminando el registro, un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogDeleteOpen}
+                                    onClose={handleCloseDialogDelete}
+                                    onConfirm={handleSubmit(handleDelete)}
+                                    loading={loading}
+                                    title="Eliminar registro"
+                                    content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
+                                />
 
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
@@ -375,7 +346,7 @@ const FormUpdate = () => {
                                         sx={{ mx: 4 }}
                                         variant='outlined'
                                         size='small'
-                                        onClick={handleDeleteDialogOpen}
+                                        onClick={handleOpenDialogDelete}
                                         disabled={!isValid && loading}
                                     >
                                         Eliminar

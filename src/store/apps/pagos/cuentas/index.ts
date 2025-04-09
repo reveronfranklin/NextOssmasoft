@@ -5,8 +5,7 @@ export const admMaestroCuentaSlice = createSlice({
     name: 'admMaestroCuenta',
     initialState: {
         typeOperation: null,
-        codigoCuentaBanco: 0,
-        isOpenDialogCreate: false,
+        isOpenDialogCuenta: false,
         isOpenDialogDelete: false,
         maestroCuenta: {} as CuentaDto
     },
@@ -14,14 +13,8 @@ export const admMaestroCuentaSlice = createSlice({
         setTypeOperation: (state, action) => {
             state.typeOperation = action.payload
         },
-        setCodigoCuentaBanco: (state, action) => {
-            state.codigoCuentaBanco = action.payload
-        },
-        setIsOpenDialogCreate: (state, action) => {
-            state.isOpenDialogCreate = action.payload
-        },
-        setIsOpenDialogDelete: (state, action) => {
-            state.isOpenDialogDelete = action.payload
+        setIsOpenDialogCuenta: (state, action) => {
+            state.isOpenDialogCuenta = action.payload
         },
         setMaestroCuentaShow: (state, action) => {
             state.maestroCuenta = action.payload
@@ -33,9 +26,7 @@ export const admMaestroCuentaSlice = createSlice({
 })
 export const {
     setTypeOperation,
-    setCodigoCuentaBanco,
-    setIsOpenDialogCreate,
-    setIsOpenDialogDelete,
+    setIsOpenDialogCuenta,
     setMaestroCuentaShow,
     resetMaestroCuentaShow
 } = admMaestroCuentaSlice.actions

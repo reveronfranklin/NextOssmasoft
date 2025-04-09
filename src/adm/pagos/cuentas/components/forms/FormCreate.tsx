@@ -17,21 +17,21 @@ import {
 
 import { useServices } from '../../services';
 import { CuentaDto } from '../../interfaces';
-import { setIsOpenDialogCreate } from 'src/store/apps/pagos/cuentas'
+import { setIsOpenDialogCuenta } from 'src/store/apps/pagos/cuentas'
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
 import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
 
 const FormCreate = () => {
-    const dispatch                          = useDispatch()
-    const qc: QueryClient                   = useQueryClient()
-    const rules                             = getRules()
-    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]       = useState(false)
-
     const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
     const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
     const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
+    const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]                       = useState(false)
+
+    const dispatch                          = useDispatch()
+    const qc: QueryClient                   = useQueryClient()
+    const rules                             = getRules()
 
     const {
         store,
@@ -73,7 +73,7 @@ const FormCreate = () => {
     }
 
     const changeToBoolean = (value: any) : boolean => {
-        return (value == 'true')
+        return (value == 'true' || value == true)
     }
 
     const handleClearMaestroCuenta = () => {
@@ -113,7 +113,7 @@ const FormCreate = () => {
             const response = await store(payload)
 
             if (response.isValid) {
-                dispatch(setIsOpenDialogCreate(false))
+                dispatch(setIsOpenDialogCuenta(false))
             }
         } catch (e: any) {
             console.error('handleCreateMaestroCuenta', e)
@@ -217,13 +217,15 @@ const FormCreate = () => {
                                                     name="principal"
                                                     control={control}
                                                     rules={rules.principal}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    defaultValue={false}
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="principal-label"
                                                             label="¿Cuenta principal?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            { ...rest }
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>
@@ -242,13 +244,15 @@ const FormCreate = () => {
                                                     name="recaudadora"
                                                     control={control}
                                                     rules={rules.recaudadora}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    defaultValue={false}
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="recaudadora-label"
                                                             label="¿Cuenta recaudadora?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            { ...rest }
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>

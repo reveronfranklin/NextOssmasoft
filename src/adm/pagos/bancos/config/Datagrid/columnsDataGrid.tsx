@@ -1,9 +1,10 @@
+import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Icon from 'src/@core/components/icon';
 import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
-import { GridRenderCellParams } from '@mui/x-data-grid';
+import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
 import { SisBancoUpdateDto, SisBancoDeleteDto } from '../../interfaces'
 import {
     setIsOpenDialogMaestroBancoDetalle,
@@ -13,7 +14,7 @@ import {
     setTypeOperation
 } from 'src/store/apps/pagos/bancos';
 
-function ColumnsDataGrid() {
+const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
     const handleEdit = (maestroBanco: SisBancoUpdateDto) => {
@@ -36,7 +37,7 @@ function ColumnsDataGrid() {
         },
     }))
 
-    const columns = [
+    const columns = useMemo<GridColDef[]>(() => [
         {
             flex: 0,
             minWidth: 40,
@@ -78,10 +79,10 @@ function ColumnsDataGrid() {
                 </Typography>
             )
         }
-    ]
+    ], [dispatch])
 
     return columns
 }
 
 
-export default ColumnsDataGrid
+export default useColumnsDataGrid

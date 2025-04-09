@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import ColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
+import useColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
 import useServices from '../../services/useServices'
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -18,16 +18,16 @@ const DataGridComponent = () => {
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
 
-    const qc: QueryClient = useQueryClient()
-    const debounceTimeoutRef = useRef<any>(null)
+    const debounceTimeoutRef    = useRef<any>(null)
+    const qc: QueryClient       = useQueryClient()
+    const { getMaestroBanco }   = useServices()
+    const columnsDataGrid       = useColumnsDataGrid()
 
     const filter: any = {
         pageSize,
         pageNumber,
         searchText
     }
-
-    const { getMaestroBanco } = useServices()
 
     const query = useQuery({
         queryKey: ['maestroBancoTable', pageSize, pageNumber, searchText],
@@ -83,7 +83,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoBanco}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={columnsDataGrid}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}

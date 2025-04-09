@@ -30,7 +30,7 @@ const rules =  {
         required: 'Este campo es requerido',
         pattern:{
             value: /^[0-9a-zA-Z-]+$/,
-            message: 'Solo se admiten letras y números'
+            message: 'Solo se admiten letras, números y guiones'
         },
         minLength: {
             value: 1,
@@ -42,17 +42,15 @@ const rules =  {
         }
     },
     principal: {
-        required: 'Este campo es requerido',
         pattern:{
             value: /^(true|false)$/,
-            message: 'Permitido SI(true) y NO (false)'
+            message: 'Permitido SI (true) y NO (false)'
         }
     },
     recaudadora: {
-        required: 'Este campo es requerido',
         pattern:{
             value: /^(true|false)$/,
-            message: 'Permitido SI(true) y NO (false)'
+            message: 'Permitido SI (true) y NO (false)'
         }
     }
 }
