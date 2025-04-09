@@ -1,13 +1,12 @@
-import Grid from '@mui/material/Grid'
+import Grid from '@mui/material/Grid';
+import Layout from 'src/adm/pagos/cuentas/views/Layout';
 
-// import Layout from 'src/adm/pagos/bancos/views/Layout'
-
-const Bancos = () => {
-  return (
-    <Grid item xs={12}>
-      Cuentas
-    </Grid>
-  )
+const Cuentas = () => {
+    return (
+        <Grid item xs={12}>
+            <Layout />
+        </Grid>
+    )
 }
 
-export default Bancos
+export default Cuentas
