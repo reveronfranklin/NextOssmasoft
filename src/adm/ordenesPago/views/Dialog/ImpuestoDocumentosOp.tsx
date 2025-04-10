@@ -48,7 +48,7 @@ const DialogImpuestoDocumentosEdit = () => {
           },
         }}
       >
-        <Grid spacing={0} >
+        <Grid>
           <Box position="static" sx={{ boxShadow: 'none' }}>
             <Toolbar sx={{
               justifyContent: 'space-between',

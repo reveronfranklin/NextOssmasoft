@@ -67,5 +67,4 @@ function ColumnsDataGrid() {
     ]
 }
 
-
 export default ColumnsDataGrid

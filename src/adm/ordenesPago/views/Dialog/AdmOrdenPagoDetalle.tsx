@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
 import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation, setConFactura, setCodigoOrdenPago } from "src/store/apps/ordenPago"
-import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPAgo'
+import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPago'
 import FormUpdateOrdenPago from '../../forms/edit/FormUpdateOrdenPago'
 import ListaCompromiso from '../../components/ListCompromiso/listaCompromisos'
 
@@ -22,7 +22,7 @@ const DialogAdmOrdenPagoDetalle = () => {
     const [isClosing, setIsClosing] = useState(false)
     const dispatch = useDispatch()
 
-    const { isOpenDialogOrdenPagoDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago )
+    const { isOpenDialogOrdenPagoDetalle, typeOperation } = useSelector((state: RootState) => state.admOrdenPago)
 
     const handleClose = () => {
         setIsClosing(true)
@@ -73,15 +73,15 @@ const DialogAdmOrdenPagoDetalle = () => {
                     },
                 }}
             >
-                <Grid spacing={0} >
+                <Grid>
                     <Box position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{
                             justifyContent: 'space-between',
                             padding: 0,
-                            }}
+                        }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Orden de pago ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
+                                Orden de pago ({typeOperation === 'update' ? 'Editar' : 'Crear'})
                             </Typography>
                             <IconButton
                                 size='small'

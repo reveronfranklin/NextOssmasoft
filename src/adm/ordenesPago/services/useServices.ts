@@ -26,29 +26,41 @@ import { IResponseCompromisoByOrden } from '../interfaces/responseCompromisoByOr
 
 const useServices = () => {
     const [error, setError] = useState<string>('')
-    const [message, setMessage] = useState<string>('')
+    const [message, setMessage] = useState(() => ({
+        text: '',
+        timestamp: Date.now(),
+        isValid: true,
+    }))
     const [loading, setLoading] = useState<boolean>(false)
-
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-    const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<any> => {
+    const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<ResponseGetOrdenes | null> => {
         try {
             setLoading(true)
-
-            // const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSBYPRESUPUESTO, filters)
             const responseGetOrdenes = await ossmmasofApi.post<ResponseGetOrdenes>(UrlServices.GETCOMPROMISOSPENDIENTEBYPRESUPUESTO, filters)
 
             if (responseGetOrdenes.data.isValid) {
+                setMessage(prev => ({
+                    ...prev,
+                    text: responseGetOrdenes.data.message || '',
+                }))
+
                 return responseGetOrdenes.data
             }
 
-            setMessage(responseGetOrdenes.data.message)
+            setMessage(prev => ({
+                ...prev,
+                text: responseGetOrdenes.data.message || '',
+                isValid: false,
+            }))
         } catch (e: any) {
             setError(e.message)
             console.error(e)
         } finally {
             setLoading(false)
         }
+
+        return null
     }, [presupuestoSeleccionado.codigoPresupuesto])
 
     const getOrdenesPagoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<any> => {
@@ -60,7 +72,10 @@ const useServices = () => {
                 return responseGetOrdenes.data
             }
 
-            setMessage(responseGetOrdenes.data.message)
+            setMessage({
+                ...message,
+                text: responseGetOrdenes.data.message,
+            })
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -78,7 +93,10 @@ const useServices = () => {
                 return responsePucOrdenPago.data
             }
 
-            setMessage(responsePucOrdenPago.data.message)
+            setMessage({
+                ...message,
+                text: responsePucOrdenPago.data.message,
+            })
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -93,10 +111,21 @@ const useServices = () => {
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
 
             if (responseCreatetOrden.data.isValid) {
+                setMessage(prev => ({
+                    ...prev,
+                    text: responseCreatetOrden.data.message || '',
+                    timestamp: Date.now(),
+                }))
+
                 return responseCreatetOrden.data
             }
 
-            setMessage(responseCreatetOrden.data.message)
+            setMessage(prev => ({
+                ...prev,
+                text: responseCreatetOrden.data.message || '',
+                timestamp: Date.now(),
+                isValid: false,
+            }))
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -111,10 +140,21 @@ const useServices = () => {
             const responseUpdateOrden = await ossmmasofApi.post<any>(UrlServices.UPDATEORDENPAGO, filters)
 
             if (responseUpdateOrden.data.isValid) {
+                setMessage(prev => ({
+                    ...prev,
+                    text: responseUpdateOrden.data.message || '',
+                    timestamp: Date.now(),
+                }))
+
                 return responseUpdateOrden.data
             }
 
-            setMessage(responseUpdateOrden.data.message)
+            setMessage(prev => ({
+                ...prev,
+                text: responseUpdateOrden.data.message || '',
+                timestamp: Date.now(),
+                isValid: false,
+            }))
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -144,7 +184,10 @@ const useServices = () => {
                 return responseGetOrdenes.data
             }
 
-            setMessage(responseGetOrdenes.data.message)
+            setMessage({
+                ...message,
+                text: responseGetOrdenes.data.message,
+            })
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -162,7 +205,10 @@ const useServices = () => {
                 return responseGetOrdenes.data
             }
 
-            setMessage(responseGetOrdenes.data.message)
+            setMessage({
+                ...message,
+                text: responseGetOrdenes.data.message,
+            })
         } catch (e: any) {
             setError(e.message)
             console.error(e)
@@ -175,7 +221,23 @@ const useServices = () => {
         try {
             setLoading(true)
             const responseGetOrdenes = await ossmmasofApi.post<any>(UrlServices.UPDATEPUCBYORDENPAGO , filters)
-            setMessage(responseGetOrdenes.data.message)
+
+            if (responseGetOrdenes.data.isValid) {
+                setMessage(prev => ({
+                    ...prev,
+                    text: responseGetOrdenes.data.message || 'Acción realizada con éxito',
+                    timestamp: Date.now(),
+                }))
+
+                return responseGetOrdenes.data
+            }
+
+            setMessage(prev => ({
+                ...prev,
+                text: responseGetOrdenes.data.message || 'Acción no realizada',
+                timestamp: Date.now(),
+                isValid: false,
+            }))
 
             return responseGetOrdenes
         } catch (e: any) {

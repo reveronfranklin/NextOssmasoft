@@ -1,5 +1,4 @@
-import { Grid, Box, Alert, Collapse, IconButton } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -7,15 +6,15 @@ import { useSelector } from "react-redux"
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import {
-    resetCompromisoSeleccionadoDetalle,
+    setIsOpenDialogOrdenPagoDetalle,
     setCompromisoSeleccionadoDetalle,
     setIsOpenViewerPdf
 } from "src/store/apps/ordenPago"
 import TabsComponent from '../../components/Tabs'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
-
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormUpdateOrdenPago = () => {
     interface GestionConfig {
@@ -26,8 +25,17 @@ const FormUpdateOrdenPago = () => {
         showButton: boolean;
     }
 
+    interface IAlertMessage {
+        text: string;
+        severity: 'error' | 'warning' | 'info' | 'success';
+    }
+
     const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
     const [showMessage, setShowMessage] = useState(false)
+    const [currentMessage, setCurrentMessage] = useState<IAlertMessage>({
+        text: '',
+        severity: 'info'
+    })
 
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
@@ -100,45 +108,72 @@ const FormUpdateOrdenPago = () => {
     }
 
     const handleClearCompromiso = () => {
-        dispatch(resetCompromisoSeleccionadoDetalle())
+        console.log('handleClearCompromiso')
+        setShowMessage(false)
     }
 
     const handleGestionOrdenPago = () => {
         const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
         const filter = { codigoOrdenPago }
+        setShowMessage(false)
 
-        if (status === 'PE') {
-            return {
-                handle: () => aprobarOrdenPago(filter),
-                message: `¿Esta usted seguro de APROBAR la orden (${codigoOrdenPago}) ?`,
+        const actionConfigs = {
+            PE: {
+                action: aprobarOrdenPago,
+                message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Aprobar',
+                newStatus: 'AP',
+                showButton: true
+            },
+            AP: {
+                action: anularOrdenPago,
+                message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
+                nameButton: 'Anular',
+                newStatus: 'AN',
                 showButton: true
             }
         }
 
-        if (status === 'AP') {
-            return {
-                handle: () => anularOrdenPago(filter),
-                message: `¿ Esta usted seguro de ANULAR la orden (${codigoOrdenPago}) ?`,
-                nameButton: 'Anular',
-                status: 'AN',
-                showButton: true
-            }
+        const config = actionConfigs[status as keyof typeof actionConfigs] || {
+            action: () => console.log('No disponible'),
+            message: 'Orden de pago no disponible para gestionar',
+            nameButton: 'Gestionar',
+            newStatus: status,
+            showButton: false
+        }
+
+        const handleAction = (actionFn: typeof aprobarOrdenPago) => {
+            return () => actionFn(filter, () => {
+                qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] });
+                qc.invalidateQueries({ queryKey: ['retencionesTable'] });
+
+                setTimeout(() => {
+                    dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+                }, 5000)
+            })
         }
 
         return {
-            handle: () => console.log('No disponible'),
-            message: 'Orden de pago no disponible para gestionar',
-            nameButton: 'Gestionar',
-            showButton: false,
+            handle: handleAction(config.action),
+            message: config.message,
+            nameButton: config.nameButton,
+            status: config.newStatus,
+            showButton: config.showButton !== false
         }
     }
 
     useEffect(() => {
-        if (messageGestion) {
+        if (messageGestion.text) {
+            setCurrentMessage({
+                    text: messageGestion.text,
+                    severity: messageGestion.isValid ? 'success' : 'error'
+                })
+
             setShowMessage(true)
+
             const timer = setTimeout(() => {
                 setShowMessage(false)
+                setCurrentMessage({ text: '', severity: 'info' })
             }, 30000)
 
             return () => clearTimeout(timer)
@@ -152,11 +187,11 @@ const FormUpdateOrdenPago = () => {
     return (
         <>
             <Grid container spacing={0} paddingLeft={0} paddingBottom={0}>
-                <Grid sm={12} xs={12}>
+                <Grid item sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
                     </Box>
                 </Grid>
-                <Grid sm={6} xs={12} sx={{
+                <Grid item sm={6} xs={12} sx={{
                     overflow: 'auto',
                     padding: '10px',
                     paddingBottom: '0px',
@@ -173,38 +208,15 @@ const FormUpdateOrdenPago = () => {
                         message={message}
                         loading={loading}
                     />
-                    <Box sx={{
-                        position: 'fixed',
-                        bottom: 20,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 1,
-                        width: '80%',
-                        maxWidth: '600px'
-                    }}>
-                        <Collapse in={showMessage}>
-                            <Alert
-                                severity="error"
-                                action={
-                                    <IconButton
-                                        aria-label="close"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={() => setShowMessage(false)}
-                                    >
-                                        <CloseIcon fontSize="inherit" />
-                                    </IconButton>
-                                }
-                                sx={{
-                                    boxShadow: 3
-                                }}
-                            >
-                                {messageGestion}
-                            </Alert>
-                        </Collapse>
-                    </Box>
+                    <AlertMessage
+                        message={currentMessage.text}
+                        severity={currentMessage.severity}
+                        duration={30000}
+                        show={showMessage}
+                        onClose={() => setShowMessage(false)}
+                    />
                 </Grid>
-                <Grid sm={6} xs={12}>
+                <Grid item sm={6} xs={12}>
                     <TabsComponent />
                 </Grid>
             </Grid>
