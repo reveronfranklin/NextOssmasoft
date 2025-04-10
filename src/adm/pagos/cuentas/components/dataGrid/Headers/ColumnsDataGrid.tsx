@@ -6,26 +6,27 @@ import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { CuentaDto, CuentaDeleteDto } from '../../../interfaces';
 import {
-    setIsOpenDialogMaestroBancoDetalle,
-    setIsOpenDialogMaestroBancoDelete,
-    setMaestroBancoSeleccionadoDetalle,
-    setCodigoBanco,
+    setIsOpenDialogCreate,
+    setIsOpenDialogDelete,
+    setMaestroCuentaShow,
+    setCodigoCuentaBanco,
     setTypeOperation
-} from 'src/store/apps/pagos/bancos';
+} from 'src/store/apps/pagos/cuentas';
 
 function ColumnsDataGrid() {
     const dispatch = useDispatch()
 
-    const handleEdit = (maestroBanco: CuentaDto) => {
+    const handleEdit = (maestroCuenta: CuentaDto) => {
+        console.log('handleEdit', maestroCuenta)
         dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogMaestroBancoDetalle(true))
-        dispatch(setMaestroBancoSeleccionadoDetalle(maestroBanco))
+        dispatch(setIsOpenDialogCreate(true))
+        dispatch(setMaestroCuentaShow(maestroCuenta))
     }
 
     const handleDelete = (codigoBanco: CuentaDeleteDto) => {
         dispatch(setTypeOperation('delete'))
-        dispatch(setIsOpenDialogMaestroBancoDelete(true))
-        dispatch(setCodigoBanco(codigoBanco))
+        dispatch(setIsOpenDialogDelete(true))
+        dispatch(setCodigoCuentaBanco(codigoBanco))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({

@@ -1,4 +1,4 @@
-import { Box, Grid, TextField, FormControl, Button, FormHelperText, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
+import { Box, Grid, TextField, FormControl, Button, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
 Checkbox, FormControlLabel, Typography } from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from 'react-hook-form'
@@ -24,6 +24,8 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings';
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -57,7 +59,7 @@ const FormOrdenPago = (props: {
         handleGestionOrdenPago?: any,
         onViewerPdf?: any,
         titleButton?: string,
-        message?: string,
+        message?: IAlertMessageDto,
         loading?: boolean
     }) => {
 
@@ -94,7 +96,7 @@ const FormOrdenPago = (props: {
 
     const defaultValues: any = {
         codigoOrdenPago: 0,
-        descripcionStatus: '',
+        descripcionStatus: 'PENDIENTE',
         frecuenciaPagoId: 0,
         tipoPagoId: 0,
         tipoOrdenId: 0,        iva: 0,
@@ -186,7 +188,10 @@ const FormOrdenPago = (props: {
         if (orden && Object.keys(orden).length) {
             setIsFormEnabled(true)
 
-            setValue('descripcionStatus', orden.descripcionStatus ?? '')
+            if (typeOperation === 'update') {
+                setValue('descripcionStatus', orden.descripcionStatus ?? '')
+            }
+
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
             setValue('cantidadPago', orden.cantidadPago ?? 0)
             setValue('nombreProveedor', orden.nombreProveedor ?? '')
@@ -552,7 +557,12 @@ const FormOrdenPago = (props: {
                                 </ButtonWithConfirm>
                             </span>
                         )}
-                        <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
+                        />
                     </Box>
                 </form> :
                 typeOperation === 'create' ?

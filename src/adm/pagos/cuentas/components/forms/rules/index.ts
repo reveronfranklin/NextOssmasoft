@@ -11,8 +11,8 @@ const rules =  {
     noCuenta: {
         required: 'Este campo es requerido',
         pattern:{
-            value: /^[0-9]+$/,
-            message: 'Solo se admiten numeros'
+            value: /^[0-9a-zA-Z]+$/,
+            message: 'Solo se admiten números'
         },
         min: {
             value: 1,
@@ -29,8 +29,8 @@ const rules =  {
     codigo: {
         required: 'Este campo es requerido',
         pattern:{
-            value: /^[A-Za-z]+$/,
-            message: 'Solo se admiten letras'
+            value: /^[0-9a-zA-Z-]+$/,
+            message: 'Solo se admiten letras y números'
         },
         minLength: {
             value: 1,

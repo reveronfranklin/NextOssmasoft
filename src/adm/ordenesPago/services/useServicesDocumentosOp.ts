@@ -12,10 +12,15 @@ import { IUpdateDocumentosOp, IResponseUpdateDocumentosOp } from '../interfaces/
 import { IDeleteDocumentoOp, IResponseDeleteDocumentoOp } from '../interfaces/documentosOp/deleteDocumentosOp'
 
 import { setDocumentCount } from 'src/store/apps/ordenPago'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 const useServicesDocumentosOp = () => {
   const [error, setError] = useState<string>('')
-  const [message, setMessage] = useState<string>('')
+  const [message, setMessage] = useState<IAlertMessageDto>({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
@@ -23,7 +28,11 @@ const useServicesDocumentosOp = () => {
 
   const handleApiError = (e: any) => {
     setError(e.message);
-    setMessage(`Error: ${e.message}`)
+    setMessage({
+      text: e.message,
+      timestamp: Date.now(),
+      isValid: false,
+    })
     console.error(e)
 
     return null
@@ -32,7 +41,11 @@ const useServicesDocumentosOp = () => {
   const handleApiResponse = <T,>(response: {data: T }, successMessage?: string): T | null => {
     if (response && response.data) {
       if (successMessage) {
-        setMessage(successMessage)
+        setMessage({
+          text: successMessage,
+          timestamp: Date.now(),
+          isValid: true,
+        })
       }
 
       return response.data

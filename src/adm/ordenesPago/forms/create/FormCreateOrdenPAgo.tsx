@@ -97,8 +97,6 @@ const FormCreateOrdenPago = () => {
     }
 
     useEffect(() => {
-        console.log(typeOperation === 'create')
-
         if (typeOperation === 'create') {
             dispatch(resetCompromisoSeleccionadoDetalle())
         }

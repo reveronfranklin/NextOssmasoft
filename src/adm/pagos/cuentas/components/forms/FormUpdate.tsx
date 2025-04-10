@@ -16,22 +16,31 @@ import {
     DialogContent,
     DialogActions,
     CircularProgress,
+    Select,
+    MenuItem,
+    InputLabel
 } from '@mui/material';
 
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
-import { setMaestroCuentaShow, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
+import { setIsOpenDialogCreate, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
 import { useServices } from '../../services';
+import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
+import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
 
 const FormUpdate = () => {
-    const dispatch = useDispatch()
-    const { maestroBanco }                          = useSelector((state: RootState) => state.admMaestroBanco )
-    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
-    const [open, setOpen]                           = useState<boolean>(false)
-    const [openDeleteDialog, setOpenDeleteDialog]   = useState<boolean>(false)
+    const dispatch                                  = useDispatch()
     const qc: QueryClient                           = useQueryClient()
     const rules                                     = getRules()
+    const { maestroCuenta }                         = useSelector((state: RootState) => state.admMaestroCuenta )
+    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]               = useState(false)
+    const [openDeleteDialog, setOpenDeleteDialog]   = useState<boolean>(false)
+
+    const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
+    const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
+    const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
 
     const {
         update,
@@ -41,9 +50,7 @@ const FormUpdate = () => {
     } = useServices()
 
     const defaultValues: CuentaDto = {
-        codigoBanco: maestroBanco.codigoBanco,
-        nombre: maestroBanco.nombre,
-        codigoInterbancario: maestroBanco.codigoInterbancario
+        ...maestroCuenta
     }
 
     const {
@@ -57,36 +64,79 @@ const FormUpdate = () => {
         mode: 'onChange'
     })
 
-    const handleDialogOpen = () => {
-        setOpen(true)
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
     }
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
     }
 
-    const handleUpdateMaestroBanco = async (dataFormMaestroBanco: CuentaDto) => {
+    const changeToBoolean = (value: any) : boolean => {
+        return (value == 'true')
+    }
+
+    const clearDefaultValues = () => {
+        setValue('codigoCuentaBanco', maestroCuenta.codigoCuentaBanco)
+        setValue('codigoBanco', null)
+        setValue('tipoCuentaId', null)
+        setValue('noCuenta', null)
+        setValue('formatoMascara', null)
+        setValue('denominacionFuncionalId', null)
+        setValue('codigo', null)
+        setValue('principal', false)
+        setValue('recaudadora', false)
+        setValue('codigoMayor', 0)
+        setValue('codigoAuxiliar', 0)
+    }
+
+    const handleClearMaestroCuenta = () => {
+        setCodigoBanco(0)
+        setTipoCuenta(0)
+        setDenominacionFuncional(0)
+        dispatch(resetMaestroCuentaShow())
+        reset(defaultValues)
+        clearDefaultValues()
+    }
+
+    const handleMaestroBanco = (maestroBanco: any) => {
+        setValue('codigoBanco', maestroBanco.codigoBanco)
+        setCodigoBanco(maestroBanco.codigoBanco)
+    }
+
+    const handleTipoCuenta = (tipoCuenta: any) => {
+        setValue('tipoCuentaId', tipoCuenta.descripcionId)
+        setTipoCuenta(tipoCuenta.descripcionId)
+    }
+
+    const handleDenominacionFuncionalId = (denominacionFuncional: any) => {
+        setValue('denominacionFuncionalId', denominacionFuncional.descripcionId)
+        setDenominacionFuncional(denominacionFuncional.descripcionId)
+    }
+
+    const handleUpdateMaestroCuenta = async (cuenta: CuentaDto) => {
         setIsFormEnabled(false)
-        handleClose()
+        handleCloseDialog()
 
         try {
             const payload: CuentaDto = {
-                codigoBanco: dataFormMaestroBanco.codigoBanco,
-                nombre: dataFormMaestroBanco.nombre,
-                codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
+                ...cuenta,
+                principal: changeToBoolean(cuenta.principal),
+                recaudadora: changeToBoolean(cuenta.recaudadora)
             }
 
             const response = await update(payload)
 
-            if (response.isValid) {
-                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+            if (response?.isValid) {
+                dispatch(setIsOpenDialogCreate(false))
+                dispatch(resetMaestroCuentaShow())
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('handleUpdateMaestroCuenta', e)
         } finally {
             setIsFormEnabled(true)
             qc.invalidateQueries({
-                queryKey: ['maestroBancoTable']
+                queryKey: ['maestroCuentaTable']
             })
         }
     }
@@ -102,34 +152,29 @@ const FormUpdate = () => {
     const handleDelete = async () => {
         try {
             const payload: CuentaDeleteDto = {
-                codigoCuentaBanco: maestroBanco.codigoBanco
+                codigoCuentaBanco: maestroCuenta.codigoCuentaBanco
             }
 
             const response = await destroy(payload)
 
             if (response?.isValid) {
-                dispatch(setMaestroCuentaShow(false))
+                dispatch(setIsOpenDialogCreate(false))
+                dispatch(resetMaestroCuentaShow())
             }
         } catch (e: any) {
             console.error(e)
         } finally {
             qc.invalidateQueries({
-                queryKey: ['maestroBancoTable']
+                queryKey: ['maestroCuentaTable']
             })
         }
     }
 
-    const handleClearMaestroBanco = () => {
-        dispatch(resetMaestroCuentaShow())
-        reset()
-    }
-
     useEffect(() => {
-        if (Object.keys(maestroBanco).length === 0) {
-            setValue('codigoInterbancario', '')
-            setValue('nombre', '')
-        }
-    }, [ maestroBanco ])
+        setCodigoBanco(Number(maestroCuenta.codigoBanco ?? 0))
+        setTipoCuenta(Number(maestroCuenta.tipoCuentaId ?? 0))
+        setDenominacionFuncional(Number(maestroCuenta.denominacionFuncionalId ?? 0))
+    }, [ maestroCuenta ])
 
     return (
         <>
@@ -149,115 +194,134 @@ const FormUpdate = () => {
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <MaestroBanco
+                                                id={codigoBanco}
+                                                onSelectionChange={handleMaestroBanco}
+                                            />
+                                        </Grid>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <TipoCuenta
+                                                id={tipoCuenta}
+                                                onSelectionChange={handleTipoCuenta}
+                                            />
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
-                                                    name="codigoBanco"
+                                                    name="noCuenta"
                                                     control={control}
-                                                    rules={ rules.codigoBanco }
+                                                    rules={ rules.noCuenta }
                                                     render={({ field: { value, onChange } }) => (
                                                         <TextField
                                                             type="number"
                                                             fullWidth
-                                                            label="Código Banco"
-                                                            placeholder="Código Banco"
-                                                            value={value || 0}
+                                                            label="Número de cuenta"
+                                                            placeholder="Número de cuenta"
+                                                            value={value || ''}
                                                             multiline
                                                             onChange={onChange}
-                                                            error={!!errors.codigoBanco}
-                                                            helperText={errors.codigoBanco?.message}
-                                                            disabled={true}
+                                                            error={!!errors.noCuenta}
+                                                            helperText={errors.noCuenta?.message}
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <DenominacionFuncional
+                                                id={denominacionFuncional}
+                                                onSelectionChange={handleDenominacionFuncionalId}
+                                            />
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
-                                                    name="codigoInterbancario"
+                                                    name="codigo"
                                                     control={control}
-                                                    rules={ rules.codigoInterbancario }
+                                                    rules={ rules.codigo }
                                                     render={({ field: { value, onChange } }) => (
                                                         <TextField
-                                                            type="number"
+                                                            type="text"
                                                             fullWidth
-                                                            label="Código Interbancario"
-                                                            placeholder="Código Interbancario"
+                                                            label="Código"
+                                                            placeholder="Código"
                                                             value={value || ''}
                                                             multiline
                                                             onChange={onChange}
-                                                            error={!!errors.codigoInterbancario}
-                                                            helperText={errors.codigoInterbancario?.message}
+                                                            error={!!errors.codigo}
+                                                            helperText={errors.codigo?.message}
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
+                                                <InputLabel id="principal-label">¿Cuenta principal?</InputLabel>
                                                 <Controller
-                                                    name="nombre"
+                                                    name="principal"
                                                     control={control}
-                                                    rules={ rules.nombre }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="text"
+                                                    rules={rules.principal}
+                                                    render={({ field: { onChange, value } }) => (
+                                                        <Select
+                                                            labelId="principal-label"
+                                                            label="¿Cuenta principal?"
                                                             fullWidth
-                                                            label="Nombre del Banco"
-                                                            placeholder="Nombre del Banco"
-                                                            value={value || ''}
-                                                            multiline
+                                                            value={value || false}
                                                             onChange={onChange}
-                                                            error={!!errors.nombre}
-                                                            helperText={errors.nombre?.message}
-                                                        />
+                                                        >
+                                                            <MenuItem value="true">Sí</MenuItem>
+                                                            <MenuItem value="false">No</MenuItem>
+                                                        </Select>
                                                     )}
                                                 />
+                                                {errors.principal && (
+                                                    <FormHelperText error>{errors.principal.message}</FormHelperText>
+                                                )}
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="recaudadora-label">¿Cuenta recaudadora?</InputLabel>
+                                                <Controller
+                                                    name="recaudadora"
+                                                    control={control}
+                                                    rules={rules.recaudadora}
+                                                    render={({ field: { onChange, value } }) => (
+                                                        <Select
+                                                            labelId="recaudadora-label"
+                                                            label="¿Cuenta recaudadora?"
+                                                            fullWidth
+                                                            value={value || false}
+                                                            onChange={onChange}
+                                                        >
+                                                            <MenuItem value="true">Sí</MenuItem>
+                                                            <MenuItem value="false">No</MenuItem>
+                                                        </Select>
+                                                    )}
+                                                />
+                                                {errors.recaudadora && (
+                                                    <FormHelperText error>{errors.recaudadora.message}</FormHelperText>
+                                                )}
                                             </FormControl>
                                         </Grid>
                                     </Grid>
                                 </Grid>
 
-                                <Dialog
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleUpdateMaestroBanco)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Espere un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogOpen}
+                                    onClose={handleCloseDialog}
+                                    onConfirm={handleSubmit(handleUpdateMaestroCuenta)}
+                                    loading={loading}
+                                    title="Actualizar registro"
+                                    content="¿Desea continuar con la actualización de este registro?"
+                                />
 
                                 <Dialog
                                     open={openDeleteDialog}
@@ -302,7 +366,7 @@ const FormUpdate = () => {
                                         variant='contained'
                                         color='primary'
                                         size='small'
-                                        onClick={handleDialogOpen}
+                                        onClick={handleOpenDialog}
                                         disabled={!isValid && loading}
                                     >
                                         Actualizar
@@ -319,7 +383,7 @@ const FormUpdate = () => {
                                     <Button
                                         color='primary'
                                         size='small'
-                                        onClick={handleClearMaestroBanco}
+                                        onClick={handleClearMaestroCuenta}
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
