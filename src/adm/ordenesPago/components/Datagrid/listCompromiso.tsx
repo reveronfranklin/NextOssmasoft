@@ -20,9 +20,12 @@ const DataGridComponent = () => {
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
 
+    const columns = ColumnsDataGrid()
+
     const qc: QueryClient = useQueryClient()
     const debounceTimeoutRef = useRef<any>(null)
     const dispatch = useDispatch()
+
 
     const {
         getCompromisoByPresupuesto,
@@ -101,7 +104,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoCompromiso}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={columns}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}

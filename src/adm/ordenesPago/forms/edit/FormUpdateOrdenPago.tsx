@@ -187,11 +187,11 @@ const FormUpdateOrdenPago = () => {
     return (
         <>
             <Grid container spacing={0} paddingLeft={0} paddingBottom={0}>
-                <Grid sm={12} xs={12}>
+                <Grid item sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
                     </Box>
                 </Grid>
-                <Grid sm={6} xs={12} sx={{
+                <Grid item sm={6} xs={12} sx={{
                     overflow: 'auto',
                     padding: '10px',
                     paddingBottom: '0px',
@@ -216,7 +216,7 @@ const FormUpdateOrdenPago = () => {
                         onClose={() => setShowMessage(false)}
                     />
                 </Grid>
-                <Grid sm={6} xs={12}>
+                <Grid item sm={6} xs={12}>
                     <TabsComponent />
                 </Grid>
             </Grid>

@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button, Box, Grid, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
-import { useDispatch } from 'react-redux'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import dayjs from 'dayjs'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
+import { NumericFormat } from 'react-number-format'
 
+// Components
 import EstatusFisico from '../../components/AutoComplete/documentos/EstatusFisico'
 import TipoDocumento from '../../components/AutoComplete/documentos/TipoDocumento'
 import TipoImpuesto from '../../components/AutoComplete/documentos/TipoImpuesto'
@@ -20,10 +20,16 @@ import TipoOperacion from '../../components/AutoComplete/documentos/TipoOperaci�
 import TipoTransaction from '../../components/AutoComplete/documentos/TipoTransaccion'
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import CustomButtonDialog from './../../components/BottonsActions'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
-import { setIsOpenDialogConfirmButtons, setIsOpenDialogDocumentosEdit } from 'src/store/apps/ordenPago'
-import { resetDocumentoOpSeleccionado, setDocumentoOpSeleccionado } from 'src/store/apps/ordenPago'
-import { setIsOpenDialogImpuestoDocumentosEdit } from "src/store/apps/ordenPago"
+// Store actions
+import {
+  setIsOpenDialogConfirmButtons,
+  setIsOpenDialogDocumentosEdit,
+  resetDocumentoOpSeleccionado,
+  setDocumentoOpSeleccionado,
+  setIsOpenDialogImpuestoDocumentosEdit
+} from 'src/store/apps/ordenPago'
 
 import { ICreateDocumentosOp } from '../../interfaces/documentosOp/createDocumentosOp'
 import { IUpdateDocumentosOp } from '../../interfaces/documentosOp/updateDocumentosOp'
@@ -33,27 +39,31 @@ import calcularBaseImponible from '../../helpers/baseImponible'
 import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
-import { NumericFormat } from 'react-number-format'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
-
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
   const [baseImponible, setBaseImponible] = useState<number>(0)
   const [montoImpuesto, setMontoImpuesto] = useState<number>(0)
   const [retencionMonto, setRetencionMonto] = useState<number>(0)
-
   const [impuesto, setImpuesto] = useState<number>(0)
   const [estatusFisico, setEstatusFisico] = useState<number>(0)
+  const autocompleteRef = useRef()
 
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
-  const autocompleteRef = useRef()
+  const {
+    documentoOpSeleccionado,
+    typeOperationDocumento,
+    isOpenDialogConfirmButtons,
+    codigoOrdenPago,
+  } = useSelector((state: RootState) => state.admOrdenPago)
 
-  const { presupuestoSeleccionado, message, loading, createDocumentos, updateDocumentos, deleteDocumentos } = useServicesDocumentosOp()
-
-  const { documentoOpSeleccionado, typeOperationDocumento, isOpenDialogConfirmButtons, codigoOrdenPago } = useSelector(
-    (state: RootState) => state.admOrdenPago
-  )
+  const {
+    presupuestoSeleccionado,
+    message, loading,
+    createDocumentos,
+    updateDocumentos,
+    deleteDocumentos
+  } = useServicesDocumentosOp()
 
   const defaultValues: ICreateDocumentosOp = {
     codigoDocumentoOp: 0,
@@ -61,11 +71,11 @@ const FormCreateDocumentosOp = () => {
     codigoPresupuesto: presupuestoSeleccionado?.codigoPresupuesto ?? 0,
     fechaComprobante: '',
     periodoImpositivo: '',
-    tipoOperacionId: null,
-    tipoDocumentoId: null,
-    tipoTransaccionId: null,
-    tipoImpuestoId: null,
-    estatusFiscoId: null,
+    tipoOperacionId: 0,
+    tipoDocumentoId: 0,
+    tipoTransaccionId: 0,
+    tipoImpuestoId: 0,
+    estatusFiscoId: 0,
     fechaDocumento: '',
     numeroDocumento: '',
     numeroControlDocumento: '',
@@ -189,7 +199,6 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
-    } finally {
     }
   }
 
@@ -221,13 +230,10 @@ const FormCreateDocumentosOp = () => {
       const result = await updateDocumentos(Documento)
 
       if (result?.isValid) {
-        console.log(result?.message)
+        invalidateAndReset('documentosTable')
       }
-
-      invalidateAndReset('documentosTable')
     } catch (e: any) {
       console.error(e)
-    } finally {
     }
   }
 
@@ -240,12 +246,10 @@ const FormCreateDocumentosOp = () => {
       const result = await deleteDocumentos(data)
 
       if (result?.isValid) {
-        console.log(result?.message)
+        invalidateAndReset('documentosTable')
       }
     } catch (e: any) {
       console.error(e)
-    } finally {
-      invalidateAndReset('documentosTable')
     }
   }
 
@@ -254,22 +258,22 @@ const FormCreateDocumentosOp = () => {
     setValue('codigoOrdenPago', 0)
     setValue('fechaComprobante', '')
     setValue('periodoImpositivo', '')
-    setValue('tipoOperacionId', null)
-    setValue('tipoDocumentoId', null)
-    setValue('tipoTransaccionId', null)
-    setValue('tipoImpuestoId', null)
-    setValue('estatusFiscoId', null)
+    setValue('tipoOperacionId', 0)
+    setValue('tipoDocumentoId', 0)
+    setValue('tipoTransaccionId', 0)
+    setValue('tipoImpuestoId', 0)
+    setValue('estatusFiscoId', 0)
     setValue('fechaDocumento', '')
     setValue('numeroDocumento', '0')
     setValue('numeroControlDocumento', '0')
     setValue('montoDocumento', 0)
     setValue('baseImponible', 0)
     setValue('montoImpuesto', 0)
-    setValue('numeroDocumentoAfectado', null)
+    setValue('numeroDocumentoAfectado', '')
     setValue('montoImpuestoExento', 0)
     setValue('montoRetenido', 0)
     setValue('codigoPresupuesto', 0)
-    setValue('numeroExpediente', null)
+    setValue('numeroExpediente', '')
   }
 
   const handleFechaComprobanteObjChange = (fecha: Date | null) => {
@@ -326,10 +330,10 @@ const FormCreateDocumentosOp = () => {
 
       setValue('numeroDocumento', documentoOpSeleccionado['numeroDocumento'])
       setValue('numeroControlDocumento', documentoOpSeleccionado['numeroControlDocumento'])
-      setValue('numeroDocumentoAfectado', documentoOpSeleccionado['numeroDocumentoAfectado'])
+      setValue('numeroDocumentoAfectado', documentoOpSeleccionado['numeroDocumentoAfectado'] ?? '')
       setValue('montoImpuestoExento', documentoOpSeleccionado['montoImpuestoExento'])
       setValue('montoRetenido', documentoOpSeleccionado['montoRetenido'])
-      setValue('numeroExpediente', documentoOpSeleccionado['numeroExpediente'])
+      setValue('numeroExpediente', documentoOpSeleccionado['numeroExpediente'] ?? '')
       setValue('periodoImpositivo', documentoOpSeleccionado['periodoImpositivo'])
 
       setValue('tipoOperacionId', documentoOpSeleccionado['tipoOperacionId'])
@@ -609,7 +613,7 @@ const FormCreateDocumentosOp = () => {
                 }}
                 onValueChange={(values: any) => {
                   const { value } = values
-                  setMontoDocumento(value)
+                  setMontoDocumento(value || 0)
                 }}
                 placeholder='0,00'
                 error={Boolean(errors.montoDocumento)}
@@ -692,7 +696,7 @@ const FormCreateDocumentosOp = () => {
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
-                    value={value}
+                    value={value || ''}
                     onChange={onChange}
                     label='Número Documento Afectado'
                     variant='outlined'
@@ -765,7 +769,7 @@ const FormCreateDocumentosOp = () => {
                   }
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <TextField fullWidth value={value} onChange={onChange} label='Número Expediente' variant='outlined' />
+                  <TextField fullWidth value={value ?? ''} onChange={onChange} label='Número Expediente' variant='outlined' />
                 )}
               />
             </Grid>

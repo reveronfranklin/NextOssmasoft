@@ -7,10 +7,10 @@ export interface IResponseCreateDocumentosOp {
   page: number
   totalPage: number
   cantidadRegistros: number
-  total1: number
-  total2: number
-  total3: number
-  total4: number
+  total1?: number
+  total2?: number
+  total3?: number
+  total4?: number
 }
 
 export interface ICreateDocumentosOp {
@@ -20,17 +20,17 @@ export interface ICreateDocumentosOp {
   fechaComprobanteString?: string
   fechaComprobanteObj?: FechaComprobanteObj
   periodoImpositivo: string
-  tipoOperacionId: number | null
+  tipoOperacionId: number
   descripcionTipoOperacion?: string
-  tipoDocumentoId: number | null
+  tipoDocumentoId: number
   descripcionTipoDocumento?: string
-  tipoTransaccionId: number | null
+  tipoTransaccionId: number
   descripcionTipoTransaccion?: string
-  tipoImpuestoId: number | null
+  tipoImpuestoId: number
   descripcionTipoImpuesto?: string
-  estatusFiscoId: number | null
+  estatusFiscoId: number
   descripcionEstatusFisco?: string
-  fechaDocumento: string | null
+  fechaDocumento: string
   fechaDocumentoString?: string
   fechaDocumentoObj?: FechaDocumentoObj
   numeroDocumento: string

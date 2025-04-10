@@ -1,18 +1,22 @@
-import { UrlServices } from '../enums/UrlServices.enum'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useCallback, useState } from "react"
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { UrlServices } from '../enums/UrlServices.enum'
 
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 import { useDispatch } from 'react-redux'
 
-import { IGetListByOrdenPago, IResponseListDocumentoByOrden } from '../interfaces/documentosOp/listDocumentoByOrdenPago'
-import { ICreateDocumentosOp, IResponseCreateDocumentosOp } from '../interfaces/documentosOp/createDocumentosOp'
-import { IUpdateDocumentosOp, IResponseUpdateDocumentosOp } from '../interfaces/documentosOp/updateDocumentosOp'
-import { IDeleteDocumentoOp, IResponseDeleteDocumentoOp } from '../interfaces/documentosOp/deleteDocumentosOp'
+import { IGetListByOrdenPago } from '../interfaces/documentosOp/listDocumentoByOrdenPago'
+import { ICreateDocumentosOp } from '../interfaces/documentosOp/createDocumentosOp'
+import { IUpdateDocumentosOp } from '../interfaces/documentosOp/updateDocumentosOp'
+import { IDeleteDocumentoOp } from '../interfaces/documentosOp/deleteDocumentosOp'
 
 import { setDocumentCount } from 'src/store/apps/ordenPago'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 const useServicesDocumentosOp = () => {
   const [error, setError] = useState<string>('')
@@ -22,107 +26,71 @@ const useServicesDocumentosOp = () => {
     isValid: true,
   })
   const [loading, setLoading] = useState<boolean>(false)
+  const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const dispatch = useDispatch()
-
-  const handleApiError = (e: any) => {
-    setError(e.message);
-    setMessage({
-      text: e.message,
-      timestamp: Date.now(),
-      isValid: false,
-    })
-    console.error(e)
-
-    return null
-  }
-
-  const handleApiResponse = <T,>(response: {data: T }, successMessage?: string): T | null => {
-    if (response && response.data) {
-      if (successMessage) {
-        setMessage({
-          text: successMessage,
-          timestamp: Date.now(),
-          isValid: true,
-        })
-      }
-
-      return response.data
-    }
-
-    return null
-  }
-
-  const getListDocumentos = useCallback(async (filters: IGetListByOrdenPago): Promise<IResponseListDocumentoByOrden | null> => {
+  const getListDocumentos = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<IGetListByOrdenPago>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseListDocumentoByOrden>(UrlServices.GETDOCUMENTOSOPBYORDENPAGO, filters)
-      const data = handleApiResponse(response)
 
-      if (data) {
-        dispatch(setDocumentCount(data.cantidadRegistros))
+      const responseFetch = await ossmmasofApi.post<IResponseBase<IGetListByOrdenPago>>(UrlServices.GETDOCUMENTOSOPBYORDENPAGO, filters)
+      const responseHandleApi = handleApiResponse<IGetListByOrdenPago>(responseFetch.data, undefined, setMessage, setError)
 
-        return data
-      }
+      dispatch(setDocumentCount(responseHandleApi?.cantidadRegistros))
 
-      return null
+      return responseHandleApi
     } catch (e: any) {
 
-      return handleApiError(e)
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
   }, [dispatch])
 
-  const createDocumentos = useCallback(async (filters: ICreateDocumentosOp): Promise<IResponseCreateDocumentosOp | null> => {
+  const createDocumentos = useCallback(async (filters: ICreateDocumentosOp): Promise<IApiResponse<ICreateDocumentosOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseCreateDocumentosOp>(UrlServices.CREATEDOCUMENTOSOP, filters)
-      const data = handleApiResponse(response, 'Documento creado con éxito.')
 
-      if (data) {
-        dispatch(setDocumentCount(data.cantidadRegistros))
+      const responseFetch = await ossmmasofApi.post<IResponseBase<ICreateDocumentosOp>>(UrlServices.CREATEDOCUMENTOSOP, filters)
+      const responseHandleApi = handleApiResponse<ICreateDocumentosOp>(responseFetch.data, 'Documento creado con éxito', setMessage, setError)
 
-        return data
-      }
+      dispatch(setDocumentCount(responseHandleApi?.cantidadRegistros))
 
-      return null
+      return responseHandleApi
     } catch (e: any) {
 
-      return handleApiError(e)
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
   }, [dispatch])
 
-  const updateDocumentos = useCallback(async (filters: IUpdateDocumentosOp): Promise<IResponseUpdateDocumentosOp | null> => {
+  const updateDocumentos = useCallback(async (filters: IUpdateDocumentosOp): Promise<IApiResponse<IUpdateDocumentosOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseUpdateDocumentosOp>(UrlServices.UPDATEDOCUMENTOSOP, filters)
 
-      return handleApiResponse(response, 'Documento actualizado con éxito.')
+      const responseFetch = await ossmmasofApi.post<IResponseBase<IUpdateDocumentosOp>>(UrlServices.UPDATEDOCUMENTOSOP, filters)
+      const responseHandleApi = handleApiResponse<IUpdateDocumentosOp>(responseFetch.data, 'Documento actualizado con éxito', setMessage, setError)
+
+      return responseHandleApi
     } catch (e: any) {
 
-      return handleApiError(e)
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const deleteDocumentos = useCallback(async (filters: IDeleteDocumentoOp): Promise<IResponseDeleteDocumentoOp | null> => {
+  const deleteDocumentos = useCallback(async (filters: IDeleteDocumentoOp): Promise<IApiResponse<IDeleteDocumentoOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseDeleteDocumentoOp>(UrlServices.DELETEDOCUMENTOSOP, filters)
-      const data = handleApiResponse(response, 'Documento eliminado con éxito.')
 
-      if (data) {
-        dispatch(setDocumentCount(data.cantidadRegistros))
+      const responseFetch = await ossmmasofApi.post<IResponseBase<IDeleteDocumentoOp>>(UrlServices.DELETEDOCUMENTOSOP, filters)
+      const responseHandleApi = handleApiResponse<IDeleteDocumentoOp>(responseFetch.data, 'Documento eliminado con éxito', setMessage, setError)
 
-        return data
-      }
+      dispatch(setDocumentCount(responseHandleApi?.cantidadRegistros))
 
-      return null
+      return responseHandleApi
     } catch (e: any) {
 
       return handleApiError(e)
