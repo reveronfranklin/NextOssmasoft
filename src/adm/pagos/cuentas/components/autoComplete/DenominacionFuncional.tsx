@@ -8,7 +8,7 @@ const DenominacionFuncional = ({
     id,
     onSelectionChange,
     error,
-    label = "Denominación Funcional",
+    label = 'Denominación Funcional',
     required = false
 }: AutoCompleteProps) => {
     const { getList } = useServicesDescriptivas()

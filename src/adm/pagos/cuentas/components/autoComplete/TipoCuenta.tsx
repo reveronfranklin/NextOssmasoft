@@ -7,7 +7,8 @@ import type { AutoCompleteProps, DescriptivaResponseDto, DescriptivaFilterDto } 
 const TipoCuenta = ({
     id,
     onSelectionChange,
-    error, label = 'Tipo de cuenta',
+    error,
+    label = 'Tipo de cuenta',
     required = false
 } : AutoCompleteProps) => {
     const { getList } = useServicesDescriptivas()
