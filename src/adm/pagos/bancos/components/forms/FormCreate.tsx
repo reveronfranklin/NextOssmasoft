@@ -1,35 +1,30 @@
 import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
-import { CleaningServices } from '@mui/icons-material'
-import { useDispatch } from 'react-redux'
+import { CleaningServices } from '@mui/icons-material';
 import {
     Box,
     Grid,
     TextField,
     FormControl,
-    Button,
-    FormHelperText,
-    Dialog,
-    DialogTitle,
-    DialogContentText,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
+    Button
 } from '@mui/material';
 
 import { useServices } from '../../services';
 import { SisBancoCreateDto } from '../../interfaces';
-import { setIsOpenDialogMaestroBancoDetalle } from 'src/store/apps/pagos/bancos'
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import getRules from './rules';
 
 const FormCreate = () => {
-    const dispatch = useDispatch()
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [open, setOpen] = useState<boolean>(false)
-    const qc: QueryClient = useQueryClient()
+    const [dialogOpen, setDialogOpen]       = useState(false)
+
+    const qc: QueryClient   = useQueryClient()
+    const rules             = getRules()
 
     const {
-        createMaestroBanco,
+        store,
         message,
         loading
     } = useServices()
@@ -50,17 +45,21 @@ const FormCreate = () => {
         mode: 'onChange'
     })
 
-    const handleDialogOpen = () => {
-        setOpen(true)
+    const handleOpenDialog = () => {
+        setDialogOpen(true)
     }
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseDialog = () => {
+        setDialogOpen(false)
+    }
+
+    const handleClearMaestroBanco = () => {
+        reset(defaultValues)
     }
 
     const handleCreateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
         setIsFormEnabled(false)
-        handleClose()
+        handleCloseDialog()
 
         try {
             const payload: SisBancoCreateDto = {
@@ -69,10 +68,10 @@ const FormCreate = () => {
                 codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
             }
 
-            const response = await createMaestroBanco(payload)
+            const response = await store(payload)
 
-            if (response.isValid) {
-                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+            if (response?.isValid) {
+                handleClearMaestroBanco()
             }
         } catch (e: any) {
             console.error(e)
@@ -81,39 +80,6 @@ const FormCreate = () => {
             qc.invalidateQueries({
                 queryKey: ['maestroBancoTable']
             })
-        }
-    }
-
-    const handleClearMaestroBanco = () => {
-        reset()
-    }
-
-    const rules =  {
-        codigoInterbancario: {
-            required: 'Este campo es requerido',
-            pattern:{
-                value: /^[0-9]+$/,
-                message: 'Solo se admiten numeros'
-            },
-            min: {
-                value: 1,
-                message: 'Mínimo 1 digitos'
-            },
-            maxLength: {
-                value: 5,
-                message: 'Máximo 5 digitos'
-            }
-        },
-        nombre: {
-            required: 'Este campo es requerido',
-            minLength: {
-                value: 1,
-                message: 'Mínimo 1 caracter'
-            },
-            maxLength: {
-                value: 200,
-                message: 'Máximo 200 caracter'
-            }
         }
     }
 
@@ -152,6 +118,7 @@ const FormCreate = () => {
                                                             error={!!errors.codigoInterbancario}
                                                             helperText={errors.codigoInterbancario?.message}
                                                             required
+                                                            autoFocus
                                                         />
                                                     )}
                                                 />
@@ -171,7 +138,10 @@ const FormCreate = () => {
                                                             placeholder="Nombre del Banco"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={onChange}
+                                                            onChange={(e) => {
+                                                                const textUpperCase = e.target.value.toUpperCase()
+                                                                onChange(textUpperCase)
+                                                            }}
                                                             error={!!errors.nombre}
                                                             helperText={errors.nombre?.message}
                                                             required
@@ -183,50 +153,21 @@ const FormCreate = () => {
                                     </Grid>
                                 </Grid>
 
-                                <Dialog
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleCreateMaestroBanco)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Espere un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogOpen}
+                                    onClose={handleCloseDialog}
+                                    onConfirm={handleSubmit(handleCreateMaestroBanco)}
+                                    loading={loading}
+                                    title="Crear nuevo registro"
+                                    content="¿Desea continuar con la creación del registro?"
+                                />
 
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
-                                        onClick={handleDialogOpen}
+                                        onClick={handleOpenDialog}
                                         disabled={!isValid}
                                     >
                                         { 'Crear' }
@@ -238,7 +179,6 @@ const FormCreate = () => {
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                                 </Box>
                             </form>
                             : null
@@ -246,6 +186,12 @@ const FormCreate = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
         </>
     )
 }

@@ -20,7 +20,7 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
-    const { getMaestroBanco }   = useServices()
+    const { getList }           = useServices()
     const columnsDataGrid       = useColumnsDataGrid()
 
     const filter: any = {
@@ -31,7 +31,7 @@ const DataGridComponent = () => {
 
     const query = useQuery({
         queryKey: ['maestroBancoTable', pageSize, pageNumber, searchText],
-        queryFn: () => getMaestroBanco({ ...filter, pageSize, pageNumber, searchText }),
+        queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
             return qc.getQueryData(['maestroBancoTable', pageSize, pageNumber, searchText])
         },

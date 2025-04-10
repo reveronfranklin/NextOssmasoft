@@ -6,7 +6,6 @@ export const admMaestroCuentaSlice = createSlice({
     initialState: {
         typeOperation: null,
         isOpenDialogCuenta: false,
-        isOpenDialogDelete: false,
         maestroCuenta: {} as CuentaDto
     },
     reducers: {

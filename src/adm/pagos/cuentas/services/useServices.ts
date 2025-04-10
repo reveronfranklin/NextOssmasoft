@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
-import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
-import { createApiHandlers } from "../../utils/api-handlers"
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
+import { createApiHandlers } from '../../utils/api-handlers';
 import { UrlServices } from '../enums/urlServices.enum';
 import {
     ResponseDto,

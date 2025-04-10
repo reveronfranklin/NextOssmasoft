@@ -14,11 +14,11 @@ import {
     InputLabel
 } from '@mui/material';
 
-import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
 import { CuentaDto } from '../../interfaces';
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
-import DialogConfirmation from '../dialog/DialogConfirmation';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
 const FormCreate = () => {
@@ -129,6 +129,7 @@ const FormCreate = () => {
                                                         onSelectionChange={(selected) => onChange(selected?.codigoBanco || null)}
                                                         error={errors.codigoBanco?.message}
                                                         required
+                                                        autoFocus
                                                     />
                                                 )}
                                             />

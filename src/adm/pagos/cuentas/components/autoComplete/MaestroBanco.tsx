@@ -10,6 +10,7 @@ const MaestroBanco = ({
     error,
     label = 'Maestro Banco',
     required = false,
+    autoFocus = false
 } : AutoCompleteProps) => {
     const { getList } = useServicesMaestroBanco()
     const qc: QueryClient = useQueryClient()
@@ -73,7 +74,7 @@ const MaestroBanco = ({
                         id="autocomplete-maestro-banco"
                         getOptionLabel={(option) => `${option.codigoBanco} - ${option.nombre}`}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} />}
+                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
                         key={`banco-${id || 'empty'}`}
                     />
                     {

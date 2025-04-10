@@ -4,4 +4,5 @@ export interface AutoCompleteProps {
     error?: string
     label?: string
     required?: boolean
+    autoFocus?: boolean
 }

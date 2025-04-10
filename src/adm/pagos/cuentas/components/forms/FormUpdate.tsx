@@ -15,13 +15,13 @@ import {
     InputLabel
 } from '@mui/material';
 
-import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
 import { setIsOpenDialogCuenta, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
 import { useServices } from '../../services';
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
-import DialogConfirmation from '../dialog/DialogConfirmation';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
 const FormUpdate = () => {
@@ -68,8 +68,7 @@ const FormUpdate = () => {
         return (value == 'true' || value == true)
     }
 
-    const clearDefaultValues = (codigoCuentaBanco: number) => {
-        setValue('codigoCuentaBanco', codigoCuentaBanco)
+    const clearDefaultValues = () => {
         setValue('codigoBanco', null)
         setValue('tipoCuentaId', null)
         setValue('noCuenta', null)
@@ -85,7 +84,7 @@ const FormUpdate = () => {
     const handleClearMaestroCuenta = () => {
         dispatch(resetMaestroCuentaShow())
         reset(defaultValues)
-        clearDefaultValues(defaultValues.codigoCuentaBanco)
+        clearDefaultValues()
     }
 
     const handleUpdateMaestroCuenta = async (cuenta: CuentaDto) => {
@@ -171,6 +170,7 @@ const FormUpdate = () => {
                                                         onSelectionChange={(selected) => onChange(selected?.codigoBanco || null)}
                                                         error={errors.codigoBanco?.message}
                                                         required
+                                                        autoFocus
                                                     />
                                                 )}
                                             />

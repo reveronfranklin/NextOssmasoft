@@ -9,7 +9,8 @@ const TipoCuenta = ({
     onSelectionChange,
     error,
     label = 'Tipo de cuenta',
-    required = false
+    required = false,
+    autoFocus = false
 } : AutoCompleteProps) => {
     const { getList } = useServicesDescriptivas()
     const qc: QueryClient = useQueryClient()
@@ -73,7 +74,7 @@ const TipoCuenta = ({
                         id="autocomplete-tipo-cuenta"
                         getOptionLabel={(option) => `${option.descripcionId} - ${option.descripcion}`}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} />}
+                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
                         key={`tipo-cuenta-${id || 'empty'}`}
                     />
                     {
