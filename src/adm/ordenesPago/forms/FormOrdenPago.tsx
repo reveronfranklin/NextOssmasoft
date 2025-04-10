@@ -193,7 +193,7 @@ const FormOrdenPago = (props: {
             }
 
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
-            setValue('cantidadPago', orden.cantidadPago ?? 0)
+            setValue('cantidadPago', orden.cantidadPago ?? '')
             setValue('nombreProveedor', orden.nombreProveedor ?? '')
             setValue('motivo', orden.motivo ?? '')
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
@@ -226,7 +226,7 @@ const FormOrdenPago = (props: {
             { !!isFormEnabled ?
                 <form>
                     <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
-                        <Grid container sm={12} xs={12} sx={{ paddingTop: 1 }}>
+                        <Grid item xs={12} sx={{ paddingTop: 1 }}>
                             <FormControlLabel
                                 control={
                                     <Controller
@@ -246,195 +246,199 @@ const FormOrdenPago = (props: {
                                 label={ true ? 'con Factura' : 'sin Factura'}
                             />
                         </Grid>
-                        <Grid container sm={6} xs={12}>
-                            <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
-                                <FormControl fullWidth>
-                                    <Controller
-                                        name="descripcionStatus"
-                                        control={control}
-                                        render={({ field: { value, onChange } }) => (
-                                            <TextField
-                                                fullWidth
-                                                label="Estatus"
-                                                placeholder="Estatus"
-                                                value={value || ''}
-                                                rows={4}
-                                                multiline
-                                                onChange={onChange}
-                                                disabled={true}
-                                                error={!!errors.descripcionStatus}
-                                                helperText={errors.descripcionStatus?.message}
-                                            />
-                                        )}
-                                    />
-                                </FormControl>
-                            </Grid>
-                            <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
-                                <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
-                                </Grid>
-                            </Grid>
-                            <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
-                                <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
-                                    {(typeOperation === 'update') ? <FormControl fullWidth>
+                        <Grid container spacing={0}>
+                            <Grid item xs={12} sm={6}>
+                                <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                                    <FormControl fullWidth>
                                         <Controller
-                                            name="numeroOrdenPago"
+                                            name="descripcionStatus"
                                             control={control}
                                             render={({ field: { value, onChange } }) => (
                                                 <TextField
-                                                    disabled={true}
                                                     fullWidth
-                                                    label="N° Orden de Pago"
-                                                    placeholder="N° Orden de Pago"
+                                                    label="Estatus"
+                                                    placeholder="Estatus"
                                                     value={value || ''}
+                                                    rows={4}
+                                                    multiline
                                                     onChange={onChange}
+                                                    disabled={true}
+                                                    error={!!errors.descripcionStatus}
+                                                    helperText={errors.descripcionStatus?.message}
                                                 />
                                             )}
                                         />
-                                    </FormControl> : null }
+                                    </FormControl>
                                 </Grid>
-                            </Grid>
-                            <Grid container justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
-                                <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
-                                    { typeOperation === 'update' ? (
-                                        <FormControl fullWidth>
-                                            <DatePickerWrapper>
-                                                <DatePicker
-                                                    selected={fechaOrdenPago ? getDateByObject(fechaOrdenPago) : null}
-                                                    id='date-time-picker-desde'
-                                                    dateFormat='dd/MM/yyyy'
-                                                    onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                                    placeholderText='Fecha de la orden'
-                                                    customInput={<CustomInput label='Fecha Orden Pago' />}
-                                                />
-                                            </DatePickerWrapper>
-                                        </FormControl>
-                                    ) : null }
+                                <Grid container item justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ padding: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid container sm={6} xs={12}>
-                            <Grid item sm={12} xs={12} sx={{ paddingTop: '5px' }}>
-                                <FormControl fullWidth>
-                                    <Controller
-                                        name="origenDescripcion"
-                                        control={control}
-                                        render={({ field: { value, onChange } }) => (
-                                            <TextField
-                                                fullWidth
-                                                label="Origen de compromiso"
-                                                placeholder="Origen de compromiso"
-                                                value={value || ''}
-                                                onChange={onChange}
-                                                disabled={true}
+                                <Grid container item justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                        {(typeOperation === 'update') ? <FormControl fullWidth>
+                                            <Controller
+                                                name="numeroOrdenPago"
+                                                control={control}
+                                                render={({ field: { value, onChange } }) => (
+                                                    <TextField
+                                                        disabled={true}
+                                                        fullWidth
+                                                        label="N° Orden de Pago"
+                                                        placeholder="N° Orden de Pago"
+                                                        value={value || ''}
+                                                        onChange={onChange}
+                                                    />
+                                                )}
                                             />
-                                        )}
-                                    />
-                                </FormControl>
-                            </Grid>
-                            <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
-                                <TipoOrden
-                                    id={tipoOrdenPagoId}
-                                    autocompleteRef={autocompleteRef}
-                                    onSelectionChange={handleTipoOrden}
-                                />
-                            </Grid>
-                            <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
-                                <FormaPago
-                                    id={tipoPagoId}
-                                    autocompleteRef={autocompleteRef}
-                                    onSelectionChange={handleFormaPago}
-                                />
-                            </Grid>
-                            <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
-                                <FrecuenciaPago
-                                    id={frecuenciaPagoId}
-                                    autocompleteRef={autocompleteRef}
-                                    onSelectionChange={handleFrecuenciaPago}
-                                />
-                            </Grid>
-                            <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
-                                <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
-                                    <FormControl fullWidth>
-                                        <Controller
-                                            name="cantidadPago"
-                                            control={control}
-                                            rules={{ required: 'Estatus is required' }}
-                                            defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                            render={({ field: { value, onChange } }) => (
-                                                <TextField
-                                                    fullWidth
-                                                    label="Cantidad de Pagos"
-                                                    placeholder="Cantidad de Pagos"
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    error={!!errors.cantidadPago}
-                                                    helperText={errors.cantidadPago?.message}
-                                                />
-                                            )}
-                                        />
-                                    </FormControl>
+                                        </FormControl> : null }
+                                    </Grid>
                                 </Grid>
-                                <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
-                                    <FormControl fullWidth>
-                                        <Controller
-                                            name="cantidadPago"
-                                            control={control}
-                                            rules={{ required: 'Este campo es requerido' }}
-                                            defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                            render={({ field: { value, onChange } }) => (
-                                                <TextField
-                                                    fullWidth
-                                                    label="N°"
-                                                    placeholder="N°"
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    error={!!errors.cantidadPago}
-                                                    helperText={errors.cantidadPago?.message}
-                                                />
-                                            )}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
-                                {typeOperation === 'update' && (
-                                    <>
-                                        <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
+                                <Grid container item justifyContent="space-between" direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ padding: '5px' }}>
+                                        { typeOperation === 'update' ? (
                                             <FormControl fullWidth>
                                                 <DatePickerWrapper>
                                                     <DatePicker
-                                                        selected={fecha ? getDateByObject(fecha) : null}
+                                                        selected={fechaOrdenPago ? getDateByObject(fechaOrdenPago) : null}
                                                         id='date-time-picker-desde'
                                                         dateFormat='dd/MM/yyyy'
                                                         onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                                        placeholderText='Plazo de Pago Desde'
-                                                        customInput={<CustomInput label='Plazo de Pago Desde' />}
-                                                        disabled={true}
+                                                        placeholderText='Fecha de la orden'
+                                                        customInput={<CustomInput label='Fecha Orden Pago' />}
                                                     />
                                                 </DatePickerWrapper>
                                             </FormControl>
-                                        </Grid>
-                                        <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <DatePickerWrapper>
-                                                    <DatePicker
-                                                        selected={fecha ? getDateByObject(fecha) : null}
-                                                        id='date-time-picker-hasta'
-                                                        dateFormat='dd/MM/yyyy'
-                                                        onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
-                                                        placeholderText='Plazo de Pago Hasta'
-                                                        customInput={<CustomInput label='Plazo de Pago Hasta' />}
-                                                        disabled={true}
+                                        ) : null }
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Grid item sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                                    <FormControl fullWidth>
+                                        <Controller
+                                            name="origenDescripcion"
+                                            control={control}
+                                            render={({ field: { value, onChange } }) => (
+                                                <TextField
+                                                    fullWidth
+                                                    label="Origen de compromiso"
+                                                    placeholder="Origen de compromiso"
+                                                    value={value || ''}
+                                                    onChange={onChange}
+                                                    disabled={true}
+                                                />
+                                            )}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
+                                    <TipoOrden
+                                        id={tipoOrdenPagoId}
+                                        autocompleteRef={autocompleteRef}
+                                        onSelectionChange={handleTipoOrden}
+                                    />
+                                </Grid>
+                                <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
+                                    <FormaPago
+                                        id={tipoPagoId}
+                                        autocompleteRef={autocompleteRef}
+                                        onSelectionChange={handleFormaPago}
+                                    />
+                                </Grid>
+                                <Grid item sm={12} xs={12} sx={{ paddingTop: '10px' }}>
+                                    <FrecuenciaPago
+                                        id={frecuenciaPagoId}
+                                        autocompleteRef={autocompleteRef}
+                                        onSelectionChange={handleFrecuenciaPago}
+                                    />
+                                </Grid>
+                                <Grid container item direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                                    <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
+                                        <FormControl fullWidth>
+                                            <Controller
+                                                name="cantidadPago"
+                                                control={control}
+                                                rules={{ required: 'Estatus is required' }}
+                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
+                                                render={({ field: { value, onChange } }) => {
+                                                    return (
+                                                        <TextField
+                                                            fullWidth
+                                                            label="Cantidad de Pagos"
+                                                            placeholder="Cantidad de Pagos"
+                                                            value={value}
+                                                            onChange={onChange}
+                                                            error={!!errors.cantidadPago}
+                                                            helperText={errors.cantidadPago?.message}
+                                                        />
+                                                    )
+                                                }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
+                                        <FormControl fullWidth>
+                                            <Controller
+                                                name="cantidadPago"
+                                                control={control}
+                                                rules={{ required: 'Este campo es requerido' }}
+                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
+                                                render={({ field: { value, onChange } }) => (
+                                                    <TextField
+                                                        fullWidth
+                                                        label="N°"
+                                                        placeholder="N°"
+                                                        value={value}
+                                                        onChange={onChange}
+                                                        error={!!errors.cantidadPago}
+                                                        helperText={errors.cantidadPago?.message}
                                                     />
-                                                </DatePickerWrapper>
-                                            </FormControl>
-                                        </Grid>
-                                    </>
-                                )}
+                                                )}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item direction="row" sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                                    {typeOperation === 'update' && (
+                                        <>
+                                            <Grid item sm={6} xs={12} sx={{ paddingTop: '5px', paddingRight: '5px' }}>
+                                                <FormControl fullWidth>
+                                                    <DatePickerWrapper>
+                                                        <DatePicker
+                                                            selected={fecha ? getDateByObject(fecha) : null}
+                                                            id='date-time-picker-desde'
+                                                            dateFormat='dd/MM/yyyy'
+                                                            onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                            placeholderText='Plazo de Pago Desde'
+                                                            customInput={<CustomInput label='Plazo de Pago Desde' />}
+                                                            disabled={true}
+                                                        />
+                                                    </DatePickerWrapper>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item sm={6} xs={12} sx={{ paddingTop: '5px' }}>
+                                                <FormControl fullWidth>
+                                                    <DatePickerWrapper>
+                                                        <DatePicker
+                                                            selected={fecha ? getDateByObject(fecha) : null}
+                                                            id='date-time-picker-hasta'
+                                                            dateFormat='dd/MM/yyyy'
+                                                            onChange={(date: Date) => { handleFechaSolicitudChange(date) }}
+                                                            placeholderText='Plazo de Pago Hasta'
+                                                            customInput={<CustomInput label='Plazo de Pago Hasta' />}
+                                                            disabled={true}
+                                                        />
+                                                    </DatePickerWrapper>
+                                                </FormControl>
+                                            </Grid>
+                                        </>
+                                    )}
+                                </Grid>
                             </Grid>
                         </Grid>
-                        <Grid container sm={12} xs={12} sx={{ paddingTop: '5px' }}>
-                            <Grid item sm={12} xs={12} sx={{ paddingTop: '5px' }}>
+                        <Grid container>
+                            <Grid item sm={12} xs={12} sx={{ paddingTop: '15px' }}>
                                 <FormControl fullWidth>
                                     <Controller
                                         name="nombreProveedor"
@@ -467,7 +471,7 @@ const FormOrdenPago = (props: {
                                                 placeholder="Motivo"
                                                 value={value || ''}
                                                 multiline
-                                                rows={6}
+                                                rows={8}
                                                 onChange={onChange}
                                                 error={!!errors.motivo}
                                                 helperText={errors.motivo?.message}

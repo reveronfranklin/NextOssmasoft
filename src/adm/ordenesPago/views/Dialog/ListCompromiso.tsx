@@ -48,7 +48,7 @@ const ListCompromiso = () => {
                     },
                 }}
             >
-                <Grid spacing={0} >
+                <Grid>
                     <Box position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{ justifyContent: 'space-between', padding: 0 }}>
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>

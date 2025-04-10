@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useRef } from 'react'
+import { useState, ChangeEvent, useRef, useCallback } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
@@ -24,17 +24,15 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
-
-    const qc: QueryClient = useQueryClient()
     const debounceTimeoutRef = useRef<any>(null)
 
-    const {
-        getListPucByOrdenPago,
-        fetchUpdatePucByOrdenPago
-    } = useServices()
+    const columnsDataGridListPucByOrden = ColumnsDataGridListPucByOrden()
+    const qc: QueryClient = useQueryClient()
 
     const { codigoOrdenPago} = useSelector((state: RootState) => state.admOrdenPago)
     const filter: IfilterByOrdenPago = { codigoOrdenPago }
+
+    const { getListPucByOrdenPago, fetchUpdatePucByOrdenPago } = useServices()
 
     const query = useQuery({
         queryKey: ['listPucByOrdenPago', pageSize, pageNumber, searchText],
@@ -48,17 +46,18 @@ const DataGridComponent = () => {
 
     const rows = query?.data?.data || []
     const rowCount = query?.data?.data.length
+    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
 
-    const handlePageChange = (newPage: number) => {
+    const handlePageChange = useCallback((newPage: number) => {
         setPage(newPage)
-    }
+    }, [])
 
-    const handleSizeChange = (newPageSize: number) => {
+    const handleSizeChange = useCallback((newPageSize: number) => {
         setPage(0)
         setPageSize(newPageSize)
-    }
+    }, [])
 
-    const handleOnCellEditCommit = async (row: any) => {
+    const handleOnCellEditCommit = useCallback(async (row: any) => {
         const updateDto: IUpdateFieldDto = {
             id: row.id,
             field: row.field,
@@ -75,30 +74,25 @@ const DataGridComponent = () => {
         } finally {
             qc.invalidateQueries({ queryKey: ['listPucByOrdenPago'] })
         }
-    }
+    }, [fetchUpdatePucByOrdenPago, qc])
 
-    const handleSearch = (value: string) => {
+    const debouncedSearch = useCallback(() => {
+        clearTimeout(debounceTimeoutRef.current)
+        debounceTimeoutRef.current = setTimeout(() => {
+            setSearchText(buffer)
+        }, 2500)
+    }, [buffer])
+
+    const handleSearch = useCallback((value: string) => {
         if (value === '') {
             setSearchText('')
             setBuffer('')
 
             return
         }
-
-        const newBuffer = value
-        setBuffer(newBuffer)
+        setBuffer(value)
         debouncedSearch()
-    }
-
-    const debouncedSearch = () => {
-        clearTimeout(debounceTimeoutRef.current)
-
-        debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
-        }, 2500)
-    }
-
-    const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
+    }, [debouncedSearch])
 
     return (
         <>
@@ -111,7 +105,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoPucOrdenPago}
                             rows={paginatedRows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGridListPucByOrden() as any}
+                            columns={columnsDataGridListPucByOrden}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}

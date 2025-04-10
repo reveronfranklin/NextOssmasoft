@@ -13,7 +13,7 @@ import {
     setConFactura,
 } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
-import FormOrdenPago from '../../forms/FormOrdenPago'
+import FormOrdenPago from '../FormOrdenPago'
 
 const FormCreateOrdenPago = () => {
     const qc: QueryClient = useQueryClient()
@@ -105,7 +105,7 @@ const FormCreateOrdenPago = () => {
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>
-                <Grid sm={12} xs={12}>
+                <Grid item sm={12} xs={12}>
                     <Box display="flex" gap={2} ml="1.5rem">
                         <Button
                             variant='contained'
@@ -117,7 +117,7 @@ const FormCreateOrdenPago = () => {
                         </Button>
                     </Box>
                 </Grid>
-                <Grid sm={12} xs={12} sx={{
+                <Grid item sm={12} xs={12} sx={{
                     overflow: 'auto',
                     padding: '0 1rem',
                 }}>
@@ -125,9 +125,9 @@ const FormCreateOrdenPago = () => {
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleCreateOrden}
                         onFormClear={handleClearCompromiso}
-                        titleButton = {'Crear'}
-                        message = {message}
-                        loading = {loading}
+                        titleButton={'Crear'}
+                        message={message}
+                        loading={loading}
                     />
                 </Grid>
             </Grid>

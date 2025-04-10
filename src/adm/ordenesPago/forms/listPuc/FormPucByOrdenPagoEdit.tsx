@@ -1,15 +1,15 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, TextField, Button, Grid } from '@mui/material'
+import { Box, TextField, Grid } from '@mui/material'
 import { RootState } from "src/store"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
-import { toast } from 'react-hot-toast'
 import { setIsOpenDialogListPucOrdenPagoEdit } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
-import { useDispatch } from 'react-redux'
 import { NumericFormat } from 'react-number-format'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
+import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
 
 interface FormInputs {
     monto: number
@@ -24,10 +24,13 @@ interface FormInputs {
 
 const FormPucByOrdenPagoEdit = () => {
     const dispatch = useDispatch()
-    const qc: QueryClient = useQueryClient()
 
     const { pucSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
-    const { fetchUpdatePucByOrdenPago } = useServices()
+
+    const qc: QueryClient = useQueryClient()
+
+    const { message, fetchUpdatePucByOrdenPago } = useServices()
+
     const { control, handleSubmit, formState: { errors, isValid } } = useForm<FormInputs>({ defaultValues: pucSeleccionado, mode: 'onChange' })
 
     const onSubmit = async (data: FormInputs) => {
@@ -38,15 +41,15 @@ const FormPucByOrdenPagoEdit = () => {
         }
 
         try {
-            const response = await fetchUpdatePucByOrdenPago(updateDto)
-            if (response?.data?.isValid) {
-                toast.success('Registro actualizado')
-            }
+            await fetchUpdatePucByOrdenPago(updateDto)
         } catch (error) {
             console.error(error)
         } finally {
             qc.invalidateQueries({ queryKey: ['listPucByOrdenPago'] })
-            dispatch(setIsOpenDialogListPucOrdenPagoEdit(false))
+
+            setTimeout(() => {
+                dispatch(setIsOpenDialogListPucOrdenPagoEdit(false))
+            }, 10000)
         }
     }
 
@@ -61,14 +64,15 @@ const FormPucByOrdenPagoEdit = () => {
                         required: 'Este campo es requerido',
                         min: { value: 0, message: 'El monto debe ser mayor o igual a 0' }
                     }}
-                    render={({ field }) => (
+                    render={({ field: { ref, ...field } }) => (
                         <NumericFormat
                             {...field}
-                            customInput={TextField}
+                            getInputRef={ref}
                             thousandSeparator="."
                             decimalSeparator=","
                             allowNegative={false}
                             decimalScale={2}
+                            customInput={TextField}
                             label="Monto"
                             fullWidth
                             error={!!errors.monto}
@@ -154,15 +158,23 @@ const FormPucByOrdenPagoEdit = () => {
             </Grid>
             <Grid item xs={12}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-                    <Button
-                        onClick={handleSubmit(onSubmit)}
-                        variant="contained"
+                    <ButtonWithConfirm
                         color="primary"
-                        type="submit"
+                        onAction={handleSubmit(onSubmit)}
+                        confirmMessage={'¿Está seguro de que desea guardar los cambios?'}
+                        showLoading={true}
+                        disableBackdropClick={true}
+                        sx={{ minWidth: '120px' }}
                         disabled={!isValid}
                     >
                         Guardar
-                    </Button>
+                    </ButtonWithConfirm>
+                    <AlertMessage
+                        message={message?.text ?? ''}
+                        severity={message?.isValid ? 'success' : 'error'}
+                        duration={8000}
+                        show={message?.text ? true : false}
+                    />
                 </Box>
             </Grid>
         </Grid>

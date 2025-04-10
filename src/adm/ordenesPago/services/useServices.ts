@@ -225,7 +225,7 @@ const useServices = () => {
             if (responseGetOrdenes.data.isValid) {
                 setMessage(prev => ({
                     ...prev,
-                    text: responseGetOrdenes.data.message || '',
+                    text: responseGetOrdenes.data.message || 'Acción realizada con éxito',
                     timestamp: Date.now(),
                 }))
 
@@ -234,7 +234,7 @@ const useServices = () => {
 
             setMessage(prev => ({
                 ...prev,
-                text: responseGetOrdenes.data.message || '',
+                text: responseGetOrdenes.data.message || 'Acción no realizada',
                 timestamp: Date.now(),
                 isValid: false,
             }))

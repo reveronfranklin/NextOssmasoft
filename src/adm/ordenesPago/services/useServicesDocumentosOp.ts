@@ -22,8 +22,8 @@ const useServicesDocumentosOp = () => {
     isValid: true,
   })
   const [loading, setLoading] = useState<boolean>(false)
-  const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
+  const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
   const dispatch = useDispatch()
 
   const handleApiError = (e: any) => {
@@ -38,7 +38,7 @@ const useServicesDocumentosOp = () => {
     return null
   }
 
-  const handleApiResponse = <T,>(response: {data: T }, successMessage?: string): T | null => {
+  const handleApiResponse = <T>(response: {data: T }, successMessage?: string): T | null => {
     if (response && response.data) {
       if (successMessage) {
         setMessage({
@@ -79,7 +79,7 @@ const useServicesDocumentosOp = () => {
     try {
       setLoading(true)
       const response = await ossmmasofApi.post<IResponseCreateDocumentosOp>(UrlServices.CREATEDOCUMENTOSOP, filters)
-      const data = handleApiResponse(response, 'Documento creado con éxito.')
+      const data = handleApiResponse<IResponseCreateDocumentosOp>(response, 'Documento creado con éxito.')
 
       if (data) {
         dispatch(setDocumentCount(data.cantidadRegistros))
