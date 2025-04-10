@@ -5,12 +5,10 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-import { SisBancoUpdateDto, SisBancoDeleteDto } from '../../interfaces'
+import { SisBancoUpdateDto } from '../../../interfaces';
 import {
     setIsOpenDialogMaestroBancoDetalle,
-    setIsOpenDialogMaestroBancoDelete,
     setMaestroBancoSeleccionadoDetalle,
-    setCodigoBanco,
     setTypeOperation
 } from 'src/store/apps/pagos/bancos';
 
@@ -21,12 +19,6 @@ const useColumnsDataGrid = (): GridColDef[] => {
         dispatch(setTypeOperation('update'))
         dispatch(setIsOpenDialogMaestroBancoDetalle(true))
         dispatch(setMaestroBancoSeleccionadoDetalle(maestroBanco))
-    }
-
-    const handleDelete = (codigoBanco: SisBancoDeleteDto) => {
-        dispatch(setTypeOperation('delete'))
-        dispatch(setIsOpenDialogMaestroBancoDelete(true))
-        dispatch(setCodigoBanco(codigoBanco))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -49,11 +41,6 @@ const useColumnsDataGrid = (): GridColDef[] => {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </StyledIconButton>
-                    </Tooltip>
-                    <Tooltip title='Delete'>
-                        <StyledIconButton size='small' onClick={() => handleDelete(row.codigoBanco)}>
-                            <Icon icon='mdi:delete' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>

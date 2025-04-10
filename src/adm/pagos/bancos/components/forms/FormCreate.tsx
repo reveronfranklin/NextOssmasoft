@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
     Box,
     Grid,
@@ -18,38 +18,32 @@ import {
     CircularProgress,
 } from '@mui/material';
 
-import { RootState } from 'src/store';
-import { SisBancoCreateDto, SisBancoDeleteDto } from '../interfaces';
-import { setIsOpenDialogMaestroBancoDetalle, resetMaestroBancoSeleccionadoDetalle } from 'src/store/apps/pagos/bancos'
-import useServices from '../services/useServices';
+import { useServices } from '../../services';
+import { SisBancoCreateDto } from '../../interfaces';
+import { setIsOpenDialogMaestroBancoDetalle } from 'src/store/apps/pagos/bancos'
 
-const FormUpdate = () => {
+const FormCreate = () => {
     const dispatch = useDispatch()
-    const { maestroBanco } = useSelector((state: RootState) => state.admMaestroBanco )
-
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
     const [open, setOpen] = useState<boolean>(false)
-    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const qc: QueryClient = useQueryClient()
 
     const {
-        updateMaestroBanco,
-        deleteMaestroBanco,
+        createMaestroBanco,
         message,
         loading
     } = useServices()
 
     const defaultValues: SisBancoCreateDto = {
-        codigoBanco: maestroBanco.codigoBanco,
-        nombre: maestroBanco.nombre,
-        codigoInterbancario: maestroBanco.codigoInterbancario
+        codigoBanco: 0,
+        nombre: '',
+        codigoInterbancario: ''
     }
 
     const {
         control,
         handleSubmit,
         reset,
-        setValue,
         formState: { errors, isValid }
     } = useForm<SisBancoCreateDto>({
         defaultValues,
@@ -64,18 +58,18 @@ const FormUpdate = () => {
         setOpen(false)
     }
 
-    const handleUpdateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
+    const handleCreateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
         setIsFormEnabled(false)
         handleClose()
 
         try {
             const payload: SisBancoCreateDto = {
-                codigoBanco: dataFormMaestroBanco.codigoBanco,
+                codigoBanco: 0,
                 nombre: dataFormMaestroBanco.nombre,
                 codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
             }
 
-            const response = await updateMaestroBanco(payload)
+            const response = await createMaestroBanco(payload)
 
             if (response.isValid) {
                 dispatch(setIsOpenDialogMaestroBancoDetalle(false))
@@ -90,50 +84,11 @@ const FormUpdate = () => {
         }
     }
 
-    const handleDeleteDialogOpen = () => {
-        setOpenDeleteDialog(true)
-    }
-
-    const handleDeleteDialogClose = () => {
-        setOpenDeleteDialog(false)
-    }
-
-    const handleDelete = async () => {
-        try {
-            const payload: SisBancoDeleteDto = {
-                codigoBanco: maestroBanco.codigoBanco
-            }
-
-            const response = await deleteMaestroBanco(payload)
-
-            if (response?.isValid) {
-                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
-            }
-        } catch (e: any) {
-            console.error(e)
-        } finally {
-            qc.invalidateQueries({
-                queryKey: ['maestroBancoTable']
-            })
-        }
-    }
-
     const handleClearMaestroBanco = () => {
-        dispatch(resetMaestroBancoSeleccionadoDetalle())
         reset()
     }
 
-    useEffect(() => {
-        if (Object.keys(maestroBanco).length === 0) {
-            setValue('codigoInterbancario', '')
-            setValue('nombre', '')
-        }
-    }, [ maestroBanco ])
-
     const rules =  {
-        codigoBanco: {
-            required: 'Este campo es requerido'
-        },
         codigoInterbancario: {
             required: 'Este campo es requerido',
             pattern:{
@@ -182,29 +137,6 @@ const FormUpdate = () => {
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
-                                                    name="codigoBanco"
-                                                    control={control}
-                                                    rules={ rules.codigoBanco }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="number"
-                                                            fullWidth
-                                                            label="Código Banco"
-                                                            placeholder="Código Banco"
-                                                            value={value || 0}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.codigoBanco}
-                                                            helperText={errors.codigoBanco?.message}
-                                                            disabled={true}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
                                                     name="codigoInterbancario"
                                                     control={control}
                                                     rules={ rules.codigoInterbancario }
@@ -219,15 +151,13 @@ const FormUpdate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.codigoInterbancario}
                                                             helperText={errors.codigoInterbancario?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
                                                     name="nombre"
@@ -244,6 +174,7 @@ const FormUpdate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.nombre}
                                                             helperText={errors.nombre?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -271,7 +202,7 @@ const FormUpdate = () => {
                                             variant='contained'
                                             color='primary'
                                             size='small'
-                                            onClick={handleSubmit(handleUpdateMaestroBanco)}
+                                            onClick={handleSubmit(handleCreateMaestroBanco)}
                                         >
                                             { loading ? (
                                                 <>
@@ -290,62 +221,15 @@ const FormUpdate = () => {
                                     </DialogActions>
                                 </Dialog>
 
-                                <Dialog
-                                    open={openDeleteDialog}
-                                    onClose={handleDeleteDialogClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleDeleteDialogClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleDelete)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Eliminando el registro, un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
-
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
                                         onClick={handleDialogOpen}
-                                        disabled={!isValid && loading}
+                                        disabled={!isValid}
                                     >
-                                        Actualizar
-                                    </Button>
-                                    <Button
-                                        sx={{ mx: 4 }}
-                                        variant='outlined'
-                                        size='small'
-                                        onClick={handleDeleteDialogOpen}
-                                        disabled={!isValid && loading}
-                                    >
-                                        Eliminar
+                                        { 'Crear' }
                                     </Button>
                                     <Button
                                         color='primary'
@@ -366,4 +250,4 @@ const FormUpdate = () => {
     )
 }
 
-export default FormUpdate
+export default FormCreate

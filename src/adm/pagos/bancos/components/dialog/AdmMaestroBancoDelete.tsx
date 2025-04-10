@@ -15,7 +15,7 @@ import {
 import { RootState } from 'src/store';
 import { setIsOpenDialogMaestroBancoDelete } from 'src/store/apps/pagos/bancos';
 import { SisBancoDeleteDto } from 'src/interfaces/adm/SisBanco/SisBancoDeleteDto';
-import useServices from '../../services/useServices';
+import { useServices } from '../../services';
 
 const AdmMaestroBancoDelete = () => {
     const dispatch = useDispatch()

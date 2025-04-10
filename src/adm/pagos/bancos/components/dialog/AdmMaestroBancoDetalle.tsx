@@ -6,8 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/store';
 import Icon from 'src/@core/components/icon';
 import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos';
-import FormCreate from '../../forms/FormCreate';
-import FormUpdate from '../../forms/FormUpdate';
+import FormCreate from '../forms/FormCreate';
+import FormUpdate from '../forms/FormUpdate';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -48,7 +48,7 @@ const DialogAdmMaestroBancoDetalle = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '50vh',
+                        height: '45vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0

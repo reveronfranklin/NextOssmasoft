@@ -1,11 +1,11 @@
-import { ChangeEvent, useState, useRef } from 'react'
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import useColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
-import useServices from '../../services/useServices'
+import { ChangeEvent, useState, useRef } from 'react';
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, styled } from '@mui/material';
+import Spinner from 'src/@core/components/spinner';
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import useColumnsDataGrid from './headers/ColumnsDataGrid';
+import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -13,10 +13,10 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState<number>(0)
-    const [pageSize, setPageSize] = useState<number>(5)
-    const [searchText, setSearchText] = useState<string>('')
-    const [buffer, setBuffer] = useState<string>('')
+    const [pageNumber, setPage]         = useState<number>(0)
+    const [pageSize, setPageSize]       = useState<number>(5)
+    const [searchText, setSearchText]   = useState<string>('')
+    const [buffer, setBuffer]           = useState<string>('')
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()

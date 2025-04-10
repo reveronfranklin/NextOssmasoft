@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     Box,
     Grid,
@@ -18,32 +18,38 @@ import {
     CircularProgress,
 } from '@mui/material';
 
-import useServices from '../services/useServices';
-import { SisBancoCreateDto } from '../interfaces';
-import { setIsOpenDialogMaestroBancoDetalle } from 'src/store/apps/pagos/bancos'
+import { RootState } from 'src/store';
+import { SisBancoCreateDto, SisBancoDeleteDto } from '../../interfaces';
+import { setIsOpenDialogMaestroBancoDetalle, resetMaestroBancoSeleccionadoDetalle } from 'src/store/apps/pagos/bancos'
+import { useServices } from '../../services';
 
-const FormCreate = () => {
+const FormUpdate = () => {
     const dispatch = useDispatch()
+    const { maestroBanco } = useSelector((state: RootState) => state.admMaestroBanco )
+
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
     const [open, setOpen] = useState<boolean>(false)
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const qc: QueryClient = useQueryClient()
 
     const {
-        createMaestroBanco,
+        updateMaestroBanco,
+        deleteMaestroBanco,
         message,
         loading
     } = useServices()
 
     const defaultValues: SisBancoCreateDto = {
-        codigoBanco: 0,
-        nombre: '',
-        codigoInterbancario: ''
+        codigoBanco: maestroBanco.codigoBanco,
+        nombre: maestroBanco.nombre,
+        codigoInterbancario: maestroBanco.codigoInterbancario
     }
 
     const {
         control,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors, isValid }
     } = useForm<SisBancoCreateDto>({
         defaultValues,
@@ -58,7 +64,7 @@ const FormCreate = () => {
         setOpen(false)
     }
 
-    const handleCreateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
+    const handleUpdateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
         setIsFormEnabled(false)
         handleClose()
 
@@ -69,7 +75,7 @@ const FormCreate = () => {
                 codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
             }
 
-            const response = await createMaestroBanco(payload)
+            const response = await updateMaestroBanco(payload)
 
             if (response.isValid) {
                 dispatch(setIsOpenDialogMaestroBancoDetalle(false))
@@ -84,9 +90,45 @@ const FormCreate = () => {
         }
     }
 
+    const handleDeleteDialogOpen = () => {
+        setOpenDeleteDialog(true)
+    }
+
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false)
+    }
+
+    const handleDelete = async () => {
+        try {
+            const payload: SisBancoDeleteDto = {
+                codigoBanco: maestroBanco.codigoBanco
+            }
+
+            const response = await deleteMaestroBanco(payload)
+
+            if (response?.isValid) {
+                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+            }
+        } catch (e: any) {
+            console.error(e)
+        } finally {
+            qc.invalidateQueries({
+                queryKey: ['maestroBancoTable']
+            })
+        }
+    }
+
     const handleClearMaestroBanco = () => {
+        dispatch(resetMaestroBancoSeleccionadoDetalle())
         reset()
     }
+
+    useEffect(() => {
+        if (Object.keys(maestroBanco).length === 0) {
+            setValue('codigoInterbancario', '')
+            setValue('nombre', '')
+        }
+    }, [ maestroBanco ])
 
     const rules =  {
         codigoBanco: {
@@ -155,6 +197,7 @@ const FormCreate = () => {
                                                             error={!!errors.codigoBanco}
                                                             helperText={errors.codigoBanco?.message}
                                                             disabled={true}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -177,6 +220,7 @@ const FormCreate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.codigoInterbancario}
                                                             helperText={errors.codigoInterbancario?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -202,6 +246,7 @@ const FormCreate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.nombre}
                                                             helperText={errors.nombre?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -229,7 +274,7 @@ const FormCreate = () => {
                                             variant='contained'
                                             color='primary'
                                             size='small'
-                                            onClick={handleSubmit(handleCreateMaestroBanco)}
+                                            onClick={handleSubmit(handleUpdateMaestroBanco)}
                                         >
                                             { loading ? (
                                                 <>
@@ -248,15 +293,62 @@ const FormCreate = () => {
                                     </DialogActions>
                                 </Dialog>
 
+                                <Dialog
+                                    open={openDeleteDialog}
+                                    onClose={handleDeleteDialogClose}
+                                    aria-labelledby='alert-dialog-title'
+                                    aria-describedby='alert-dialog-description'
+                                >
+                                    <DialogTitle id='alert-dialog-title'>
+                                        {'Esta usted seguro de realizar esta acción?'}
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id='alert-dialog-description'>
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleDeleteDialogClose}>No</Button>
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            size='small'
+                                            onClick={handleSubmit(handleDelete)}
+                                        >
+                                            { loading ? (
+                                                <>
+                                                    <CircularProgress
+                                                        sx={{
+                                                            color: 'common.white',
+                                                            width: '20px !important',
+                                                            height: '20px !important',
+                                                            mr: theme => theme.spacing(2)
+                                                        }}
+                                                    />
+                                                    Eliminando el registro, un momento...
+                                                </>
+                                            ) : 'Si' }
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
                                         onClick={handleDialogOpen}
-                                        disabled={!isValid}
+                                        disabled={!isValid && loading}
                                     >
-                                        { 'Crear' }
+                                        Actualizar
+                                    </Button>
+                                    <Button
+                                        sx={{ mx: 4 }}
+                                        variant='outlined'
+                                        size='small'
+                                        onClick={handleDeleteDialogOpen}
+                                        disabled={!isValid && loading}
+                                    >
+                                        Eliminar
                                     </Button>
                                     <Button
                                         color='primary'
@@ -277,4 +369,4 @@ const FormCreate = () => {
     )
 }
 
-export default FormCreate
+export default FormUpdate
