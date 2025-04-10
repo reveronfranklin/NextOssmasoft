@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, Grid, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
@@ -23,14 +23,13 @@ const DataGridComponent = () => {
 
   const qc: QueryClient = useQueryClient()
   const dispatch = useDispatch()
-  const {
-    getListImpuestoDocumentosOp
-  } = useServicesImpuestosDocumentosOp()
+  const { getListImpuestoDocumentosOp } = useServicesImpuestosDocumentosOp()
 
   const { documentoOpSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
 
-  const filter: any = { codigoDocumentoOp: documentoOpSeleccionado.codigoDocumentoOp }
-  console.log(filter)
+  const filter = useMemo(() => ({
+    codigoDocumentoOp: documentoOpSeleccionado.codigoDocumentoOp
+  }), [documentoOpSeleccionado.codigoDocumentoOp])
 
   const query = useQuery({
     queryKey: ['impuestoDocumentosTable', pageSize, pageNumber],

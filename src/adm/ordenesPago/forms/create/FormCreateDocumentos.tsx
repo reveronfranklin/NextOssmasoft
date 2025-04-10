@@ -230,13 +230,10 @@ const FormCreateDocumentosOp = () => {
       const result = await updateDocumentos(Documento)
 
       if (result?.isValid) {
-        console.log(result?.message)
+        invalidateAndReset('documentosTable')
       }
-
-      invalidateAndReset('documentosTable')
     } catch (e: any) {
       console.error(e)
-    } finally {
     }
   }
 
@@ -249,12 +246,10 @@ const FormCreateDocumentosOp = () => {
       const result = await deleteDocumentos(data)
 
       if (result?.isValid) {
-        console.log(result?.message)
+        invalidateAndReset('documentosTable')
       }
     } catch (e: any) {
       console.error(e)
-    } finally {
-      invalidateAndReset('documentosTable')
     }
   }
 

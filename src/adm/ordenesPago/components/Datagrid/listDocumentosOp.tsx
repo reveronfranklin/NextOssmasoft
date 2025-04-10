@@ -27,6 +27,7 @@ const DataGridComponent = () => {
   const columnsDataGridListCompromiso = ColumnsDataGridListCompromiso()
 
   const filter: IGetListByOrdenPago = { codigoOrdenPago }
+
   const query = useQuery({
     queryKey: ['documentosTable', pageSize, pageNumber, codigoOrdenPago],
     queryFn: () => getListDocumentos(filter),
@@ -38,7 +39,8 @@ const DataGridComponent = () => {
   }, qc)
 
   const rows: Documentos[] = query?.data?.data || []
-  const rowCount = rows && Array.isArray(rows) ? rows.length : 0
+  const rowCount = query?.data?.cantidadRegistros
+
   setDocumentCount(rowCount)
 
   const handlePageChange = useCallback((newPage: number) => {
