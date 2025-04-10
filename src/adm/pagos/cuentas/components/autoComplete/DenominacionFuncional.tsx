@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react';
-import { Skeleton } from '@mui/material';
-import { Autocomplete, TextField } from '@mui/material';
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
-import { useServicesDescriptivas } from '../../services';
-import { DescriptivaResponseDto, DescriptivaFilterDto } from '../../interfaces';
+import { useEffect, useState } from 'react'
+import { Skeleton, Autocomplete, TextField, FormControl, FormHelperText } from '@mui/material'
+import { useQueryClient, useQuery, type QueryClient } from '@tanstack/react-query'
+import { useServicesDescriptivas } from '../../services'
+import type { AutoCompleteProps, DescriptivaResponseDto, DescriptivaFilterDto } from '../../interfaces'
 
-const DenominacionFuncional = (props: any) => {
-    const { getList }       = useServicesDescriptivas()
-    const qc: QueryClient   = useQueryClient()
+const DenominacionFuncional = ({
+    id,
+    onSelectionChange,
+    error,
+    label = "Denominación Funcional",
+    required = false
+}: AutoCompleteProps) => {
+    const { getList } = useServicesDescriptivas()
+    const qc: QueryClient = useQueryClient()
 
     const payload: DescriptivaFilterDto = {
         TituloId: 221
@@ -20,35 +25,26 @@ const DenominacionFuncional = (props: any) => {
         staleTime: 5000 * 60 * 60
     }, qc)
 
-    const ListDenominacionFuncional: DescriptivaResponseDto[]   = query.data?.data ?? [];
+    const ListDenominacionFuncional: DescriptivaResponseDto[]   = query.data?.data ?? []
     const [selectedValue, setSelectedValue]                     = useState<DescriptivaResponseDto | null>(null)
 
     useEffect(() => {
-        if (props.id === 0) {
+        if (id === null || id === 0 || id === undefined) {
             setSelectedValue(null)
 
             return
         }
 
-        if (selectedValue && selectedValue.descripcionId === props.id) {
-
-            return
-        }
-
-        const value = ListDenominacionFuncional.find((item) => item?.descripcionId === props.id)
-
-        if (value && (!selectedValue || selectedValue.descripcionId !== value.descripcionId)) {
-            setSelectedValue(value)
-            props.onSelectionChange(value)
-        }
-    }, [props.id, ListDenominacionFuncional])
+        const value = ListDenominacionFuncional.find((item) => item?.descripcionId === id)
+        setSelectedValue(value ?? null)
+    }, [id, ListDenominacionFuncional])
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
-            props.onSelectionChange(newValue)
+            onSelectionChange(newValue)
             setSelectedValue(newValue)
         } else {
-            props.onSelectionChange({
+            onSelectionChange({
                 descripcionId: 0,
                 value: 0
             })
@@ -57,31 +53,35 @@ const DenominacionFuncional = (props: any) => {
     }
 
     return (
-        <>
-            {
-                query.isLoading ? (
-                    <Skeleton
-                        width={300}
-                        height={70}
-                        style={{
-                            border: '1px solid #ccc',
-                            backgroundColor: '#fff',
-                            borderRadius: 10,
-                            padding: 0,
-                        }}
-                    />
-                ) : (
+        <FormControl fullWidth error={!!error}>
+            {query.isLoading ? (
+                <Skeleton
+                    width={300}
+                    height={70}
+                    style={{
+                        border: "1px solid #ccc",
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        padding: 0
+                    }}
+                />
+            ) : (
+                <>
                     <Autocomplete
                         options={ListDenominacionFuncional}
                         value={selectedValue}
-                        id='autocomplete-denominacion-funcional'
+                        id="autocomplete-denominacion-funcional"
                         getOptionLabel={(option) => `${option.descripcionId} - ${option.descripcion}`}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label="Denominación Funcional" />}
+                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} />}
+                        key={`denominacion-funcional-${id || "empty"}`}
                     />
-                )
-            }
-        </>
+                    {
+                        error && <FormHelperText error>{error}</FormHelperText>
+                    }
+                </>
+            )}
+        </FormControl>
     )
 }
 

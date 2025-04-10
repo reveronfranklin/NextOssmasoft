@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@mui/material';
-import { Autocomplete, TextField } from '@mui/material';
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { Skeleton, Autocomplete, TextField, FormControl, FormHelperText } from '@mui/material';
+import { useQueryClient, useQuery, type QueryClient } from '@tanstack/react-query';
 import { useServicesMaestroBanco } from '../../services';
-import { BancoResponseDto, BancoFilterDto } from '../../interfaces';
+import type { AutoCompleteProps, BancoResponseDto, BancoFilterDto } from '../../interfaces';
 
-const MaestroBanco = (props: any) => {
-    const { getList }       = useServicesMaestroBanco()
-    const qc: QueryClient   = useQueryClient()
+const MaestroBanco = ({
+    id,
+    onSelectionChange,
+    error,
+    label = 'Maestro Banco',
+    required = false,
+} : AutoCompleteProps) => {
+    const { getList } = useServicesMaestroBanco()
+    const qc: QueryClient = useQueryClient()
 
     const payload: BancoFilterDto = {
         searchText: ''
@@ -20,35 +25,26 @@ const MaestroBanco = (props: any) => {
         staleTime: 5000 * 60 * 60
     }, qc)
 
-    const ListBanco: BancoResponseDto[]     = query.data?.data ?? [];
+    const ListBanco: BancoResponseDto[]     = query.data?.data ?? []
     const [selectedValue, setSelectedValue] = useState<BancoResponseDto | null>(null)
 
     useEffect(() => {
-        if (props.id === 0) {
-            setSelectedValue(null)
+        if (id === null || id === 0 || id === undefined) {
+          setSelectedValue(null)
 
-            return
+          return
         }
 
-        if (selectedValue && selectedValue.codigoBanco === props.id) {
-
-            return
-        }
-
-        const value = ListBanco.find((item) => item?.codigoBanco === props.id)
-
-        if (value && (!selectedValue || selectedValue.codigoBanco !== value.codigoBanco)) {
-            setSelectedValue(value)
-            props.onSelectionChange(value)
-        }
-    }, [props.id, ListBanco])
+        const value = ListBanco.find((item) => item?.codigoBanco === id)
+        setSelectedValue(value ?? null)
+    }, [id, ListBanco])
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {
-            props.onSelectionChange(newValue)
+            onSelectionChange(newValue)
             setSelectedValue(newValue)
         } else {
-            props.onSelectionChange({
+            onSelectionChange({
                 codigoBanco: 0,
                 value: 0
             })
@@ -57,31 +53,35 @@ const MaestroBanco = (props: any) => {
     }
 
     return (
-        <>
-            {
-                query.isLoading ? (
-                    <Skeleton
-                        width={300}
-                        height={70}
-                        style={{
-                            border: '1px solid #ccc',
-                            backgroundColor: '#fff',
-                            borderRadius: 10,
-                            padding: 0,
-                        }}
-                    />
-                ) : (
+        <FormControl fullWidth error={!!error}>
+            {query.isLoading ? (
+                <Skeleton
+                    width={300}
+                    height={70}
+                    style={{
+                        border: "1px solid #ccc",
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        padding: 0
+                    }}
+                />
+            ) : (
+                <>
                     <Autocomplete
                         options={ListBanco}
                         value={selectedValue}
-                        id='autocomplete-maestro-banco'
+                        id="autocomplete-maestro-banco"
                         getOptionLabel={(option) => `${option.codigoBanco} - ${option.nombre}`}
                         onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} label="Maestro Banco" />}
+                        renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} />}
+                        key={`banco-${id || 'empty'}`}
                     />
-                )
-            }
-        </>
+                    {
+                        error && <FormHelperText error>{error}</FormHelperText>
+                    }
+                </>
+            )}
+        </FormControl>
     )
 }
 

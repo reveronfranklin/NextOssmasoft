@@ -19,7 +19,7 @@ interface ApiHandlerOptions {
  * @returns null para indicar que ocurrió un error
  */
 export const handleApiError = (error: any, options?: ApiHandlerOptions) => {
-    const errorMessage = error?.message || "Error desconocido"
+    const errorMessage = error?.message || 'Error desconocido'
 
     // Establecer el mensaje de error si se proporciona la función setter
     if (options?.setError) {

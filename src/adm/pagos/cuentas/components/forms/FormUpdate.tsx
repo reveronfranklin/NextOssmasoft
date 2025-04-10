@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material'
@@ -25,12 +25,9 @@ import DialogConfirmation from '../dialog/DialogConfirmation';
 import getRules from './rules';
 
 const FormUpdate = () => {
-    const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]                       = useState(false)
-    const [dialogDeleteOpen, setDialogDeleteOpen]           = useState<boolean>(false)
-    const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
-    const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
-    const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
+    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
     const dispatch          = useDispatch()
     const qc: QueryClient   = useQueryClient()
@@ -71,8 +68,8 @@ const FormUpdate = () => {
         return (value == 'true' || value == true)
     }
 
-    const clearDefaultValues = () => {
-        setValue('codigoCuentaBanco', maestroCuenta.codigoCuentaBanco)
+    const clearDefaultValues = (codigoCuentaBanco: number) => {
+        setValue('codigoCuentaBanco', codigoCuentaBanco)
         setValue('codigoBanco', null)
         setValue('tipoCuentaId', null)
         setValue('noCuenta', null)
@@ -86,27 +83,9 @@ const FormUpdate = () => {
     }
 
     const handleClearMaestroCuenta = () => {
-        setCodigoBanco(0)
-        setTipoCuenta(0)
-        setDenominacionFuncional(0)
         dispatch(resetMaestroCuentaShow())
         reset(defaultValues)
-        clearDefaultValues()
-    }
-
-    const handleMaestroBanco = (maestroBanco: any) => {
-        setValue('codigoBanco', maestroBanco.codigoBanco)
-        setCodigoBanco(maestroBanco.codigoBanco)
-    }
-
-    const handleTipoCuenta = (tipoCuenta: any) => {
-        setValue('tipoCuentaId', tipoCuenta.descripcionId)
-        setTipoCuenta(tipoCuenta.descripcionId)
-    }
-
-    const handleDenominacionFuncionalId = (denominacionFuncional: any) => {
-        setValue('denominacionFuncionalId', denominacionFuncional.descripcionId)
-        setDenominacionFuncional(denominacionFuncional.descripcionId)
+        clearDefaultValues(defaultValues.codigoCuentaBanco)
     }
 
     const handleUpdateMaestroCuenta = async (cuenta: CuentaDto) => {
@@ -164,12 +143,6 @@ const FormUpdate = () => {
         }
     }
 
-    useEffect(() => {
-        setCodigoBanco(Number(maestroCuenta.codigoBanco ?? 0))
-        setTipoCuenta(Number(maestroCuenta.tipoCuentaId ?? 0))
-        setDenominacionFuncional(Number(maestroCuenta.denominacionFuncionalId ?? 0))
-    }, [ maestroCuenta ])
-
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>
@@ -188,15 +161,33 @@ const FormUpdate = () => {
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <MaestroBanco
-                                                id={codigoBanco}
-                                                onSelectionChange={handleMaestroBanco}
+                                            <Controller
+                                                name="codigoBanco"
+                                                control={control}
+                                                rules={ rules.codigoBanco }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <MaestroBanco
+                                                        id={value || null}
+                                                        onSelectionChange={(selected) => onChange(selected?.codigoBanco || null)}
+                                                        error={errors.codigoBanco?.message}
+                                                        required
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <TipoCuenta
-                                                id={tipoCuenta}
-                                                onSelectionChange={handleTipoCuenta}
+                                            <Controller
+                                                name="tipoCuentaId"
+                                                control={control}
+                                                rules={ rules.tipoCuentaId }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <TipoCuenta
+                                                        id={value}
+                                                        onSelectionChange={(selected) => onChange(selected?.descripcionId || null)}
+                                                        error={errors.tipoCuentaId?.message}
+                                                        required
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                     </Grid>
@@ -219,15 +210,25 @@ const FormUpdate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.noCuenta}
                                                             helperText={errors.noCuenta?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <DenominacionFuncional
-                                                id={denominacionFuncional}
-                                                onSelectionChange={handleDenominacionFuncionalId}
+                                            <Controller
+                                                name="denominacionFuncionalId"
+                                                control={control}
+                                                rules={ rules.denominacionFuncionalId }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <DenominacionFuncional
+                                                        id={value}
+                                                        onSelectionChange={(selected) => onChange(selected?.descripcionId || null)}
+                                                        error={errors.denominacionFuncionalId?.message}
+                                                        required
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                     </Grid>

@@ -27,7 +27,6 @@ const rules =  {
         required: 'Este campo es requerido'
     },
     codigo: {
-        required: 'Este campo es requerido',
         pattern:{
             value: /^[0-9a-zA-Z-]+$/,
             message: 'Solo se admiten letras, números y guiones'

@@ -17,3 +17,6 @@ export * from './cuentas/cuenta-delete.dto'
 
 /* Interface Dialog Confirmation */
 export * from './dialog/dialog-confirmation-props.interface'
+
+/* Interface AutoComplete */
+export * from './autoComplete/auto-complete-props.interface'
