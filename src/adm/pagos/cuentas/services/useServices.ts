@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
-import { createApiHandlers } from '../../utils/api-handlers';
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/urlServices.enum';
 import {
     ResponseDto,
@@ -20,20 +20,14 @@ const useServices = () => {
         isValid: true
     })
 
-    const { handleApiError, handleApiResponse } = createApiHandlers(setError, setMessage)
-
     const getList = useCallback(async (payload: CuentaFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
-
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response)
+            const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
+            
+return handleApiResponse<CuentaResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -45,13 +39,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
             const message   = 'Cuenta creada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -63,13 +53,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
             const message   = 'Cuenta actualizada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -81,13 +67,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
             const message   = 'Cuenta eliminada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }

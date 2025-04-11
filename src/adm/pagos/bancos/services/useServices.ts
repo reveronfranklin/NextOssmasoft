@@ -1,9 +1,16 @@
-import { useCallback, useState } from "react"
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
-import { createApiHandlers } from '../../utils/api-handlers';
-import { UrlServices } from '../enums/UrlServices.enum'
-import { IResponse, SisBancoResponseDto, SisBancoFilterDto, SisBancoCreateDto, SisBancoUpdateDto, SisBancoDeleteDto } from '../interfaces'
+import { useCallback, useState } from 'react';
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
+import { UrlServices } from '../enums/UrlServices.enum';
+import {
+    IResponse,
+    SisBancoResponseDto,
+    SisBancoFilterDto,
+    SisBancoCreateDto,
+    SisBancoUpdateDto,
+    SisBancoDeleteDto
+} from '../interfaces';
 
 const useServices = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -14,20 +21,14 @@ const useServices = () => {
         isValid: true
     })
 
-    const { handleApiError, handleApiResponse } = createApiHandlers(setError, setMessage)
-
     const getList = useCallback(async (filters: SisBancoFilterDto): Promise<any> => {
         try {
             setLoading(true)
             const response = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
-
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response)
+            
+return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -39,13 +40,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
             const message   = 'Cuenta creada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -57,13 +54,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATEMAESTROBANCO, payload)
             const message   = 'Cuenta actualizada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
@@ -75,13 +68,9 @@ const useServices = () => {
             const response  = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETEMAESTROBANCO, payload)
             const message   = 'Cuenta eliminada exitosamente'
 
-            if (response?.data?.isValid === false) {
-                return handleApiError(response?.data)
-            }
-
-            return handleApiResponse(response, message)
+            return handleApiResponse<SisBancoDeleteDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
-            return handleApiError(e)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
