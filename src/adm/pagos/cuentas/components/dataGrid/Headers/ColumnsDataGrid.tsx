@@ -1,32 +1,24 @@
+import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Icon from 'src/@core/components/icon';
 import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
-import { GridRenderCellParams } from '@mui/x-data-grid';
-import { CuentaDto, CuentaDeleteDto } from '../../../interfaces';
+import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
+import { CuentaDto } from '../../../interfaces';
 import {
-    setIsOpenDialogCreate,
-    setIsOpenDialogDelete,
+    setIsOpenDialogCuenta,
     setMaestroCuentaShow,
-    setCodigoCuentaBanco,
     setTypeOperation
 } from 'src/store/apps/pagos/cuentas';
 
-function ColumnsDataGrid() {
+const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
     const handleEdit = (maestroCuenta: CuentaDto) => {
-        console.log('handleEdit', maestroCuenta)
         dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogCreate(true))
+        dispatch(setIsOpenDialogCuenta(true))
         dispatch(setMaestroCuentaShow(maestroCuenta))
-    }
-
-    const handleDelete = (codigoBanco: CuentaDeleteDto) => {
-        dispatch(setTypeOperation('delete'))
-        dispatch(setIsOpenDialogDelete(true))
-        dispatch(setCodigoCuentaBanco(codigoBanco))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -37,7 +29,7 @@ function ColumnsDataGrid() {
         },
     }))
 
-    const columns = [
+    const columns = useMemo<GridColDef[]>(() => [
         {
             flex: 0,
             minWidth: 40,
@@ -49,11 +41,6 @@ function ColumnsDataGrid() {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </StyledIconButton>
-                    </Tooltip>
-                    <Tooltip title='Delete'>
-                        <StyledIconButton size='small' onClick={() => handleDelete(row.codigoCuentaBanco)}>
-                            <Icon icon='mdi:delete' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>
@@ -119,10 +106,10 @@ function ColumnsDataGrid() {
                 </Typography>
             )
         }
-    ]
+    ], [dispatch])
 
     return columns
 }
 
 
-export default ColumnsDataGrid
+export default useColumnsDataGrid

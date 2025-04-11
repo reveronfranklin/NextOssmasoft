@@ -1,9 +1,8 @@
-import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from "@mui/material"
-import Icon from 'src/@core/components/icon'
-import { useDispatch } from 'react-redux'
-import DataGridBancosComponent from '../components/Datagrid/bancos'
-
-import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos'
+import { useDispatch } from 'react-redux';
+import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material';
+import Icon from 'src/@core/components/icon';
+import DataGridBancosComponent from '../components/dataGrid/Bancos';
+import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos';
 
 const LayoutBancos = () => {
     const dispatch = useDispatch()

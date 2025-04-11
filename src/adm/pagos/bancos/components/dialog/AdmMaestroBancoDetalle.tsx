@@ -3,11 +3,11 @@ import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
 import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'src/store';
 import Icon from 'src/@core/components/icon';
+import { RootState } from 'src/store';
 import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos';
-import FormCreate from '../../forms/FormCreate';
-import FormUpdate from '../../forms/FormUpdate';
+import FormCreate from '../forms/FormCreate';
+import FormUpdate from '../forms/FormUpdate';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -18,6 +18,7 @@ const Transition = forwardRef(function Transition(
 
 const DialogAdmMaestroBancoDetalle = () => {
     const dispatch = useDispatch()
+
     const { typeOperation, isOpenDialogMaestroBancoDetalle } = useSelector((state: RootState) => state.admMaestroBanco )
 
     const handleClose = () => {
@@ -45,10 +46,11 @@ const DialogAdmMaestroBancoDetalle = () => {
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'
                 aria-describedby='modal-modal-description'
+                disableEnforceFocus
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '50vh',
+                        height: '45vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0
