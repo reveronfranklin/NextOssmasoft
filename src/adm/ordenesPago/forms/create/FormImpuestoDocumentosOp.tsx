@@ -331,7 +331,7 @@ const FormImpuestoDocumentosOp = () => {
               />
             </Grid>
 
-            <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
+            <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <Controller
                   name='conceptoPago'
@@ -369,7 +369,7 @@ const FormImpuestoDocumentosOp = () => {
           </Grid>
 
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
-            <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+            <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
               <TipoRetencion
                 id={ impuestoDocumentoOpSeleccionado?.tipoRetencionId || 0}
                 autocompleteRef={autocompleteRef}
@@ -534,7 +534,7 @@ const FormImpuestoDocumentosOp = () => {
           </Grid>
         </Grid>
 
-        <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+        <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
           {message || validationError && (
             <Box>
               <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message} {validationError}</FormHelperText>

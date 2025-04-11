@@ -184,7 +184,7 @@ const FormCreateRetenciones = () => {
     <Box>
       <form>
         <Grid container spacing={0} paddingTop={0} justifyContent="flex">
-          <Grid container sm={2} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={2} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="codigoRetencion"
               control={control}
@@ -201,14 +201,14 @@ const FormCreateRetenciones = () => {
             />
           </Grid>
 
-          <Grid container sm={8} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={8} xs={12} sx={{ padding: 2 }}>
             <TipoRetencion
               id={retencionSeleccionado?.tipoRetencionId || 0}
               onSelectionChange={(value: any) => setValue('tipoRetencionId', value.id)}
             />
           </Grid>
 
-          <Grid container sm={2} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={2} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="codigo"
               control={control}
@@ -225,7 +225,7 @@ const FormCreateRetenciones = () => {
               )}
             />
           </Grid>
-          <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={3} xs={12} sx={{ padding: 2 }}>
             <DatePickerWrapper sx={{ width: '100%' }}>
               <DatePicker
                 selected={retencionSeleccionado?.fechaIniObject ? getDateByObject(retencionSeleccionado.fechaIniObject) : null}
@@ -238,7 +238,7 @@ const FormCreateRetenciones = () => {
             </DatePickerWrapper>
           </Grid>
 
-          <Grid container sm={3} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={3} xs={12} sx={{ padding: 2 }}>
             <DatePickerWrapper sx={{ width: '100%' }}>
               <DatePicker
                 selected={retencionSeleccionado?.fechaFinObject ? getDateByObject(retencionSeleccionado.fechaFinObject) : null}
@@ -251,7 +251,7 @@ const FormCreateRetenciones = () => {
             </DatePickerWrapper>
           </Grid>
 
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="conceptoPago"
               control={control}
@@ -269,7 +269,7 @@ const FormCreateRetenciones = () => {
             />
           </Grid>
 
-          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={4} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="baseImponible"
               control={control}
@@ -288,7 +288,7 @@ const FormCreateRetenciones = () => {
             />
           </Grid>
 
-          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={4} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="porRetencion"
               control={control}
@@ -307,7 +307,7 @@ const FormCreateRetenciones = () => {
             />
           </Grid>
 
-          <Grid container sm={4} xs={12} sx={{ padding: 2 }}>
+          <Grid item sm={4} xs={12} sx={{ padding: 2 }}>
             <Controller
               name="montoRetencion"
               control={control}
@@ -325,7 +325,6 @@ const FormCreateRetenciones = () => {
               )}
             />
           </Grid>
-
         </Grid>
       </form>
       <Box sx={{ padding: 2 }}>

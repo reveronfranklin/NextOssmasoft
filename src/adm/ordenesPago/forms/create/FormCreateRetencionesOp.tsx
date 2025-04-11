@@ -161,13 +161,13 @@ const FormCreateRetencionesOp = () => {
     <Box>
       <form>
         <Grid container spacing={0} paddingTop={0} justifyContent="flex">
-          <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
             <TipoRetencion
               id={retencionOpSeleccionado?.tipoRetencionId || 0}
               onSelectionChange={(value: any) => setValue('tipoRetencion', value.id)}
             />
           </Grid>
-          <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
               <Controller
                 name='conceptoPago'
@@ -201,7 +201,7 @@ const FormCreateRetencionesOp = () => {
               </Button>
             </Box>
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
               name='montoRetencion'
               control={control}
@@ -219,7 +219,7 @@ const FormCreateRetencionesOp = () => {
               )}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
               name='montoRetenido'
               control={control}
@@ -238,7 +238,7 @@ const FormCreateRetencionesOp = () => {
               )}
             />
           </Grid>
-          <Grid container sm={12} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
             <Controller
               name='numeroComprobante'
               control={control}
@@ -257,7 +257,7 @@ const FormCreateRetencionesOp = () => {
               )}
             />
           </Grid>
-          <Grid container sm={6} xs={12} sx={{ padding: 2 }}>
+          <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             {localMessage && (
               <Box>
                 <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{localMessage}</FormHelperText>

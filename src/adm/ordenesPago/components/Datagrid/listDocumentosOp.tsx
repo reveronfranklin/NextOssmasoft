@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
@@ -8,9 +8,7 @@ import ColumnsDataGridListCompromiso from '../../config/Datagrid/columnsDataGrid
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 import { Documentos, IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
-import {
-  setDocumentCount
-} from "src/store/apps/ordenPago"
+import { setDocumentCount } from "src/store/apps/ordenPago"
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 600,
@@ -21,69 +19,38 @@ const DataGridComponent = () => {
   const [pageNumber, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(5)
 
-  // const [searchText, setSearchText] = useState<string>('')
-  // const [buffer, setBuffer] = useState<string>('')
-  // const debounceTimeoutRef = useRef<any>(null)
-
   const qc: QueryClient = useQueryClient()
+  const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
 
   const { getListDocumentos } = useServicesDocumentosOp()
 
-  const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
+  const columnsDataGridListCompromiso = ColumnsDataGridListCompromiso()
+
   const filter: IGetListByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
-    queryKey: ['documentosTable', pageSize, pageNumber],
+    queryKey: ['documentosTable', pageSize, pageNumber, codigoOrdenPago],
     queryFn: () => getListDocumentos(filter),
     initialData: () => {
-      return qc.getQueryData(['documentosTable', pageSize, pageNumber])
+      return qc.getQueryData(['documentosTable', pageSize, pageNumber, codigoOrdenPago])
     },
     staleTime: 1000 * 60,
     retry: 3,
   }, qc)
 
   const rows: Documentos[] = query?.data?.data || []
-  const rowCount = rows && Array.isArray(rows) ? rows.length : 0
+  const rowCount = query?.data?.cantidadRegistros
 
   setDocumentCount(rowCount)
 
-  // const handleDoubleClick = (data: any) => {
-  //   const { row } = data
-  //   dispatch(setDocumentoOpSeleccionado(row))
-  //   setTimeout(() => {
-  //     dispatch(setIsOpenDialogDocumentosEdit(true))
-  //   }, 1500)
-  // }
-
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     setPage(newPage)
-  }
+  }, [])
 
-  const handleSizeChange = (newPageSize: number) => {
+  const handleSizeChange = useCallback((newPageSize: number) => {
     setPage(0)
     setPageSize(newPageSize)
-  }
-
-  // const handleSearch = (value: string) => {
-  //   if (value === '') {
-  //     setSearchText('')
-  //     setBuffer('')
-
-  //     return
-  //   }
-
-  //   const newBuffer = value
-  //   setBuffer(newBuffer)
-  //   debouncedSearch()
-  // }
-
-  // const debouncedSearch = () => {
-  //   clearTimeout(debounceTimeoutRef.current)
-
-  //   debounceTimeoutRef.current = setTimeout(() => {
-  //     setSearchText(buffer)
-  //   }, 2500)
-  // }
+  }, [])
 
   return (
     <>
@@ -96,7 +63,7 @@ const DataGridComponent = () => {
               getRowId={(row) => row.codigoDocumentoOp}
               rows={rows}
               rowCount={rowCount}
-              columns={ColumnsDataGridListCompromiso() as any}
+              columns={columnsDataGridListCompromiso}
               pageSize={pageSize}
               page={pageNumber}
               getRowHeight={() => 'auto'}
@@ -105,21 +72,6 @@ const DataGridComponent = () => {
               rowsPerPageOptions={[5, 10, 50]}
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
-
-              // onRowDoubleClick={row => handleDoubleClick(row)}
-              // components={{ Toolbar: ServerSideToolbar }}
-              // componentsProps={{
-              //   baseButton: {
-              //     variant: 'outlined'
-              //   },
-                // toolbar: {
-                //   printOptions: { disableToolbarButton: true },
-                //   value: buffer,
-                //   clearSearch: () => handleSearch(''),
-                //   onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                //   sx: { paddingLeft: 0, paddingRight: 0 }
-                // }
-              // }}
             />
           </StyledDataGridContainer>
         )
