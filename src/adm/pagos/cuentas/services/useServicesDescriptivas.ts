@@ -18,12 +18,10 @@ const useServicesDescriptivas = () => {
         try {
             setLoading(true)
             const response = await ossmmasofApi.post<ResponseDto<DescriptivaResponseDto>>(UrlServices.GET_DESCRIPTIVAS, filters)
-            
-return handleApiResponse<DescriptivaResponseDto>(response.data, undefined, setMessage, setError)
+
+            return handleApiResponse<DescriptivaResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
-            console.error('Error useServicesDescriptivas getList', e)
-            
-return handleApiError(e, setMessage, setError)
+            return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }

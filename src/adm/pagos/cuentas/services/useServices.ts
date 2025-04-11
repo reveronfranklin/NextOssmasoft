@@ -24,8 +24,8 @@ const useServices = () => {
         try {
             setLoading(true)
             const response = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.GET_MAESTRO_CUENTAS, payload)
-            
-return handleApiResponse<CuentaResponseDto>(response.data, undefined, setMessage, setError)
+
+            return handleApiResponse<CuentaResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {

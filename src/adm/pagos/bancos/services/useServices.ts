@@ -25,8 +25,8 @@ const useServices = () => {
         try {
             setLoading(true)
             const response = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
-            
-return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
+
+            return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
