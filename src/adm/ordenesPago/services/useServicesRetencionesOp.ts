@@ -4,11 +4,16 @@ import { useCallback, useState } from "react"
 
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
+import { useDispatch } from 'react-redux'
 
-import { IResponseGetRetenciones } from '../interfaces/responseRetenciones.interfaces'
-import { ICreateRetencionOp, IResponseCreateRetencion } from '../interfaces/retencionesOp/createRetencionOp'
-import { IUpdateRetencionOp, IResponseUpdateRetencion } from '../interfaces/retencionesOp/updateRetencionOp'
-import { IDeleteRetencionOp, IResponseDeleteRetencion } from '../interfaces/retencionesOp/deleteRetencionOp'
+import { ICreateRetencionOp } from '../interfaces/retencionesOp/createRetencionOp'
+import { IUpdateRetencionOp } from '../interfaces/retencionesOp/updateRetencionOp'
+import { IDeleteRetencionOp } from '../interfaces/retencionesOp/deleteRetencionOp'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IResponseBase } from 'src/interfaces/response-base-dto'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 interface IfilterByOrdenPago {
   codigoOrdenPago: number
@@ -16,7 +21,7 @@ interface IfilterByOrdenPago {
 
 const useServicesRetencionesOp = (): {
   error: string,
-  message: string,
+  message: IAlertMessageDto,
   loading: boolean,
   presupuestoSeleccionado: any,
   getRetencionesOpByOrdenPago: (filters: IfilterByOrdenPago) => Promise<any>,
@@ -25,81 +30,75 @@ const useServicesRetencionesOp = (): {
   deleteRetencionOp: (filters: IDeleteRetencionOp) => Promise<any>
 } => {
   const [error, setError] = useState<string>('')
-  const [message, setMessage] = useState<string>('')
+  const [message, setMessage] = useState<IAlertMessageDto>({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
+  const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getRetencionesOpByOrdenPago = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
+  const getRetencionesOpByOrdenPago = useCallback(async (filters: IfilterByOrdenPago): Promise<IApiResponse<IfilterByOrdenPago>> => {
     try {
       setLoading(true)
-      const responseGetOrdenes = await ossmmasofApi.post<IResponseGetRetenciones>(UrlServices.GETRETENCIONESOPBYORDENPAGO, filters)
+      const responseGetOrdenes = await ossmmasofApi.post<IResponseBase<IfilterByOrdenPago>>(UrlServices.GETRETENCIONESOPBYORDENPAGO, filters)
+      const responseHandleApi = handleApiResponse<IfilterByOrdenPago>(responseGetOrdenes.data, undefined, setMessage, setError)
 
-      if (responseGetOrdenes.data.isValid) {
-        return responseGetOrdenes.data
-      }
-      setMessage(responseGetOrdenes.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const createRetencionOp = useCallback(async (filters: ICreateRetencionOp): Promise<any> => {
+  const createRetencionOp = useCallback(async (filters: ICreateRetencionOp): Promise<IApiResponse<ICreateRetencionOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseCreateRetencion>(UrlServices.CREATERETENCIONESOP, filters)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<ICreateRetencionOp>>(UrlServices.CREATERETENCIONESOP, filters)
+      const responseHandleApi = handleApiResponse<ICreateRetencionOp>(responseCreateRetencion.data, undefined, setMessage, setError)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-      setMessage(responseCreateRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const updateRetencionOp = useCallback(async (filters: IUpdateRetencionOp): Promise<any> => {
+  const updateRetencionOp = useCallback(async (filters: IUpdateRetencionOp): Promise<IApiResponse<IUpdateRetencionOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseUpdateRetencion = await ossmmasofApi.post<IResponseUpdateRetencion>(UrlServices.UPDATERETENCIONESOP, filters)
+      const responseUpdateRetencion = await ossmmasofApi.post<IResponseBase<IUpdateRetencionOp>>(UrlServices.UPDATERETENCIONESOP, filters)
+      const responseHandleApi = handleApiResponse<IUpdateRetencionOp>(responseUpdateRetencion.data, undefined, setMessage, setError)
 
-      if (responseUpdateRetencion.data.isValid) {
-        return responseUpdateRetencion.data
-      }
-      setMessage(responseUpdateRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const deleteRetencionOp = useCallback(async (filters: IDeleteRetencionOp): Promise<any> => {
+  const deleteRetencionOp = useCallback(async (filters: IDeleteRetencionOp): Promise<IApiResponse<IDeleteRetencionOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseDeleteRetencion = await ossmmasofApi.post<IResponseDeleteRetencion>(UrlServices.DELETERETENCIONESOP, filters)
 
-      if (responseDeleteRetencion.data.isValid) {
-        return responseDeleteRetencion.data
-      }
+      const responseDeleteRetencion = await ossmmasofApi.post<IResponseBase<IDeleteRetencionOp>>(UrlServices.DELETERETENCIONESOP, filters)
+      const responseHandleApi = handleApiResponse<IDeleteRetencionOp>(responseDeleteRetencion.data, undefined, setMessage, setError)
 
-      setMessage(responseDeleteRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
   return {
     error, message, loading,

@@ -4,16 +4,26 @@ import { useCallback, useState } from "react"
 
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
+import { useDispatch } from 'react-redux'
 
-import { ICreateRetencion, IResponseCreateRetencion } from '../interfaces/retenciones/createRetencion'
-import { IUpdateRetencion, IResponseUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
-import { IDeleteRetencion, IResponseDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
+import { ICreateRetencion } from '../interfaces/retenciones/createRetencion'
+import { IUpdateRetencion } from '../interfaces/retenciones/updateRetencion'
+import { IDeleteRetencion } from '../interfaces/retenciones/deleteRetencion'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IResponseBase } from 'src/interfaces/response-base-dto'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 const useServicesRetencionesOp = () => {
   const [error, setError] = useState<string>('')
-  const [message, setMessage] = useState<string>('')
+  const [message, setMessage] = useState<IAlertMessageDto>({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
-
+  const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
   const getRetenciones = useCallback(async (): Promise<any> => {
@@ -30,63 +40,52 @@ const useServicesRetencionesOp = () => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const createRetencion = useCallback(async (filters: ICreateRetencion): Promise<any> => {
+  const createRetencion = useCallback(async (filters: ICreateRetencion): Promise<IApiResponse<ICreateRetencion>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseCreateRetencion>(UrlServices.CREATEADMRETENCIONES , filters)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<ICreateRetencion>>(UrlServices.CREATEADMRETENCIONES , filters)
+      const responseHandleApi = handleApiResponse<ICreateRetencion>(responseCreateRetencion.data, undefined, setMessage, setError)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-
-      setMessage(responseCreateRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const updateRetencion = useCallback(async (filters: IUpdateRetencion): Promise<any> => {
+  const updateRetencion = useCallback(async (filters: IUpdateRetencion): Promise<IApiResponse<IUpdateRetencion>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseUpdateRetencion = await ossmmasofApi.post<IResponseUpdateRetencion>(UrlServices.UPDATEADMRETENCIONES , filters)
+      const responseUpdateRetencion = await ossmmasofApi.post<IResponseBase<IUpdateRetencion>>(UrlServices.UPDATEADMRETENCIONES , filters)
+      const responseHandleApi = handleApiResponse<IUpdateRetencion>(responseUpdateRetencion.data, undefined, setMessage, setError)
 
-      if (responseUpdateRetencion.data.isValid) {
-        return responseUpdateRetencion.data
-      }
-      setMessage(responseUpdateRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const deleteRetencion = useCallback(async (filters: IDeleteRetencion): Promise<any> => {
+  const deleteRetencion = useCallback(async (filters: IDeleteRetencion): Promise<IApiResponse<IDeleteRetencion>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseDeleteRetencion = await ossmmasofApi.post<IResponseDeleteRetencion>(UrlServices.DELETEADMRETENCIONES, filters)
+      const responseDeleteRetencion = await ossmmasofApi.post<IResponseBase<IDeleteRetencion>>(UrlServices.DELETEADMRETENCIONES, filters)
+      const responseHandleApi = handleApiResponse<IDeleteRetencion>(responseDeleteRetencion.data, undefined, setMessage, setError)
 
-      if (responseDeleteRetencion.data.isValid) {
-        return responseDeleteRetencion.data
-      }
-
-      setMessage(responseDeleteRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
   return {
     error, message, loading,
