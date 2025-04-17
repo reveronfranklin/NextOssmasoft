@@ -1,13 +1,11 @@
-import LayoutBancos from '../forms/LayoutBancos'
-import DialogAdmMaestroBancoDetalle from './Dialog/AdmMaestroBancoDetalle'
-import DialogAdmMaestroBancoDelete from './Dialog/AdmMaestroBancoDelete'
+import LayoutBancos from './LayoutBancos'
+import DialogAdmMaestroBancoDetalle from '../components/dialog/AdmMaestroBancoDetalle'
 
 const LayoutComponent = () => {
     return (
         <>
             <LayoutBancos />
             <DialogAdmMaestroBancoDetalle />
-            <DialogAdmMaestroBancoDelete />
         </>
     )
 }

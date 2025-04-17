@@ -1,11 +1,11 @@
-import { ChangeEvent, useState, useRef } from 'react'
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import ColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
-import useServices from '../../services/useServices'
+import { ChangeEvent, useState, useRef } from 'react';
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, styled } from '@mui/material';
+import Spinner from 'src/@core/components/spinner';
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import useColumnsDataGrid from './headers/ColumnsDataGrid';
+import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -13,13 +13,15 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState<number>(0)
-    const [pageSize, setPageSize] = useState<number>(5)
-    const [searchText, setSearchText] = useState<string>('')
-    const [buffer, setBuffer] = useState<string>('')
+    const [pageNumber, setPage]         = useState<number>(0)
+    const [pageSize, setPageSize]       = useState<number>(5)
+    const [searchText, setSearchText]   = useState<string>('')
+    const [buffer, setBuffer]           = useState<string>('')
 
-    const qc: QueryClient = useQueryClient()
-    const debounceTimeoutRef = useRef<any>(null)
+    const debounceTimeoutRef    = useRef<any>(null)
+    const qc: QueryClient       = useQueryClient()
+    const { getList }           = useServices()
+    const columnsDataGrid       = useColumnsDataGrid()
 
     const filter: any = {
         pageSize,
@@ -27,11 +29,9 @@ const DataGridComponent = () => {
         searchText
     }
 
-    const { getMaestroBanco } = useServices()
-
     const query = useQuery({
         queryKey: ['maestroBancoTable', pageSize, pageNumber, searchText],
-        queryFn: () => getMaestroBanco({ ...filter, pageSize, pageNumber, searchText }),
+        queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
             return qc.getQueryData(['maestroBancoTable', pageSize, pageNumber, searchText])
         },
@@ -83,7 +83,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoBanco}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={columnsDataGrid}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}

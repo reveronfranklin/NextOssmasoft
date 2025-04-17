@@ -9,19 +9,19 @@ const commonSetting = {
   isProduction: isProduction
 }
 
-const productionSetting = {
+/*const productionSetting = {
   ...commonSetting,
   meEndpoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/RefreshToken',
   loginEndpoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/Login',
   refreshEndPoint: 'https://ossmmasoft.com.ve:5001/api/SisUsuarios/RefreshToken'
-}
-
-/*const productionSetting = {
-  ...commonSetting,
-  meEndpoint: 'http://10.10.34.2:5000/api/SisUsuarios/RefreshToken',
-  loginEndpoint: 'http://10.10.34.2:5000/api/SisUsuarios/Login',
-  refreshEndPoint: 'http://10.10.34.2:5000/api/SisUsuarios/RefreshToken'
 }*/
+
+const productionSetting = {
+  ...commonSetting,
+  meEndpoint: 'http://10.10.15.2:5000/api/SisUsuarios/RefreshToken',
+  loginEndpoint: 'http://10.10.15.2:5000/api/SisUsuarios/Login',
+  refreshEndPoint: 'http://10.10.15.2:5000/api/SisUsuarios/RefreshToken'
+}
 
 const developSetting = {
   ...commonSetting,
