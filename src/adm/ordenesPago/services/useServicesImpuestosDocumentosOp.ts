@@ -3,94 +3,89 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useCallback, useState } from "react"
 import { useDispatch } from 'react-redux'
 
-import { IListImpuestoByOrdenPago, IResponseListImpuestoByOrdenPago } from '../interfaces/impuestoDocumentosOp/listImpuestoDocumentosOp'
-import { ICreateImpuestoDocumentosOp, IResponseCreateImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/createImpuestoDocumentosOp'
-import { IUpdateImpuestoDocumentosOp, IResponseUpdateImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/updateImpuestoDocumentosOp'
-import { IDeleteImpuestoDocumentosOp, IResponseDeleteImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/deleteImpuestoDocumentosOp'
+import { IListImpuestoByOrdenPago } from '../interfaces/impuestoDocumentosOp/listImpuestoDocumentosOp'
+import { ICreateImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/createImpuestoDocumentosOp'
+import { IUpdateImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/updateImpuestoDocumentosOp'
+import { IDeleteImpuestoDocumentosOp } from '../interfaces/impuestoDocumentosOp/deleteImpuestoDocumentosOp'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IResponseBase } from 'src/interfaces/response-base-dto'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 const useServicesImpuestosDocumentosOp = () => {
-  const [message, setMessage] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [message, setMessage] = useState<IAlertMessageDto>({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
-
   const dispatch = useDispatch()
 
-  const getListImpuestoDocumentosOp = useCallback(async (filters: IListImpuestoByOrdenPago): Promise<IResponseListImpuestoByOrdenPago | null> => {
+  const getListImpuestoDocumentosOp = useCallback(async (filters: IListImpuestoByOrdenPago): Promise<IApiResponse<IListImpuestoByOrdenPago>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseListImpuestoByOrdenPago>(UrlServices.GETIMPUESTOSDOCBYORDENPAGO , filters)
+      const response = await ossmmasofApi.post<IResponseBase<IListImpuestoByOrdenPago>>(UrlServices.GETIMPUESTOSDOCBYORDENPAGO , filters)
+      const responseHandleApi = handleApiResponse<IListImpuestoByOrdenPago>(response.data, undefined, setMessage, setError)
 
-      if(response.data.isValid) {
-
-        return response.data
-      }
-
-      setMessage(response.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      console.log(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-
-    return null
   }, [dispatch])
 
-  const createImpuestoDocumentosOp = useCallback(async (filters: ICreateImpuestoDocumentosOp): Promise<IResponseCreateImpuestoDocumentosOp | null> => {
+  const createImpuestoDocumentosOp = useCallback(async (filters: ICreateImpuestoDocumentosOp): Promise<IApiResponse<ICreateImpuestoDocumentosOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseCreateImpuestoDocumentosOp>(UrlServices.CREATEIMPUESTODOCUMENTO, filters)
+      const response = await ossmmasofApi.post<IResponseBase<ICreateImpuestoDocumentosOp>>(UrlServices.CREATEIMPUESTODOCUMENTO, filters)
+      const responseHandleApi = handleApiResponse<ICreateImpuestoDocumentosOp>(response.data, undefined, setMessage, setError)
 
-      if (response.data.isValid) {
-
-        return response.data
-      }
-      setMessage(response.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      console.log(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-
-    return null
   }, [dispatch])
 
-  const updateImpuestoDocumentosOp = useCallback(async (filters: IUpdateImpuestoDocumentosOp): Promise<IResponseUpdateImpuestoDocumentosOp | null> => {
+  const updateImpuestoDocumentosOp = useCallback(async (filters: IUpdateImpuestoDocumentosOp): Promise<IApiResponse<IUpdateImpuestoDocumentosOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseUpdateImpuestoDocumentosOp>(UrlServices.UPDATEIMPUESTODOCUMENTO , filters)
+      const response = await ossmmasofApi.post<IResponseBase<IUpdateImpuestoDocumentosOp>>(UrlServices.UPDATEIMPUESTODOCUMENTO , filters)
+      const responseHandleApi = handleApiResponse<IUpdateImpuestoDocumentosOp>(response.data, undefined, setMessage, setError)
 
-      if (response.data.isValid) {
-
-        return response.data
-      }
+      return responseHandleApi
     } catch (e: any) {
-      console.log(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-
-    return null
   }, [dispatch])
 
-  const deleteImpuestoDocumentosOp = useCallback(async (filters: IDeleteImpuestoDocumentosOp): Promise<IResponseDeleteImpuestoDocumentosOp | null> => {
+  const deleteImpuestoDocumentosOp = useCallback(async (filters: IDeleteImpuestoDocumentosOp): Promise<IApiResponse<IDeleteImpuestoDocumentosOp>> => {
     try {
       setLoading(true)
-      const response = await ossmmasofApi.post<IResponseDeleteImpuestoDocumentosOp>(UrlServices.DELETEIMPUESTODOCUMENTO , filters)
+      const response = await ossmmasofApi.post<IResponseBase<IDeleteImpuestoDocumentosOp>>(UrlServices.DELETEIMPUESTODOCUMENTO , filters)
+      const responseHandleApi = handleApiResponse<IDeleteImpuestoDocumentosOp>(response.data, undefined, setMessage, setError)
 
-      if (response.data.isValid) {
-
-        return response.data
-      }
+      return responseHandleApi
     } catch (e: any) {
-      console.log(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
 
-    return null
   }, [dispatch])
 
   return {
-    message, loading,
+    message, loading, error,
     getListImpuestoDocumentosOp,
     createImpuestoDocumentosOp,
     updateImpuestoDocumentosOp,

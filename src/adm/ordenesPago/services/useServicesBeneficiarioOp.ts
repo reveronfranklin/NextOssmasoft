@@ -4,108 +4,108 @@ import { useCallback, useState } from "react"
 
 import { useSelector } from "react-redux"
 import { RootState } from "src/store"
+import { useDispatch } from 'react-redux'
 
-import { IGetListByOrdenPago, IResponseGetBeneficiarioOp } from '../interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
-import { ICreateBeneficiarioOp, IResponseBenenficiarioOpCreate } from '../interfaces/admBeneficiarioOp/createBeneficiarioOp.interfaces'
-import { IUpdateBeneficiarioOp, IResponseBenenficiarioOpUpdate } from '../interfaces/admBeneficiarioOp/updateBeneficiarioOp.interfaces'
-import { IDeleteBeneficiarioOp, IResponseDeleteBeneficiario } from '../interfaces/admBeneficiarioOp/deleteBeneficiarioOp.interfaces'
-import { IUpdateMontoBeneficiarioOp, IResponseBenenficiarioOpMontoUpdate } from '../interfaces/admBeneficiarioOp/updateMontoBeneficiarioOp.interfaces'
+import { IGetListByOrdenPago } from '../interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
+import { ICreateBeneficiarioOp } from '../interfaces/admBeneficiarioOp/createBeneficiarioOp.interfaces'
+import { IUpdateBeneficiarioOp } from '../interfaces/admBeneficiarioOp/updateBeneficiarioOp.interfaces'
+import { IDeleteBeneficiarioOp } from '../interfaces/admBeneficiarioOp/deleteBeneficiarioOp.interfaces'
+import { IUpdateMontoBeneficiarioOp } from '../interfaces/admBeneficiarioOp/updateMontoBeneficiarioOp.interfaces'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IResponseBase } from 'src/interfaces/response-base-dto'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 const useServicesBeneficiarioOp = () => {
   const [error, setError] = useState<string>('')
-  const [message, setMessage] = useState<string>('')
+  const [message, setMessage] = useState<IAlertMessageDto>({
+    text: '',
+    timestamp: Date.now(),
+    isValid: true,
+  })
   const [loading, setLoading] = useState<boolean>(false)
+  const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getBeneficiarioOpByOrdenPago = useCallback(async (filters: IGetListByOrdenPago): Promise<any> => {
+  const getBeneficiarioOpByOrdenPago = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<IGetListByOrdenPago>> => {
     try {
       setLoading(true)
-      const responseGetOrdenes = await ossmmasofApi.post<IResponseGetBeneficiarioOp>(UrlServices.GETBENEFICIARIO, filters)
 
-      if (responseGetOrdenes.data.isValid) {
-        return responseGetOrdenes.data
-      }
-      setMessage(responseGetOrdenes.data.message)
+      const responseGetOrdenes = await ossmmasofApi.post<IResponseBase<IGetListByOrdenPago>>(UrlServices.GETBENEFICIARIO, filters)
+      const responseHandleApi = handleApiResponse<IGetListByOrdenPago>(responseGetOrdenes.data, undefined, setMessage, setError)
+
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const createBeneficiarioOp = useCallback(async (filters: ICreateBeneficiarioOp): Promise<any> => {
+  const createBeneficiarioOp = useCallback(async (filters: ICreateBeneficiarioOp): Promise<IApiResponse<ICreateBeneficiarioOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseBenenficiarioOpCreate>(UrlServices.CREATEBENEFICIARIO, filters)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<ICreateBeneficiarioOp>>(UrlServices.CREATEBENEFICIARIO, filters)
+      const responseHandleApi = handleApiResponse<ICreateBeneficiarioOp>(responseCreateRetencion.data, 'Beneficiario creado con éxito', setMessage, setError)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-      setMessage(responseCreateRetencion.data.message)
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const updateBeneficiarioOp = useCallback(async (filters: IUpdateBeneficiarioOp): Promise<any> => {
+  const updateBeneficiarioOp = useCallback(async (filters: IUpdateBeneficiarioOp): Promise<IApiResponse<IUpdateBeneficiarioOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseBenenficiarioOpUpdate>(UrlServices.UPDATEBENEFICIARIO, filters)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-      setMessage(responseCreateRetencion.data.message)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<IUpdateBeneficiarioOp>>(UrlServices.UPDATEBENEFICIARIO, filters)
+      const responseHandleApi = handleApiResponse<IUpdateBeneficiarioOp>(responseCreateRetencion.data, 'Beneficiario actualizado con éxito', setMessage, setError)
+
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const deleteBeneficiarioOp = useCallback(async (filters: IDeleteBeneficiarioOp): Promise<any> => {
+  const deleteBeneficiarioOp = useCallback(async (filters: IDeleteBeneficiarioOp): Promise<IApiResponse<IDeleteBeneficiarioOp>> => {
     try {
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseDeleteBeneficiario>(UrlServices.DELETEBENEFICIARIO, filters)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-      setMessage(responseCreateRetencion.data.message)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<IDeleteBeneficiarioOp>>(UrlServices.DELETEBENEFICIARIO, filters)
+      const responseHandleApi = handleApiResponse<IDeleteBeneficiarioOp>(responseCreateRetencion.data, 'Beneficiario eliminado con éxito', setMessage, setError)
+
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [dispatch])
 
-  const updateBeneficiarioOpMonto = useCallback(async (filters: IUpdateMontoBeneficiarioOp): Promise<any> => {
+  const updateBeneficiarioOpMonto = useCallback(async (filters: IUpdateMontoBeneficiarioOp): Promise<IApiResponse<IUpdateMontoBeneficiarioOp>> => {
     try {
-      console.log(filters)
       setLoading(true)
-      setMessage('')
-      const responseCreateRetencion = await ossmmasofApi.post<IResponseBenenficiarioOpMontoUpdate>(UrlServices.UPDATEBENEFICIARIOMONTO, filters)
 
-      if (responseCreateRetencion.data.isValid) {
-        return responseCreateRetencion.data
-      }
-      setMessage(responseCreateRetencion.data.message)
+      const responseCreateRetencion = await ossmmasofApi.post<IResponseBase<IUpdateMontoBeneficiarioOp>>(UrlServices.UPDATEBENEFICIARIOMONTO, filters)
+      const responseHandleApi = handleApiResponse<IUpdateMontoBeneficiarioOp>(responseCreateRetencion.data, 'Monto actualizado con éxito', setMessage, setError)
+
+      return responseHandleApi
     } catch (e: any) {
-      setError(e.message)
-      console.error(e)
+
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
-  } , [])
+  } , [dispatch])
 
   return {
     error, message, loading,
