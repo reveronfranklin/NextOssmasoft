@@ -36,7 +36,7 @@ const FormCreateRetencionesOp = () => {
 
   const { codigoOrdenPago, retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
-  const [localMessage, setLocalMessage] = useState<string | null>(message)
+  const [localMessage, setLocalMessage] = useState<any | null>(message)
 
   const { control, setValue, getValues, formState: { errors, isValid } } = useForm<any>({
     defaultValues: {
@@ -123,7 +123,7 @@ const FormCreateRetencionesOp = () => {
   }
 
   const clearForm = async (): Promise<void> => {
-    setLocalMessage(null)
+    // setLocalMessage(null)
     setValue('tipoRetencion', '')
     setValue('conceptoPago', '')
     setValue('montoRetencion', '')
@@ -258,11 +258,11 @@ const FormCreateRetencionesOp = () => {
             />
           </Grid>
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-            {localMessage && (
+            {/* {localMessage && (
               <Box>
                 <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{localMessage}</FormHelperText>
               </Box>
-            )}
+            )} */}
           </Grid>
         </Grid>
       </form>
@@ -295,11 +295,11 @@ const FormCreateRetencionesOp = () => {
         setIsOpenDialog={setIsOpenDialogConfirmButtons}
         isFormValid={isValid}
       />
-      {message && (
+      {/* {message.isValid && (
         <Box>
-          <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message}</FormHelperText>
+          <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message.text}</FormHelperText>
         </Box>
-      )}
+      )} */}
     </Box>
   )
 }

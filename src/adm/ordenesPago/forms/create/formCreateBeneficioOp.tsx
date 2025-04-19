@@ -13,6 +13,7 @@ import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
 import { ICreateBeneficiarioOp } from '../../interfaces/admBeneficiarioOp/createBeneficiarioOp.interfaces'
 import { IUpdateBeneficiarioOp } from '../../interfaces/admBeneficiarioOp/updateBeneficiarioOp.interfaces'
 import { IDeleteBeneficiarioOp } from '../../interfaces/admBeneficiarioOp/deleteBeneficiarioOp.interfaces'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormCreateBeneficioOp = () => {
   const dispatch = useDispatch()
@@ -132,8 +133,6 @@ const FormCreateBeneficioOp = () => {
                   variant="outlined"
                   type="number"
                   inputProps={{ min: 0 }}
-                  error={!!message}
-                  helperText={message}
                 />
               )}
             />
@@ -151,8 +150,6 @@ const FormCreateBeneficioOp = () => {
                   variant="outlined"
                   type="number"
                   inputProps={{ min: 0 }}
-                  error={!!message}
-                  helperText={message}
                 />
               )}
             />
@@ -170,8 +167,6 @@ const FormCreateBeneficioOp = () => {
                   variant="outlined"
                   type="number"
                   inputProps={{ min: 0 }}
-                  error={!!message}
-                  helperText={message}
                 />
               )}
             />
@@ -207,6 +202,12 @@ const FormCreateBeneficioOp = () => {
           isOpenDialog={isOpenDialogConfirmButtons}
           setIsOpenDialog={setIsOpenDialogConfirmButtons}
           isFormValid={isValid}
+        />
+        <AlertMessage
+          message={message?.text ?? ''}
+          severity={message?.isValid ? 'success' : 'error'}
+          duration={8000}
+          show={message?.text ? true : false}
         />
       </Box>
     </Box>
