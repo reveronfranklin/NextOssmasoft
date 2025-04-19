@@ -219,8 +219,8 @@ const FormCreateRetenciones = () => {
                   onChange={onChange}
                   label='codigo'
                   variant='outlined'
-                  error={!!errors.codigo}
-                  helperText={errors.codigo?.message as string | undefined}
+                  // error={!!errors.codigo}
+                  // helperText={errors.codigo?.message as string | undefined}
                 />
               )}
             />
@@ -262,8 +262,8 @@ const FormCreateRetenciones = () => {
                   onChange={onChange}
                   label='Concepto Pago'
                   variant='outlined'
-                  error={!!errors.conceptoPag}
-                  helperText={errors.conceptoPag?.message as string | undefined}
+                  // error={!!errors.conceptoPag}
+                  // helperText={errors.conceptoPag?.message as string | undefined}
                 />
               )}
             />
@@ -281,8 +281,8 @@ const FormCreateRetenciones = () => {
                   label='Base Imponible'
                   variant='outlined'
                   size='small'
-                  error={!!errors.baseImponible}
-                  helperText={errors.baseImponible?.message as string | undefined}
+                  // error={!!errors.baseImponible}
+                  // helperText={errors.baseImponible?.message as string | undefined}
                 />
               )}
             />
@@ -300,8 +300,8 @@ const FormCreateRetenciones = () => {
                   label='Por Retencion'
                   variant='outlined'
                   size='small'
-                  error={!!errors.montoRetencion}
-                  helperText={errors.montoRetencion?.message as string | undefined}
+                  // error={!!errors.montoRetencion}
+                  // helperText={errors.montoRetencion?.message as string | undefined}
                 />
               )}
             />
@@ -319,8 +319,8 @@ const FormCreateRetenciones = () => {
                   label='Monto Retencion'
                   variant='outlined'
                   size='small'
-                  error={!!errors.baseImponible}
-                  helperText={errors.baseImponible?.message as string | undefined}
+                  // error={!!errors.baseImponible}
+                  // helperText={errors.baseImponible?.message as string | undefined}
                 />
               )}
             />

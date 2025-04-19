@@ -23,6 +23,7 @@ import {
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useServicesRetenciones } from '../../services/index'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormImpuestoDocumentosOp = () => {
   const [porRetencion, setPorRetencion] = useState<number>(0)
@@ -533,14 +534,6 @@ const FormImpuestoDocumentosOp = () => {
 
           </Grid>
         </Grid>
-
-        <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-          {message || validationError && (
-            <Box>
-              <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message} {validationError}</FormHelperText>
-            </Box>
-          )}
-        </Grid>
       </form>
       <CustomButtonDialog
         saveButtonConfig={{
@@ -574,6 +567,12 @@ const FormImpuestoDocumentosOp = () => {
         isOpenDialog={isOpenDialogConfirmButtons}
         setIsOpenDialog={setIsOpenDialogConfirmButtons}
         isFormValid={isValid}
+      />
+      <AlertMessage
+        message={message?.text ?? ''}
+        severity={message?.isValid ? 'success' : 'error'}
+        duration={8000}
+        show={message?.text ? true : false}
       />
     </>
   )
