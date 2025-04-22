@@ -50,7 +50,7 @@ const FormUpdateOrdenPago = () => {
         retry: 3,
     }, qc)
 
-    console.log('data', data)
+    console.log(data)
     const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const {
         updateOrden,
@@ -108,7 +108,6 @@ const FormUpdateOrdenPago = () => {
     }
 
     const handleClearCompromiso = () => {
-        console.log('handleClearCompromiso')
         setShowMessage(false)
     }
 

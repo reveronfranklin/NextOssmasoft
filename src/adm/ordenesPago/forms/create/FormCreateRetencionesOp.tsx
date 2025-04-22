@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, Button, FormHelperText, Grid, TextField } from "@mui/material"
+import React from 'react'
+import { Box, Button, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { RootState } from "src/store"
 import { useSelector, useDispatch } from "react-redux"
@@ -21,6 +21,7 @@ import { IUpdateRetencionOp } from '../../interfaces/retencionesOp/updateRetenci
 import { IDeleteRetencionOp } from '../../interfaces/retencionesOp/deleteRetencionOp'
 
 import TipoRetencion from 'src/adm/ordenesPago/components/AutoComplete/TipoRetencion'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 interface getValuesForm {
   tipoRetencion: number
@@ -36,9 +37,8 @@ const FormCreateRetencionesOp = () => {
 
   const { codigoOrdenPago, retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
-  const [localMessage, setLocalMessage] = useState<any | null>(message)
 
-  const { control, setValue, getValues, formState: { errors, isValid } } = useForm<any>({
+  const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
     defaultValues: {
       tipoRetencion: retencionOpSeleccionado?.tipoRetencionId ?? '',
       conceptoPago: retencionOpSeleccionado?.conceptoPago ?? '',
@@ -123,7 +123,6 @@ const FormCreateRetencionesOp = () => {
   }
 
   const clearForm = async (): Promise<void> => {
-    // setLocalMessage(null)
     setValue('tipoRetencion', '')
     setValue('conceptoPago', '')
     setValue('montoRetencion', '')
@@ -150,7 +149,6 @@ const FormCreateRetencionesOp = () => {
   }, [retencionOpSeleccionado, setValue])
 
   useEffect(() => {
-    console.log(retencionSeleccionado)
     if (retencionSeleccionado) {
       setValue('conceptoPago', retencionSeleccionado?.descripcionTipoRetencion ?? '')
       setValue('codigoRetencion', retencionSeleccionado?.codigoRetencion ?? 0)
@@ -179,8 +177,6 @@ const FormCreateRetencionesOp = () => {
                     value={value}
                     onChange={onChange}
                     variant='outlined'
-                    error={!!errors.conceptoPago}
-                    helperText={errors.conceptoPago?.message as string | undefined}
                     sx={{ flexGrow: 1 }}
                   />
                 )}
@@ -213,8 +209,6 @@ const FormCreateRetencionesOp = () => {
                   label='Monto Retención'
                   variant='outlined'
                   size='small'
-                  error={!!errors.montoRetencion}
-                  helperText={errors.montoRetencion?.message as string | undefined}
                 />
               )}
             />
@@ -231,8 +225,6 @@ const FormCreateRetencionesOp = () => {
                   label='Monto Retenido'
                   variant='outlined'
                   size='small'
-                  error={!!errors.montoRetenido}
-                  helperText={errors.montoRetenido?.message as string | undefined}
                   disabled
                 />
               )}
@@ -250,19 +242,12 @@ const FormCreateRetencionesOp = () => {
                   placeholder='Número Comprobante'
                   variant='outlined'
                   size='small'
-                  error={!!errors.numeroComprobante}
-                  helperText={errors.numeroComprobante?.message as string | undefined}
                   disabled
                 />
               )}
             />
           </Grid>
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-            {/* {localMessage && (
-              <Box>
-                <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{localMessage}</FormHelperText>
-              </Box>
-            )} */}
           </Grid>
         </Grid>
       </form>
@@ -295,11 +280,12 @@ const FormCreateRetencionesOp = () => {
         setIsOpenDialog={setIsOpenDialogConfirmButtons}
         isFormValid={isValid}
       />
-      {/* {message.isValid && (
-        <Box>
-          <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message.text}</FormHelperText>
-        </Box>
-      )} */}
+      <AlertMessage
+        message={message?.text ?? ''}
+        severity={message?.isValid ? 'success' : 'error'}
+        duration={8000}
+        show={message?.text ? true : false}
+      />
     </Box>
   )
 }

@@ -28,7 +28,7 @@ const FormCreateRetenciones = () => {
   const { isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
   const { loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
 
-  const { control, setValue, getValues, formState: { errors, isValid } } = useForm<any>({
+  const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
     defaultValues: {
       codigoRetencion: 0,
       codigo: 0,
@@ -219,8 +219,6 @@ const FormCreateRetenciones = () => {
                   onChange={onChange}
                   label='codigo'
                   variant='outlined'
-                  // error={!!errors.codigo}
-                  // helperText={errors.codigo?.message as string | undefined}
                 />
               )}
             />
@@ -262,8 +260,6 @@ const FormCreateRetenciones = () => {
                   onChange={onChange}
                   label='Concepto Pago'
                   variant='outlined'
-                  // error={!!errors.conceptoPag}
-                  // helperText={errors.conceptoPag?.message as string | undefined}
                 />
               )}
             />
@@ -281,8 +277,6 @@ const FormCreateRetenciones = () => {
                   label='Base Imponible'
                   variant='outlined'
                   size='small'
-                  // error={!!errors.baseImponible}
-                  // helperText={errors.baseImponible?.message as string | undefined}
                 />
               )}
             />
@@ -300,8 +294,6 @@ const FormCreateRetenciones = () => {
                   label='Por Retencion'
                   variant='outlined'
                   size='small'
-                  // error={!!errors.montoRetencion}
-                  // helperText={errors.montoRetencion?.message as string | undefined}
                 />
               )}
             />
@@ -319,8 +311,6 @@ const FormCreateRetenciones = () => {
                   label='Monto Retencion'
                   variant='outlined'
                   size='small'
-                  // error={!!errors.baseImponible}
-                  // helperText={errors.baseImponible?.message as string | undefined}
                 />
               )}
             />
