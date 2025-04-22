@@ -22,8 +22,6 @@ const TipoRetencion = (props: any) => {
     staleTime: 5000 * 60 * 60,
   }, qc)
 
-  console.log(query.data?.data)
-
   const ListTipoRetencion: ITipoRetencion[] = query.data?.data ?? []
   const [selectedValue, setSelectedValue] = useState<ITipoRetencion | null>(null)
 

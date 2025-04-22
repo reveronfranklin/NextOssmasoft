@@ -15,11 +15,6 @@ const StyledDataGridContainer = styled(Box)(() => ({
     overflowY: 'auto',
 }))
 
-interface IfilterByOrdenPago {
-    codigoOrdenPago: number,
-    codigoPresupuesto?: any
-}
-
 const DataGridComponent = () => {
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
@@ -28,23 +23,23 @@ const DataGridComponent = () => {
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
-
     const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
     const { getCompromisoByOrden, presupuestoSeleccionado } = useServices()
 
-    const filter: IfilterByOrdenPago = {
-        codigoOrdenPago,
+    const filter: any = {
+        codigoOrdenPago: codigoOrdenPago,
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
     }
 
     const query = useQuery({
-        queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText],
+        queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText, filter],
         queryFn: () => getCompromisoByOrden(filter),
         initialData: () => {
             return qc.getQueryData(['listCompromisoByOrdenPago', pageSize, pageNumber, searchText])
         },
         staleTime: 100 * 60,
         retry: 3,
+        enabled: !!codigoOrdenPago && !!presupuestoSeleccionado?.codigoPresupuesto,
     }, qc)
 
     const rows = query?.data?.data || []

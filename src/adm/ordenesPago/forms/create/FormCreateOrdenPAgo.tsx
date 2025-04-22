@@ -11,6 +11,7 @@ import {
     setCompromisoSeleccionadoDetalle,
     setTypeOperation,
     setConFactura,
+    setCodigoOrdenPago,
 } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
 import FormOrdenPago from '../FormOrdenPago'
@@ -69,17 +70,23 @@ const FormCreateOrdenPago = () => {
             }
 
             const response = await createOrden(payload)
+            const { data } = response
 
-            if (response) {
-                dispatch(setCompromisoSeleccionadoDetalle(response.data))
-                dispatch(setConFactura(response.data.conFactura))
-                changeViewToEdit()
+            if (data) {
+                dispatch(setCompromisoSeleccionadoDetalle(data))
+
+                dispatch(setConFactura(data.conFactura))
+                dispatch(setCodigoOrdenPago(data.codigoOrdenPago))
+
+                setTimeout(() => {
+                    changeViewToEdit()
+                }, 500);
             }
         } catch (e: any) {
             console.error(e)
         } finally {
             qc.invalidateQueries({
-                queryKey: ['ordenesPagoTable']
+                queryKey: ['ordenesPagoTable, listCompromisoByOrdenPago']
             })
         }
     }

@@ -59,13 +59,13 @@ const FormImpuestoDocumentosOp = () => {
     codigoImpuestoDocumentoOp: 0,
     codigoDocumentoOp: 0,
     codigoRetencion: 0,
+    conceptoPago: '',
     tipoRetencionId: 0,
     periodoImpositivo: '',
     baseImponible: 0,
     montoImpuesto: 0,
     montoImpuestoExento: 0,
     montoRetenido: 0,
-    conceptoPago: ''
   }
 
   const {
@@ -531,7 +531,13 @@ const FormImpuestoDocumentosOp = () => {
                 )}
               />
             </Grid>
-
+            <Box>
+              {validationError && validationError.length > 0 && (
+                <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
+                  {validationError}
+                </FormHelperText>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </form>

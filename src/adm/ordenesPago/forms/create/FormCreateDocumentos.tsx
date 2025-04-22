@@ -316,6 +316,10 @@ const FormCreateDocumentosOp = () => {
       dispatch(setDocumentoOpSeleccionado(documentoUpdate))
       setValue('fechaDocumento', fechaDocumento)
 
+      //setea la fecha de documento en comprobante
+      handleFechaComprobanteObjChange(fecha)
+
+      //periodo impositivo formato yyyy-mm-dd
       generatePImpositivo(fecha)
     }
   }
@@ -410,23 +414,45 @@ const FormCreateDocumentosOp = () => {
 
             <Grid item xs={3} style={{ marginLeft: 'auto' }}>
               <DatePickerWrapper>
-                <DatePicker
-                  selected={
-                    documentoOpSeleccionado?.fechaComprobanteObj
-                      ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj)
-                      : null
-                  }
-                  id='Fecha-comprobante'
-                  dateFormat='dd/MM/yyyy'
-                  onChange={(date: Date) => {
-                    handleFechaComprobanteObjChange(date)
-                  }}
-                  placeholderText='Fecha Comprobante'
-                  customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
-                  disabled={false}
+                <Controller
+                  name='fechaDocumento' // Usa el mismo nombre del campo que controlas con useForm
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      selected={field.value ? new Date(field.value) : null} // Usa el valor controlado por react-hook-form
+                      id='Fecha-documento'
+                      dateFormat='dd/MM/yyyy'
+                      onChange={(date: Date) => {
+                          field.onChange(dayjs(date).format('YYYY-MM-DDTHH:mm:ss'))
+                          handleFechaDocumentoObjChange(date)
+                      }}
+                      placeholderText='Fecha Documento'
+                      customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' value={field.value ? dayjs(field.value).format('DD/MM/YYYY') : ''} />}
+                      disabled={false}
+                    />
+                    )}
                 />
               </DatePickerWrapper>
             </Grid>
+            {/* <Grid item xs={3} style={{ marginLeft: 'auto' }}>
+              <DatePickerWrapper>
+                <DatePicker
+                  selected={
+                    documentoOpSeleccionado?.fechaDocumentoObj
+                      ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj)
+                      : null
+                  }
+                  id='Fecha-documento'
+                  dateFormat='dd/MM/yyyy'
+                  onChange={(date: Date) => {
+                    handleFechaDocumentoObjChange(date)
+                  }}
+                  placeholderText='Fecha Documento'
+                  customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
+                  disabled={false}
+                />
+              </DatePickerWrapper>
+            </Grid> */}
           </Grid>
 
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
@@ -516,18 +542,18 @@ const FormCreateDocumentosOp = () => {
               <DatePickerWrapper>
                 <DatePicker
                   selected={
-                    documentoOpSeleccionado?.fechaDocumentoObj
-                      ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj)
+                    documentoOpSeleccionado?.fechaComprobanteObj
+                      ? getDateByObject(documentoOpSeleccionado?.fechaComprobanteObj)
                       : null
                   }
-                  id='Fecha-documento'
+                  id='Fecha-comprobante'
                   dateFormat='dd/MM/yyyy'
                   onChange={(date: Date) => {
-                    handleFechaDocumentoObjChange(date)
+                    handleFechaComprobanteObjChange(date)
                   }}
-                  placeholderText='Fecha Documento'
-                  customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
-                  disabled={false}
+                  placeholderText='Fecha Comprobante'
+                  customInput={<TextField fullWidth label='Fecha Comprobante' variant='outlined' />}
+                  disabled={true}
                 />
               </DatePickerWrapper>
             </Grid>
@@ -825,7 +851,7 @@ const FormCreateDocumentosOp = () => {
             variant='outlined'
             size='small'
           >
-            ver impuestos
+            Impuestos
           </Button>
         </>
         <AlertMessage

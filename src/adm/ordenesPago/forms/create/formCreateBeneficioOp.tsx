@@ -89,6 +89,7 @@ const FormCreateBeneficioOp = () => {
       const data: IDeleteBeneficiarioOp = {
         codigoBeneficiarioOp: beneficioOpSeleccionado.codigoBeneficiarioOp
       }
+
       const response = await deleteBeneficiarioOp(data)
 
       if (response.isValid) {}
@@ -106,15 +107,12 @@ const FormCreateBeneficioOp = () => {
   }
 
   useEffect(() => {
-    console.log('beneficioOpSeleccionado', beneficioOpSeleccionado)
     if (beneficioOpSeleccionado) {
       setValue('monto', beneficioOpSeleccionado.monto)
       setValue('montoPagado', beneficioOpSeleccionado.montoPagado)
       setValue('montoAnulado', beneficioOpSeleccionado.montoAnulado)
     }
-  }
-    , [beneficioOpSeleccionado])
-
+  }, [beneficioOpSeleccionado])
 
   return (
     <Box p={2}>
