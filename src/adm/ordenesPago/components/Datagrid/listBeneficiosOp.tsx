@@ -7,7 +7,6 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useServicesBeneficiarioOp } from '../../services/index'
 import { setIsCollapseRetenciones, setBeneficioOpSeleccionado } from 'src/store/apps/ordenPago'
 import { useDispatch } from 'react-redux'
-import toast from 'react-hot-toast'
 
 import { IUpdateMontoBeneficiarioOp } from '../../interfaces/admBeneficiarioOp/updateMontoBeneficiarioOp.interfaces'
 import { useSelector } from 'react-redux'
@@ -87,7 +86,7 @@ const DataGridComponent = () => {
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoBeneficiarioOp}
+              getRowId={(row) => row?.codigoBeneficiarioOp}
               rows={rows}
               rowCount={rowCount}
               columns={ColumnsDataGridBeneficioOp() as any}
