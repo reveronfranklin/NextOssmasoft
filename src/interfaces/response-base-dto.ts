@@ -1,8 +1,8 @@
 export interface IResponseBase<T> {
   data: T[]
   isValid: boolean
-  linkData: any
-  linkDataAlternative: any
+  linkData: string | null
+  linkDataArlternative?: string | null
   message: string
   page: number
   totalPage: number

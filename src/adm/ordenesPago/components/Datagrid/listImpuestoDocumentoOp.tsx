@@ -32,7 +32,7 @@ const DataGridComponent = () => {
   }), [documentoOpSeleccionado.codigoDocumentoOp])
 
   const query = useQuery({
-    queryKey: ['impuestoDocumentosTable', pageSize, pageNumber],
+    queryKey: ['impuestoDocumentosTable', pageSize, pageNumber, filter],
     queryFn: () => getListImpuestoDocumentosOp(filter),
     initialData: () => {
       return qc.getQueryData(['impuestoDocumentosTable', pageSize, pageNumber])

@@ -28,11 +28,19 @@ export const handleApiResponse = <T>(
   }
 
   return {
-    success: apiResponse.isValid,
-    isValid: apiResponse.isValid,
-    message: message,
     data: apiResponse.data,
+    isValid: apiResponse.isValid,
+    linkData: apiResponse.linkData,
+    linkDataArlternative: apiResponse.linkDataArlternative,
+    message: message,
+    page: apiResponse.page,
+    totalPage: apiResponse.totalPage,
     cantidadRegistros: apiResponse.cantidadRegistros || 0,
+    total1: apiResponse.total1,
+    total2: apiResponse.total2,
+    total3: apiResponse.total3,
+    total4: apiResponse.total4,
+    success: apiResponse.isValid,
   }
 }
 

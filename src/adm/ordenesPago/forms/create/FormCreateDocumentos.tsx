@@ -850,6 +850,7 @@ const FormCreateDocumentosOp = () => {
             onClick={() => dispatch(setIsOpenDialogImpuestoDocumentosEdit(true))}
             variant='outlined'
             size='small'
+            disabled={typeOperationDocumento === 'create' ? true : false}
           >
             Impuestos
           </Button>
