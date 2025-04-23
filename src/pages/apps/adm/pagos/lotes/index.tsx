@@ -1,9 +1,10 @@
-import Grid from '@mui/material/Grid'
+import Grid from '@mui/material/Grid';
+import Layout from 'src/adm/pagos/lotes/views/Layout';
 
 const Bancos = () => {
   return (
     <Grid item xs={12}>
-      Lotes
+      <Layout />
     </Grid>
   )
 }
