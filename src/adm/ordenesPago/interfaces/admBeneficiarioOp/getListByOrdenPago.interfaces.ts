@@ -7,7 +7,7 @@ export interface IGetListByOrdenPago {
 }
 
 export interface IResponseGetBeneficiarioOp {
-  data: BeneficiarioOp[]
+  data: IBeneficiarioOp[]
   isValid: boolean
   linkData: any
   linkDataArlternative: any
@@ -21,7 +21,7 @@ export interface IResponseGetBeneficiarioOp {
   total4: number
 }
 
-export interface BeneficiarioOp {
+export interface IBeneficiarioOp {
   codigoBeneficiarioOp: number
   codigoOrdenPago: number
   codigoProveedor: number

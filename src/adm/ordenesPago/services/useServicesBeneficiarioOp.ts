@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "src/store"
 import { useDispatch } from 'react-redux'
 
-import { IGetListByOrdenPago } from '../interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
+import { IGetListByOrdenPago, IBeneficiarioOp } from '../interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
 import { ICreateBeneficiarioOp } from '../interfaces/admBeneficiarioOp/createBeneficiarioOp.interfaces'
 import { IUpdateBeneficiarioOp } from '../interfaces/admBeneficiarioOp/updateBeneficiarioOp.interfaces'
 import { IDeleteBeneficiarioOp } from '../interfaces/admBeneficiarioOp/deleteBeneficiarioOp.interfaces'
@@ -28,12 +28,12 @@ const useServicesBeneficiarioOp = () => {
   const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getBeneficiarioOpByOrdenPago = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<IGetListByOrdenPago>> => {
+  const getBeneficiarioOpByOrdenPago = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<IBeneficiarioOp>> => {
     try {
       setLoading(true)
 
-      const responseGetOrdenes = await ossmmasofApi.post<IResponseBase<IGetListByOrdenPago>>(UrlServices.GETBENEFICIARIO, filters)
-      const responseHandleApi = handleApiResponse<IGetListByOrdenPago>(responseGetOrdenes.data, undefined, setMessage, setError)
+      const responseGetOrdenes = await ossmmasofApi.post<IResponseBase<IBeneficiarioOp>>(UrlServices.GETBENEFICIARIO, filters)
+      const responseHandleApi = handleApiResponse<IBeneficiarioOp>(responseGetOrdenes.data, undefined, setMessage, setError)
 
       return responseHandleApi
     } catch (e: any) {
