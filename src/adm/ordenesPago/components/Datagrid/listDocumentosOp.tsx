@@ -38,7 +38,7 @@ const DataGridComponent = () => {
     retry: 3,
   }, qc)
 
-  const rows: Documentos[] = query?.data?.data || []
+  const rows: any[] = query?.data?.data || []
   const rowCount = query?.data?.cantidadRegistros
 
   setDocumentCount(rowCount)
