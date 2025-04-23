@@ -5,17 +5,21 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
+
 /* import { CuentaDto } from '../../../interfaces'; */
-import {
+
+/* import {
     setIsOpenDialogCuenta,
     setMaestroCuentaShow,
     setTypeOperation
-} from 'src/store/apps/pagos/cuentas';
+} from 'src/store/apps/pagos/cuentas'; */
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (maestroCuenta: any) => {
+    const handleEdit = (lote: any) => {
+        console.log('Lotes', lote)
+
        /*  dispatch(setTypeOperation('update'))
         dispatch(setIsOpenDialogCuenta(true))
         dispatch(setMaestroCuentaShow(maestroCuenta)) */

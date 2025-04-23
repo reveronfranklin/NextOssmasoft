@@ -33,6 +33,8 @@ const useServices = () => {
     }, [])
 
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
+        console.log('Payload', payload)
+
 /*         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
@@ -47,6 +49,8 @@ const useServices = () => {
     }, [])
 
     const update = useCallback(async (payload: LoteDto): Promise<any> => {
+        console.log('Payload', payload)
+
 /*         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
@@ -61,6 +65,8 @@ const useServices = () => {
     }, [])
 
     const remove = useCallback(async (payload: any): Promise<any> => {
+        console.log('Payload', payload)
+
 /*         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
