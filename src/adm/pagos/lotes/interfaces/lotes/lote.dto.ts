@@ -1,8 +1,8 @@
 export interface LoteDto {
     codigoLotePago:    number;
-    tipoPagoId:        number;
-    fechaPago:         Date;
-    codigoCuentaBanco: number;
+    tipoPagoId:        number | null;
+    fechaPago:         Date | null;
+    codigoCuentaBanco: number | null;
     codigoPresupuesto: number;
-    Titulo:            string;
+    Titulo:            string | null;
 }

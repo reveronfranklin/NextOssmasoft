@@ -5,10 +5,9 @@ import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
 import Icon from 'src/@core/components/icon';
 import { RootState } from 'src/store';
-import { setIsOpenDialogCuenta, setTypeOperation } from 'src/store/apps/pagos/cuentas';
-
-/* import FormCreate from '../forms/FormCreate';
-import FormUpdate from '../forms/FormUpdate'; */
+import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
+import FormCreate from '../forms/FormCreate';
+/* import FormUpdate from '../forms/FormUpdate'; */
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -17,12 +16,12 @@ const Transition = forwardRef(function Transition(
     return <Fade ref={ref} {...props} />
 })
 
-const DialogLotes = () => {
+const DialogLote = () => {
     const dispatch = useDispatch()
-    const { typeOperation, isOpenDialogCuenta } = useSelector((state: RootState) => state.admMaestroCuenta )
+    const { typeOperation, isOpenDialogLote } = useSelector((state: RootState) => state.admLote )
 
     const handleClose = () => {
-        dispatch(setIsOpenDialogCuenta(false))
+        dispatch(setIsOpenDialogLote(false))
         dispatch(setTypeOperation(null))
     }
 
@@ -30,7 +29,8 @@ const DialogLotes = () => {
         return (
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
-                    {/* {typeOperation === 'update' ? <FormUpdate /> : <FormCreate /> } */}
+                    {/* <FormUpdate /> */}
+                    {typeOperation === 'update' ? 'Update'  : <FormCreate /> }
                 </div>
             </Fade>
         )
@@ -42,7 +42,7 @@ const DialogLotes = () => {
                 fullWidth
                 maxWidth="md"
                 scroll='body'
-                open={isOpenDialogCuenta}
+                open={isOpenDialogLote}
                 TransitionComponent={Transition}
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'
@@ -65,7 +65,7 @@ const DialogLotes = () => {
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Maestro Cuenta ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
+                                Lotes de pago ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
                             </Typography>
                             <IconButton
                                 size='small'
@@ -85,4 +85,4 @@ const DialogLotes = () => {
     )
 }
 
-export default DialogLotes
+export default DialogLote

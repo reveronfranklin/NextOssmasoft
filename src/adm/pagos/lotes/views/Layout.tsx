@@ -1,11 +1,11 @@
 import LayoutLotes from './LayoutLotes';
-import DialogLotes from '../components/dialog/DialogLotes';
+import DialogLote from '../components/dialog/DialogLote';
 
 const LayoutComponent = () => {
     return (
         <>
             <LayoutLotes />
-            <DialogLotes />
+            <DialogLote />
         </>
     )
 }

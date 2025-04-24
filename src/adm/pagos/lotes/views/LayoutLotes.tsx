@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material';
 import Icon from 'src/@core/components/icon';
 import DataGridCuentasComponent from '../components/dataGrid/Lotes';
-import { setIsOpenDialogCuenta, setTypeOperation } from 'src/store/apps/pagos/cuentas';
+import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
 
 const LayoutLotes = () => {
     const dispatch = useDispatch()
@@ -10,13 +10,13 @@ const LayoutLotes = () => {
     const handleCreate = async () => {
         dispatch(setTypeOperation('create'))
         setTimeout(() => {
-            dispatch(setIsOpenDialogCuenta(true))
+            dispatch(setIsOpenDialogLote(true))
         }, 1500)
     }
 
     return (
         <Card>
-            <CardHeader title='Lotes'/>
+            <CardHeader title='Lotes de pago'/>
             <CardContent>
                 <Grid item justifyContent='flex-end'>
                     <Tooltip title='Agregar Lotes'>

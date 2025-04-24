@@ -84,7 +84,7 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoCuentaBanco}
+                            getRowId={(row) => row.codigoLotePago}
                             rows={rows}
                             rowCount={rowCount}
                             columns={columns}
