@@ -7,7 +7,7 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import ColumnsDataGridListCompromiso from '../../config/Datagrid/columnsDataGridListDocumentosOp'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-import { Documentos, IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
+import { IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
 import { setDocumentCount } from "src/store/apps/ordenPago"
 
 const StyledDataGridContainer = styled(Box)(() => ({
