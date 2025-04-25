@@ -23,7 +23,7 @@ import WarningIcon from '@mui/icons-material/Warning'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from '@mui/icons-material/Settings'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
@@ -215,9 +215,9 @@ const FormOrdenPago = (props: {
 
     const getActionIcon = (actionName: string) => {
         switch (actionName?.toLowerCase()) {
-            case 'aprobar': return <CheckCircleIcon />;
-            case 'anular': return <BlockIcon />;
-            default: return <SettingsIcon />;
+            case 'aprobar': return <CheckCircleIcon />
+            case 'anular': return <BlockIcon />
+            default: return <SettingsIcon />
         }
     }
 

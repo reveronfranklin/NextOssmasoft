@@ -30,8 +30,14 @@ const DataGridComponent = () => {
 
     const {
         getOrdenesPagoByPresupuesto,
-        presupuestoSeleccionado
+        presupuestoSeleccionado,
+        deleteOrden
     } = useServices()
+
+    const actions = {
+        deleteOrden,
+        presupuestoSeleccionado
+    }
 
     const filter: any = {
         pageSize,
@@ -105,7 +111,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoOrdenPago}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={ColumnsDataGrid(actions) as any}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}
