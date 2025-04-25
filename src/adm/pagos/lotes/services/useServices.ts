@@ -22,7 +22,7 @@ const useServices = () => {
     const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.GET_LOTE, payload)
+            const response = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.GET_LOTES, payload)
 
             return handleApiResponse<LoteResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
@@ -35,17 +35,17 @@ const useServices = () => {
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
         console.log('Payload', payload)
 
-/*         try {
+        try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.CREATE_MAESTRO_CUENTA, payload)
-            const message   = 'Cuenta creada exitosamente'
+            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CREATE_LOTE, payload)
+            const message   = 'Lote de pago creada exitosamente'
 
-            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
+            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
-        } */
+        }
     }, [])
 
     const update = useCallback(async (payload: LoteDto): Promise<any> => {
@@ -54,7 +54,7 @@ const useServices = () => {
 /*         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
-            const message   = 'Cuenta actualizada exitosamente'
+            const message   = 'Lote de pago exitosamente'
 
             return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -70,7 +70,7 @@ const useServices = () => {
 /*         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
-            const message   = 'Cuenta eliminada exitosamente'
+            const message   = 'Lote de pago eliminada exitosamente'
 
             return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
