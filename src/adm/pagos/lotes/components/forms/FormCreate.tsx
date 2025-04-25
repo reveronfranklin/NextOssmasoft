@@ -177,6 +177,7 @@ const FormCreate = () => {
                                                             }}
                                                             error={!!errors.Titulo}
                                                             helperText={errors.Titulo?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />

@@ -33,6 +33,26 @@ const useColumnsDataGrid = (): GridColDef[] => {
         },
     }))
 
+    const getStatusDescription = (status: string): string => {
+        let estatus = ''
+
+        switch (status) {
+            case 'PE':
+                estatus = 'Pendiente'
+                break;
+
+            case 'AN':
+                estatus = 'Anulada'
+                break;
+
+            case 'AP':
+                estatus = 'Aprobada'
+                break;
+        }
+
+        return estatus
+    }
+
     const columns = useMemo<GridColDef[]>(() => [
         {
             flex: 0,
@@ -106,7 +126,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
             field: 'status',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.status === null ? 'NO DISPONIBLE' : params.row.status}
+                    {params.row.status === null ? 'NO DISPONIBLE' : getStatusDescription(params.row.status)}
                 </Typography>
             )
         }
