@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import Icon from 'src/@core/components/icon'
-import { styled } from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 import { useDispatch } from 'react-redux'
 import { IconButton, Tooltip, Typography } from "@mui/material"
 import { GridRenderCellParams } from '@mui/x-data-grid'
@@ -12,9 +12,11 @@ import {
     setCodigoOrdenPago,
     setConFactura
 } from 'src/store/apps/ordenPago'
+import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
 
-function ColumnsDataGrid() {
+function ColumnsDataGrid(props: any) {
     const dispatch = useDispatch()
+    const theme = useTheme()
 
     const handleEdit = (row: any) => {
         dispatch(setCompromisoSeleccionadoDetalle(row))
@@ -28,6 +30,14 @@ function ColumnsDataGrid() {
         dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setIsOpenViewerPdf(true))
+    }
+
+    const handleDeleteOrdenPago = async (row : any) => {
+        if (!row) return
+        await props.deleteOrden({
+            codigoOrdenPago: row.codigoOrdenPago,
+            codigoPresupuesto: props.presupuestoSeleccionado.codigoPresupuesto
+        })
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -60,6 +70,26 @@ function ColumnsDataGrid() {
                             <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
+                    { row && row.status === 'PE' &&
+                        <ButtonWithConfirm
+                            color="primary"
+                            onAction={() => handleDeleteOrdenPago(row)}
+                            confirmMessage={`Esta usted seguro de eliminar la orden de pago: # ${row.codigoOrdenPago}`}
+                            showLoading={true}
+                            disableBackdropClick={true}
+                            startIcon={<Icon icon='mdi:delete' fontSize={20} />}
+                            sx={{
+                                minWidth: '0px',
+                                padding: 0,
+                                '&:hover': {
+                                    color: theme.palette.primary.main,
+                                    transform: 'scale(1.5)',
+                                    transition: 'transform 0.2s ease-in-out',
+                                },
+                            }}
+                        >
+                        </ButtonWithConfirm>
+                    }
                 </Box>
             )
         },
