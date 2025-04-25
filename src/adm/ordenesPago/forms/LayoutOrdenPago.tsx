@@ -7,10 +7,11 @@ import {
     setTypeOperation
 } from 'src/store/apps/ordenPago'
 import useServices from '../services/useServices'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const LayoutOrdenPago = () => {
     const dispatch = useDispatch()
-    const { presupuestoSeleccionado } = useServices()
+    const { presupuestoSeleccionado, message } = useServices()
 
     const handleCreateOrden = async () => {
         dispatch(setTypeOperation('create'))
@@ -38,6 +39,12 @@ const LayoutOrdenPago = () => {
                     <DataGridOrdenPagoComponent />
                 </Grid>
             </CardContent>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={10000}
+                show={message?.text ? true : false}
+            />
         </Card>
     )
 }

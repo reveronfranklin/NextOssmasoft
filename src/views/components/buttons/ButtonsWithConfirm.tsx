@@ -7,15 +7,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 type ButtonWithConfirmProps = {
-  children: ReactNode;
-  onAction?: () => void | Promise<void>;
-  confirmTitle?: string;
-  confirmMessage?: string;
-  confirmText?: string;
-  cancelText?: string;
-  disableBackdropClick?: boolean;
-  showLoading?: boolean;
-} & ButtonProps;
+  children: ReactNode
+  onAction?: () => void | Promise<void>
+  confirmTitle?: string
+  confirmMessage?: string
+  confirmText?: string
+  cancelText?: string
+  disableBackdropClick?: boolean
+  showLoading?: boolean
+} & ButtonProps
 
 export const ButtonWithConfirm = ({
   children,
@@ -43,7 +43,7 @@ export const ButtonWithConfirm = ({
     if (!onAction) {
       handleClose()
 
-      return;
+      return
     }
 
     try {

@@ -6,8 +6,10 @@ import { FiltersGetOrdenes } from '../interfaces/filtersGetOrdenes.interfaces'
 import { ResponseGetOrdenes } from '../interfaces/responseGetOrdenes.interfaces'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
-
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
+
+import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 interface IFilterDesciptiva {
     tituloId: number
@@ -20,6 +22,7 @@ interface IfilterByOrdenPago {
 
 import { IUpdateOrdenPago } from '../interfaces/updateOrdenPago.interfaces'
 import { ICreateOrdenPago } from '../interfaces/createOrdenPago.interfaces'
+import { IDeleteOrdenPago } from '../interfaces/deleteOrdenPago.interfaces'
 
 import { IResponseListPucByOrden } from '../interfaces/responseListPucByOrden'
 import { IResponseCompromisoByOrden } from '../interfaces/responseCompromisoByOrden'
@@ -163,6 +166,22 @@ const useServices = () => {
         }
     }, [])
 
+    const deleteOrden = useCallback(async (filters: IDeleteOrdenPago): Promise<IApiResponse<IDeleteOrdenPago>> => {
+        try {
+            setLoading(true)
+
+            const responseDeleteOrden = await ossmmasofApi.post<any>(UrlServices.DELETEORDENPAGO, filters)
+            const responseHandleApi = handleApiResponse<IDeleteOrdenPago>(responseDeleteOrden.data, 'ordenPago eliminado con éxito', setMessage, setError)
+
+            return responseHandleApi
+        } catch (e: any) {
+
+            return handleApiError(e)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     const fetchDescriptivaById = useCallback(async (filter: IFilterDesciptiva) => {
         try {
             const response = await ossmmasofApi.post<any>(UrlServices.DESCRIPTIVAS , filter)
@@ -256,6 +275,7 @@ const useServices = () => {
         getPucOrdenPago,
         createOrden,
         updateOrden,
+        deleteOrden,
         fetchDescriptivaById,
         getCompromisoByOrden,
         getListPucByOrdenPago,

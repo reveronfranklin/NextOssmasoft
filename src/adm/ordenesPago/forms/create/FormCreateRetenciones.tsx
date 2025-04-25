@@ -20,13 +20,14 @@ import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import dayjs from 'dayjs'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormCreateRetenciones = () => {
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
 
   const { isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
-  const { loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
+  const { message, loading, createRetencion, updateRetencion, deleteRetencion } = useServicesRetenciones()
 
   const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
     defaultValues: {
@@ -346,6 +347,12 @@ const FormCreateRetenciones = () => {
           isOpenDialog={isOpenDialogConfirmButtons}
           setIsOpenDialog={setIsOpenDialogConfirmButtons}
           isFormValid={isValid}
+        />
+        <AlertMessage
+          message={message?.text ?? ''}
+          severity={message?.isValid ? 'success' : 'error'}
+          duration={8000}
+          show={message?.text ? true : false}
         />
       </Box>
     </Box>
