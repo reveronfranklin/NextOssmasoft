@@ -14,9 +14,9 @@ import { IDeleteDocumentoOp } from '../interfaces/documentosOp/deleteDocumentosO
 import { setDocumentCount } from 'src/store/apps/ordenPago'
 
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
-import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 const useServicesDocumentosOp = () => {
   const [error, setError] = useState<string>('')
