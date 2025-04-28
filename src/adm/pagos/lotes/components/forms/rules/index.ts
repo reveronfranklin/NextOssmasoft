@@ -11,7 +11,7 @@ const rules =  {
         required: 'Este campo es requerido',
         isNumeric: 'El ID debe ser un número'
     },
-    Titulo: {
+    titulo: {
         required: 'Este campo es requerido',
         minLength: {
             value: 1,

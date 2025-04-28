@@ -33,8 +33,6 @@ const useServices = () => {
     }, [])
 
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
-        console.log('Payload', payload)
-
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CREATE_LOTE, payload)
@@ -49,35 +47,31 @@ const useServices = () => {
     }, [])
 
     const update = useCallback(async (payload: LoteDto): Promise<any> => {
-        console.log('Payload', payload)
-
-/*         try {
+        try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.UPDATE_MAESTRO_CUENTA, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.UPDATE_LOTE, payload)
             const message   = 'Lote de pago exitosamente'
 
-            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
+            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
-        } */
+        }
     }, [])
 
     const remove = useCallback(async (payload: any): Promise<any> => {
-        console.log('Payload', payload)
-
-/*         try {
+        try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<ResponseDto<CuentaResponseDto>>(UrlServices.DELETE_MAESTRO_CUENTA, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.DELETE_LOTE, payload)
             const message   = 'Lote de pago eliminada exitosamente'
 
-            return handleApiResponse<CuentaResponseDto>(response.data, message, setMessage, setError)
+            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
-        } */
+        }
     }, [])
 
     return {

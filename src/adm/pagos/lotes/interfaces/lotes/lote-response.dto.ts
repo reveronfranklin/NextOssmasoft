@@ -2,7 +2,7 @@ export interface LoteResponseDto {
     codigoLotePago:      number;
     tipoPagoId:          number;
     descripcionTipoPago: string;
-    fechaPago:           Date;
+    fechaPago:           string;
     fechaPagoString:     string;
     fechaPagoDto:        FechaPagoDto;
     codigoCuentaBanco:   number;

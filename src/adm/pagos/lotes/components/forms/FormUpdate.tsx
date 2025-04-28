@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DatePicker from 'react-datepicker';
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
-import moment from 'moment';
 import {
     Box,
     Grid,
@@ -14,8 +14,10 @@ import {
     Button
 } from '@mui/material';
 
+import { RootState } from 'src/store';
 import { useServices } from '../../services';
-import { LoteDto, FechaPagoDto } from '../../interfaces';
+import { setIsOpenDialogLote, resetLoteShow } from 'src/store/apps/pagos/lotes'
+import { LoteDto, FechaPagoDto, LoteDeleteDto } from '../../interfaces';
 import { TipoPago, MaestroCuenta } from '../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
@@ -24,9 +26,10 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
-const FormCreate = () => {
-    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]       = useState(false)
+const FormUpdate = () => {
+    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
     const [fechaPagoLote, setFechaPagoLote] = useState<FechaPagoDto>({
         year: new Date().getFullYear(),
@@ -34,23 +37,30 @@ const FormCreate = () => {
         day: new Date().getDate()
     })
 
+    const dispatch          = useDispatch()
     const qc: QueryClient   = useQueryClient()
+    const { lote }          = useSelector((state: RootState) => state.admLote )
     const rules             = getRules()
 
     const {
-        store,
+        update,
+        remove,
         message,
         loading
     } = useServices()
 
     const defaultValues: LoteDto = {
-        codigoLotePago: 0,
-        tipoPagoId: null,
-        fechaPago: moment().format('YYYY-MM-DDTHH:mm:ss'),
-        codigoCuentaBanco: null,
-        codigoPresupuesto: 19,
-        titulo: null
+        codigoLotePago: lote.codigoLotePago,
+        tipoPagoId: lote.tipoPagoId,
+        fechaPago: lote.fechaPago,
+        codigoCuentaBanco: lote.codigoCuentaBanco,
+        codigoPresupuesto: lote.codigoPresupuesto ?? 19,
+        titulo: lote.titulo
     }
+
+    useEffect(() => {
+        setFechaPagoLote(lote.fechaPagoDto)
+    }, [lote])
 
     const {
         control,
@@ -64,37 +74,74 @@ const FormCreate = () => {
     })
 
     const handleOpenDialog = () => {
-        setDialogOpen(true);
+        setDialogOpen(true)
     }
 
     const handleCloseDialog = () => {
-        setDialogOpen(false);
+        setDialogOpen(false)
+    }
+
+    const clearDefaultValues = () => {
+        setValue('tipoPagoId', null)
+        setValue('fechaPago', null)
+        setValue('codigoCuentaBanco', null)
+        setValue('codigoPresupuesto', 19)
+        setValue('titulo', null)
     }
 
     const handleClearPagoLote = () => {
-        const currentDate       = moment()
-        const fechaPagoLote     = fechaToFechaObj(currentDate.toDate())
-
-        setFechaPagoLote(fechaPagoLote)
+        dispatch(resetLoteShow())
         reset(defaultValues)
+        clearDefaultValues()
+
+        console.log(defaultValues)
     }
 
-    const handleCreateLotePago = async (formValues: LoteDto) => {
+    const handleUpdatePagoLote = async (lote: LoteDto) => {
         setIsFormEnabled(false)
         handleCloseDialog()
 
         try {
             const payload: LoteDto = {
-                ...formValues
+                ...lote
             }
 
-            const response = await store(payload)
+            await update(payload)
+        } catch (e: any) {
+            console.error('handleUpdatePagoLote', e)
+        } finally {
+            setIsFormEnabled(true)
+            qc.invalidateQueries({
+                queryKey: ['lotesTable']
+            })
+        }
+    }
+
+    const handleOpenDialogDelete = () => {
+        setDialogDeleteOpen(true)
+    }
+
+    const handleCloseDialogDelete = () => {
+        setDialogDeleteOpen(false)
+    }
+
+    const handleDelete = async () => {
+        setIsFormEnabled(false)
+        handleCloseDialogDelete()
+
+        try {
+            const payload: LoteDeleteDto = {
+                codigoLotePago: lote.codigoLotePago
+            }
+
+            const response = await remove(payload)
 
             if (response?.isValid) {
+                dispatch(setIsOpenDialogLote(false))
                 handleClearPagoLote()
             }
         } catch (e: any) {
-            console.error('handleCreateLotePago', e)
+            console.error('handleDelete', e)
         } finally {
             setIsFormEnabled(true)
             qc.invalidateQueries({
@@ -106,9 +153,9 @@ const FormCreate = () => {
     const handleFechaLotePagoChange = (date: Date | null) => {
         if (date && dayjs(date).isValid()) {
             const fechaPagoLotePagoObj  = fechaToFechaObj(date)
-            const fechaOrdenPagoLote    = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
+            const fechaPagoLote         = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
 
-            setValue('fechaPago', fechaOrdenPagoLote)
+            setValue('fechaPago', fechaPagoLote)
             setFechaPagoLote(fechaPagoLotePagoObj)
         }
     }
@@ -211,21 +258,39 @@ const FormCreate = () => {
                                 <DialogConfirmation
                                     open={dialogOpen}
                                     onClose={handleCloseDialog}
-                                    onConfirm={handleSubmit(handleCreateLotePago)}
+                                    onConfirm={handleSubmit(handleUpdatePagoLote)}
                                     loading={loading}
-                                    title="Crear nuevo registro"
-                                    content="¿Desea continuar con la creación del registro?"
+                                    title="Actualizar registro"
+                                    content="¿Desea continuar con la actualización de este registro?"
                                 />
 
-                                <Box sx={{ paddingTop: 6, marginTop: 55 }}>
+                                <DialogConfirmation
+                                    open={dialogDeleteOpen}
+                                    onClose={handleCloseDialogDelete}
+                                    onConfirm={handleDelete}
+                                    loading={loading}
+                                    title="Eliminar registro"
+                                    content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
+                                />
+
+                                <Box sx={{ paddingTop: 6, marginTop: 55}}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
                                         onClick={handleOpenDialog}
-                                        disabled={!isValid}
+                                        disabled={!isValid && loading}
                                     >
-                                        { 'Crear' }
+                                        Actualizar
+                                    </Button>
+                                    <Button
+                                        sx={{ mx: 4 }}
+                                        variant='outlined'
+                                        size='small'
+                                        onClick={handleOpenDialogDelete}
+                                        disabled={!isValid && loading}
+                                    >
+                                        Eliminar
                                     </Button>
                                     <Button
                                         color='primary'
@@ -251,4 +316,4 @@ const FormCreate = () => {
     )
 }
 
-export default FormCreate
+export default FormUpdate

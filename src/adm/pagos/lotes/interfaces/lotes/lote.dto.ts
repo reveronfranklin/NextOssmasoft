@@ -4,5 +4,5 @@ export interface LoteDto {
     fechaPago:         string | null;
     codigoCuentaBanco: number | null;
     codigoPresupuesto: number;
-    Titulo:            string | null;
+    titulo:            string | null;
 }

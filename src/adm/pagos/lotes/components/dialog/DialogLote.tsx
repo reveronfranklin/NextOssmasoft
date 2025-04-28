@@ -7,7 +7,7 @@ import Icon from 'src/@core/components/icon';
 import { RootState } from 'src/store';
 import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
 import FormCreate from '../forms/FormCreate';
-/* import FormUpdate from '../forms/FormUpdate'; */
+import FormUpdate from '../forms/FormUpdate';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -29,8 +29,7 @@ const DialogLote = () => {
         return (
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
-                    {/* <FormUpdate /> */}
-                    {typeOperation === 'update' ? 'Update'  : <FormCreate /> }
+                    {typeOperation === 'update' ? <FormUpdate /> : <FormCreate /> }
                 </div>
             </Fade>
         )
