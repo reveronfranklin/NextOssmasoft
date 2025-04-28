@@ -10,6 +10,8 @@ import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
 import { IApiResponse } from 'src/interfaces/api-response-dto'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { useQueryClient, QueryClient } from '@tanstack/react-query'
 
 interface IFilterDesciptiva {
     tituloId: number
@@ -29,13 +31,15 @@ import { IResponseCompromisoByOrden } from '../interfaces/responseCompromisoByOr
 
 const useServices = () => {
     const [error, setError] = useState<string>('')
-    const [message, setMessage] = useState(() => ({
+    const [message, setMessage] = useState<IAlertMessageDto>({
         text: '',
         timestamp: Date.now(),
         isValid: true,
-    }))
+    })
     const [loading, setLoading] = useState<boolean>(false)
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+
+    const queryClient: QueryClient = useQueryClient()
 
     const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<ResponseGetOrdenes | null> => {
         try {
@@ -108,59 +112,31 @@ const useServices = () => {
         }
     }, [])
 
-    const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<any> => {
+    const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<IApiResponse<ICreateOrdenPago>> => {
         try {
             setLoading(true)
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
+            const responseHandleApi = handleApiResponse<ICreateOrdenPago>(responseCreatetOrden.data, 'Documento creado con éxito', setMessage, setError)
 
-            if (responseCreatetOrden.data.isValid) {
-                setMessage(prev => ({
-                    ...prev,
-                    text: responseCreatetOrden.data.message || '',
-                    timestamp: Date.now(),
-                }))
-
-                return responseCreatetOrden.data
-            }
-
-            setMessage(prev => ({
-                ...prev,
-                text: responseCreatetOrden.data.message || '',
-                timestamp: Date.now(),
-                isValid: false,
-            }))
+            return responseHandleApi
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
     }, [])
 
-    const updateOrden = useCallback(async (filters: IUpdateOrdenPago): Promise<any> => {
+    const updateOrden = useCallback(async (filters: IUpdateOrdenPago): Promise<IApiResponse<IUpdateOrdenPago>> => {
         try {
             setLoading(true)
             const responseUpdateOrden = await ossmmasofApi.post<any>(UrlServices.UPDATEORDENPAGO, filters)
+            const responseHandleApi = handleApiResponse<IUpdateOrdenPago>(responseUpdateOrden.data, 'Documento actualizado con éxito', setMessage, setError)
 
-            if (responseUpdateOrden.data.isValid) {
-                setMessage(prev => ({
-                    ...prev,
-                    text: responseUpdateOrden.data.message || '',
-                    timestamp: Date.now(),
-                }))
-
-                return responseUpdateOrden.data
-            }
-
-            setMessage(prev => ({
-                ...prev,
-                text: responseUpdateOrden.data.message || '',
-                timestamp: Date.now(),
-                isValid: false,
-            }))
+            return responseHandleApi
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }
@@ -169,9 +145,15 @@ const useServices = () => {
     const deleteOrden = useCallback(async (filters: IDeleteOrdenPago): Promise<IApiResponse<IDeleteOrdenPago>> => {
         try {
             setLoading(true)
-
             const responseDeleteOrden = await ossmmasofApi.post<any>(UrlServices.DELETEORDENPAGO, filters)
-            const responseHandleApi = handleApiResponse<IDeleteOrdenPago>(responseDeleteOrden.data, 'ordenPago eliminado con éxito', setMessage, setError)
+            const responseHandleApi = handleApiResponse<IDeleteOrdenPago>(
+                responseDeleteOrden.data,
+                'ordenPago eliminado con éxito',
+                setMessage,
+                setError,
+                queryClient,
+                [['ordenesPagoTable']]
+            )
 
             return responseHandleApi
         } catch (e: any) {

@@ -1,12 +1,15 @@
 import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IApiResponse } from 'src/interfaces/api-response-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { QueryClient } from '@tanstack/react-query'
 
 export const handleApiResponse = <T>(
   apiResponse: IResponseBase<T>,
   successMessage?: string,
   setMessage?: (message: IAlertMessageDto) => void,
-  setError?: (error: string) => void
+  setError?: (error: string) => void,
+  queryClient?: QueryClient,
+  queryKeysToInvalidate?: string[][]
 ): IApiResponse<T> => {
   const message = apiResponse?.message || successMessage || ''
 
@@ -17,6 +20,12 @@ export const handleApiResponse = <T>(
         timestamp: Date.now(),
         isValid: true,
       })
+
+      if (queryClient && queryKeysToInvalidate) {
+        queryKeysToInvalidate.forEach(queryKey => {
+          queryClient.invalidateQueries({ queryKey })
+        })
+      }
     } else {
       setError(message)
       setMessage({
