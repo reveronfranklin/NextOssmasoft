@@ -7,7 +7,8 @@ import {
     ResponseDto,
     LoteResponseDto,
     LoteFilterDto,
-    LoteDto
+    LoteDto,
+    LoteStatusDto
 } from '../interfaces';
 
 const useServices = () => {
@@ -74,6 +75,35 @@ const useServices = () => {
         }
     }, [])
 
+
+    const approve = useCallback(async (payload: LoteStatusDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.APPROVE_LOTE, payload)
+            const message   = 'Lote de pago aprobado'
+
+            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const cancel = useCallback(async (payload: LoteStatusDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CANCEL_LOTE, payload)
+            const message   = 'Lote de pago anulado'
+
+            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error,
         message,
@@ -82,7 +112,9 @@ const useServices = () => {
         getList,
         store,
         update,
-        remove
+        remove,
+        approve,
+        cancel
     }
 }
 

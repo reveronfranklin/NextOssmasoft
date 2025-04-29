@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DatePicker from 'react-datepicker';
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
+import BlockIcon from '@mui/icons-material/Block'; // Para anular
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
     Box,
     Grid,
@@ -17,7 +20,7 @@ import {
 import { RootState } from 'src/store';
 import { useServices } from '../../services';
 import { setIsOpenDialogLote, resetLoteShow } from 'src/store/apps/pagos/lotes'
-import { LoteDto, FechaPagoDto, LoteDeleteDto } from '../../interfaces';
+import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto } from '../../interfaces';
 import { TipoPago, MaestroCuenta } from '../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
@@ -27,9 +30,11 @@ import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationD
 import getRules from './rules';
 
 const FormUpdate = () => {
-    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
-    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
+    const [isFormEnabled, setIsFormEnabled]                     = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]                           = useState<boolean>(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]               = useState<boolean>(false)
+    const [dialogChangeStatusOpen, setDialogChangeStatusOpen]   = useState<boolean>(false)
+    const [statusLote, setStatusLote]                           = useState<string>('')
 
     const [fechaPagoLote, setFechaPagoLote] = useState<FechaPagoDto>({
         year: new Date().getFullYear(),
@@ -45,6 +50,8 @@ const FormUpdate = () => {
     const {
         update,
         remove,
+        approve,
+        cancel,
         message,
         loading
     } = useServices()
@@ -157,6 +164,50 @@ const FormUpdate = () => {
 
             setValue('fechaPago', fechaPagoLote)
             setFechaPagoLote(fechaPagoLotePagoObj)
+        }
+    }
+
+    const getActionIcon = (actionName: string) => {
+        switch (actionName?.toLowerCase()) {
+            case 'aprobar': return <CheckCircleIcon />
+            case 'anular': return <BlockIcon />
+            default: return <SettingsIcon />
+        }
+    }
+
+    const handleOpenDialogChangeStatus = (status: string) => {
+        setStatusLote(status)
+        setDialogChangeStatusOpen(true)
+    }
+
+    const handleCloseDialogChangeStatus = () => {
+        setStatusLote('')
+        setDialogChangeStatusOpen(false)
+    }
+
+    const handleChangeStatusLote = async () => {
+        setIsFormEnabled(false)
+        handleCloseDialogChangeStatus()
+
+        try {
+            const payload: LoteStatusDto = {
+                codigoLotePago: lote.codigoLotePago,
+                status: (statusLote === 'Aprobar' ? 'AP' : 'AN')
+            }
+
+            const response = (statusLote === 'Aprobar') ? await approve(payload) : await cancel(payload)
+
+            if (response?.isValid) {
+                dispatch(setIsOpenDialogLote(false))
+                handleClearPagoLote()
+            }
+        } catch (e: any) {
+            console.error('handleChangeStatusLote', e)
+        } finally {
+            setIsFormEnabled(true)
+            qc.invalidateQueries({
+                queryKey: ['lotesTable']
+            })
         }
     }
 
@@ -273,6 +324,15 @@ const FormUpdate = () => {
                                     content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
                                 />
 
+                                <DialogConfirmation
+                                    open={dialogChangeStatusOpen}
+                                    onClose={handleCloseDialogChangeStatus}
+                                    onConfirm={handleChangeStatusLote}
+                                    loading={loading}
+                                    title={`${statusLote} lote`}
+                                    content={`¿Está seguro que desea ${statusLote.toLowerCase()} este registro? Esta acción no se puede deshacer.`}
+                                />
+
                                 <Box sx={{ paddingTop: 6, marginTop: 55}}>
                                     <Button
                                         variant='contained'
@@ -292,6 +352,30 @@ const FormUpdate = () => {
                                     >
                                         Eliminar
                                     </Button>
+                                    {
+                                        lote.status == 'PE' &&
+                                            <Button
+                                                sx={{ mx: 1 }}
+                                                variant='outlined'
+                                                size='small'
+                                                onClick={() => handleOpenDialogChangeStatus('Aprobar')}
+                                                disabled={!isValid && loading}
+                                            >
+                                                { getActionIcon('aprobar') } Aprobar
+                                            </Button>
+                                    }
+                                    {
+                                        lote.status == 'AP' &&
+                                            <Button
+                                                sx={{ mx: 4 }}
+                                                variant='outlined'
+                                                size='small'
+                                                onClick={() => handleOpenDialogChangeStatus('Anular')}
+                                                disabled={!isValid && loading}
+                                            >
+                                                { getActionIcon('anular') } Anular
+                                            </Button>
+                                    }
                                     <Button
                                         color='primary'
                                         size='small'

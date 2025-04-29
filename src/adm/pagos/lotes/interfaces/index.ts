@@ -14,6 +14,7 @@ export * from './lotes/lote-filter.dto'
 export * from './lotes/lote-response.dto'
 export * from './lotes/lote.dto'
 export * from './lotes/lote-delete.dto'
+export * from './lotes/lote-status.dto'
 
 /* Interface AutoComplete */
 export * from './autoComplete/auto-complete-props.interface'
