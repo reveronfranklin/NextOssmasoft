@@ -5,6 +5,7 @@ import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
 import useColumnsDataGrid from './headers/ColumnsDataGrid';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -20,7 +21,7 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
-    const { getList }           = useServices()
+    const { getList, message }  = useServices()
     const columnsDataGrid       = useColumnsDataGrid()
 
     const filter: any = {
@@ -105,6 +106,12 @@ const DataGridComponent = () => {
                                     sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
+                        />
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>
                 )
