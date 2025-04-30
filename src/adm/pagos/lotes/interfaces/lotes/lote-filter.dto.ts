@@ -3,7 +3,7 @@ export interface LoteFilterDto {
     PageNumber:        number;
     SearchText:        string;
     CodigoPresupuesto: number;
-    FechaInicio:       Date;
-    FechaFin:          Date;
+    FechaInicio:       string;
+    FechaFin:          string;
     CodigEmpresa:      number;
 }

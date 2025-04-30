@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { LoteResponseDto } from 'src/adm/pagos/lotes/interfaces';
+import { LoteResponseDto, LoteFilterFechaPagoDto } from 'src/adm/pagos/lotes/interfaces';
 
 export const admLoteSlice = createSlice({
     name: 'admLote',
     initialState: {
         typeOperation: null,
         isOpenDialogLote: false,
-        lote: {} as LoteResponseDto
+        lote: {} as LoteResponseDto,
+        batchPaymentDate: {} as LoteFilterFechaPagoDto
     },
     reducers: {
         setTypeOperation: (state, action) => {
@@ -20,6 +21,9 @@ export const admLoteSlice = createSlice({
         },
         resetLoteShow: (state): void => {
             state.lote = {} as LoteResponseDto
+        },
+        setBatchPaymentDate: (state, action) => {
+            state.batchPaymentDate = action.payload
         }
     }
 })
@@ -27,5 +31,6 @@ export const {
     setTypeOperation,
     setIsOpenDialogLote,
     setLoteShow,
-    resetLoteShow
+    resetLoteShow,
+    setBatchPaymentDate
 } = admLoteSlice.actions

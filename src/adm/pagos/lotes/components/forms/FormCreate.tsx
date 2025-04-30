@@ -165,8 +165,8 @@ const FormCreate = () => {
                                                         id='date-time-picker-desde'
                                                         dateFormat='dd/MM/yyyy'
                                                         onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
-                                                        placeholderText='Fecha de pago'
-                                                        customInput={<CustomInput label='Fecha Orden Pago' />}
+                                                        placeholderText='Fecha pago lote'
+                                                        customInput={<CustomInput label='Fecha pago lote' />}
                                                         required
                                                     />
                                                 </DatePickerWrapper>

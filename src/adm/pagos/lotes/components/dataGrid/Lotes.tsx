@@ -1,9 +1,12 @@
 import { ChangeEvent, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import { RootState } from 'src/store';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGrid';
 import { useServices } from '../../services';
 
@@ -20,16 +23,17 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
-    const { getList }           = useServices()
+    const { batchPaymentDate }  = useSelector((state: RootState) => state.admLote )
+    const { getList, message }  = useServices()
     const columns               = useColumnsDataGrid()
 
     const filter: any = {
         pageSize,
         pageNumber,
-        searchText: 'prueba titulo',
+        searchText,
         CodigoPresupuesto: 19,
-        FechaInicio: '2025-01-01',
-        FechaFin: '2025-03-25',
+        FechaInicio: batchPaymentDate.start,
+        FechaFin: batchPaymentDate.end,
         CodigEmpresa: 13
     }
 
@@ -109,6 +113,12 @@ const DataGridComponent = () => {
                                     sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
+                        />
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>
                 )
