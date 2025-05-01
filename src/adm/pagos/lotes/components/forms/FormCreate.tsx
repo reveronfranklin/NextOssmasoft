@@ -158,19 +158,17 @@ const FormCreate = () => {
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={3} xs={3} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <DatePickerWrapper>
-                                                    <DatePicker
-                                                        selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
-                                                        id='date-time-picker-desde'
-                                                        dateFormat='dd/MM/yyyy'
-                                                        onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
-                                                        placeholderText='Fecha pago lote'
-                                                        customInput={<CustomInput label='Fecha pago lote' />}
-                                                        required
-                                                    />
-                                                </DatePickerWrapper>
-                                            </FormControl>
+                                            <DatePickerWrapper>
+                                                <DatePicker
+                                                    selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
+                                                    id='date-time-picker-desde'
+                                                    dateFormat='dd/MM/yyyy'
+                                                    onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
+                                                    placeholderText='Fecha pago lote'
+                                                    customInput={<CustomInput label='Fecha pago lote' />}
+                                                    required
+                                                />
+                                            </DatePickerWrapper>
                                         </Grid>
                                     </Grid>
 
@@ -217,7 +215,7 @@ const FormCreate = () => {
                                     content="¿Desea continuar con la creación del registro?"
                                 />
 
-                                <Box sx={{ paddingTop: 6, marginTop: 55 }}>
+                                <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'

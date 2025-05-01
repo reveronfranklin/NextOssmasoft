@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useRef } from 'react';
+import { ChangeEvent, useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
@@ -49,6 +49,13 @@ const DataGridComponent = () => {
         staleTime: 1000 * 60,
         retry: 3
     }, qc)
+
+    useEffect(() => {
+        qc.prefetchQuery({
+            queryKey: ['lotesTable', pageSize, pageNumber, searchText],
+            queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText })
+        })
+    }, [ batchPaymentDate ])
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0

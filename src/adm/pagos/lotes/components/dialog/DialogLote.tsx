@@ -49,7 +49,7 @@ const DialogLote = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '80vh',
+                        height: '75vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0

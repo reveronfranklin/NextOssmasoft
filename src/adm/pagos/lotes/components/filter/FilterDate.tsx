@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Grid, FormControl } from '@mui/material';
+import { Grid } from '@mui/material';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DatePicker from 'react-datepicker';
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
@@ -57,37 +57,30 @@ const FilterDate = () => {
     }, [ fechaPagoLoteStart, fechaPagoLoteEnd ])
 
     return (
-        <Grid  container spacing={12} justifyContent="flex">
-            <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                <FormControl fullWidth>
-                    <DatePickerWrapper>
-                        <DatePicker
-                            selected={fechaPagoLoteObjStart ? getDateByObject(fechaPagoLoteObjStart) : null}
-                            id='date-time-picker-desde'
-                            dateFormat='dd/MM/yyyy'
-                            onChange={(date: Date) => { handleFechaLotePagoStart(date) }}
-                            placeholderText='Fecha desde'
-                            customInput={<CustomInput label='Fecha desde' />}
-                            required
-                            autoFocus
-                        />
-                    </DatePickerWrapper>
-                </FormControl>
+        <Grid container spacing={3} justifyContent="flex" flexWrap="wrap">
+            <Grid item sm={6} xs={6}>
+                <DatePickerWrapper>
+                    <DatePicker
+                        selected={fechaPagoLoteObjStart ? getDateByObject(fechaPagoLoteObjStart) : null}
+                        id='date-time-picker-desde'
+                        dateFormat='dd/MM/yyyy'
+                        onChange={(date: Date) => { handleFechaLotePagoStart(date) }}
+                        placeholderText='Fecha desde'
+                        customInput={<CustomInput label='Fecha desde' />}
+                    />
+                </DatePickerWrapper>
             </Grid>
-            <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                <FormControl fullWidth>
-                    <DatePickerWrapper>
-                        <DatePicker
-                            selected={fechaPagoLoteObjEnd ? getDateByObject(fechaPagoLoteObjEnd) : null}
-                            id='date-time-picker-hasta'
-                            dateFormat='dd/MM/yyyy'
-                            onChange={(date: Date) => { handleFechaLotePagoEnd(date) }}
-                            placeholderText='Fecha hasta'
-                            customInput={<CustomInput label='Fecha hasta' />}
-                            required
-                        />
-                    </DatePickerWrapper>
-                </FormControl>
+            <Grid item sm={6} xs={6}>
+                <DatePickerWrapper>
+                    <DatePicker
+                        selected={fechaPagoLoteObjEnd ? getDateByObject(fechaPagoLoteObjEnd) : null}
+                        id='date-time-picker-hasta'
+                        dateFormat='dd/MM/yyyy'
+                        onChange={(date: Date) => { handleFechaLotePagoEnd(date) }}
+                        placeholderText='Fecha hasta'
+                        customInput={<CustomInput label='Fecha hasta' />}
+                    />
+                </DatePickerWrapper>
             </Grid>
         </Grid>
     )
