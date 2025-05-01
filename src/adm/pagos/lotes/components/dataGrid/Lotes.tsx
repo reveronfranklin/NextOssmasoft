@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
+import dayjs from 'dayjs';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
 import { RootState } from 'src/store';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGrid';
 import { useServices } from '../../services';
+import { LoteFilterDto } from '../../interfaces'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -27,14 +29,15 @@ const DataGridComponent = () => {
     const { getList, message }  = useServices()
     const columns               = useColumnsDataGrid()
 
-    const filter: any = {
+    const currentDate = dayjs(Date()).format('YYYY-MM-DD')
+
+    const filter: LoteFilterDto = {
         pageSize,
         pageNumber,
         searchText,
-        CodigoPresupuesto: 19,
-        FechaInicio: batchPaymentDate.start,
-        FechaFin: batchPaymentDate.end,
-        CodigEmpresa: 13
+        codigoPresupuesto: 19,
+        fechaInicio: `${batchPaymentDate.start ?? currentDate}`,
+        fechaFin: `${batchPaymentDate.end ?? currentDate}`
     }
 
     const query = useQuery({

@@ -1,9 +1,8 @@
 export interface LoteFilterDto {
-    PageSize:          number;
-    PageNumber:        number;
-    SearchText:        string;
-    CodigoPresupuesto: number;
-    FechaInicio:       string;
-    FechaFin:          string;
-    CodigEmpresa:      number;
+    pageSize:          number;
+    pageNumber:        number;
+    searchText:        string;
+    codigoPresupuesto: number;
+    fechaInicio:       string;
+    fechaFin:          string;
 }

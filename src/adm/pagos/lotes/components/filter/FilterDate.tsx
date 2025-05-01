@@ -50,7 +50,7 @@ const FilterDate = () => {
     useEffect(() => {
         const batchPaymentDate: LoteFilterFechaPagoDto = {
             start: fechaPagoLoteStart,
-            end: fechaPagoLoteEnd,
+            end: fechaPagoLoteEnd
         }
 
         dispatch(setBatchPaymentDate(batchPaymentDate))
