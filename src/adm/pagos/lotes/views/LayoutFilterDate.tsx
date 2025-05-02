@@ -3,7 +3,7 @@ import FilterDate from '../components/filter/FilterDate'
 
 const LayoutFilterDate = () => {
   return (
-    <Grid item xs={6} paddingBottom={5}>
+    <Grid item xs={12} paddingBottom={5}>
         <Card>
             <CardHeader title='Filtrar Fecha de pago' />
             <CardContent>

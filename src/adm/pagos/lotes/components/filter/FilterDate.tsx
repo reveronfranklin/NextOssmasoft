@@ -57,7 +57,7 @@ const FilterDate = () => {
     }, [ fechaPagoLoteStart, fechaPagoLoteEnd ])
 
     return (
-        <Grid container spacing={3} justifyContent="flex" flexWrap="wrap">
+        <Grid container spacing={3} justifyContent="flex" flexWrap="wrap" paddingTop={4}>
             <Grid item sm={6} xs={6}>
                 <DatePickerWrapper>
                     <DatePicker
