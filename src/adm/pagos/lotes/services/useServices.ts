@@ -1,4 +1,6 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
@@ -20,6 +22,8 @@ const useServices = () => {
         isValid: true
     })
 
+    const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+
     const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
         try {
             setLoading(true)
@@ -31,7 +35,7 @@ const useServices = () => {
         } finally {
             setLoading(false)
         }
-    }, [])
+    }, [presupuestoSeleccionado.codigoPresupuesto])
 
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
         try {
@@ -108,6 +112,7 @@ const useServices = () => {
         error,
         message,
         loading,
+        presupuestoSeleccionado,
         setMessage,
         getList,
         store,

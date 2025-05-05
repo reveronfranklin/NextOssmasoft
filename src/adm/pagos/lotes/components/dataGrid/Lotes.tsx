@@ -18,15 +18,20 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage]         = useState<number>(0)
-    const [pageSize, setPageSize]       = useState<number>(5)
-    const [searchText, setSearchText]   = useState<string>('')
-    const [buffer, setBuffer]           = useState<string>('')
+    const [pageNumber, setPage]                                     = useState<number>(0)
+    const [pageSize, setPageSize]                                   = useState<number>(5)
+    const [searchText, setSearchText]                               = useState<string>('')
+    const [buffer, setBuffer]                                       = useState<string>('')
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
     const { batchPaymentDate }  = useSelector((state: RootState) => state.admLote )
-    const { getList, message }  = useServices()
+    const {
+        presupuestoSeleccionado,
+        getList,
+        message
+    }  = useServices()
     const columns               = useColumnsDataGrid()
 
     const currentDate = dayjs(Date()).format('YYYY-MM-DD')
@@ -35,27 +40,34 @@ const DataGridComponent = () => {
         pageSize,
         pageNumber,
         searchText,
-        codigoPresupuesto: 19,
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
         fechaInicio: `${batchPaymentDate.start ?? currentDate}`,
         fechaFin: `${batchPaymentDate.end ?? currentDate}`
     }
 
     const query = useQuery({
-        queryKey: ['lotesTable', pageSize, pageNumber, searchText],
-        queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
+        queryKey: ['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+        queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotesTable', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
         },
         staleTime: 1000 * 60,
-        retry: 3
+        retry: 3,
+        enabled: isPresupuestoSeleccionado
     }, qc)
 
     useEffect(() => {
+        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
+            setIsPresupuestoSeleccionado(true)
+        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
+            setIsPresupuestoSeleccionado(false)
+        }
+
         qc.prefetchQuery({
-            queryKey: ['lotesTable', pageSize, pageNumber, searchText],
-            queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText })
+            queryKey: ['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+            queryFn: () => getList(filter)
         })
-    }, [ batchPaymentDate ])
+    }, [ batchPaymentDate, presupuestoSeleccionado.codigoPresupuesto ])
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
