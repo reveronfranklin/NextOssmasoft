@@ -32,24 +32,24 @@ const DataGridComponent = () => {
         getList,
         message
     }  = useServices()
-    const columns               = useColumnsDataGrid()
 
-    const currentDate = dayjs(Date()).format('YYYY-MM-DD')
+    const columns       = useColumnsDataGrid()
+    const currentDate   = dayjs(Date()).format('YYYY-MM-DD')
 
-    const filter: LoteFilterDto = {
+    const filter = {
         pageSize,
         pageNumber,
         searchText,
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        fechaInicio: `${batchPaymentDate.start ?? currentDate}`,
-        fechaFin: `${batchPaymentDate.end ?? currentDate}`
-    }
+        fechaInicio: `${ batchPaymentDate.start ?? currentDate }`,
+        fechaFin: `${ batchPaymentDate.end ?? currentDate }`,
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto ?? 0
+    } as LoteFilterDto
 
     const query = useQuery({
-        queryKey: ['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+        queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
         queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
+            return qc.getQueryData(['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
         },
         staleTime: 1000 * 60,
         retry: 3,
@@ -64,10 +64,10 @@ const DataGridComponent = () => {
         }
 
         qc.prefetchQuery({
-            queryKey: ['lotesTable', pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+            queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
             queryFn: () => getList(filter)
         })
-    }, [ batchPaymentDate, presupuestoSeleccionado.codigoPresupuesto ])
+    }, [ presupuestoSeleccionado.codigoPresupuesto ])
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
