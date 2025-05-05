@@ -23,6 +23,9 @@ const FilterDate = () => {
     const [fechaPagoLoteObjStart, setFechaPagoLoteObjStart] = useState<FechaPagoDto>(dateRangesByYear.start.dateObject)
     const [fechaPagoLoteObjEnd, setFechaPagoLoteObjEnd]     = useState<FechaPagoDto>(dateRangesByYear.end.dateObject)
 
+    const [minDate, setMinDate] = useState<FechaPagoDto>()
+    const [maxDate, setMaxDate] = useState<FechaPagoDto>()
+
     const dispatch = useDispatch()
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
@@ -58,6 +61,9 @@ const FilterDate = () => {
 
                 setFechaPagoLoteObjEnd(dateRangesByYear.end.dateObject)
                 setFechaPagoLoteEnd(dateRangesByYear.end.date)
+
+                setMinDate(dateRangesByYear.start.dateObject)
+                setMaxDate(dateRangesByYear.end.dateObject)
             }
         }
     }, [ presupuestoSeleccionado.codigoPresupuesto ])
@@ -82,8 +88,8 @@ const FilterDate = () => {
                         onChange={(date: Date) => { handleFechaLotePagoStart(date) }}
                         placeholderText='Fecha desde'
                         customInput={<CustomInput label='Fecha desde' />}
-                        minDate={dateRangesByYear.start.dateObject ? getDateByObject(dateRangesByYear.start.dateObject) : null}
-                        maxDate={dateRangesByYear.end.dateObject ? getDateByObject(dateRangesByYear.end.dateObject) : null}
+                        minDate={minDate ? getDateByObject(minDate) : null}
+                        maxDate={maxDate ? getDateByObject(maxDate) : null}
                     />
                 </DatePickerWrapper>
             </Grid>
@@ -96,8 +102,8 @@ const FilterDate = () => {
                         onChange={(date: Date) => { handleFechaLotePagoEnd(date) }}
                         placeholderText='Fecha hasta'
                         customInput={<CustomInput label='Fecha hasta' />}
-                        minDate={dateRangesByYear.start.dateObject ? getDateByObject(dateRangesByYear.start.dateObject) : null}
-                        maxDate={dateRangesByYear.end.dateObject ? getDateByObject(dateRangesByYear.end.dateObject) : null}
+                        minDate={minDate ? getDateByObject(minDate) : null}
+                        maxDate={maxDate ? getDateByObject(maxDate) : null}
                     />
                 </DatePickerWrapper>
             </Grid>
