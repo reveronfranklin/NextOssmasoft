@@ -12,7 +12,7 @@ import { setBatchPaymentDate } from 'src/store/apps/pagos/lotes';
 import { FechaPagoDto, LoteFilterFechaPagoDto } from '../../interfaces';
 import generateDateRangesByYear from '../../helpers/dateRangesYear'
 
-const StyledCustomInput = styled(CustomInput)(({ theme }) => ({
+const StyledCustomInput = styled(CustomInput)(() => ({
     width: "100%",
     "& .MuiInputBase-root": {
         width: "100%"
