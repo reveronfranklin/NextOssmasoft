@@ -1,93 +1,84 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Grid, FormControl } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import DatePicker from 'react-datepicker';
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
 import dayjs from 'dayjs';
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { FechaPagoDto, LoteFilterFechaPagoDto } from '../../interfaces';
+import { RootState } from 'src/store';
+import { getDateByObject } from 'src/utilities/ge-date-by-object';
 import { setBatchPaymentDate } from 'src/store/apps/pagos/lotes';
+import { FechaPagoDto, LoteFilterFechaPagoDto } from '../../interfaces';
+import generateDateRangesByYear from '../../helpers/dateRangesYear'
+
+const StyledCustomInput = styled(CustomInput)(() => ({
+    width: "100%",
+    "& .MuiInputBase-root": {
+        width: "100%"
+    },
+    "& .MuiInputBase-input": {
+        width: "100%"
+    }
+}))
 
 const FilterDate = () => {
-    const currentDate = dayjs(Date()).format('YYYY-MM-DD')
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null])
+    const [startDate, endDate]      = dateRange
 
-    const currentDateObj = {
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate()
-    }
+    const [minDate, setMinDate] = useState<FechaPagoDto>()
+    const [maxDate, setMaxDate] = useState<FechaPagoDto>()
 
-    const [fechaPagoLoteStart, setFechaPagoLoteStart]   = useState<string>(currentDate)
-    const [fechaPagoLoteEnd, setFechaPagoLoteEnd]       = useState<string>(currentDate)
-
-    const [fechaPagoLoteObjStart, setFechaPagoLoteObjStart] = useState<FechaPagoDto>(currentDateObj)
-    const [fechaPagoLoteObjEnd, setFechaPagoLoteObjEnd]     = useState<FechaPagoDto>(currentDateObj)
-
-    const dispatch = useDispatch()
-
-    const handleFechaLotePagoStart = (date: Date | null) => {
-        if (date && dayjs(date).isValid()) {
-            const fechaPagoLoteStart         = dayjs(date).format('YYYY-MM-DD')
-            const fechaPagoLotePagoObjStart  = fechaToFechaObj(date)
-
-            setFechaPagoLoteObjStart(fechaPagoLotePagoObjStart)
-            setFechaPagoLoteStart(fechaPagoLoteStart)
-        }
-    }
-
-    const handleFechaLotePagoEnd = (date: Date | null) => {
-        if (date && dayjs(date).isValid()) {
-            const fechaPagoLotePagoObjEnd  = fechaToFechaObj(date)
-            const fechaPagoLoteEnd         = dayjs(date).format('YYYY-MM-DD')
-
-            setFechaPagoLoteObjEnd(fechaPagoLotePagoObjEnd)
-            setFechaPagoLoteEnd(fechaPagoLoteEnd)
-        }
-    }
+    const dispatch                  = useDispatch()
+    const presupuestoSeleccionado   = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
     useEffect(() => {
-        const batchPaymentDate: LoteFilterFechaPagoDto = {
-            start: fechaPagoLoteStart,
-            end: fechaPagoLoteEnd,
+        if (presupuestoSeleccionado?.codigoPresupuesto > 0) {
+            const selectedYear      = presupuestoSeleccionado.ano
+            const dateRangesByYear  = generateDateRangesByYear(selectedYear)
+
+            if (dateRangesByYear?.start && dateRangesByYear?.end) {
+                setDateRange([dateRangesByYear.start.date, dateRangesByYear.end.date])
+                setMinDate(dateRangesByYear.start.dateObject)
+                setMaxDate(dateRangesByYear.end.dateObject)
+            }
+        }
+    }, [ presupuestoSeleccionado.codigoPresupuesto ])
+
+    useEffect(() => {
+        const batchPaymentDate = {} as LoteFilterFechaPagoDto
+
+        if (startDate && dayjs(startDate).isValid()) {
+            batchPaymentDate.start = dayjs(startDate).format('YYYY-MM-DD')
+        }
+
+        if (endDate && dayjs(endDate).isValid()) {
+            batchPaymentDate.end = dayjs(endDate).format('YYYY-MM-DD')
         }
 
         dispatch(setBatchPaymentDate(batchPaymentDate))
-    }, [ fechaPagoLoteStart, fechaPagoLoteEnd ])
+    }, [ startDate, endDate ])
 
     return (
-        <Grid  container spacing={12} justifyContent="flex">
-            <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                <FormControl fullWidth>
-                    <DatePickerWrapper>
-                        <DatePicker
-                            selected={fechaPagoLoteObjStart ? getDateByObject(fechaPagoLoteObjStart) : null}
-                            id='date-time-picker-desde'
-                            dateFormat='dd/MM/yyyy'
-                            onChange={(date: Date) => { handleFechaLotePagoStart(date) }}
-                            placeholderText='Fecha desde'
-                            customInput={<CustomInput label='Fecha desde' />}
-                            required
-                            autoFocus
-                        />
-                    </DatePickerWrapper>
-                </FormControl>
-            </Grid>
-            <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                <FormControl fullWidth>
-                    <DatePickerWrapper>
-                        <DatePicker
-                            selected={fechaPagoLoteObjEnd ? getDateByObject(fechaPagoLoteObjEnd) : null}
-                            id='date-time-picker-hasta'
-                            dateFormat='dd/MM/yyyy'
-                            onChange={(date: Date) => { handleFechaLotePagoEnd(date) }}
-                            placeholderText='Fecha hasta'
-                            customInput={<CustomInput label='Fecha hasta' />}
-                            required
-                        />
-                    </DatePickerWrapper>
-                </FormControl>
+        <Grid container spacing={3} paddingTop={4}>
+            <Grid item sm={12} xs={12}>
+                <DatePickerWrapper>
+                    <DatePicker
+                        id='date-time-picker-start-end'
+                        dateFormat='dd/MM/yyyy'
+                        placeholderText='Fecha Desde - Fecha Hasta'
+                        customInput={<StyledCustomInput label='Fecha Desde - Fecha Hasta' />}
+                        selectsRange={true}
+                        startDate={startDate}
+                        endDate={endDate}
+                        isClearable={true}
+                        minDate={minDate ? getDateByObject(minDate) : null}
+                        maxDate={maxDate ? getDateByObject(maxDate) : null}
+                        onChange={(update) => {
+                            setDateRange(update)
+                        }}
+                    />
+                </DatePickerWrapper>
             </Grid>
         </Grid>
     )

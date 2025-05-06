@@ -256,19 +256,18 @@ const FormUpdate = () => {
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={3} xs={3} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <DatePickerWrapper>
-                                                    <DatePicker
-                                                        selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
-                                                        id='date-time-picker-desde'
-                                                        dateFormat='dd/MM/yyyy'
-                                                        onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
-                                                        placeholderText='Fecha pago lote'
-                                                        customInput={<CustomInput label='Fecha pago lote' />}
-                                                        required
-                                                    />
-                                                </DatePickerWrapper>
-                                            </FormControl>
+                                            <DatePickerWrapper>
+                                                <DatePicker
+                                                    selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
+                                                    id='date-time-picker-desde'
+                                                    dateFormat='dd/MM/yyyy'
+                                                    onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
+                                                    placeholderText='Fecha pago lote'
+                                                    customInput={<CustomInput label='Fecha pago lote' />}
+                                                    popperPlacement='left-start'
+                                                    required
+                                                />
+                                            </DatePickerWrapper>
                                         </Grid>
                                     </Grid>
 
@@ -333,7 +332,7 @@ const FormUpdate = () => {
                                     content={`¿Está seguro que desea ${statusLote.toLowerCase()} este registro? Esta acción no se puede deshacer.`}
                                 />
 
-                                <Box sx={{ paddingTop: 6, marginTop: 55}}>
+                                <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
