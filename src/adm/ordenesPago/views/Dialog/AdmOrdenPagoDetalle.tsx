@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
 import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation, setConFactura, setCodigoOrdenPago } from "src/store/apps/ordenPago"
-import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPago'
+import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPAgo'
 import FormUpdateOrdenPago from '../../forms/edit/FormUpdateOrdenPago'
 import ListaCompromiso from '../../components/ListCompromiso/listaCompromisos'
 

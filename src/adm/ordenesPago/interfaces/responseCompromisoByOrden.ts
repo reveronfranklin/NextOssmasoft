@@ -1,5 +1,5 @@
 export interface IResponseCompromisoByOrden {
-    data: Datum[];
+    data: CompromisoByOrden[];
     isValid: boolean;
     linkData: null;
     linkDataArlternative: null;
@@ -13,7 +13,7 @@ export interface IResponseCompromisoByOrden {
     total4: number;
 }
 
-interface Datum {
+interface CompromisoByOrden {
     codigoCompromisoOp: number;
     origenCompromisoId: number;
     codigoIdentificador: number;

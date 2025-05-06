@@ -179,19 +179,13 @@ const useServices = () => {
     const getCompromisoByOrden = useCallback(async (filters: IfilterByOrdenPago): Promise<any> => {
         try {
             setLoading(true)
-            const responseGetOrdenes = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
+            const responseGetCompromisoByOrden = await ossmmasofApi.post<IResponseCompromisoByOrden>(UrlServices.GETCOMPROMISOBYORDENPAGO , filters)
+            const responseHandleApi = handleApiResponse<any>(responseGetCompromisoByOrden.data, 'Lista de compromisos', setMessage, setError)
 
-            if (responseGetOrdenes.data.isValid) {
-                return responseGetOrdenes.data
-            }
-
-            setMessage({
-                ...message,
-                text: responseGetOrdenes.data.message,
-            })
+            return responseHandleApi
         } catch (e: any) {
-            setError(e.message)
-            console.error(e)
+
+            return handleApiError(e)
         } finally {
             setLoading(false)
         }

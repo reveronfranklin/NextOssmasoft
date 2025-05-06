@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Orden } from 'src/adm/ordenesPago/interfaces/responseGetOrdenes.interfaces'
 import { Retencion } from 'src/adm/ordenesPago/interfaces/responseRetenciones.interfaces'
 import { IRetencionData } from 'src/adm/ordenesPago/interfaces/retenciones/createRetencion'
-import { BeneficiarioOp } from 'src/adm/ordenesPago/interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
+import { IBeneficiarioOp } from 'src/adm/ordenesPago/interfaces/admBeneficiarioOp/getListByOrdenPago.interfaces'
 import { Documentos } from 'src/adm/ordenesPago/interfaces/documentosOp/listDocumentoByOrdenPago'
 
 export const admOrdenPagoSlice = createSlice({
@@ -23,13 +23,14 @@ export const admOrdenPagoSlice = createSlice({
         compromisoSeleccionadoListaDetalle: {} as Orden, //orden de pago de la grid principal
         retencionOpSeleccionado: {} as Retencion,
         retencionSeleccionado: {} as IRetencionData,
-        beneficioOpSeleccionado: {} as BeneficiarioOp,
+        beneficioOpSeleccionado: {} as IBeneficiarioOp,
         documentoOpSeleccionado: {} as Documentos,
         impuestoDocumentoOpSeleccionado: {} as any,
         pucSeleccionado: {} as any,
         codigoOrdenPago: 0,
-        conFactura: null,
-        documentCount: 0
+        conFactura: Boolean,
+        documentCount: 0,
+        codigoIdentificador: 0
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -101,6 +102,9 @@ export const admOrdenPagoSlice = createSlice({
         setConFactura: (state, action) => {
             state.conFactura = action.payload
         },
+        setCodigoIdentificadorCompromiso: (state, action) => {
+            state.codigoIdentificador = action.payload
+        },
         setDocumentCount: (state, action) => {
             state.documentCount = action.payload
         },
@@ -134,5 +138,6 @@ export const {
     resetImpuestoDocumentoOpSeleccionado,
     setCodigoOrdenPago,
     setConFactura,
-    setDocumentCount
+    setDocumentCount,
+    setCodigoIdentificadorCompromiso
 } = admOrdenPagoSlice.actions

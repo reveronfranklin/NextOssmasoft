@@ -1,5 +1,5 @@
 export interface ICreateOrdenPago {
-    codigoOrdenPago: number | null;
+    codigoOrdenPago: number;
     codigoPresupuesto: number;
     codigoCompromiso: string | number;
     fechaOrdenPago: string;

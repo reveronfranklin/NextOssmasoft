@@ -4,9 +4,9 @@ import { UrlServices } from '../enums/UrlServices.enum'
 import { useDispatch } from 'react-redux'
 
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
+import { IApiResponse } from 'src/interfaces/api-response-dto'
 import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
-import { IApiResponse } from 'src/interfaces/api-response-dto'
 
 interface IGestionOrdenPago {
   codigoOrdenPago: number
@@ -14,7 +14,7 @@ interface IGestionOrdenPago {
 
 const useGestionOrdenPago = () => {
   const [error, setError] = useState<string>('')
-  const [messageGestion, setMessageGestion] = useState<IAlertMessageDto>({
+  const [message, setMessage] = useState<IAlertMessageDto>({
     text: '',
     timestamp: Date.now(),
     isValid: true,
@@ -26,14 +26,14 @@ const useGestionOrdenPago = () => {
     try {
       setLoading(true)
       const responseFetch = await ossmmasofApi.post<IResponseBase<IGestionOrdenPago>>(UrlServices.APROBARORDENPAGO, filters)
-      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento APROBADO con éxito', setMessageGestion, setError)
+      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento APROBADO con éxito', setMessage, setError)
 
       if (onSuccess) onSuccess()
 
       return responseHandleApi
     } catch (e: any) {
 
-      return handleApiError(e, setMessageGestion, setError)
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
@@ -43,21 +43,21 @@ const useGestionOrdenPago = () => {
     try {
       setLoading(true)
       const responseFetch = await ossmmasofApi.post<IResponseBase<IGestionOrdenPago>>(UrlServices.ANULARORDENPAGO, filters)
-      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento creado con éxito', setMessageGestion, setError)
+      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento creado con éxito', setMessage, setError)
 
       if (onSuccess) onSuccess()
 
       return responseHandleApi
     } catch (e: any) {
 
-      return handleApiError(e, setMessageGestion, setError)
+      return handleApiError(e, setMessage, setError)
     } finally {
       setLoading(false)
     }
   }, [dispatch])
 
   return {
-    messageGestion, loading, error,
+    message, loading, error,
     anularOrdenPago,
     aprobarOrdenPago
   }

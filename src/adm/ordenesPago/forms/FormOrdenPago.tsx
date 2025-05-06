@@ -80,7 +80,8 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
-    const [isFormEnabled, setIsFormEnabled] = useState(false)
+    const [isFormEnabled, setIsFormEnabled] = useState(!!orden && Object.keys(orden).length > 0)
+
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
@@ -569,7 +570,7 @@ const FormOrdenPago = (props: {
                         />
                     </Box>
                 </form> :
-                typeOperation === 'create' ?
+                typeOperation === 'create' && !isFormEnabled ?
                 (
                     <Box sx={{ textAlign: 'center', padding: 10 }}>
                         <WarningIcon color="error" />

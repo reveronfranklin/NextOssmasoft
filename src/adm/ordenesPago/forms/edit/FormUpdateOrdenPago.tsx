@@ -15,48 +15,36 @@ import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
+import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+
+interface GestionConfig {
+    handle: () => Promise<any> | void;
+    message: string;
+    nameButton: string;
+    status?: string;
+    showButton: boolean;
+}
 
 const FormUpdateOrdenPago = () => {
-    interface GestionConfig {
-        handle: () => Promise<any> | void;
-        message: string;
-        nameButton: string;
-        status?: string;
-        showButton: boolean;
-    }
-
-    interface IAlertMessage {
-        text: string;
-        severity: 'error' | 'warning' | 'info' | 'success';
-    }
-
     const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
     const [showMessage, setShowMessage] = useState(false)
-    const [currentMessage, setCurrentMessage] = useState<IAlertMessage>({
-        text: '',
-        severity: 'info'
-    })
+    const [currentMessage, setCurrentMessage] = useState<IAlertMessageDto>()
 
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
-
-    const { getRetenciones } = useServicesRetenciones()
-    const { anularOrdenPago, aprobarOrdenPago, messageGestion } = useGestionOrdenPago()
 
     const { data } = useQuery({
         queryKey: ['retencionesTable'],
         queryFn: () => getRetenciones(),
         staleTime: 60 * 1000,
         retry: 3,
-    }, qc)
+    }, qc) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
-    console.log(data)
-    const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-    const {
-        updateOrden,
-        loading,
-        message
-    } = useServices()
+    const { getRetenciones } = useServicesRetenciones()
+    const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago } = useGestionOrdenPago()
+    const { message: serviceMessage, updateOrden, loading} = useServices()
+
+    const { compromisoSeleccionadoListaDetalle, codigoIdentificador } = useSelector((state: RootState) => state.admOrdenPago)
 
     const handleUpdateOrden = async (dataFormOrder: any) => {
         try {
@@ -65,11 +53,10 @@ const FormUpdateOrdenPago = () => {
                 codigoPresupuesto,
                 tipoOrdenPagoId,
                 fechaComprobante,
-                codigoCompromiso,
+                fechaOrdenPago,
             } = compromisoSeleccionadoListaDetalle
 
             const {
-                fechaOrdenPagoString,
                 motivo,
                 frecuenciaPagoId,
                 tipoPagoId,
@@ -80,8 +67,8 @@ const FormUpdateOrdenPago = () => {
             const payload: IUpdateOrdenPago = {
                 codigoOrdenPago,
                 codigoPresupuesto,
-                codigoCompromiso: codigoCompromiso, //todo Revisar
-                fechaOrdenPago: new Date(fechaOrdenPagoString),
+                codigoCompromiso: codigoIdentificador,
+                fechaOrdenPago,
                 tipoOrdenPagoId,
                 cantidadPago,
                 frecuenciaPagoId,
@@ -97,7 +84,9 @@ const FormUpdateOrdenPago = () => {
 
             const response = await updateOrden(payload)
 
-            dispatch(setCompromisoSeleccionadoDetalle(response.data))
+            if (response.isValid) {
+                dispatch(setCompromisoSeleccionadoDetalle(response.data))
+            }
         } catch (e: any) {
             console.error(e)
         } finally {
@@ -116,7 +105,7 @@ const FormUpdateOrdenPago = () => {
         const filter = { codigoOrdenPago }
         setShowMessage(false)
 
-        const actionConfigs = {
+        const actionConfigs: any = {
             PE: {
                 action: aprobarOrdenPago,
                 message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
@@ -162,22 +151,15 @@ const FormUpdateOrdenPago = () => {
     }
 
     useEffect(() => {
-        if (messageGestion.text) {
-            setCurrentMessage({
-                    text: messageGestion.text,
-                    severity: messageGestion.isValid ? 'success' : 'error'
-                })
-
+        if (gestionMessage?.text) {
+            setCurrentMessage(gestionMessage)
             setShowMessage(true)
-
-            const timer = setTimeout(() => {
-                setShowMessage(false)
-                setCurrentMessage({ text: '', severity: 'info' })
-            }, 30000)
-
-            return () => clearTimeout(timer)
         }
-    }, [messageGestion])
+        else if (serviceMessage?.text) {
+            setCurrentMessage(serviceMessage)
+            setShowMessage(true)
+        }
+    }, [gestionMessage, serviceMessage])
 
     useEffect(() => {
         setGestionConfig(handleGestionOrdenPago())
@@ -204,15 +186,14 @@ const FormUpdateOrdenPago = () => {
                         handleGestionOrdenPago={gestionConfig || {}}
                         onViewerPdf={() => dispatch(setIsOpenViewerPdf(true))}
                         titleButton={'Actualizar'}
-                        message={message}
+                        message={currentMessage}
                         loading={loading}
                     />
                     <AlertMessage
-                        message={currentMessage.text}
-                        severity={currentMessage.severity}
-                        duration={30000}
-                        show={showMessage}
-                        onClose={() => setShowMessage(false)}
+                        message={currentMessage?.text ?? ''}
+                        severity={currentMessage?.isValid ? 'success' : 'error'}
+                        duration={8000}
+                        show={currentMessage?.text ? true : false}
                     />
                 </Grid>
                 <Grid item sm={6} xs={12}>
