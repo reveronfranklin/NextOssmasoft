@@ -72,7 +72,9 @@ const MaestroCuenta = ({
                         options={ListCuenta}
                         value={selectedValue}
                         id="autocomplete-maestro-cuenta"
-                        getOptionLabel={(option) => `${option.codigoCuentaBanco} - ${option.descripcionBanco}`}
+                        getOptionLabel={(option) => {
+                            return `${option.codigoCuentaBanco} - ${option.descripcionBanco} - ${option.noCuenta} - ${option.descripcionDenominacionFuncional}`
+                        }}
                         onChange={handleChange}
                         renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
                         key={`cuenta-${id || 'empty'}`}

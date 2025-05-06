@@ -1,14 +1,16 @@
-import { ChangeEvent, useState, useRef } from 'react';
+import { ChangeEvent, useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
+import dayjs from 'dayjs';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
 import { RootState } from 'src/store';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGrid';
 import { useServices } from '../../services';
+import { LoteFilterDto } from '../../interfaces'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -16,36 +18,59 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage]         = useState<number>(0)
-    const [pageSize, setPageSize]       = useState<number>(5)
-    const [searchText, setSearchText]   = useState<string>('')
-    const [buffer, setBuffer]           = useState<string>('')
+    const [pageNumber, setPage]                                     = useState<number>(0)
+    const [pageSize, setPageSize]                                   = useState<number>(5)
+    const [searchText, setSearchText]                               = useState<string>('')
+    const [buffer, setBuffer]                                       = useState<string>('')
+    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
     const { batchPaymentDate }  = useSelector((state: RootState) => state.admLote )
-    const { getList, message }  = useServices()
-    const columns               = useColumnsDataGrid()
+    const {
+        presupuestoSeleccionado,
+        getList,
+        message
+    }  = useServices()
 
-    const filter: any = {
+    const columns       = useColumnsDataGrid()
+    const currentDate   = dayjs(Date()).format('YYYY-MM-DD')
+    const staleTime     = 1000 * 60 * 60
+
+    const filter = {
         pageSize,
         pageNumber,
         searchText,
-        CodigoPresupuesto: 19,
-        FechaInicio: batchPaymentDate.start,
-        FechaFin: batchPaymentDate.end,
-        CodigEmpresa: 13
-    }
+        fechaInicio: `${ batchPaymentDate.start ?? currentDate }`,
+        fechaFin: `${ batchPaymentDate.end ?? currentDate }`,
+        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto ?? 0
+    } as LoteFilterDto
 
     const query = useQuery({
-        queryKey: ['lotesTable', pageSize, pageNumber, searchText],
-        queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
+        queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+        queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotesTable', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
         },
-        staleTime: 1000 * 60,
-        retry: 3
+        staleTime: staleTime,
+        retry: 3,
+        enabled: isPresupuestoSeleccionado
     }, qc)
+
+    useEffect(() => {
+        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
+            setIsPresupuestoSeleccionado(true)
+        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
+            setIsPresupuestoSeleccionado(false)
+        }
+
+        qc.prefetchQuery({
+            queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
+            queryFn: () => getList(filter),
+            staleTime: staleTime,
+            retry: 3
+        })
+    }, [ presupuestoSeleccionado.codigoPresupuesto ])
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
