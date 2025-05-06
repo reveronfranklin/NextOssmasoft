@@ -70,13 +70,14 @@ const FormCreateOrdenPago = () => {
             }
 
             const response = await createOrden(payload)
+
             const { data } = response
 
             if (data) {
                 dispatch(setCompromisoSeleccionadoDetalle(data))
 
-                dispatch(setConFactura(data.conFactura))
-                dispatch(setCodigoOrdenPago(data.codigoOrdenPago))
+                dispatch(setConFactura(data[0]?.conFactura))
+                dispatch(setCodigoOrdenPago(data[0]?.codigoOrdenPago))
 
                 setTimeout(() => {
                     changeViewToEdit()

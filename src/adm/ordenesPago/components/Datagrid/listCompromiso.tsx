@@ -26,7 +26,6 @@ const DataGridComponent = () => {
     const debounceTimeoutRef = useRef<any>(null)
     const dispatch = useDispatch()
 
-
     const {
         getCompromisoByPresupuesto,
         presupuestoSeleccionado
@@ -55,7 +54,7 @@ const DataGridComponent = () => {
     const rowCount = query?.data?.cantidadRegistros || 0
 
     const handleDoubleClick = (data: any) => {
-        const {row} = data
+        const { row } = data
 
         dispatch(setCompromisoSeleccionadoDetalle(row))
         setTimeout(() => {
