@@ -38,7 +38,9 @@ const FormUpdateOrdenPago = () => {
         queryFn: () => getRetenciones(),
         staleTime: 60 * 1000,
         retry: 3,
-    }, qc) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+    }, qc)
+
+    console.log(data) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
     const { getRetenciones } = useServicesRetenciones()
     const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago } = useGestionOrdenPago()
@@ -193,7 +195,7 @@ const FormUpdateOrdenPago = () => {
                         message={currentMessage?.text ?? ''}
                         severity={currentMessage?.isValid ? 'success' : 'error'}
                         duration={8000}
-                        show={currentMessage?.text ? true : false}
+                        show={showMessage}
                     />
                 </Grid>
                 <Grid item sm={6} xs={12}>

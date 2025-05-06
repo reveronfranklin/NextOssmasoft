@@ -1,6 +1,6 @@
-import { useState, ChangeEvent, useRef, useCallback } from 'react'
+import { useState, ChangeEvent, useRef, useCallback, useEffect } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
+import { Box, Grid, styled } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
@@ -10,6 +10,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import Spinner from 'src/@core/components/spinner'
 import useServices from '../../services/useServices'
 import toast from 'react-hot-toast'
+import FormatNumber from 'src/utilities/format-numbers'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
@@ -24,6 +25,7 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
+    const [totalMonto, setTotalMonto] = useState<number>(0)
     const debounceTimeoutRef = useRef<any>(null)
 
     const columnsDataGridListPucByOrden = ColumnsDataGridListPucByOrden()
@@ -47,6 +49,15 @@ const DataGridComponent = () => {
     const rows = query?.data?.data || []
     const rowCount = query?.data?.data.length
     const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
+
+    useEffect(() => {
+        if (rows && rows.length > 0) {
+            const sum = rows.reduce((acc: any, row: any) => acc + (Number(row.monto) || 0), 0)
+            setTotalMonto(sum)
+        } else {
+            setTotalMonto(0)
+        }
+    }, [rows])
 
     const handlePageChange = useCallback((newPage: number) => {
         setPage(newPage)
@@ -96,6 +107,16 @@ const DataGridComponent = () => {
 
     return (
         <>
+            <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+                <Grid item xs={2} sm={6}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                        <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
+                            <label style={{ marginRight: '5px' }}><b>Total monto:</b></label>
+                            {FormatNumber(totalMonto)}
+                        </div>
+                    </div>
+                </Grid>
+            </Grid>
             {
                 query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <StyledDataGridContainer>
