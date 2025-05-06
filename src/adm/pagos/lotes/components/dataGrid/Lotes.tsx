@@ -1,11 +1,13 @@
 import { ChangeEvent, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
-import useColumnsDataGrid from './headers/ColumnsDataGrid';
+import { RootState } from 'src/store';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import useColumnsDataGrid from './headers/ColumnsDataGrid';
 import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -21,20 +23,25 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
+    const { batchPaymentDate }  = useSelector((state: RootState) => state.admLote )
     const { getList, message }  = useServices()
     const columns               = useColumnsDataGrid()
 
     const filter: any = {
         pageSize,
         pageNumber,
-        searchText
+        searchText,
+        CodigoPresupuesto: 19,
+        FechaInicio: batchPaymentDate.start,
+        FechaFin: batchPaymentDate.end,
+        CodigEmpresa: 13
     }
 
     const query = useQuery({
-        queryKey: ['maestroCuentaTable', pageSize, pageNumber, searchText],
+        queryKey: ['lotesTable', pageSize, pageNumber, searchText],
         queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
-            return qc.getQueryData(['maestroCuentaTable', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotesTable', pageSize, pageNumber, searchText])
         },
         staleTime: 1000 * 60,
         retry: 3
@@ -81,7 +88,7 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoCuentaBanco}
+                            getRowId={(row) => row.codigoLotePago}
                             rows={rows}
                             rowCount={rowCount}
                             columns={columns}
