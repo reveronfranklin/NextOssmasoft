@@ -5,7 +5,7 @@ const LayoutFilterDate = () => {
   return (
     <Grid item xs={12} paddingBottom={5}>
         <Card>
-            <CardHeader title='Filtrar Fecha de pago' />
+            <CardHeader title='Filtrar Por Fechas De Pago ' />
             <CardContent>
                 <FilterDate />
             </CardContent>

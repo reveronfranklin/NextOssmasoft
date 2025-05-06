@@ -264,6 +264,7 @@ const FormUpdate = () => {
                                                     onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
                                                     placeholderText='Fecha pago lote'
                                                     customInput={<CustomInput label='Fecha pago lote' />}
+                                                    popperPlacement='left-start'
                                                     required
                                                 />
                                             </DatePickerWrapper>

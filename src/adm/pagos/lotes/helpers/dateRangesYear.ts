@@ -2,16 +2,15 @@ import moment from 'moment';
 import { FechaPagoDto } from '../interfaces';
 
 const generateDateRangesByYear = (year: string | number) => {
-    const currentDate   = moment().format('YYYY-MM-DD')
-    const currentYear   = currentDate.split('-')[0]
-    let endDateString   = `${year}-12-31`
+    const currentYear = moment().format('YYYY')
+    let endDateString = moment(`${year}-12-31`)
 
     if (currentYear == year) {
-        endDateString = currentDate
+        endDateString = moment()
     }
 
-    const startDate = moment(`${year}-01-01`).format('YYYY-MM-DD')
-    const endDate   = moment(endDateString).format('YYYY-MM-DD')
+    const startDate = moment(`${year}-01-01`)
+    const endDate   = endDateString
 
     const startDateObject: FechaPagoDto = {
         year: moment(startDate).year(),
@@ -27,11 +26,11 @@ const generateDateRangesByYear = (year: string | number) => {
 
     const batchPaymentDate = {
         start: {
-            date: startDate,
+            date: startDate.toDate(),
             dateObject: startDateObject
         },
         end: {
-            date: endDate,
+            date: endDate.toDate(),
             dateObject: endDateObject
         }
     }
