@@ -35,6 +35,7 @@ const DataGridComponent = () => {
 
     const columns       = useColumnsDataGrid()
     const currentDate   = dayjs(Date()).format('YYYY-MM-DD')
+    const staleTime     = 1000 * 60 * 60
 
     const filter = {
         pageSize,
@@ -51,7 +52,7 @@ const DataGridComponent = () => {
         initialData: () => {
             return qc.getQueryData(['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto])
         },
-        staleTime: 1000 * 60,
+        staleTime: staleTime,
         retry: 3,
         enabled: isPresupuestoSeleccionado
     }, qc)
@@ -65,7 +66,9 @@ const DataGridComponent = () => {
 
         qc.prefetchQuery({
             queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, presupuestoSeleccionado.codigoPresupuesto],
-            queryFn: () => getList(filter)
+            queryFn: () => getList(filter),
+            staleTime: staleTime,
+            retry: 3
         })
     }, [ presupuestoSeleccionado.codigoPresupuesto ])
 
