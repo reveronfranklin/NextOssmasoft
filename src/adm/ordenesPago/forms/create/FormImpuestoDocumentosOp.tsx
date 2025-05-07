@@ -566,7 +566,7 @@ const FormImpuestoDocumentosOp = () => {
         clearButtonConfig={{
           label: 'Limpiar',
           onClick: async () => clearForm(),
-          show: true,
+          show: false,
           disabled: false
         }}
         loading={loading}
@@ -577,7 +577,7 @@ const FormImpuestoDocumentosOp = () => {
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}
-        duration={8000}
+        duration={message?.isValid ? 2000 : 5000}
         show={message?.text ? true : false}
       />
     </>

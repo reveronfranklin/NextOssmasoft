@@ -75,6 +75,7 @@ const TipoTransaction = (props: any) => {
             getOptionLabel={(option) => option.id + '-' + option.descripcion}
             onChange={handleChange}
             renderInput={(params) => <TextField {...params} label="TipoTransaction" />}
+            disabled={props.disabled}
           />
         )
       }
