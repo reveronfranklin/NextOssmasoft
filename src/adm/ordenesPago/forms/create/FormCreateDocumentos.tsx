@@ -73,7 +73,7 @@ const FormCreateDocumentosOp = () => {
     periodoImpositivo: '',
     tipoOperacionId: 0,
     tipoDocumentoId: 0,
-    tipoTransaccionId: 0,
+    tipoTransaccionId: 669,
     tipoImpuestoId: 0,
     estatusFiscoId: 0,
     fechaDocumento: '',
@@ -177,7 +177,7 @@ const FormCreateDocumentosOp = () => {
         periodoImpositivo: getValues('periodoImpositivo'),
         tipoOperacionId: getValues('tipoOperacionId'),
         tipoDocumentoId: getValues('tipoDocumentoId'),
-        tipoTransaccionId: getValues('tipoTransaccionId'),
+        tipoTransaccionId: 669,
         tipoImpuestoId: getValues('tipoImpuestoId'),
         estatusFiscoId: getValues('estatusFiscoId'),
         numeroDocumento: getValues('numeroDocumento'),
@@ -211,7 +211,7 @@ const FormCreateDocumentosOp = () => {
         periodoImpositivo: getValues('periodoImpositivo'),
         tipoOperacionId: getValues('tipoOperacionId'),
         tipoDocumentoId: getValues('tipoDocumentoId'),
-        tipoTransaccionId: getValues('tipoTransaccionId'),
+        tipoTransaccionId: 669,
         tipoImpuestoId: getValues('tipoImpuestoId'),
         estatusFiscoId: getValues('estatusFiscoId'),
         fechaDocumento: getValues('fechaDocumento'),
@@ -254,6 +254,10 @@ const FormCreateDocumentosOp = () => {
   }
 
   const clearForm: () => Promise<void> = async () => {
+    setBaseImponible(0)
+    setMontoDocumento(0)
+    setMontoImpuesto(0)
+
     setValue('codigoDocumentoOp', 0)
     setValue('codigoOrdenPago', 0)
     setValue('fechaComprobante', '')
@@ -316,10 +320,8 @@ const FormCreateDocumentosOp = () => {
       dispatch(setDocumentoOpSeleccionado(documentoUpdate))
       setValue('fechaDocumento', fechaDocumento)
 
-      //setea la fecha de documento en comprobante
       handleFechaComprobanteObjChange(fecha)
 
-      //periodo impositivo formato yyyy-mm-dd
       generatePImpositivo(fecha)
     }
   }
@@ -415,11 +417,11 @@ const FormCreateDocumentosOp = () => {
             <Grid item xs={3} style={{ marginLeft: 'auto' }}>
               <DatePickerWrapper>
                 <Controller
-                  name='fechaDocumento' // Usa el mismo nombre del campo que controlas con useForm
+                  name='fechaDocumento'
                   control={control}
                   render={({ field }) => (
                     <DatePicker
-                      selected={field.value ? new Date(field.value) : null} // Usa el valor controlado por react-hook-form
+                      selected={field.value ? new Date(field.value) : null}
                       id='Fecha-documento'
                       dateFormat='dd/MM/yyyy'
                       onChange={(date: Date) => {
@@ -434,25 +436,6 @@ const FormCreateDocumentosOp = () => {
                 />
               </DatePickerWrapper>
             </Grid>
-            {/* <Grid item xs={3} style={{ marginLeft: 'auto' }}>
-              <DatePickerWrapper>
-                <DatePicker
-                  selected={
-                    documentoOpSeleccionado?.fechaDocumentoObj
-                      ? getDateByObject(documentoOpSeleccionado?.fechaDocumentoObj)
-                      : null
-                  }
-                  id='Fecha-documento'
-                  dateFormat='dd/MM/yyyy'
-                  onChange={(date: Date) => {
-                    handleFechaDocumentoObjChange(date)
-                  }}
-                  placeholderText='Fecha Documento'
-                  customInput={<TextField fullWidth label='Fecha Documento' variant='outlined' />}
-                  disabled={false}
-                />
-              </DatePickerWrapper>
-            </Grid> */}
           </Grid>
 
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
@@ -483,6 +466,17 @@ const FormCreateDocumentosOp = () => {
             </Grid>
 
             <Grid item xs={3}>
+              <TipoTransaction
+                id={documentoOpSeleccionado?.tipoTransaccionId ?? 669}
+                autocompleteRef={autocompleteRef}
+                onSelectionChange={(value: any) => {
+                  setValue('tipoTransaccionId', value.id)
+                }}
+                disabled={true}
+              />
+            </Grid>
+
+            <Grid item xs={3}>
               <Controller
                 name='tipoOperacionId'
                 control={control}
@@ -504,16 +498,6 @@ const FormCreateDocumentosOp = () => {
                 autocompleteRef={autocompleteRef}
                 onSelectionChange={(value: any) => {
                   setValue('tipoDocumentoId', value.id)
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={3}>
-              <TipoTransaction
-                id={documentoOpSeleccionado?.tipoTransaccionId ?? 0}
-                autocompleteRef={autocompleteRef}
-                onSelectionChange={(value: any) => {
-                  setValue('tipoTransaccionId', value.id)
                 }}
               />
             </Grid>
@@ -838,7 +822,7 @@ const FormCreateDocumentosOp = () => {
             clearButtonConfig={{
               label: 'Limpiar',
               onClick: async () => clearForm(),
-              show: true,
+              show: false,
               disabled: false
             }}
             loading={loading}
@@ -858,7 +842,7 @@ const FormCreateDocumentosOp = () => {
         <AlertMessage
           message={message?.text ?? ''}
           severity={message?.isValid ? 'success' : 'error'}
-          duration={8000}
+          duration={message?.isValid ? 2000 : 5000}
           show={message?.text ? true : false}
         />
       </Box>
