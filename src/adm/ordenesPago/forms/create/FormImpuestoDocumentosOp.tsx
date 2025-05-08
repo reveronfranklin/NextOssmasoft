@@ -372,7 +372,7 @@ const FormImpuestoDocumentosOp = () => {
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
             <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
               <TipoRetencion
-                id={retencionSeleccionado.tipoRetencionId || 0}
+                id={retencionSeleccionado?.tipoRetencionId || 0}
                 autocompleteRef={autocompleteRef}
                 onSelectionChange={(value: any) => setValue('tipoRetencionId', value.id)}
               />
