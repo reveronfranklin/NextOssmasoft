@@ -2,7 +2,7 @@ export interface IUpdateOrdenPago {
     codigoOrdenPago: number;
     codigoPresupuesto: number;
     codigoCompromiso: number | string; //todo verificar si es string o number
-    fechaOrdenPago: Date;
+    fechaOrdenPago: string;
     tipoOrdenPagoId: number;
     cantidadPago: number;
     frecuenciaPagoId: number;

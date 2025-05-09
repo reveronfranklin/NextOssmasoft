@@ -8,33 +8,30 @@ import {
     Grid,
     TextField,
     FormControl,
-    Button,
-    FormHelperText,
-    Dialog,
-    DialogTitle,
-    DialogContentText,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
+    Button
 } from '@mui/material';
 
 import { RootState } from 'src/store';
-import { SisBancoCreateDto, SisBancoDeleteDto } from '../interfaces';
+import { SisBancoCreateDto, SisBancoDeleteDto } from '../../interfaces';
 import { setIsOpenDialogMaestroBancoDetalle, resetMaestroBancoSeleccionadoDetalle } from 'src/store/apps/pagos/bancos'
-import useServices from '../services/useServices';
+import { useServices } from '../../services';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import getRules from './rules';
 
 const FormUpdate = () => {
     const dispatch = useDispatch()
-    const { maestroBanco } = useSelector((state: RootState) => state.admMaestroBanco )
+    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
-    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [open, setOpen] = useState<boolean>(false)
-    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
-    const qc: QueryClient = useQueryClient()
+    const { maestroBanco }  = useSelector((state: RootState) => state.admMaestroBanco )
+    const qc: QueryClient   = useQueryClient()
+    const rules             = getRules()
 
     const {
-        updateMaestroBanco,
-        deleteMaestroBanco,
+        update,
+        remove,
         message,
         loading
     } = useServices()
@@ -56,17 +53,22 @@ const FormUpdate = () => {
         mode: 'onChange'
     })
 
-    const handleDialogOpen = () => {
-        setOpen(true)
+    const handleOpenDialog = () => {
+        setDialogOpen(true)
     }
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseDialog = () => {
+        setDialogOpen(false)
+    }
+
+    const handleClearMaestroBanco = () => {
+        dispatch(resetMaestroBancoSeleccionadoDetalle())
+        reset(defaultValues)
     }
 
     const handleUpdateMaestroBanco = async (dataFormMaestroBanco: SisBancoCreateDto) => {
         setIsFormEnabled(false)
-        handleClose()
+        handleCloseDialog()
 
         try {
             const payload: SisBancoCreateDto = {
@@ -75,11 +77,7 @@ const FormUpdate = () => {
                 codigoInterbancario: dataFormMaestroBanco.codigoInterbancario
             }
 
-            const response = await updateMaestroBanco(payload)
-
-            if (response.isValid) {
-                dispatch(setIsOpenDialogMaestroBancoDetalle(false))
-            }
+            await update(payload)
         } catch (e: any) {
             console.error(e)
         } finally {
@@ -90,12 +88,12 @@ const FormUpdate = () => {
         }
     }
 
-    const handleDeleteDialogOpen = () => {
-        setOpenDeleteDialog(true)
+    const handleOpenDialogDelete = () => {
+        setDialogDeleteOpen(true)
     }
 
-    const handleDeleteDialogClose = () => {
-        setOpenDeleteDialog(false)
+    const handleCloseDialogDelete = () => {
+        setDialogDeleteOpen(false)
     }
 
     const handleDelete = async () => {
@@ -104,10 +102,11 @@ const FormUpdate = () => {
                 codigoBanco: maestroBanco.codigoBanco
             }
 
-            const response = await deleteMaestroBanco(payload)
+            const response = await remove(payload)
 
             if (response?.isValid) {
                 dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+                handleClearMaestroBanco()
             }
         } catch (e: any) {
             console.error(e)
@@ -118,49 +117,12 @@ const FormUpdate = () => {
         }
     }
 
-    const handleClearMaestroBanco = () => {
-        dispatch(resetMaestroBancoSeleccionadoDetalle())
-        reset()
-    }
-
     useEffect(() => {
         if (Object.keys(maestroBanco).length === 0) {
             setValue('codigoInterbancario', '')
             setValue('nombre', '')
         }
     }, [ maestroBanco ])
-
-    const rules =  {
-        codigoBanco: {
-            required: 'Este campo es requerido'
-        },
-        codigoInterbancario: {
-            required: 'Este campo es requerido',
-            pattern:{
-                value: /^[0-9]+$/,
-                message: 'Solo se admiten numeros'
-            },
-            min: {
-                value: 1,
-                message: 'Mínimo 1 digitos'
-            },
-            maxLength: {
-                value: 5,
-                message: 'Máximo 5 digitos'
-            }
-        },
-        nombre: {
-            required: 'Este campo es requerido',
-            minLength: {
-                value: 1,
-                message: 'Mínimo 1 caracter'
-            },
-            maxLength: {
-                value: 200,
-                message: 'Máximo 200 caracter'
-            }
-        }
-    }
 
     return (
         <>
@@ -197,6 +159,7 @@ const FormUpdate = () => {
                                                             error={!!errors.codigoBanco}
                                                             helperText={errors.codigoBanco?.message}
                                                             disabled={true}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -219,6 +182,8 @@ const FormUpdate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.codigoInterbancario}
                                                             helperText={errors.codigoInterbancario?.message}
+                                                            required
+                                                            autoFocus
                                                         />
                                                     )}
                                                 />
@@ -241,9 +206,13 @@ const FormUpdate = () => {
                                                             placeholder="Nombre del Banco"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={onChange}
+                                                            onChange={(e) => {
+                                                                const textUpperCase = e.target.value.toUpperCase()
+                                                                onChange(textUpperCase)
+                                                            }}
                                                             error={!!errors.nombre}
                                                             helperText={errors.nombre?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
@@ -252,88 +221,30 @@ const FormUpdate = () => {
                                     </Grid>
                                 </Grid>
 
-                                <Dialog
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleUpdateMaestroBanco)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Espere un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogOpen}
+                                    onClose={handleCloseDialog}
+                                    onConfirm={handleSubmit(handleUpdateMaestroBanco)}
+                                    loading={loading}
+                                    title="Actualizar registro"
+                                    content="¿Desea continuar con la actualización de este registro?"
+                                />
 
-                                <Dialog
-                                    open={openDeleteDialog}
-                                    onClose={handleDeleteDialogClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleDeleteDialogClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleDelete)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Eliminando el registro, un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogDeleteOpen}
+                                    onClose={handleCloseDialogDelete}
+                                    onConfirm={handleDelete}
+                                    loading={loading}
+                                    title="Eliminar registro"
+                                    content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
+                                />
 
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
-                                        onClick={handleDialogOpen}
+                                        onClick={handleOpenDialog}
                                         disabled={!isValid && loading}
                                     >
                                         Actualizar
@@ -342,7 +253,7 @@ const FormUpdate = () => {
                                         sx={{ mx: 4 }}
                                         variant='outlined'
                                         size='small'
-                                        onClick={handleDeleteDialogOpen}
+                                        onClick={handleOpenDialogDelete}
                                         disabled={!isValid && loading}
                                     >
                                         Eliminar
@@ -354,7 +265,6 @@ const FormUpdate = () => {
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                                 </Box>
                             </form>
                             : null
@@ -362,6 +272,12 @@ const FormUpdate = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
         </>
     )
 }

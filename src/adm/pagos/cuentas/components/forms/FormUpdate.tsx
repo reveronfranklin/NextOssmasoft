@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material'
@@ -10,12 +10,6 @@ import {
     FormControl,
     Button,
     FormHelperText,
-    Dialog,
-    DialogTitle,
-    DialogContentText,
-    DialogContent,
-    DialogActions,
-    CircularProgress,
     Select,
     MenuItem,
     InputLabel
@@ -23,28 +17,26 @@ import {
 
 import { RootState } from 'src/store';
 import { CuentaDto, CuentaDeleteDto } from '../../interfaces';
-import { setIsOpenDialogCreate, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
+import { setIsOpenDialogCuenta, resetMaestroCuentaShow } from 'src/store/apps/pagos/cuentas'
 import { useServices } from '../../services';
 import { MaestroBanco, TipoCuenta, DenominacionFuncional } from '../autoComplete';
-import DialogConfirmation from '../dialog/DialogConfirmation';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
 const FormUpdate = () => {
-    const dispatch                                  = useDispatch()
-    const qc: QueryClient                           = useQueryClient()
-    const rules                                     = getRules()
-    const { maestroCuenta }                         = useSelector((state: RootState) => state.admMaestroCuenta )
     const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]               = useState(false)
-    const [openDeleteDialog, setOpenDeleteDialog]   = useState<boolean>(false)
+    const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
-    const [codigoBanco, setCodigoBanco]                     = useState<number>(0)
-    const [tipoCuenta, setTipoCuenta]                       = useState<number>(0)
-    const [denominacionFuncional, setDenominacionFuncional] = useState<number>(0)
+    const dispatch          = useDispatch()
+    const qc: QueryClient   = useQueryClient()
+    const { maestroCuenta } = useSelector((state: RootState) => state.admMaestroCuenta )
+    const rules             = getRules()
 
     const {
         update,
-        destroy,
+        remove,
         message,
         loading
     } = useServices()
@@ -65,19 +57,18 @@ const FormUpdate = () => {
     })
 
     const handleOpenDialog = () => {
-        setDialogOpen(true);
+        setDialogOpen(true)
     }
 
     const handleCloseDialog = () => {
-        setDialogOpen(false);
+        setDialogOpen(false)
     }
 
     const changeToBoolean = (value: any) : boolean => {
-        return (value == 'true')
+        return (value == 'true' || value == true)
     }
 
     const clearDefaultValues = () => {
-        setValue('codigoCuentaBanco', maestroCuenta.codigoCuentaBanco)
         setValue('codigoBanco', null)
         setValue('tipoCuentaId', null)
         setValue('noCuenta', null)
@@ -91,27 +82,9 @@ const FormUpdate = () => {
     }
 
     const handleClearMaestroCuenta = () => {
-        setCodigoBanco(0)
-        setTipoCuenta(0)
-        setDenominacionFuncional(0)
         dispatch(resetMaestroCuentaShow())
         reset(defaultValues)
         clearDefaultValues()
-    }
-
-    const handleMaestroBanco = (maestroBanco: any) => {
-        setValue('codigoBanco', maestroBanco.codigoBanco)
-        setCodigoBanco(maestroBanco.codigoBanco)
-    }
-
-    const handleTipoCuenta = (tipoCuenta: any) => {
-        setValue('tipoCuentaId', tipoCuenta.descripcionId)
-        setTipoCuenta(tipoCuenta.descripcionId)
-    }
-
-    const handleDenominacionFuncionalId = (denominacionFuncional: any) => {
-        setValue('denominacionFuncionalId', denominacionFuncional.descripcionId)
-        setDenominacionFuncional(denominacionFuncional.descripcionId)
     }
 
     const handleUpdateMaestroCuenta = async (cuenta: CuentaDto) => {
@@ -125,12 +98,7 @@ const FormUpdate = () => {
                 recaudadora: changeToBoolean(cuenta.recaudadora)
             }
 
-            const response = await update(payload)
-
-            if (response?.isValid) {
-                dispatch(setIsOpenDialogCreate(false))
-                dispatch(resetMaestroCuentaShow())
-            }
+            await update(payload)
         } catch (e: any) {
             console.error('handleUpdateMaestroCuenta', e)
         } finally {
@@ -141,40 +109,38 @@ const FormUpdate = () => {
         }
     }
 
-    const handleDeleteDialogOpen = () => {
-        setOpenDeleteDialog(true)
+    const handleOpenDialogDelete = () => {
+        setDialogDeleteOpen(true)
     }
 
-    const handleDeleteDialogClose = () => {
-        setOpenDeleteDialog(false)
+    const handleCloseDialogDelete = () => {
+        setDialogDeleteOpen(false)
     }
 
     const handleDelete = async () => {
+        setIsFormEnabled(false)
+        handleCloseDialogDelete()
+
         try {
             const payload: CuentaDeleteDto = {
                 codigoCuentaBanco: maestroCuenta.codigoCuentaBanco
             }
 
-            const response = await destroy(payload)
+            const response = await remove(payload)
 
             if (response?.isValid) {
-                dispatch(setIsOpenDialogCreate(false))
-                dispatch(resetMaestroCuentaShow())
+                dispatch(setIsOpenDialogCuenta(false))
+                handleClearMaestroCuenta()
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('handleDelete', e)
         } finally {
+            setIsFormEnabled(true)
             qc.invalidateQueries({
                 queryKey: ['maestroCuentaTable']
             })
         }
     }
-
-    useEffect(() => {
-        setCodigoBanco(Number(maestroCuenta.codigoBanco ?? 0))
-        setTipoCuenta(Number(maestroCuenta.tipoCuentaId ?? 0))
-        setDenominacionFuncional(Number(maestroCuenta.denominacionFuncionalId ?? 0))
-    }, [ maestroCuenta ])
 
     return (
         <>
@@ -194,15 +160,34 @@ const FormUpdate = () => {
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <MaestroBanco
-                                                id={codigoBanco}
-                                                onSelectionChange={handleMaestroBanco}
+                                            <Controller
+                                                name="codigoBanco"
+                                                control={control}
+                                                rules={ rules.codigoBanco }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <MaestroBanco
+                                                        id={value || null}
+                                                        onSelectionChange={(selected) => onChange(selected?.codigoBanco || null)}
+                                                        error={errors.codigoBanco?.message}
+                                                        required
+                                                        autoFocus
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <TipoCuenta
-                                                id={tipoCuenta}
-                                                onSelectionChange={handleTipoCuenta}
+                                            <Controller
+                                                name="tipoCuentaId"
+                                                control={control}
+                                                rules={ rules.tipoCuentaId }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <TipoCuenta
+                                                        id={value}
+                                                        onSelectionChange={(selected) => onChange(selected?.descripcionId || null)}
+                                                        error={errors.tipoCuentaId?.message}
+                                                        required
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                     </Grid>
@@ -225,15 +210,25 @@ const FormUpdate = () => {
                                                             onChange={onChange}
                                                             error={!!errors.noCuenta}
                                                             helperText={errors.noCuenta?.message}
+                                                            required
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
                                         <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <DenominacionFuncional
-                                                id={denominacionFuncional}
-                                                onSelectionChange={handleDenominacionFuncionalId}
+                                            <Controller
+                                                name="denominacionFuncionalId"
+                                                control={control}
+                                                rules={ rules.denominacionFuncionalId }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <DenominacionFuncional
+                                                        id={value}
+                                                        onSelectionChange={(selected) => onChange(selected?.descripcionId || null)}
+                                                        error={errors.denominacionFuncionalId?.message}
+                                                        required
+                                                    />
+                                                )}
                                             />
                                         </Grid>
                                     </Grid>
@@ -253,7 +248,10 @@ const FormUpdate = () => {
                                                             placeholder="Código"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={onChange}
+                                                            onChange={(e) => {
+                                                                const textUpperCase = e.target.value.toUpperCase()
+                                                                onChange(textUpperCase)
+                                                            }}
                                                             error={!!errors.codigo}
                                                             helperText={errors.codigo?.message}
                                                         />
@@ -268,13 +266,14 @@ const FormUpdate = () => {
                                                     name="principal"
                                                     control={control}
                                                     rules={rules.principal}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="principal-label"
                                                             label="¿Cuenta principal?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            {...rest}
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>
@@ -293,13 +292,14 @@ const FormUpdate = () => {
                                                     name="recaudadora"
                                                     control={control}
                                                     rules={rules.recaudadora}
-                                                    render={({ field: { onChange, value } }) => (
+                                                    render={({ field: { onChange, value, ...rest } }) => (
                                                         <Select
                                                             labelId="recaudadora-label"
                                                             label="¿Cuenta recaudadora?"
                                                             fullWidth
                                                             value={value || false}
                                                             onChange={onChange}
+                                                            { ...rest }
                                                         >
                                                             <MenuItem value="true">Sí</MenuItem>
                                                             <MenuItem value="false">No</MenuItem>
@@ -323,43 +323,14 @@ const FormUpdate = () => {
                                     content="¿Desea continuar con la actualización de este registro?"
                                 />
 
-                                <Dialog
-                                    open={openDeleteDialog}
-                                    onClose={handleDeleteDialogClose}
-                                    aria-labelledby='alert-dialog-title'
-                                    aria-describedby='alert-dialog-description'
-                                >
-                                    <DialogTitle id='alert-dialog-title'>
-                                        {'Esta usted seguro de realizar esta acción?'}
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id='alert-dialog-description'>
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleDeleteDialogClose}>No</Button>
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            size='small'
-                                            onClick={handleSubmit(handleDelete)}
-                                        >
-                                            { loading ? (
-                                                <>
-                                                    <CircularProgress
-                                                        sx={{
-                                                            color: 'common.white',
-                                                            width: '20px !important',
-                                                            height: '20px !important',
-                                                            mr: theme => theme.spacing(2)
-                                                        }}
-                                                    />
-                                                    Eliminando el registro, un momento...
-                                                </>
-                                            ) : 'Si' }
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <DialogConfirmation
+                                    open={dialogDeleteOpen}
+                                    onClose={handleCloseDialogDelete}
+                                    onConfirm={handleDelete}
+                                    loading={loading}
+                                    title="Eliminar registro"
+                                    content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
+                                />
 
                                 <Box sx={{ paddingTop: 6 }}>
                                     <Button
@@ -375,7 +346,7 @@ const FormUpdate = () => {
                                         sx={{ mx: 4 }}
                                         variant='outlined'
                                         size='small'
-                                        onClick={handleDeleteDialogOpen}
+                                        onClick={handleOpenDialogDelete}
                                         disabled={!isValid && loading}
                                     >
                                         Eliminar
@@ -387,7 +358,6 @@ const FormUpdate = () => {
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>
-                                    <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{message}</FormHelperText>
                                 </Box>
                             </form>
                             : null
@@ -395,6 +365,12 @@ const FormUpdate = () => {
                     </Box>
                 </Grid>
             </Grid>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
         </>
     )
 }

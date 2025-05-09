@@ -28,16 +28,15 @@ const DataGridComponent = () => {
   const dispatch = useDispatch()
   const { getRetencionesOpByOrdenPago } = useServicesRetencionesOp()
 
-  const { compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
-  const { codigoOrdenPago } = compromisoSeleccionadoListaDetalle
+  const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
 
   const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
-    queryKey: ['retencionesOpTable', pageSize, pageNumber, searchText],
+    queryKey: ['retencionesOpTable', pageSize, pageNumber, searchText, filter],
     queryFn: () => getRetencionesOpByOrdenPago(filter),
     initialData: () => {
-      return qc.getQueryData(['retencionesOpTable', pageSize, pageNumber, searchText])
+      return qc.getQueryData(['retencionesOpTable', pageSize, pageNumber, searchText, filter])
     },
     staleTime: 1000 * 60,
     retry: 3,
@@ -82,20 +81,6 @@ const DataGridComponent = () => {
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
               onRowDoubleClick={row => handleDoubleClick(row)}
-
-              // components={{ Toolbar: ServerSideToolbar }}
-              // componentsProps={{
-              //   baseButton: {
-              //     variant: 'outlined'
-              //   },
-              //   toolbar: {
-              //     printOptions: { disableToolbarButton: true },
-              //     value: buffer,
-              //     clearSearch: () => handleSearch(''),
-              //     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-              //     sx: { paddingLeft: 0, paddingRight: 0 }
-              //   }
-              // }}
             />
           </StyledDataGridContainer>
         )

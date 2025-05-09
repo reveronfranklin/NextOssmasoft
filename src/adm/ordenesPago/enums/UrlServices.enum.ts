@@ -7,6 +7,7 @@ export enum UrlServices {
     GETPUCORDENPAGO             = '/AdmPucOrdenPago/GetByOrdenPago',
     CREATEORDENPAGO             = '/AdmOrdenPago/Create',
     UPDATEORDENPAGO             = '/AdmOrdenPago/Update',
+    DELETEORDENPAGO             = '/AdmOrdenPago/Delete',
 
     DESCRIPTIVAS                = '/AdmDescriptivas/GetSelectDescriptiva',
 
@@ -43,7 +44,6 @@ export enum UrlServices {
     APROBARORDENPAGO            = 'AdmOrdenPago/Aprobar',
     ANULARORDENPAGO             = 'AdmOrdenPago/Anular',
 
-    //Urls Reports
     GETREPORTBYORDENPAGO        = '/api-v1.0/payment-orders/pdf/report',
     GETREPORTBYRETENCIONES      = '/api-v1.0/income-tax-withholding-voucher/pdf/report',
     GETREPORTBYCOMPROBANTE      = '/api-v1.0/vat-withholding-voucher/pdf/report',

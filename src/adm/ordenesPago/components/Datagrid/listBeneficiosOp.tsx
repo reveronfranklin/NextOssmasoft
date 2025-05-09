@@ -7,7 +7,6 @@ import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useServicesBeneficiarioOp } from '../../services/index'
 import { setIsCollapseRetenciones, setBeneficioOpSeleccionado } from 'src/store/apps/ordenPago'
 import { useDispatch } from 'react-redux'
-import toast from 'react-hot-toast'
 
 import { IUpdateMontoBeneficiarioOp } from '../../interfaces/admBeneficiarioOp/updateMontoBeneficiarioOp.interfaces'
 import { useSelector } from 'react-redux'
@@ -36,7 +35,7 @@ const DataGridComponent = () => {
   const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
-    queryKey: ['beneficioOpTable', pageSize, pageNumber, searchText],
+    queryKey: ['beneficioOpTable', pageSize, pageNumber, searchText, filter],
     queryFn: () => getBeneficiarioOpByOrdenPago(filter),
     initialData: () => {
       return qc.getQueryData(['beneficioOpTable', pageSize, pageNumber, searchText])
@@ -70,14 +69,8 @@ const DataGridComponent = () => {
     }
 
     try {
-      const response = await updateBeneficiarioOpMonto(updateDto)
+      await updateBeneficiarioOpMonto(updateDto)
 
-      if (response?.data?.isValid) {
-        console.log('Registro actualizado')
-        toast.success('Registro actualizado', {
-          position: 'top-right',
-        })
-      }
     } catch (error) {
       console.error(error)
     } finally {
@@ -93,7 +86,7 @@ const DataGridComponent = () => {
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoBeneficiarioOp}
+              getRowId={(row) => row?.codigoBeneficiarioOp}
               rows={rows}
               rowCount={rowCount}
               columns={ColumnsDataGridBeneficioOp() as any}

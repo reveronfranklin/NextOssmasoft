@@ -57,10 +57,6 @@ const FormViewerPdf: React.FC = () => {
         borderRadius: '4px',
         flexWrap: 'wrap'
       }}>
-        {/* <Typography variant="body1" sx={{ mr: 2 }}>
-          Orden de Pago: {codigoOrdenPago}
-        </Typography> */}
-
         <TextField
           select
           label="Seleccionar Reporte"

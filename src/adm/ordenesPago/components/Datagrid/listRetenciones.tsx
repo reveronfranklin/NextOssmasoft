@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled, Typography } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useServicesRetenciones } from '../../services/index'
 import { setRetencionSeleccionado, setIsOpenDialogListRetenciones } from 'src/store/apps/ordenPago'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from "src/store"
 import { Retencion } from '../../interfaces/responseRetenciones.interfaces'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetenciones'
 import Spinner from 'src/@core/components/spinner'
+
+import { IRetencionData } from '../../interfaces/retencionesOp/createRetencionOp'
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 'auto',
@@ -30,6 +33,8 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
   const dispatch = useDispatch()
   const { getRetenciones } = useServicesRetenciones()
 
+  const { tipoRetencion } = useSelector((state: RootState) => state.admOrdenPago)
+
   const query = useQuery({
     queryKey: ['retencionesTable'],
     queryFn: () => getRetenciones(),
@@ -37,8 +42,17 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
     staleTime: 1000 * 60,
   })
 
-  const rows = query?.data?.data || []
-  const rowCount = query?.data?.data?.length || 0
+  const allRows = query?.data?.data || []
+
+  const filteredRows = useMemo(() => {
+    if (tipoRetencion !== 0) {
+      return allRows.filter((row: IRetencionData) => row.tipoRetencionId === tipoRetencion)
+    } else {
+      return allRows
+    }
+  }, [allRows, tipoRetencion])
+
+  const rowCount = filteredRows.length
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
@@ -63,12 +77,12 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
     }
   }
 
-  const paginatedRows = rows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
+  const paginatedRows = filteredRows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
 
   return (
     <>
       {
-        query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
+        query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : filteredRows && (
           <StyledDataGridContainer>
             <LegendContainer>
               <Typography variant="caption" color="text.secondary">
@@ -78,7 +92,7 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoRetencion}
+              getRowId={(filteredRows) => filteredRows.codigoRetencion}
               rows={paginatedRows}
               rowCount={rowCount}
               columns={ColumnsDataGrid() as any}

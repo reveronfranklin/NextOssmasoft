@@ -23,6 +23,7 @@ import {
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { useServicesRetenciones } from '../../services/index'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormImpuestoDocumentosOp = () => {
   const [porRetencion, setPorRetencion] = useState<number>(0)
@@ -58,13 +59,13 @@ const FormImpuestoDocumentosOp = () => {
     codigoImpuestoDocumentoOp: 0,
     codigoDocumentoOp: 0,
     codigoRetencion: 0,
+    conceptoPago: '',
     tipoRetencionId: 0,
     periodoImpositivo: '',
     baseImponible: 0,
     montoImpuesto: 0,
     montoImpuestoExento: 0,
     montoRetenido: 0,
-    conceptoPago: ''
   }
 
   const {
@@ -139,8 +140,8 @@ const FormImpuestoDocumentosOp = () => {
       const newCreate: ICreateImpuestoDocumentosOp = {
         codigoImpuestoDocumentoOp: getValues('codigoImpuestoDocumentoOp') || 0,
         codigoDocumentoOp: getValues('codigoDocumentoOp') ?? documentoOpSeleccionado.codigoDocumentoOp,
-        codigoRetencion: getValues('codigoRetencion'),
-        tipoRetencionId: getValues('tipoRetencionId'),
+        codigoRetencion: getValues('codigoRetencion') || retencionSeleccionado.codigoRetencion,
+        tipoRetencionId: getValues('tipoRetencionId') || retencionSeleccionado.tipoRetencionId,
         periodoImpositivo: getValues('periodoImpositivo') ?? documentoOpSeleccionado.periodoImpositivo,
         baseImponible: getValues('baseImponible'),
         montoImpuesto: getValues('montoImpuesto'),
@@ -371,7 +372,7 @@ const FormImpuestoDocumentosOp = () => {
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
             <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
               <TipoRetencion
-                id={ impuestoDocumentoOpSeleccionado?.tipoRetencionId || 0}
+                id={retencionSeleccionado?.tipoRetencionId || 0}
                 autocompleteRef={autocompleteRef}
                 onSelectionChange={(value: any) => setValue('tipoRetencionId', value.id)}
               />
@@ -530,16 +531,14 @@ const FormImpuestoDocumentosOp = () => {
                 )}
               />
             </Grid>
-
-          </Grid>
-        </Grid>
-
-        <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-          {message || validationError && (
             <Box>
-              <FormHelperText sx={{ color: 'error.main', fontSize: 16 }}>{message} {validationError}</FormHelperText>
+              {validationError && validationError.length > 0 && (
+                <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
+                  {validationError}
+                </FormHelperText>
+              )}
             </Box>
-          )}
+          </Grid>
         </Grid>
       </form>
       <CustomButtonDialog
@@ -567,13 +566,19 @@ const FormImpuestoDocumentosOp = () => {
         clearButtonConfig={{
           label: 'Limpiar',
           onClick: async () => clearForm(),
-          show: true,
+          show: false,
           disabled: false
         }}
         loading={loading}
         isOpenDialog={isOpenDialogConfirmButtons}
         setIsOpenDialog={setIsOpenDialogConfirmButtons}
         isFormValid={isValid}
+      />
+      <AlertMessage
+        message={message?.text ?? ''}
+        severity={message?.isValid ? 'success' : 'error'}
+        duration={message?.isValid ? 2000 : 5000}
+        show={message?.text ? true : false}
       />
     </>
   )

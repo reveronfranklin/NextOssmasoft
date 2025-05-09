@@ -65,11 +65,13 @@ const CustomButtonDialog = ({
 
   return (
     <>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        paddingTop: 2
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          paddingTop: 0
+        }}
+      >
         <Box sx={{ flexBasis: 'auto', marginRight: 2 }}>
           {saveButtonConfig?.show && (
             <Button

@@ -74,7 +74,7 @@ const EstatusFisico = (props: any) => {
               id='autocomplete-EstatusFisico'
               getOptionLabel={(option) => option.id + '-' + option.descripcion}
               onChange={handleChange}
-              renderInput={(params) => <TextField {...params} label="EstatusFisico" />}
+              renderInput={(params) => <TextField {...params} label="EstatusFisco" />}
             />
           )
         }

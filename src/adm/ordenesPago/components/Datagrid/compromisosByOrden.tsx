@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import ColumnsDataGridListCompromisoByOrden from '../../config/Datagrid/columnsDataGridListCompromisoByOrden'
-import { setIsOpenDialogListPucOrdenPago } from "src/store/apps/ordenPago"
+import { setIsOpenDialogListPucOrdenPago, setCodigoIdentificadorCompromiso } from "src/store/apps/ordenPago"
 import { useDispatch } from 'react-redux'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
@@ -15,11 +15,6 @@ const StyledDataGridContainer = styled(Box)(() => ({
     overflowY: 'auto',
 }))
 
-interface IfilterByOrdenPago {
-    codigoOrdenPago: number,
-    codigoPresupuesto?: any
-}
-
 const DataGridComponent = () => {
     const [pageNumber, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
@@ -28,27 +23,40 @@ const DataGridComponent = () => {
     const qc: QueryClient = useQueryClient()
     const dispatch = useDispatch()
 
-
-    const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
+    const { codigoOrdenPago, compromisoSeleccionadoListaDetalle } = useSelector((state: RootState) => state.admOrdenPago)
     const { getCompromisoByOrden, presupuestoSeleccionado } = useServices()
 
-    const filter: IfilterByOrdenPago = {
-        codigoOrdenPago,
+    const filter: any = {
+        codigoOrdenPago: compromisoSeleccionadoListaDetalle.codigoOrdenPago,
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
     }
 
     const query = useQuery({
-        queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText],
+        queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText, filter],
         queryFn: () => getCompromisoByOrden(filter),
         initialData: () => {
             return qc.getQueryData(['listCompromisoByOrdenPago', pageSize, pageNumber, searchText])
         },
         staleTime: 100 * 60,
         retry: 3,
+        enabled: !!codigoOrdenPago && !!presupuestoSeleccionado?.codigoPresupuesto,
     }, qc)
 
     const rows = query?.data?.data || []
     const rowCount = rows.length || 0
+
+    useEffect(() => {
+        qc.prefetchQuery({
+            queryKey: ['listCompromisoByOrdenPago', pageSize, pageNumber, searchText, filter],
+            queryFn: () => getCompromisoByOrden(filter)
+        })
+    }, [codigoOrdenPago])
+
+    useEffect(() => {
+        if (rows && rows.length > 0 && rows[0]?.codigoIdentificador) {
+            dispatch(setCodigoIdentificadorCompromiso(rows[0]?.codigoIdentificador));
+        }
+    }, [dispatch, rows])
 
     const handleDoubleClick = (data: any) => {
         console.log(data)

@@ -1,12 +1,15 @@
 import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IApiResponse } from 'src/interfaces/api-response-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import { QueryClient } from '@tanstack/react-query'
 
 export const handleApiResponse = <T>(
   apiResponse: IResponseBase<T>,
   successMessage?: string,
   setMessage?: (message: IAlertMessageDto) => void,
-  setError?: (error: string) => void
+  setError?: (error: string) => void,
+  queryClient?: QueryClient,
+  queryKeysToInvalidate?: string[][]
 ): IApiResponse<T> => {
   const message = apiResponse?.message || successMessage || ''
 
@@ -17,6 +20,12 @@ export const handleApiResponse = <T>(
         timestamp: Date.now(),
         isValid: true,
       })
+
+      if (queryClient && queryKeysToInvalidate) {
+        queryKeysToInvalidate.forEach(queryKey => {
+          queryClient.invalidateQueries({ queryKey })
+        })
+      }
     } else {
       setError(message)
       setMessage({
@@ -28,11 +37,19 @@ export const handleApiResponse = <T>(
   }
 
   return {
-    success: apiResponse.isValid,
-    isValid: apiResponse.isValid,
-    message: message,
     data: apiResponse.data,
+    isValid: apiResponse.isValid,
+    linkData: apiResponse.linkData,
+    linkDataArlternative: apiResponse.linkDataArlternative,
+    message: message,
+    page: apiResponse.page,
+    totalPage: apiResponse.totalPage,
     cantidadRegistros: apiResponse.cantidadRegistros || 0,
+    total1: apiResponse.total1,
+    total2: apiResponse.total2,
+    total3: apiResponse.total3,
+    total4: apiResponse.total4,
+    success: apiResponse.isValid,
   }
 }
 

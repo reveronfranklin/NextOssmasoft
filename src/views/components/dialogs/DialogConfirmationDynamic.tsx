@@ -9,7 +9,7 @@ import {
     CircularProgress,
     type Theme
 } from '@mui/material';
-import { DialogConfirmationProps } from '../../interfaces';
+import { DialogConfirmationProps } from '../../../interfaces/dialog/dialog-confirmation-props.interface';
 
 const DialogConfirmation = ({
     open,

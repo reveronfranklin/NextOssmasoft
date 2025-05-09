@@ -4,7 +4,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
-import ColumnsDataGrid from './headers/ColumnsDataGrid';
+import useColumnsDataGrid from './headers/ColumnsDataGrid';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -18,16 +19,16 @@ const DataGridComponent = () => {
     const [searchText, setSearchText]   = useState<string>('')
     const [buffer, setBuffer]           = useState<string>('')
 
-    const qc: QueryClient       = useQueryClient()
     const debounceTimeoutRef    = useRef<any>(null)
+    const qc: QueryClient       = useQueryClient()
+    const { getList, message }  = useServices()
+    const columns               = useColumnsDataGrid()
 
     const filter: any = {
         pageSize,
         pageNumber,
         searchText
     }
-
-    const { getList } = useServices()
 
     const query = useQuery({
         queryKey: ['maestroCuentaTable', pageSize, pageNumber, searchText],
@@ -80,10 +81,10 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoBanco}
+                            getRowId={(row) => row.codigoCuentaBanco}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={columns}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}
@@ -105,6 +106,12 @@ const DataGridComponent = () => {
                                     sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
+                        />
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>
                 )

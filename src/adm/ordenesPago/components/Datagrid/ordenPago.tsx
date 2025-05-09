@@ -8,6 +8,7 @@ import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -30,8 +31,15 @@ const DataGridComponent = () => {
 
     const {
         getOrdenesPagoByPresupuesto,
-        presupuestoSeleccionado
+        presupuestoSeleccionado,
+        deleteOrden,
+        message
     } = useServices()
+
+    const actions = {
+        deleteOrden,
+        presupuestoSeleccionado
+    }
 
     const filter: any = {
         pageSize,
@@ -105,7 +113,7 @@ const DataGridComponent = () => {
                             getRowId={(row) => row.codigoOrdenPago}
                             rows={rows}
                             rowCount={rowCount}
-                            columns={ColumnsDataGrid() as any}
+                            columns={ColumnsDataGrid(actions) as any}
                             pageSize={pageSize}
                             page={pageNumber}
                             getRowHeight={() => 'auto'}
@@ -127,6 +135,12 @@ const DataGridComponent = () => {
                                     sx: { paddingLeft: 0, paddingRight: 0 }
                                 }
                             }}
+                        />
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>
                 )

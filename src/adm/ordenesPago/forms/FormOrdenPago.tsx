@@ -1,5 +1,5 @@
 import { Box, Grid, TextField, FormControl, Button, Dialog, DialogTitle, DialogContentText, DialogContent, DialogActions, CircularProgress,
-Checkbox, FormControlLabel, Typography } from "@mui/material"
+Checkbox, FormControlLabel } from "@mui/material"
 import { useEffect, useState, useRef } from "react"
 import { Controller, useForm } from 'react-hook-form'
 import FormaPago from '../components/AutoComplete/FormaPago'
@@ -19,13 +19,14 @@ import { setCompromisoSeleccionadoDetalle, resetCompromisoSeleccionadoDetalle } 
 import useServicesDocumentosOp from './../services/useServicesDocumentosOp'
 import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
 
-import WarningIcon from '@mui/icons-material/Warning'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from '@mui/icons-material/Settings'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+
+import MensajeCompromiso from './mensajeCompromiso'
 
 export interface FormInputs {
     codigoOrdenPago: number,
@@ -80,7 +81,8 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
-    const [isFormEnabled, setIsFormEnabled] = useState(false)
+    const [isOrdenPagoLoaded, setIsOrdenPagoLoaded] = useState<boolean>(Object.keys(orden).length > 0)
+
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
@@ -186,8 +188,7 @@ const FormOrdenPago = (props: {
 
     useEffect(() => {
         if (orden && Object.keys(orden).length) {
-            setIsFormEnabled(true)
-
+            setIsOrdenPagoLoaded(true)
             if (typeOperation === 'update') {
                 setValue('descripcionStatus', orden.descripcionStatus ?? '')
             }
@@ -215,15 +216,15 @@ const FormOrdenPago = (props: {
 
     const getActionIcon = (actionName: string) => {
         switch (actionName?.toLowerCase()) {
-            case 'aprobar': return <CheckCircleIcon />;
-            case 'anular': return <BlockIcon />;
-            default: return <SettingsIcon />;
+            case 'aprobar': return <CheckCircleIcon />
+            case 'anular': return <BlockIcon />
+            default: return <SettingsIcon />
         }
     }
 
     return (
         <Box>
-            { !!isFormEnabled ?
+            { isOrdenPagoLoaded ?
                 <form>
                     <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                         <Grid item xs={12} sx={{ paddingTop: 1 }}>
@@ -568,19 +569,7 @@ const FormOrdenPago = (props: {
                             show={message?.text ? true : false}
                         />
                     </Box>
-                </form> :
-                typeOperation === 'create' ?
-                (
-                    <Box sx={{ textAlign: 'center', padding: 10 }}>
-                        <WarningIcon color="error" />
-                        <Typography variant="h6" gutterBottom>
-                            No hay un compromiso seleccionado
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                            Por favor, seleccione uno de la lista haciendo clic en el botón de "Ver Compromisos".
-                        </Typography>
-                    </Box>
-                ) : null
+                </form> : <MensajeCompromiso />
             }
         </Box>
     )

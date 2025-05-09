@@ -1,13 +1,13 @@
 import { Ref, forwardRef, ReactElement } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from '@mui/material';
 import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
-import { Card, Dialog, DialogContent, Grid, Toolbar, Typography, Box } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'src/store';
 import Icon from 'src/@core/components/icon';
-import { setIsOpenDialogMaestroBancoDetalle, setTypeOperation } from 'src/store/apps/pagos/bancos';
-import FormCreate from '../../forms/FormCreate';
-import FormUpdate from '../../forms/FormUpdate';
+import { RootState } from 'src/store';
+import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
+import FormCreate from '../forms/FormCreate';
+import FormUpdate from '../forms/FormUpdate';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -16,12 +16,12 @@ const Transition = forwardRef(function Transition(
     return <Fade ref={ref} {...props} />
 })
 
-const DialogAdmMaestroBancoDetalle = () => {
+const DialogLote = () => {
     const dispatch = useDispatch()
-    const { typeOperation, isOpenDialogMaestroBancoDetalle } = useSelector((state: RootState) => state.admMaestroBanco )
+    const { typeOperation, isOpenDialogLote } = useSelector((state: RootState) => state.admLote )
 
     const handleClose = () => {
-        dispatch(setIsOpenDialogMaestroBancoDetalle(false))
+        dispatch(setIsOpenDialogLote(false))
         dispatch(setTypeOperation(null))
     }
 
@@ -39,8 +39,9 @@ const DialogAdmMaestroBancoDetalle = () => {
         <Card>
             <Dialog
                 fullWidth
+                maxWidth="md"
                 scroll='body'
-                open={isOpenDialogMaestroBancoDetalle}
+                open={isOpenDialogLote}
                 TransitionComponent={Transition}
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'
@@ -48,7 +49,7 @@ const DialogAdmMaestroBancoDetalle = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '50vh',
+                        height: '48vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0
@@ -63,7 +64,7 @@ const DialogAdmMaestroBancoDetalle = () => {
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Maestro Banco ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
+                                Lotes de pago ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
                             </Typography>
                             <IconButton
                                 size='small'
@@ -83,4 +84,4 @@ const DialogAdmMaestroBancoDetalle = () => {
     )
 }
 
-export default DialogAdmMaestroBancoDetalle
+export default DialogLote

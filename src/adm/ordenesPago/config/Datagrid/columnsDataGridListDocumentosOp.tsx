@@ -9,6 +9,7 @@ import {
   setDocumentoOpSeleccionado,
   setTypeOperationDocumento
 } from 'src/store/apps/ordenPago'
+import FormatNumber from 'src/utilities/format-numbers'
 
 function ColumnsDataGridListDocumentosOp() {
   const dispatch = useDispatch()
@@ -46,22 +47,6 @@ function ColumnsDataGridListDocumentosOp() {
     },
     {
       flex: 1,
-      headerName: 'TipoOperacion',
-      field: 'descripcionTipoOperacion',
-      renderCell: (params: GridRenderCellParams) => {
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'left' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                {params.row.descripcionTipoOperacion === '' ? 'NO DISPONIBLE' : params.row.descripcionTipoOperacion}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }
-    },
-    {
-      flex: 1,
       headerName: 'TipoDocumento',
       field: 'descripcionTipoDocumento',
       renderCell: (params: GridRenderCellParams) => (
@@ -80,17 +65,6 @@ function ColumnsDataGridListDocumentosOp() {
         </Typography>
       )
     },
-
-    // {
-    //   flex: 1,
-    //   headerName: '% Según Fisco',
-    //   field: 'descripcionEstatusFisco',
-    //   renderCell: (params: GridRenderCellParams) => (
-    //     <Typography variant='body2' sx={{ color: 'text.primary' }}>
-    //       {params.row.descripcionEstatusFisco === '' ? 'NO DISPONIBLE' : params.row.descripcionEstatusFisco}
-    //     </Typography>
-    //   )
-    // },
     {
       flex: 1,
       headerName: 'Fecha Documento',
@@ -108,6 +82,16 @@ function ColumnsDataGridListDocumentosOp() {
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant='body2' sx={{ color: 'text.primary' }}>
           {params.row.numeroDocumento === '' ? 'NO DISPONIBLE' : params.row.numeroDocumento}
+        </Typography>
+      )
+    },
+    {
+      flex: 1,
+      headerName: 'Monto Documento',
+      field: 'montoDocumento',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.montoDocumento === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.montoDocumento)}
         </Typography>
       )
     }
