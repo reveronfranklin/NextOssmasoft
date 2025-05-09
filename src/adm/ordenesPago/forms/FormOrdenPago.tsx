@@ -80,7 +80,10 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
+    console.log('orden', orden)
+
     const [isFormEnabled, setIsFormEnabled] = useState(!!orden && Object.keys(orden).length > 0)
+    console.log('isFormEnabled', isFormEnabled)
 
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
@@ -573,6 +576,7 @@ const FormOrdenPago = (props: {
                 typeOperation === 'create' && !isFormEnabled ?
                 (
                     <Box sx={{ textAlign: 'center', padding: 10 }}>
+                        //esto es para validar que esta actualizado y funcionando
                         <WarningIcon color="error" />
                         <Typography variant="h6" gutterBottom>
                             No hay un compromiso seleccionado
