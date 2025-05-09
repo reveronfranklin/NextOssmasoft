@@ -81,20 +81,6 @@ const DataGridComponent = () => {
               onPageSizeChange={handleSizeChange}
               onPageChange={handlePageChange}
               onRowDoubleClick={row => handleDoubleClick(row)}
-
-              // components={{ Toolbar: ServerSideToolbar }}
-              // componentsProps={{
-              //   baseButton: {
-              //     variant: 'outlined'
-              //   },
-              //   toolbar: {
-              //     printOptions: { disableToolbarButton: true },
-              //     value: buffer,
-              //     clearSearch: () => handleSearch(''),
-              //     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-              //     sx: { paddingLeft: 0, paddingRight: 0 }
-              //   }
-              // }}
             />
           </StyledDataGridContainer>
         )

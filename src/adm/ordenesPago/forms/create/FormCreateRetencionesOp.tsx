@@ -11,7 +11,8 @@ import {
   setIsOpenDialogConfirmButtons,
   setRetencionOpSeleccionado,
   setRetencionSeleccionado,
-  setIsOpenDialogListRetenciones
+  setIsOpenDialogListRetenciones,
+  setTipoRetencion
 } from "src/store/apps/ordenPago"
 
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
@@ -35,7 +36,7 @@ const FormCreateRetencionesOp = () => {
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
 
-  const { codigoOrdenPago, retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado } = useSelector((state: RootState) => state.admOrdenPago)
+  const { codigoOrdenPago, retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado, tipoRetencion } = useSelector((state: RootState) => state.admOrdenPago)
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
 
   const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
@@ -111,13 +112,14 @@ const FormCreateRetencionesOp = () => {
       }
 
       await deleteRetencionOp(payload)
+
+      clearForm()
     } catch (error) {
       console.log(error)
     } finally {
       qc.invalidateQueries({
         queryKey: ['retencionesOpTable']
       })
-      clearForm()
       dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
@@ -129,6 +131,8 @@ const FormCreateRetencionesOp = () => {
     setValue('montoRetenido', '')
     setValue('descripcionTipoRetencion', '')
     setValue('numeroComprobante', '')
+
+    dispatch(setTipoRetencion(0))
     dispatch(setRetencionOpSeleccionado(null))
     dispatch(setRetencionSeleccionado(null))
   }
@@ -155,6 +159,11 @@ const FormCreateRetencionesOp = () => {
     }
   }, [retencionSeleccionado, setValue])
 
+  const handleTipoRetencion = (tipoRetencionId: any) => {
+    setValue('tipoRetencion', tipoRetencionId)
+    dispatch(setTipoRetencion(tipoRetencionId))
+  }
+
   return (
     <Box>
       <form>
@@ -162,7 +171,7 @@ const FormCreateRetencionesOp = () => {
           <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
             <TipoRetencion
               id={retencionOpSeleccionado?.tipoRetencionId || 0}
-              onSelectionChange={(value: any) => setValue('tipoRetencion', value.id)}
+              onSelectionChange={(value: any) => handleTipoRetencion(value.id)}
             />
           </Grid>
           <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
@@ -192,6 +201,7 @@ const FormCreateRetencionesOp = () => {
                   minWidth: '80px',
                   justifyContent: 'flex-center',
                 }}
+                disabled={tipoRetencion === 0}
               >
                 <SearchIcon />
               </Button>
@@ -215,7 +225,7 @@ const FormCreateRetencionesOp = () => {
           </Grid>
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
-              name='montoRetenido'
+              name='montoRetencion'
               control={control}
               render={({ field: { value, onChange } }) => (
                 <TextField
@@ -283,7 +293,7 @@ const FormCreateRetencionesOp = () => {
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}
-        duration={8000}
+        duration={4000}
         show={message?.text ? true : false}
       />
     </Box>
