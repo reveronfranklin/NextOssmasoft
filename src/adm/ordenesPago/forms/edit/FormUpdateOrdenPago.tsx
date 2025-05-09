@@ -182,6 +182,7 @@ const FormUpdateOrdenPago = () => {
                     position: 'relative',
                 }}>
                     <FormOrdenPago
+                        modo="edicion"
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
                         onFormClear={handleClearCompromiso}
