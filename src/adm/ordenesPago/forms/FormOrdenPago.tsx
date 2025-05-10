@@ -54,6 +54,7 @@ export interface IFechaDto {
 }
 
 const FormOrdenPago = (props: {
+        modo?: string,
         orden?: any,
         onFormData: any,
         onFormClear?: any,
@@ -65,6 +66,7 @@ const FormOrdenPago = (props: {
     }) => {
 
     const {
+        modo,
         orden,
         onFormData,
         handleGestionOrdenPago,
@@ -81,7 +83,7 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
-    const [isOrdenPagoLoaded, setIsOrdenPagoLoaded] = useState<boolean>(Object.keys(orden).length > 0)
+    const [ordenLocal, setOrdenLocal] = useState<any>(orden)
 
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
@@ -188,7 +190,6 @@ const FormOrdenPago = (props: {
 
     useEffect(() => {
         if (orden && Object.keys(orden).length) {
-            setIsOrdenPagoLoaded(true)
             if (typeOperation === 'update') {
                 setValue('descripcionStatus', orden.descripcionStatus ?? '')
             }
@@ -214,6 +215,15 @@ const FormOrdenPago = (props: {
         if (open && !loading) handleClose()
     }, [orden, loading, setValue ])
 
+    useEffect(() => {
+        console.log(modo)
+        if (modo === 'creacion') {
+            setOrdenLocal({})
+        } else {
+            setOrdenLocal(orden)
+        }
+    }, [modo, orden])
+
     const getActionIcon = (actionName: string) => {
         switch (actionName?.toLowerCase()) {
             case 'aprobar': return <CheckCircleIcon />
@@ -224,7 +234,7 @@ const FormOrdenPago = (props: {
 
     return (
         <Box>
-            { isOrdenPagoLoaded ?
+            { Object.keys(ordenLocal || {}).length > 0 ?
                 <form>
                     <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                         <Grid item xs={12} sx={{ paddingTop: 1 }}>
