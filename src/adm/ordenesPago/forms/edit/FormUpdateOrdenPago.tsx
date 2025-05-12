@@ -1,4 +1,3 @@
-import { Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -10,12 +9,15 @@ import {
     setCompromisoSeleccionadoDetalle,
     setIsOpenViewerPdf
 } from "src/store/apps/ordenPago"
-import TabsComponent from '../../components/Tabs'
+import TabsComponent from '../../../shared/components/Tabs'
+import { tabs } from '../../config/tabsOrdenPago'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+
+import TwoColumnLayout from '../../../shared/views/twoColumnLayout'
 
 interface GestionConfig {
     handle: () => Promise<any> | void;
@@ -169,18 +171,8 @@ const FormUpdateOrdenPago = () => {
 
     return (
         <>
-            <Grid container spacing={0} paddingLeft={0} paddingBottom={0}>
-                <Grid item sm={12} xs={12}>
-                    <Box display="flex" gap={2} ml="1.5rem">
-                    </Box>
-                </Grid>
-                <Grid item sm={6} xs={12} sx={{
-                    overflow: 'auto',
-                    padding: '10px',
-                    paddingBottom: '0px',
-                    borderRight: '1px solid #e0e0e0',
-                    position: 'relative',
-                }}>
+            <TwoColumnLayout
+                leftContent={
                     <FormOrdenPago
                         modo="edicion"
                         orden={compromisoSeleccionadoListaDetalle}
@@ -192,17 +184,21 @@ const FormUpdateOrdenPago = () => {
                         message={currentMessage}
                         loading={loading}
                     />
-                    <AlertMessage
-                        message={currentMessage?.text ?? ''}
-                        severity={currentMessage?.isValid ? 'success' : 'error'}
-                        duration={8000}
-                        show={showMessage}
+                }
+                rightContent={
+                    <TabsComponent
+                        tabs={tabs}
+                        hasInvoice={compromisoSeleccionadoListaDetalle.conFactura}
+                        initialTab="Compromiso"
                     />
-                </Grid>
-                <Grid item sm={6} xs={12}>
-                    <TabsComponent />
-                </Grid>
-            </Grid>
+                }
+            />
+            <AlertMessage
+                message={currentMessage?.text ?? ''}
+                severity={currentMessage?.isValid ? 'success' : 'error'}
+                duration={4000}
+                show={showMessage}
+            />
         </>
     )
 }

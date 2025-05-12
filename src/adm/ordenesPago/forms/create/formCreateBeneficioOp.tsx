@@ -171,7 +171,7 @@ const FormCreateBeneficioOp = () => {
           </Grid>
         </Grid>
       </form>
-      <Box>
+      <Box sx={{ paddingTop: 4 }}>
         <CustomButtonDialog
           saveButtonConfig={{
             label: 'Crear',

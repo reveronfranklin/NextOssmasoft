@@ -20,7 +20,6 @@ import TipoOperacion from '../../components/AutoComplete/documentos/TipoOperaciÃ
 import TipoTransaction from '../../components/AutoComplete/documentos/TipoTransaccion'
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import CustomButtonDialog from './../../components/BottonsActions'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 // Store actions
 import {
@@ -59,7 +58,7 @@ const FormCreateDocumentosOp = () => {
 
   const {
     presupuestoSeleccionado,
-    message, loading,
+    loading,
     createDocumentos,
     updateDocumentos,
     deleteDocumentos
@@ -839,12 +838,6 @@ const FormCreateDocumentosOp = () => {
             Impuestos
           </Button>
         </>
-        <AlertMessage
-          message={message?.text ?? ''}
-          severity={message?.isValid ? 'success' : 'error'}
-          duration={message?.isValid ? 2000 : 5000}
-          show={message?.text ? true : false}
-        />
       </Box>
     </>
   )

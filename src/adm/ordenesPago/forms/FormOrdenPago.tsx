@@ -23,7 +23,6 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 import MensajeCompromiso from './mensajeCompromiso'
@@ -72,7 +71,6 @@ const FormOrdenPago = (props: {
         handleGestionOrdenPago,
         titleButton,
         onViewerPdf,
-        message,
         loading,
         onFormClear,
     } = props
@@ -216,8 +214,7 @@ const FormOrdenPago = (props: {
     }, [orden, loading, setValue ])
 
     useEffect(() => {
-        console.log(modo)
-        if (modo === 'creacion') {
+        if (modo === 'creacion' && !orden) {
             setOrdenLocal({})
         } else {
             setOrdenLocal(orden)
@@ -572,12 +569,6 @@ const FormOrdenPago = (props: {
                                 </ButtonWithConfirm>
                             </span>
                         )}
-                        <AlertMessage
-                            message={message?.text ?? ''}
-                            severity={message?.isValid ? 'success' : 'error'}
-                            duration={10000}
-                            show={message?.text ? true : false}
-                        />
                     </Box>
                 </form> : <MensajeCompromiso />
             }
