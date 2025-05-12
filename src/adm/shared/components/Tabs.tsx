@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box, Grid } from '@mui/material';
-
 interface TabsComponentProps {
     tabs: Array<{
         label: string
@@ -8,7 +7,7 @@ interface TabsComponentProps {
         component: React.ReactNode
         show: string[]
     }>
-    hasInvoice: boolean
+    hasInvoice?: boolean
     initialTab?: string
 }
 
