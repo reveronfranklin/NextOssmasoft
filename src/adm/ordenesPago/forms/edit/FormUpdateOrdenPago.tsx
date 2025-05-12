@@ -189,7 +189,6 @@ const FormUpdateOrdenPago = () => {
                     <TabsComponent
                         tabs={tabs}
                         hasInvoice={compromisoSeleccionadoListaDetalle.conFactura}
-                        initialTab="Compromiso"
                     />
                 }
             />
