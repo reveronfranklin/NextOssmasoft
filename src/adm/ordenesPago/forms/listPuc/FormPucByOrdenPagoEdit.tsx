@@ -172,7 +172,7 @@ const FormPucByOrdenPagoEdit = () => {
                     <AlertMessage
                         message={message?.text ?? ''}
                         severity={message?.isValid ? 'success' : 'error'}
-                        duration={8000}
+                        duration={4000}
                         show={message?.text ? true : false}
                     />
                 </Box>
