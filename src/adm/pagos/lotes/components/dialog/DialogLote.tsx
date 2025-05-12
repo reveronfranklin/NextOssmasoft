@@ -8,6 +8,7 @@ import { RootState } from 'src/store';
 import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
 import FormCreate from '../forms/FormCreate';
 import FormUpdate from '../forms/FormUpdate';
+import TwoColumnLayout from '../../../../shared/views/twoColumnLayout';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -29,7 +30,20 @@ const DialogLote = () => {
         return (
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
-                    {typeOperation === 'update' ? <FormUpdate /> : <FormCreate /> }
+                    {
+                        typeOperation === 'create'
+                        ? <FormCreate />
+                        : (
+                            <TwoColumnLayout
+                                leftContent={
+                                    <FormUpdate />
+                                }
+                                rightContent={
+                                    <></>
+                                }
+                            />
+                        )
+                    }
                 </div>
             </Fade>
         )
@@ -39,7 +53,7 @@ const DialogLote = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth="md"
+                maxWidth={ typeOperation === 'create' ? 'md' : 'lg' }
                 scroll='body'
                 open={isOpenDialogLote}
                 TransitionComponent={Transition}
@@ -49,7 +63,7 @@ const DialogLote = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '48vh',
+                        height: (typeOperation === 'create' ? '50vh' : '65vh' ),
                         margin: 0,
                         borderRadius: 0,
                         padding: 0
@@ -60,7 +74,7 @@ const DialogLote = () => {
                     <Box position="static" sx={{ boxShadow: 'none' }}>
                         <Toolbar sx={{
                                 justifyContent: 'space-between',
-                                padding: 0,
+                                padding: 0
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>

@@ -228,7 +228,7 @@ const FormUpdate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={9} xs={9} sx={{ padding: '5px' }}>
+                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
                                                     name="titulo"
@@ -255,7 +255,10 @@ const FormUpdate = () => {
                                                 />
                                             </FormControl>
                                         </Grid>
-                                        <Grid item sm={3} xs={3} sx={{ padding: '5px' }}>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <DatePickerWrapper>
                                                 <DatePicker
                                                     selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
@@ -269,10 +272,7 @@ const FormUpdate = () => {
                                                 />
                                             </DatePickerWrapper>
                                         </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                        <Grid item sm={8} xs={8} sx={{ padding: '5px' }}>
                                             <Controller
                                                 name="tipoPagoId"
                                                 control={control}
@@ -287,7 +287,10 @@ const FormUpdate = () => {
                                                 )}
                                             />
                                         </Grid>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                             <Controller
                                                 name="codigoCuentaBanco"
                                                 control={control}
@@ -332,7 +335,14 @@ const FormUpdate = () => {
                                     content={`¿Está seguro que desea ${statusLote.toLowerCase()} este registro? Esta acción no se puede deshacer.`}
                                 />
 
-                                <Box sx={{ paddingTop: 6 }}>
+                                <Box
+                                    sx={{
+                                        marginTop: 20,
+                                        position: 'sticky',
+                                        bottom: 0,
+                                        padding: '1rem'
+                                    }}
+                                >
                                     <Button
                                         variant='contained'
                                         color='primary'
