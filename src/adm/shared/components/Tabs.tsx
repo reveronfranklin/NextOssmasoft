@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, Box, Grid } from '@mui/material';
+
 interface TabsComponentProps {
     tabs: Array<{
         label: string
@@ -21,6 +22,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({ tabs, hasInvoice, initial
 
             return initialTab
         }
+
         return visibleTabs.length > 0 ? visibleTabs[0].label : '';
     };
 
@@ -38,6 +40,7 @@ const TabsComponent: React.FC<TabsComponentProps> = ({ tabs, hasInvoice, initial
 
     const renderForm = () => {
         const selectedTab = visibleTabs.find(tab => tab.label === value);
+
         return selectedTab ? selectedTab.component : null
     }
 
