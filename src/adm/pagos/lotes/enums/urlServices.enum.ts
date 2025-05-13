@@ -8,5 +8,7 @@ export enum UrlServices {
     CANCEL_LOTE             = '/AdmLotePago/Anular',
 
     GET_MAESTRO_CUENTAS     = '/SisCuentaBanco/GetAll',
-    GET_DESCRIPTIVAS        = '/AdmDescriptivas/GetSelectDescriptiva'
+    GET_DESCRIPTIVAS        = '/AdmDescriptivas/GetSelectDescriptiva',
+
+    GET_PAGOS               = '/AdmPagos/GetByLote'
 }
