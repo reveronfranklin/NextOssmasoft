@@ -5,8 +5,8 @@ import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/urlServices.enum';
 import {
     ResponseDto,
-    LoteResponseDto,
-    LoteFilterDto
+    PagoResponseDto,
+    PagoFilterDto
 } from '../interfaces';
 
 
@@ -19,12 +19,12 @@ const useServicesPagos = () => {
         isValid: true
     })
 
-    const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
+    const getList = useCallback(async (payload: PagoFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.GET_PAGOS, payload)
+            const response = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.GET_PAGOS, payload)
 
-            return handleApiResponse<LoteResponseDto>(response.data, undefined, setMessage, setError)
+            return handleApiResponse<PagoResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {

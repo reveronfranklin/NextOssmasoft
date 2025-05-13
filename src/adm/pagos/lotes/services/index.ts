@@ -6,3 +6,6 @@ export { default as useServicesDescriptivas } from './useServicesDescriptivas'
 
 /* Services 'Maestro Cuenta' */
 export { default as useServicesMaestroCuenta } from './useServicesMaestroCuenta'
+
+/* Services 'Pagos' */
+export { default as useServicesPagos } from './useServicesPagos'

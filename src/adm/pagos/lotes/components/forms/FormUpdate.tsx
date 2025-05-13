@@ -337,7 +337,7 @@ const FormUpdate = () => {
 
                                 <Box
                                     sx={{
-                                        marginTop: 20,
+                                        marginTop: 60,
                                         position: 'sticky',
                                         bottom: 0,
                                         padding: '1rem'

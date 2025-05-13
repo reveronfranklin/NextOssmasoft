@@ -6,9 +6,11 @@ import IconButton from '@mui/material/IconButton';
 import Icon from 'src/@core/components/icon';
 import { RootState } from 'src/store';
 import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
+import TwoColumnLayout from '../../../../shared/views/twoColumnLayout';
+import TabsComponent from '../../../../shared/components/Tabs';
+import { tabs } from '../dataGrid/tabs/config'
 import FormCreate from '../forms/FormCreate';
 import FormUpdate from '../forms/FormUpdate';
-import TwoColumnLayout from '../../../../shared/views/twoColumnLayout';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -39,7 +41,9 @@ const DialogLote = () => {
                                     <FormUpdate />
                                 }
                                 rightContent={
-                                    <></>
+                                    <TabsComponent
+                                        tabs={tabs}
+                                    />
                                 }
                             />
                         )
@@ -53,7 +57,7 @@ const DialogLote = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth={ typeOperation === 'create' ? 'md' : 'lg' }
+                maxWidth={ typeOperation === 'create' ? 'md' : 'xl' }
                 scroll='body'
                 open={isOpenDialogLote}
                 TransitionComponent={Transition}
@@ -63,7 +67,7 @@ const DialogLote = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: (typeOperation === 'create' ? '50vh' : '65vh' ),
+                        height: (typeOperation === 'create' ? '50vh' : '80vh' ),
                         margin: 0,
                         borderRadius: 0,
                         padding: 0
