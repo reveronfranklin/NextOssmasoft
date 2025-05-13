@@ -22,7 +22,8 @@ const useServices = () => {
         isValid: true
     })
 
-    const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+    const presupuestoSeleccionado   = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+    const { batchPaymentDate }      = useSelector((state: RootState) => state.admLote )
 
     const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
         try {
@@ -35,7 +36,7 @@ const useServices = () => {
         } finally {
             setLoading(false)
         }
-    }, [presupuestoSeleccionado.codigoPresupuesto])
+    }, [ presupuestoSeleccionado.codigoPresupuesto, batchPaymentDate ])
 
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
         try {
@@ -113,6 +114,7 @@ const useServices = () => {
         message,
         loading,
         presupuestoSeleccionado,
+        batchPaymentDate,
         setMessage,
         getList,
         store,

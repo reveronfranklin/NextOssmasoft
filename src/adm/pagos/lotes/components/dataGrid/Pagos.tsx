@@ -1,16 +1,18 @@
-import { ChangeEvent, useState, useRef, useEffect } from 'react';
+import { ChangeEvent, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import { RootState } from 'src/store';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
-import useColumnsDataGrid from './headers/ColumnsDataGrid';
-import { useServices } from '../../services';
-import { LoteFilterDto } from '../../interfaces'
+import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
+import { useServicesPagos } from '../../services';
+import { PagoFilterDto } from '../../interfaces'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 650,
+    height: 'auto',
     overflowY: 'auto'
 }))
 
@@ -19,18 +21,15 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize]                                   = useState<number>(5)
     const [searchText, setSearchText]                               = useState<string>('')
     const [buffer, setBuffer]                                       = useState<string>('')
-    const [isDateSelected, setIsDateSelected]                       = useState<boolean>(false)
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
+    const { CodigoLote }        = useSelector((state: RootState) => state.admLote )
 
     const {
-        presupuestoSeleccionado,
-        batchPaymentDate,
         getList,
         message
-    }  = useServices()
+    }  = useServicesPagos()
 
     const columns   = useColumnsDataGrid()
     const staleTime = 1000 * 60 * 60
@@ -39,37 +38,19 @@ const DataGridComponent = () => {
         pageSize,
         pageNumber,
         searchText,
-        fechaInicio: `${ batchPaymentDate.start }`,
-        fechaFin: `${ batchPaymentDate.end }`,
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto
-    } as LoteFilterDto
+        CodigoLote: CodigoLote
+    } as PagoFilterDto
 
     const query = useQuery({
-        queryKey: ['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, filter.codigoPresupuesto],
+        queryKey: ['lotesTable', CodigoLote, pageSize, pageNumber, searchText],
         queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotesTable', batchPaymentDate, pageSize, pageNumber, searchText, filter.codigoPresupuesto])
+            return qc.getQueryData(['lotesTable', CodigoLote, pageSize, pageNumber, searchText])
         },
         staleTime: staleTime,
         retry: 3,
-        enabled: isPresupuestoSeleccionado && isDateSelected
+        enabled: (CodigoLote !== null)
     }, qc)
-
-    useEffect(() => {
-        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
-            setIsPresupuestoSeleccionado(true)
-        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
-            setIsPresupuestoSeleccionado(false)
-        }
-    }, [ presupuestoSeleccionado.codigoPresupuesto ])
-
-    useEffect(() => {
-        if (batchPaymentDate.start && batchPaymentDate.end) {
-            setIsDateSelected(true)
-        } else if (batchPaymentDate.start === null && batchPaymentDate.end === null) {
-            setIsDateSelected(false)
-        }
-    }, [ batchPaymentDate ])
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
@@ -112,7 +93,7 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoLotePago}
+                            getRowId={(row) => row.codigoPago}
                             rows={rows}
                             rowCount={rowCount}
                             columns={columns}
@@ -133,8 +114,7 @@ const DataGridComponent = () => {
                                     printOptions: { disableToolbarButton: true },
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                                    sx: { paddingLeft: 0, paddingRight: 0 }
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
                                 }
                             }}
                         />
