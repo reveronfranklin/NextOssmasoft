@@ -56,7 +56,7 @@ const useServices = () => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.UPDATE_LOTE, payload)
-            const message   = 'Lote de pago exitosamente'
+            const message   = 'Lote de pago actualizado exitosamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
