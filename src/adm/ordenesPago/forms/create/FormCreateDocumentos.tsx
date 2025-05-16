@@ -38,6 +38,8 @@ import calcularBaseImponible from '../../helpers/baseImponible'
 import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
+
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
   const [baseImponible, setBaseImponible] = useState<number>(0)
@@ -57,6 +59,7 @@ const FormCreateDocumentosOp = () => {
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const {
+    message,
     presupuestoSeleccionado,
     loading,
     createDocumentos,
@@ -198,6 +201,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -233,6 +238,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -249,6 +256,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -837,6 +846,12 @@ const FormCreateDocumentosOp = () => {
           >
             Impuestos
           </Button>
+          <AlertMessage
+            message={message?.text ?? ''}
+            severity={message?.isValid ? 'success' : 'error'}
+            duration={message?.isValid ? 2000 : 4000}
+            show={message?.text ? true : false}
+          />
         </>
       </Box>
     </>
