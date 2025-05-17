@@ -20,7 +20,6 @@ import TipoOperacion from '../../components/AutoComplete/documentos/TipoOperaciÃ
 import TipoTransaction from '../../components/AutoComplete/documentos/TipoTransaccion'
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import CustomButtonDialog from './../../components/BottonsActions'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 // Store actions
 import {
@@ -38,6 +37,8 @@ import { IDeleteDocumentoOp } from '../../interfaces/documentosOp/deleteDocument
 import calcularBaseImponible from '../../helpers/baseImponible'
 import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
+
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
@@ -58,8 +59,9 @@ const FormCreateDocumentosOp = () => {
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const {
+    message,
     presupuestoSeleccionado,
-    message, loading,
+    loading,
     createDocumentos,
     updateDocumentos,
     deleteDocumentos
@@ -199,6 +201,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -234,6 +238,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -250,6 +256,8 @@ const FormCreateDocumentosOp = () => {
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -838,13 +846,13 @@ const FormCreateDocumentosOp = () => {
           >
             Impuestos
           </Button>
+          <AlertMessage
+            message={message?.text ?? ''}
+            severity={message?.isValid ? 'success' : 'error'}
+            duration={message?.isValid ? 2000 : 4000}
+            show={message?.text ? true : false}
+          />
         </>
-        <AlertMessage
-          message={message?.text ?? ''}
-          severity={message?.isValid ? 'success' : 'error'}
-          duration={message?.isValid ? 2000 : 5000}
-          show={message?.text ? true : false}
-        />
       </Box>
     </>
   )

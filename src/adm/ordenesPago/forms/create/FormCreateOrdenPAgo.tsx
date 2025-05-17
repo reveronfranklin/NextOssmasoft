@@ -130,6 +130,7 @@ const FormCreateOrdenPago = () => {
                     padding: '0 1rem',
                 }}>
                     <FormOrdenPago
+                        modo="creacion"
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleCreateOrden}
                         onFormClear={handleClearCompromiso}

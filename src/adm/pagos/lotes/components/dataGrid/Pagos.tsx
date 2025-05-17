@@ -1,67 +1,59 @@
-import { useState, ChangeEvent, useRef } from 'react'
-import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
-import useServices from '../../services/useServices'
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridListCompromiso'
-import { setCompromisoSeleccionadoDetalle, setIsOpenDialogListCompromiso } from "src/store/apps/ordenPago"
-import { useDispatch } from 'react-redux'
+import { ChangeEvent, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
+import { DataGrid } from '@mui/x-data-grid';
+import { Box, styled } from '@mui/material';
+import Spinner from 'src/@core/components/spinner';
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import { RootState } from 'src/store';
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
+import { useServicesPagos } from '../../services';
+import { PagoFilterDto } from '../../interfaces'
 
 const StyledDataGridContainer = styled(Box)(() => ({
-    height: 600,
-    overflowY: 'auto',
+    height: 'auto',
+    overflowY: 'auto'
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage] = useState<number>(0)
-    const [pageSize, setPageSize] = useState<number>(5)
-    const [searchText, setSearchText] = useState<string>('')
-    const [buffer, setBuffer] = useState<string>('')
+    const [pageNumber, setPage]                                     = useState<number>(0)
+    const [pageSize, setPageSize]                                   = useState<number>(5)
+    const [searchText, setSearchText]                               = useState<string>('')
+    const [buffer, setBuffer]                                       = useState<string>('')
 
-    const columns = ColumnsDataGrid()
-
-    const qc: QueryClient = useQueryClient()
-    const debounceTimeoutRef = useRef<any>(null)
-    const dispatch = useDispatch()
+    const debounceTimeoutRef    = useRef<any>(null)
+    const qc: QueryClient       = useQueryClient()
+    const { CodigoLote }        = useSelector((state: RootState) => state.admLote )
 
     const {
-        getCompromisoByPresupuesto,
-        presupuestoSeleccionado
-    } = useServices()
+        getList,
+        message
+    }  = useServicesPagos()
 
-    const filter: any = {
+    const columns   = useColumnsDataGrid()
+    const staleTime = 1000 * 60 * 60
+
+    const filter = {
         pageSize,
         pageNumber,
         searchText,
-        CodigoSolicitud: 0,
-        CodigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        status: 'AP'
-    }
+        CodigoLote: CodigoLote
+    } as PagoFilterDto
 
     const query = useQuery({
-        queryKey: ['compromisosTable', pageSize, pageNumber, searchText ],
-        queryFn: () => getCompromisoByPresupuesto({ ...filter, pageSize, pageNumber, searchText }),
+        queryKey: ['lotesTable', CodigoLote, pageSize, pageNumber, searchText],
+        queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['compromisosTable', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotesTable', CodigoLote, pageSize, pageNumber, searchText])
         },
-        staleTime: 1000 * 60,
+        staleTime: staleTime,
         retry: 3,
+        enabled: (CodigoLote !== null)
     }, qc)
 
-    const rows = query?.data?.data || []
-    const rowCount = query?.data?.cantidadRegistros || 0
-
-    const handleDoubleClick = (data: any) => {
-        const { row } = data
-        console.log('compromiso seleccionado', row)
-
-        dispatch(setCompromisoSeleccionadoDetalle(row))
-        setTimeout(() => {
-            dispatch(setIsOpenDialogListCompromiso(false))
-        }, 1500)
-    }
+    const rows      = query?.data?.data || []
+    const rowCount  = query?.data?.cantidadRegistros || 0
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -101,7 +93,7 @@ const DataGridComponent = () => {
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoCompromiso}
+                            getRowId={(row) => row.codigoPago}
                             rows={rows}
                             rowCount={rowCount}
                             columns={columns}
@@ -113,7 +105,6 @@ const DataGridComponent = () => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
-                            onRowDoubleClick={row => handleDoubleClick(row)}
                             components={{ Toolbar: ServerSideToolbar }}
                             componentsProps={{
                                 baseButton: {
@@ -123,10 +114,15 @@ const DataGridComponent = () => {
                                     printOptions: { disableToolbarButton: true },
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                                    sx: { paddingLeft: 0, paddingRight: 0 }
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
                                 }
                             }}
+                        />
+                        <AlertMessage
+                            message={message?.text ?? ''}
+                            severity={message?.isValid ? 'success' : 'error'}
+                            duration={10000}
+                            show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>
                 )

@@ -261,35 +261,37 @@ const FormCreateRetencionesOp = () => {
           </Grid>
         </Grid>
       </form>
-      <CustomButtonDialog
-        saveButtonConfig={{
-          label: 'Crear',
-          onClick: handleCreateOrden,
-          show: true,
-          confirm: true
-        }}
-        updateButtonConfig={{
-          label: 'Modificar',
-          onClick: handleUpdateOrden,
-          show: !!retencionOpSeleccionado?.codigoRetencionOp,
-          confirm: true
-        }}
-        deleteButtonConfig={{
-          label: 'Eliminar',
-          onClick: handleDeleteOrden,
-          show: !!retencionOpSeleccionado?.codigoRetencionOp,
-          confirm: true
-        }}
-        clearButtonConfig={{
-          label: 'Limpiar',
-          onClick: clearForm,
-          show: true
-        }}
-        loading={loading}
-        isOpenDialog={isOpenDialogConfirmButtons}
-        setIsOpenDialog={setIsOpenDialogConfirmButtons}
-        isFormValid={isValid}
-      />
+      <Box sx={{ paddingTop: 4 }}>
+        <CustomButtonDialog
+          saveButtonConfig={{
+            label: 'Crear',
+            onClick: handleCreateOrden,
+            show: true,
+            confirm: true
+          }}
+          updateButtonConfig={{
+            label: 'Modificar',
+            onClick: handleUpdateOrden,
+            show: !!retencionOpSeleccionado?.codigoRetencionOp,
+            confirm: true
+          }}
+          deleteButtonConfig={{
+            label: 'Eliminar',
+            onClick: handleDeleteOrden,
+            show: !!retencionOpSeleccionado?.codigoRetencionOp,
+            confirm: true
+          }}
+          clearButtonConfig={{
+            label: 'Limpiar',
+            onClick: clearForm,
+            show: true
+          }}
+          loading={loading}
+          isOpenDialog={isOpenDialogConfirmButtons}
+          setIsOpenDialog={setIsOpenDialogConfirmButtons}
+          isFormValid={isValid}
+        />
+      </Box>
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}

@@ -5,23 +5,13 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-
-import { LoteDto } from '../../../interfaces';
-import {
-    setIsOpenDialogLote,
-    setLoteShow,
-    setTypeOperation,
-    setCodigoLote
-} from 'src/store/apps/pagos/lotes';
+import FormatNumber from '../../../../../../utilities/format-numbers'
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (lote: LoteDto) => {
-        dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogLote(true))
-        dispatch(setLoteShow(lote))
-        dispatch(setCodigoLote(lote.codigoLotePago))
+    const handleEdit = (pago: any) => {
+        console.log(pago)
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -32,29 +22,9 @@ const useColumnsDataGrid = (): GridColDef[] => {
         },
     }))
 
-    const getStatusDescription = (status: string): string => {
-        let estatus = ''
-
-        switch (status) {
-            case 'PE':
-                estatus = 'Pendiente'
-                break;
-
-            case 'AN':
-                estatus = 'Anulada'
-                break;
-
-            case 'AP':
-                estatus = 'Aprobada'
-                break;
-        }
-
-        return estatus
-    }
-
     const columns = useMemo<GridColDef[]>(() => [
         {
-            flex: 0,
+            flex: 1,
             minWidth: 40,
             sortable: false,
             headerName: 'Acciones',
@@ -71,61 +41,67 @@ const useColumnsDataGrid = (): GridColDef[] => {
         },
         {
             flex: 1,
-            headerName: 'Descripción',
-            field: 'descripcionTipoPago',
+            headerName: 'Número Orden Pago',
+            field: 'numeroOrdenPago',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionTipoPago === '' ? 'NO DISPONIBLE' : params.row.descripcionTipoPago}
+                    {params.row.numeroOrdenPago === '' ? 'NO DISPONIBLE' : params.row.numeroOrdenPago}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'Fecha de pago',
-            field: 'fechaPagoString',
+            headerName: 'Código de pago',
+            field: 'codigoPago',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.fechaPagoString === '' ? 'NO DISPONIBLE' : params.row.fechaPagoString}
-                </Typography>
-            )
-        },
-        {
-            flex: 1.5,
-            headerName: 'Número de cuenta',
-            field: 'numeroCuenta',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.numeroCuenta === '' ? 'NO DISPONIBLE' : params.row.numeroCuenta}
-                </Typography>
-            )
-        },
-        {
-            flex: 1,
-            headerName: 'Nombre de banco',
-            field: 'nombreBanco',
-            renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.nombreBanco === '' ? 'NO DISPONIBLE' : params.row.nombreBanco}
+                    {params.row.codigoPago === '' ? 'NO DISPONIBLE' : params.row.codigoPago}
                 </Typography>
             )
         },
         {
             flex: 2,
-            headerName: 'Titulo',
-            field: 'titulo',
+            headerName: 'Nombre Proveedor',
+            field: 'nombreProveedor',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.titulo === null ? 'NO DISPONIBLE' : params.row.titulo}
+                <Typography
+                    variant='body2'
+                    sx={{
+                        color: 'text.primary',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '300px'
+                    }}>
+                    {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
                 </Typography>
             )
         },
         {
-            flex: 0.5,
-            headerName: 'Estatus',
-            field: 'status',
+            flex: 2,
+            headerName: 'Motivo',
+            field: 'motivo',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography
+                    variant='body2'
+                    sx={{
+                        color: 'text.primary',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '300px'
+                    }}>
+                    {params.row.motivo === '' ? 'NO DISPONIBLE' : params.row.motivo}
+                </Typography>
+            )
+        },
+        {
+            flex: 2,
+            headerName: 'Monto',
+            field: 'monto',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.status === null ? 'NO DISPONIBLE' : getStatusDescription(params.row.status)}
+                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
                 </Typography>
             )
         }

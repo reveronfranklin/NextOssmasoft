@@ -139,7 +139,7 @@ const DataGridComponent = () => {
                         <AlertMessage
                             message={message?.text ?? ''}
                             severity={message?.isValid ? 'success' : 'error'}
-                            duration={10000}
+                            duration={4000}
                             show={message?.text ? true : false}
                         />
                     </StyledDataGridContainer>

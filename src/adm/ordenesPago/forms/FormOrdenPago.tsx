@@ -23,7 +23,6 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 import MensajeCompromiso from './mensajeCompromiso'
@@ -54,6 +53,7 @@ export interface IFechaDto {
 }
 
 const FormOrdenPago = (props: {
+        modo?: string,
         orden?: any,
         onFormData: any,
         onFormClear?: any,
@@ -65,12 +65,12 @@ const FormOrdenPago = (props: {
     }) => {
 
     const {
+        modo,
         orden,
         onFormData,
         handleGestionOrdenPago,
         titleButton,
         onViewerPdf,
-        message,
         loading,
         onFormClear,
     } = props
@@ -81,7 +81,7 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
-    const [isOrdenPagoLoaded, setIsOrdenPagoLoaded] = useState<boolean>(Object.keys(orden).length > 0)
+    const [ordenLocal, setOrdenLocal] = useState<any>(orden)
 
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
@@ -188,7 +188,6 @@ const FormOrdenPago = (props: {
 
     useEffect(() => {
         if (orden && Object.keys(orden).length) {
-            setIsOrdenPagoLoaded(true)
             if (typeOperation === 'update') {
                 setValue('descripcionStatus', orden.descripcionStatus ?? '')
             }
@@ -214,6 +213,14 @@ const FormOrdenPago = (props: {
         if (open && !loading) handleClose()
     }, [orden, loading, setValue ])
 
+    useEffect(() => {
+        if (modo === 'creacion' && !orden) {
+            setOrdenLocal({})
+        } else {
+            setOrdenLocal(orden)
+        }
+    }, [modo, orden])
+
     const getActionIcon = (actionName: string) => {
         switch (actionName?.toLowerCase()) {
             case 'aprobar': return <CheckCircleIcon />
@@ -224,7 +231,7 @@ const FormOrdenPago = (props: {
 
     return (
         <Box>
-            { isOrdenPagoLoaded ?
+            { Object.keys(ordenLocal || {}).length > 0 ?
                 <form>
                     <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                         <Grid item xs={12} sx={{ paddingTop: 1 }}>
@@ -562,12 +569,6 @@ const FormOrdenPago = (props: {
                                 </ButtonWithConfirm>
                             </span>
                         )}
-                        <AlertMessage
-                            message={message?.text ?? ''}
-                            severity={message?.isValid ? 'success' : 'error'}
-                            duration={10000}
-                            show={message?.text ? true : false}
-                        />
                     </Box>
                 </form> : <MensajeCompromiso />
             }
