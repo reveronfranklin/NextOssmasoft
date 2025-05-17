@@ -20,6 +20,7 @@ export * from './lotes/lote-status.dto'
 /* Dtos 'Pagos' */
 export * from './pagos/pago-filter.dto'
 export * from './pagos/pago-response.dto'
+export * from './pagos/pago-monto.dto'
 
 /* Interface AutoComplete */
 export * from './autoComplete/auto-complete-props.interface'

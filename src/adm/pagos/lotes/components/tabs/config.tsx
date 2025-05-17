@@ -1,5 +1,5 @@
-import Icon from 'src/@core/components/icon'
-import DataGridComponent from '../Pagos'
+import Icon from 'src/@core/components/icon';
+import DataGridComponent from '../dataGrid/Pagos';
 
 export const tabs = [
     {

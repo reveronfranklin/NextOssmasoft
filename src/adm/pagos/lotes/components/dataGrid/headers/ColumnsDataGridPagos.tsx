@@ -99,9 +99,10 @@ const useColumnsDataGrid = (): GridColDef[] => {
             flex: 2,
             headerName: 'Monto',
             field: 'monto',
+            editable: true,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
+                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(Number(params.row.monto))}
                 </Typography>
             )
         }

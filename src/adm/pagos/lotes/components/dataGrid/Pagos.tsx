@@ -1,15 +1,16 @@
 import { ChangeEvent, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
 import { RootState } from 'src/store';
+import { setIsOpenDialogPago, setTypeOperation } from 'src/store/apps/pagos/lote-pagos';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServicesPagos } from '../../services';
-import { PagoFilterDto } from '../../interfaces'
+import { PagoFilterDto, PagoAmountDto } from '../../interfaces';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 'auto',
@@ -24,10 +25,15 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
-    const { CodigoLote }        = useSelector((state: RootState) => state.admLote )
+    const dispatch              = useDispatch()
+
+    const {
+        CodigoLote,
+    } = useSelector((state: RootState) => state.admLote )
 
     const {
         getList,
+        updateAmount,
         message
     }  = useServicesPagos()
 
@@ -42,10 +48,10 @@ const DataGridComponent = () => {
     } as PagoFilterDto
 
     const query = useQuery({
-        queryKey: ['lotesTable', CodigoLote, pageSize, pageNumber, searchText],
+        queryKey: ['lotePagosTable', CodigoLote, pageSize, pageNumber, searchText],
         queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotesTable', CodigoLote, pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotePagosTable', CodigoLote, pageSize, pageNumber, searchText])
         },
         staleTime: staleTime,
         retry: 3,
@@ -85,6 +91,29 @@ const DataGridComponent = () => {
         }, 2500)
     }
 
+    const handleOnCellEditCommit = async (cell: any) => {
+        const updateAmountData: PagoAmountDto = {
+            codigoBeneficiarioPago: cell.row.codigoBeneficiarioPago,
+            monto: Number(cell.value)
+        }
+
+        try {
+          await updateAmount(updateAmountData)
+        } catch (error) {
+          console.error('handleOnCellEditCommit', error)
+        } finally {
+          qc.invalidateQueries({ queryKey: ['lotePagosTable'] })
+        }
+    }
+
+    const handleCreate = async () => {
+        console.log('handleCreate')
+        dispatch(setTypeOperation('create'))
+        setTimeout(() => {
+            dispatch(setIsOpenDialogPago(true))
+        }, 1500)
+    }
+
     return (
         <>
             {
@@ -105,7 +134,8 @@ const DataGridComponent = () => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
-                            components={{ Toolbar: ServerSideToolbar }}
+                            onCellEditCommit={ cell => handleOnCellEditCommit(cell) }
+                            components={{ Toolbar: ServerSideToolbarWithAddButton }}
                             componentsProps={{
                                 baseButton: {
                                     variant: 'outlined'
@@ -114,7 +144,14 @@ const DataGridComponent = () => {
                                     printOptions: { disableToolbarButton: true },
                                     value: buffer,
                                     clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value)
+                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
+                                    onAdd: handleCreate,
+                                    sx: {
+                                        marginTop: 6,
+                                        marginRight: 0,
+                                        marginBottom: 8,
+                                        marginLeft: 4
+                                    }
                                 }
                             }}
                         />

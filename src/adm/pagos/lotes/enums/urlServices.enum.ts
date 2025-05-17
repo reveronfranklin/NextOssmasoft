@@ -10,5 +10,6 @@ export enum UrlServices {
     GET_MAESTRO_CUENTAS     = '/SisCuentaBanco/GetAll',
     GET_DESCRIPTIVAS        = '/AdmDescriptivas/GetSelectDescriptiva',
 
-    GET_PAGOS               = '/AdmPagos/GetByLote'
+    GET_PAGOS               = '/AdmPagos/GetByLote',
+    UPDATE_MONTO_PAGO       = '/AdmPagos/UpdateMonto',
 }

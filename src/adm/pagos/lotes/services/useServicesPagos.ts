@@ -6,7 +6,8 @@ import { UrlServices } from '../enums/urlServices.enum';
 import {
     ResponseDto,
     PagoResponseDto,
-    PagoFilterDto
+    PagoFilterDto,
+    PagoAmountDto
 } from '../interfaces';
 
 
@@ -32,12 +33,27 @@ const useServicesPagos = () => {
         }
     }, [])
 
+    const updateAmount =  useCallback(async (payload: PagoAmountDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const response  = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.UPDATE_MONTO_PAGO, payload)
+            const message   = 'Monto de pago actualizado exitosamente'
+
+            return handleApiResponse<PagoResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error,
         message,
         loading,
         setMessage,
-        getList
+        getList,
+        updateAmount
     }
 }
 
