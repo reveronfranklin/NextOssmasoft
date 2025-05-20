@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
-import DatePicker from 'react-datepicker';
-import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
-import moment from 'moment';
+import { styled } from '@mui/material/styles';
 import {
     Box,
     Grid,
@@ -13,26 +10,25 @@ import {
     FormControl,
     Button
 } from '@mui/material';
-
-import { useServices } from '../../../services';
-import { LoteDto, FechaPagoDto } from '../../../interfaces';
-import { TipoPago, MaestroCuenta } from '../../autoComplete';
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import dayjs from 'dayjs';
+import { NumericFormat } from 'react-number-format';
+import { useServicesPagos } from '../../../services';
+import { PagoDto, AdmBeneficiariosPendientesPago } from '../../../interfaces';
+import { OrdenPagoPendiente, BeneficiariosOrdenPago } from '../../autoComplete';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
-const FormCreate = () => {
-    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]       = useState(false)
+const StyledCustomInput = styled(TextField)(() => ({
+    width: '100%'
+}))
 
-    const [fechaPagoLote, setFechaPagoLote] = useState<FechaPagoDto>({
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate()
-    })
+const FormCreate = () => {
+    const [monto, setMonto]                                 = useState<number>(0)
+    const [errorMessage, setErrorMessage]                   = useState<string>('')
+    const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]                       = useState(false)
+    const [beneficiarios, setBeneficiarios]                 = useState<AdmBeneficiariosPendientesPago[]>([])
+    const [beneficiarioSelected, setBeneficiarioSelected]   = useState<AdmBeneficiariosPendientesPago>({} as AdmBeneficiariosPendientesPago)
 
     const qc: QueryClient   = useQueryClient()
     const rules             = getRules()
@@ -40,16 +36,17 @@ const FormCreate = () => {
     const {
         store,
         message,
-        loading
-    } = useServices()
+        loading,
+        codigoLoteSelected
+    } = useServicesPagos()
 
-    const defaultValues: LoteDto = {
-        codigoLotePago: 0,
-        tipoPagoId: null,
-        fechaPago: moment().format('YYYY-MM-DDTHH:mm:ss'),
-        codigoCuentaBanco: null,
-        codigoPresupuesto: 19,
-        titulo: null
+    const defaultValues: PagoDto = {
+        codigoLote: codigoLoteSelected,
+        codigoOrdenPago: null,
+        numeroOrdenPago: null,
+        codigoBeneficiarioOP: null,
+        monto: null,
+        motivo: null
     }
 
     const {
@@ -58,10 +55,51 @@ const FormCreate = () => {
         reset,
         setValue,
         formState: { errors, isValid }
-    } = useForm<LoteDto>({
+    } = useForm<PagoDto>({
         defaultValues,
         mode: 'onChange'
     })
+
+    const clearFields = () => {
+        setBeneficiarios([] as AdmBeneficiariosPendientesPago[])
+        setBeneficiarioSelected({} as AdmBeneficiariosPendientesPago)
+        setMonto(0)
+        reset()
+    }
+
+    const handleOnChangeBeneficiario = (selected: any) => {
+        const beneficiarioSelectedOP        = selected
+        const codigoBeneficiarioSelectedOp  = beneficiarioSelectedOP.codigoBeneficiarioOp || null
+
+        if (!codigoBeneficiarioSelectedOp) {
+            /* Verificar esto, para que vuelva al ultimo valor seleccionado */
+            setValue('codigoOrdenPago', beneficiarioSelected.codigoOrdenPago)
+            clearFields()
+        } else {
+            setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
+            setValue('monto', parseFloat(beneficiarioSelectedOP?.montoPorPagar))
+            setValue('motivo', beneficiarioSelectedOP?.motivo)
+
+            setBeneficiarioSelected(selected)
+        }
+
+        return codigoBeneficiarioSelectedOp
+    }
+
+    const handleOnChangeOrdenPagoPendiente = (selected: any) => {
+        const ordenPagoSelected         = selected
+        const codigoOrdenPagoSelected   = ordenPagoSelected?.codigoOrdenPago || null
+        const beneficiariosPendientes   = ordenPagoSelected?.admBeneficiariosPendientesPago ?? []
+        const listBeneficiariosSelected = codigoOrdenPagoSelected ? beneficiariosPendientes : []
+
+        if (!codigoOrdenPagoSelected) {
+            clearFields()
+        } else {
+            setBeneficiarios(listBeneficiariosSelected)
+        }
+
+        return codigoOrdenPagoSelected
+    }
 
     const handleOpenDialog = () => {
         setDialogOpen(true);
@@ -71,47 +109,49 @@ const FormCreate = () => {
         setDialogOpen(false);
     }
 
-    const handleClearPagoLote = () => {
-        const currentDate       = moment()
-        const fechaPagoLote     = fechaToFechaObj(currentDate.toDate())
-
-        setFechaPagoLote(fechaPagoLote)
+    const handleClearPago = () => {
         reset(defaultValues)
     }
 
-    const handleCreateLotePago = async (formValues: LoteDto) => {
+    const handleCreatePago = async (formValues: PagoDto) => {
         setIsFormEnabled(false)
         handleCloseDialog()
 
         try {
-            const payload: LoteDto = {
+            const payload: PagoDto = {
                 ...formValues
             }
 
             const response = await store(payload)
 
             if (response?.isValid) {
-                handleClearPagoLote()
+                handleClearPago()
             }
         } catch (e: any) {
-            console.error('handleCreateLotePago', e)
+            console.error('handleCreatePago', e)
         } finally {
             setIsFormEnabled(true)
             qc.invalidateQueries({
-                queryKey: ['lotesTable']
+                queryKey: ['lotePagosTable']
             })
         }
     }
 
-    const handleFechaLotePagoChange = (date: Date | null) => {
-        if (date && dayjs(date).isValid()) {
-            const fechaPagoLotePagoObj  = fechaToFechaObj(date)
-            const fechaOrdenPagoLote    = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
-
-            setValue('fechaPago', fechaOrdenPagoLote)
-            setFechaPagoLote(fechaPagoLotePagoObj)
-        }
+    const isBeneficiarioValid = (beneficiarioSelected: AdmBeneficiariosPendientesPago) => {
+        return (
+            typeof beneficiarioSelected === 'object' &&
+            beneficiarioSelected !== null &&
+            Object.keys(beneficiarioSelected).length > 0
+        )
     }
+
+/*     useEffect(() => {
+        if (preSaldoDisponibleSeleccionado.disponible) {
+            if (monto > preSaldoDisponibleSeleccionado.disponible) {
+                setErrorMessage('Por favor, verifica el monto. No puede sobrepasar la disponibilidad de la partida.')
+            }
+        }
+    }, [monto]) */
 
     return (
         <>
@@ -130,87 +170,129 @@ const FormCreate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={9} xs={9} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="titulo"
-                                                    control={control}
-                                                    rules={ rules.titulo }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="text"
-                                                            fullWidth
-                                                            label="Título"
-                                                            placeholder="Título"
-                                                            value={value || ''}
-                                                            multiline
-                                                            onChange={(e) => {
-                                                                const textUpperCase = e.target.value.toUpperCase()
-                                                                onChange(textUpperCase)
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <Controller
+                                                name="codigoOrdenPago"
+                                                control={control}
+                                                rules={ rules.codigoOrdenPago }
+                                                render={({ field: { value, onChange } }) => (
+                                                    <OrdenPagoPendiente
+                                                        id={value || null}
+                                                        onSelectionChange={(selected) => onChange(handleOnChangeOrdenPagoPendiente(selected))}
+                                                        error={errors.codigoOrdenPago?.message}
+                                                        required
+                                                        autoFocus
+                                                    />
+                                                )}
+                                            />
+                                        </Grid>
+                                        {
+                                            beneficiarios.length > 0 &&
+                                            (
+                                                <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                                    <Controller
+                                                        name="codigoBeneficiarioOP"
+                                                        control={control}
+                                                        rules={ rules.codigoBeneficiarioOP }
+                                                        render={({ field: { value, onChange } }) => (
+                                                            <BeneficiariosOrdenPago
+                                                                id={value || null}
+                                                                onSelectionChange={(selected) => onChange(handleOnChangeBeneficiario(selected))}
+                                                                error={errors.codigoOrdenPago?.message}
+                                                                required
+                                                                options={beneficiarios}
+                                                            />
+                                                        )}
+                                                    />
+                                                </Grid>
+                                            )
+                                        }
+                                    </Grid>
+                                    {
+                                        isBeneficiarioValid(beneficiarioSelected) &&
+                                        (
+                                            <>
+                                                <Grid container spacing={0} item sm={12} xs={12}>
+                                                    <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                                        <FormControl fullWidth>
+                                                            <Controller
+                                                                name="numeroOrdenPago"
+                                                                control={control}
+                                                                rules={ rules.numeroOrdenPago }
+                                                                render={({ field: { value, onChange } }) => (
+                                                                    <TextField
+                                                                        type="text"
+                                                                        fullWidth
+                                                                        label="Número orden de pago"
+                                                                        placeholder="Título"
+                                                                        value={value || ''}
+                                                                        multiline
+                                                                        onChange={onChange}
+                                                                        error={!!errors.numeroOrdenPago}
+                                                                        helperText={errors.numeroOrdenPago?.message}
+                                                                        required
+                                                                        disabled
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                    <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                                        <NumericFormat
+                                                            value={monto}
+                                                            customInput={StyledCustomInput}
+                                                            thousandSeparator="."
+                                                            decimalSeparator=","
+                                                            allowNegative={false}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                            label="Monto"
+                                                            onFocus={(event) => {
+                                                                event.target.select()
                                                             }}
-                                                            error={!!errors.titulo}
-                                                            helperText={errors.titulo?.message}
-                                                            required
-                                                            autoFocus
+                                                            onValueChange={(values: any) => {
+                                                                const { value } = values
+                                                                setMonto(parseFloat(value) || 0)
+                                                                setErrorMessage('')
+                                                            }}
+                                                            placeholder='Monto'
+                                                            inputProps={{
+                                                                type: 'text'
+                                                            }}
                                                         />
-                                                    )}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item sm={3} xs={3} sx={{ padding: '5px' }}>
-                                            <DatePickerWrapper>
-                                                <DatePicker
-                                                    selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
-                                                    id='date-time-picker-desde'
-                                                    dateFormat='dd/MM/yyyy'
-                                                    onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
-                                                    placeholderText='Fecha pago lote'
-                                                    customInput={<CustomInput label='Fecha pago lote' />}
-                                                    popperPlacement='left-start'
-                                                    required
-                                                />
-                                            </DatePickerWrapper>
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <Controller
-                                                name="tipoPagoId"
-                                                control={control}
-                                                rules={ rules.tipoPagoId }
-                                                render={({ field: { value, onChange } }) => (
-                                                    <TipoPago
-                                                        id={value || null}
-                                                        onSelectionChange={(selected) => onChange(selected?.id || null)}
-                                                        error={errors.tipoPagoId?.message}
-                                                        required
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <Controller
-                                                name="codigoCuentaBanco"
-                                                control={control}
-                                                rules={ rules.codigoCuentaBanco }
-                                                render={({ field: { value, onChange } }) => (
-                                                    <MaestroCuenta
-                                                        id={value || null}
-                                                        onSelectionChange={(selected) => onChange(selected?.codigoCuentaBanco || null)}
-                                                        error={errors.codigoCuentaBanco?.message}
-                                                        required
-                                                    />
-                                                )}
-                                            />
-                                        </Grid>
-                                    </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid container spacing={0} item sm={12} xs={12}>
+                                                    <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                                                        <FormControl fullWidth>
+                                                            <Controller
+                                                                name='motivo'
+                                                                control={control}
+                                                                rules={ rules.motivo }
+                                                                render={({ field: { value, onChange } }) => (
+                                                                    <TextField
+                                                                        helperText="Caracteres máximo 2000"
+                                                                        value={value || ''}
+                                                                        label="Motivo"
+                                                                        onChange={onChange}
+                                                                        placeholder='Motivo'
+                                                                        multiline
+                                                                        rows={5}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                </Grid>
+                                            </>
+                                        )
+                                    }
                                 </Grid>
 
                                 <DialogConfirmation
                                     open={dialogOpen}
                                     onClose={handleCloseDialog}
-                                    onConfirm={handleSubmit(handleCreateLotePago)}
+                                    onConfirm={handleSubmit(handleCreatePago)}
                                     loading={loading}
                                     title="Crear nuevo registro"
                                     content="¿Desea continuar con la creación del registro?"
@@ -229,7 +311,7 @@ const FormCreate = () => {
                                     <Button
                                         color='primary'
                                         size='small'
-                                        onClick={handleClearPagoLote}
+                                        onClick={handleClearPago}
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>

@@ -23,7 +23,7 @@ const useServices = () => {
     })
 
     const presupuestoSeleccionado   = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
-    const { batchPaymentDate }      = useSelector((state: RootState) => state.admLote )
+    const batchPaymentDate          = useSelector((state: RootState) => state.admLote.batchPaymentDate )
 
     const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
         try {

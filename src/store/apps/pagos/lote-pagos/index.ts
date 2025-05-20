@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const admLotePagosSlice = createSlice({
     name: 'admLotePagos',
     initialState: {
-        CodigoLote: null,
+        codigoLote: null,
         isOpenDialogPago: false,
         typeOperation: null
     },
@@ -15,7 +15,7 @@ export const admLotePagosSlice = createSlice({
             state.isOpenDialogPago = action.payload
         },
         setCodigoLote: (state, action) => {
-            state.CodigoLote = action.payload
+            state.codigoLote = action.payload
         }
     }
 })

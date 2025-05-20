@@ -21,6 +21,11 @@ export * from './lotes/lote-status.dto'
 export * from './pagos/pago-filter.dto'
 export * from './pagos/pago-response.dto'
 export * from './pagos/pago-monto.dto'
+export * from './pagos/pago.dto'
 
-/* Interface AutoComplete */
+/* Interface 'AutoComplete' */
 export * from './autoComplete/auto-complete-props.interface'
+
+/* Interface 'Ordenes Pago' */
+export * from './ordenPago/orden-pago-filter.dto'
+export * from './ordenPago/orden-pago-response.dto'
