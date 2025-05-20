@@ -43,7 +43,7 @@ const DialogLote = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth='md'
+                maxWidth='lg'
                 scroll='body'
                 open={isOpenDialogPago}
                 TransitionComponent={Transition}
@@ -53,7 +53,7 @@ const DialogLote = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '50vh',
+                        height: '70vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0

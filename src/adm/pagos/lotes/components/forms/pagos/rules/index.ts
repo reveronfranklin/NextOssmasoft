@@ -1,25 +1,31 @@
 const rules =  {
-    tipoPagoId: {
+    codigoLote: {
         required: 'Este campo es requerido',
         isNumeric: 'El ID debe ser un número'
     },
-    fechaPago: {
-        required: 'Este campo es requerido',
-        isTimestamp: 'Debe ser una fecha válida en formato timestamp'
-    },
-    codigoCuentaBanco: {
+    codigoOrdenPago: {
         required: 'Este campo es requerido',
         isNumeric: 'El ID debe ser un número'
     },
-    titulo: {
+    numeroOrdenPago: {
+        required: 'Este campo es requerido'
+    },
+    codigoBeneficiarioOP: {
+        required: 'Este campo es requerido'
+    },
+    monto: {
+        required: 'Este campo es requerido',
+        isNumeric: 'El ID debe ser un número'
+    },
+    motivo: {
         required: 'Este campo es requerido',
         minLength: {
             value: 1,
             message: 'Mínimo 1 caracter'
         },
         maxLength: {
-            value: 200,
-            message: 'Máximo 200 caracter'
+            value: 2000,
+            message: 'Máximo 2000 caracter'
         }
     }
 }
