@@ -1,11 +1,11 @@
 const rules =  {
     codigoLote: {
         required: 'Este campo es requerido',
-        isNumeric: 'El ID debe ser un número'
+        isNumeric: 'El codigoLote debe ser un número'
     },
     codigoOrdenPago: {
         required: 'Este campo es requerido',
-        isNumeric: 'El ID debe ser un número'
+        isNumeric: 'El codigoOrdenPago debe ser un número'
     },
     numeroOrdenPago: {
         required: 'Este campo es requerido'
@@ -15,7 +15,7 @@ const rules =  {
     },
     monto: {
         required: 'Este campo es requerido',
-        isNumeric: 'El ID debe ser un número'
+        isNumeric: 'El monto debe ser un número'
     },
     motivo: {
         required: 'Este campo es requerido',

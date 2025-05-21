@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
@@ -24,7 +24,6 @@ const StyledCustomInput = styled(TextField)(() => ({
 
 const FormCreate = () => {
     const [monto, setMonto]                                 = useState<number>(0)
-    const [errorMessage, setErrorMessage]                   = useState<string>('')
     const [isFormEnabled, setIsFormEnabled]                 = useState<boolean>(true)
     const [dialogOpen, setDialogOpen]                       = useState(false)
     const [beneficiarios, setBeneficiarios]                 = useState<AdmBeneficiariosPendientesPago[]>([])
@@ -54,17 +53,19 @@ const FormCreate = () => {
         handleSubmit,
         reset,
         setValue,
+        setError,
+        clearErrors,
         formState: { errors, isValid }
     } = useForm<PagoDto>({
         defaultValues,
         mode: 'onChange'
     })
 
-    const clearFields = () => {
+    const handleClearPago = () => {
         setBeneficiarios([] as AdmBeneficiariosPendientesPago[])
         setBeneficiarioSelected({} as AdmBeneficiariosPendientesPago)
         setMonto(0)
-        reset()
+        reset(defaultValues)
     }
 
     const handleOnChangeBeneficiario = (selected: any) => {
@@ -72,9 +73,7 @@ const FormCreate = () => {
         const codigoBeneficiarioSelectedOp  = beneficiarioSelectedOP.codigoBeneficiarioOp || null
 
         if (!codigoBeneficiarioSelectedOp) {
-            /* Verificar esto, para que vuelva al ultimo valor seleccionado */
-            setValue('codigoOrdenPago', beneficiarioSelected.codigoOrdenPago)
-            clearFields()
+            handleClearPago()
         } else {
             setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
             setValue('monto', parseFloat(beneficiarioSelectedOP?.montoPorPagar))
@@ -93,7 +92,7 @@ const FormCreate = () => {
         const listBeneficiariosSelected = codigoOrdenPagoSelected ? beneficiariosPendientes : []
 
         if (!codigoOrdenPagoSelected) {
-            clearFields()
+            handleClearPago()
         } else {
             setBeneficiarios(listBeneficiariosSelected)
         }
@@ -107,10 +106,6 @@ const FormCreate = () => {
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
-    }
-
-    const handleClearPago = () => {
-        reset(defaultValues)
     }
 
     const handleCreatePago = async (formValues: PagoDto) => {
@@ -145,13 +140,18 @@ const FormCreate = () => {
         )
     }
 
-/*     useEffect(() => {
-        if (preSaldoDisponibleSeleccionado.disponible) {
-            if (monto > preSaldoDisponibleSeleccionado.disponible) {
-                setErrorMessage('Por favor, verifica el monto. No puede sobrepasar la disponibilidad de la partida.')
-            }
+    useEffect(() => {
+        if (monto <= 0) {
+            setError('monto', {
+                type: 'manual',
+                message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
+            }, { shouldFocus: true })
+        } else {
+            clearErrors('monto')
         }
-    }, [monto]) */
+
+        setValue('monto', monto)
+    }, [monto, setError, clearErrors])
 
     return (
         <>
@@ -247,18 +247,20 @@ const FormCreate = () => {
                                                             decimalScale={2}
                                                             fixedDecimalScale={true}
                                                             label="Monto"
+                                                            required
                                                             onFocus={(event) => {
                                                                 event.target.select()
                                                             }}
                                                             onValueChange={(values: any) => {
                                                                 const { value } = values
                                                                 setMonto(parseFloat(value) || 0)
-                                                                setErrorMessage('')
                                                             }}
                                                             placeholder='Monto'
                                                             inputProps={{
                                                                 type: 'text'
                                                             }}
+                                                            error={!!errors.monto}
+                                                            helperText={errors.monto?.message}
                                                         />
                                                     </Grid>
                                                 </Grid>
@@ -271,13 +273,15 @@ const FormCreate = () => {
                                                                 rules={ rules.motivo }
                                                                 render={({ field: { value, onChange } }) => (
                                                                     <TextField
-                                                                        helperText="Caracteres máximo 2000"
                                                                         value={value || ''}
                                                                         label="Motivo"
                                                                         onChange={onChange}
                                                                         placeholder='Motivo'
                                                                         multiline
                                                                         rows={5}
+                                                                        helperText={errors.motivo?.message || 'Caracteres máximo 2000'}
+                                                                        error={!!errors.motivo}
+                                                                        required
                                                                     />
                                                                 )}
                                                             />
