@@ -44,7 +44,7 @@ const FormCreate = () => {
         codigoOrdenPago: null,
         numeroOrdenPago: null,
         codigoBeneficiarioOP: null,
-        monto: null,
+        monto: monto,
         motivo: null
     }
 
@@ -55,6 +55,7 @@ const FormCreate = () => {
         setValue,
         setError,
         clearErrors,
+        trigger,
         formState: { errors, isValid }
     } = useForm<PagoDto>({
         defaultValues,
@@ -75,10 +76,12 @@ const FormCreate = () => {
         if (!codigoBeneficiarioSelectedOp) {
             handleClearPago()
         } else {
-            setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
-            setValue('monto', parseFloat(beneficiarioSelectedOP?.montoPorPagar))
-            setValue('motivo', beneficiarioSelectedOP?.motivo)
+            const montoPorPagar = parseFloat(beneficiarioSelectedOP?.montoPorPagar) || 0
 
+            setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
+            setValue('motivo', beneficiarioSelectedOP?.motivo)
+            setValue('monto', montoPorPagar)
+            setMonto(montoPorPagar)
             setBeneficiarioSelected(selected)
         }
 
@@ -140,6 +143,12 @@ const FormCreate = () => {
         )
     }
 
+    const handleOnChangeAmount = (amount: string) => {
+        const amountToPay = parseFloat(amount) || 0
+        setMonto(amountToPay)
+        setValue('monto', amountToPay)
+    }
+
     useEffect(() => {
         if (monto <= 0) {
             setError('monto', {
@@ -148,10 +157,10 @@ const FormCreate = () => {
             }, { shouldFocus: true })
         } else {
             clearErrors('monto')
+            trigger('monto')
         }
-
-        setValue('monto', monto)
-    }, [monto, setError, clearErrors])
+        console.log('monto is valid', isValid)
+    }, [monto, setError, clearErrors, trigger])
 
     return (
         <>
@@ -253,7 +262,7 @@ const FormCreate = () => {
                                                             }}
                                                             onValueChange={(values: any) => {
                                                                 const { value } = values
-                                                                setMonto(parseFloat(value) || 0)
+                                                                handleOnChangeAmount(value)
                                                             }}
                                                             placeholder='Monto'
                                                             inputProps={{
@@ -275,7 +284,9 @@ const FormCreate = () => {
                                                                     <TextField
                                                                         value={value || ''}
                                                                         label="Motivo"
-                                                                        onChange={onChange}
+                                                                         onChange={(e) => {
+                                                                            onChange(e)
+                                                                        }}
                                                                         placeholder='Motivo'
                                                                         multiline
                                                                         rows={5}

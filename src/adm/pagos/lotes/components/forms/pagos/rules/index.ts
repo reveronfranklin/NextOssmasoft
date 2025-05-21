@@ -15,7 +15,9 @@ const rules =  {
     },
     monto: {
         required: 'Este campo es requerido',
-        isNumeric: 'El monto debe ser un número'
+        isNumeric: 'El monto debe ser un número',
+        minValue: 'El monto debe ser mayor a cero',
+        decimalPlaces: 'El monto debe tener hasta dos decimales'
     },
     motivo: {
         required: 'Este campo es requerido',
