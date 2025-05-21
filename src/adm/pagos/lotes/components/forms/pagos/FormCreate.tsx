@@ -159,7 +159,6 @@ const FormCreate = () => {
             clearErrors('monto')
             trigger('monto')
         }
-        console.log('monto is valid', isValid)
     }, [monto, setError, clearErrors, trigger])
 
     return (
