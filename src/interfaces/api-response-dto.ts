@@ -1,5 +1,5 @@
 export interface IApiResponse<T> {
-  data?: T[]
+  data?: T[] | T | null;
   isValid?: boolean,
   linkData?: string | null,
   linkDataArlternative?: string | null,

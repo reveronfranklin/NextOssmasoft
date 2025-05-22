@@ -19,6 +19,7 @@ function ColumnsDataGrid(props: any) {
     const theme = useTheme()
 
     const handleEdit = (row: any) => {
+
         dispatch(setCompromisoSeleccionadoDetalle(row))
         dispatch(setCodigoOrdenPago(row.codigoOrdenPago))
         dispatch(setConFactura(row.conFactura))
