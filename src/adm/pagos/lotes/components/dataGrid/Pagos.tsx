@@ -93,7 +93,7 @@ const DataGridComponent = () => {
 
     const handleOnCellEditCommit = async (cell: any) => {
         const updateAmountData: PagoAmountDto = {
-            codigoBeneficiarioPago: cell.row.codigoBeneficiarioPago,
+            codigoBeneficiarioPago: cell.row?.codigoBeneficiarioPago,
             monto: Number(cell.value)
         }
 
@@ -102,7 +102,7 @@ const DataGridComponent = () => {
         } catch (error) {
           console.error('handleOnCellEditCommit', error)
         } finally {
-          qc.invalidateQueries({ queryKey: ['lotePagosTable'] })
+          /* qc.invalidateQueries({ queryKey: ['lotePagosTable'] }) */
         }
     }
 
