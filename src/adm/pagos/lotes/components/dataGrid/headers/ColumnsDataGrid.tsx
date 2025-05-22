@@ -5,7 +5,6 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-
 import { LoteDto } from '../../../interfaces';
 import {
     setIsOpenDialogLote,

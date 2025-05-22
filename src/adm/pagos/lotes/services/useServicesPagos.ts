@@ -10,6 +10,7 @@ import {
     PagoResponseDto,
     PagoFilterDto,
     PagoAmountDto,
+    PagoDeleteDto,
     PagoDto
 } from '../interfaces';
 
@@ -41,7 +42,7 @@ const useServicesPagos = () => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.CREATE_PAGO, payload)
-            const message   = 'Pago creada exitosamente'
+            const message   = 'Pago creado exitosamente'
 
             return handleApiResponse<PagoResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -51,11 +52,40 @@ const useServicesPagos = () => {
         }
     }, [])
 
-    const updateAmount =  useCallback(async (payload: PagoAmountDto): Promise<any> => {
+    const update = useCallback(async (payload: PagoDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const response  = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.UPDATE_PAGO, payload)
+            const message   = 'Pago actualizado exitosamente'
+
+            return handleApiResponse<PagoResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const updateAmount = useCallback(async (payload: PagoAmountDto): Promise<any> => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.UPDATE_MONTO_PAGO, payload)
             const message   = 'Monto de pago actualizado exitosamente'
+
+            return handleApiResponse<PagoResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+
+    const remove = useCallback(async (payload: PagoDeleteDto): Promise<any> => {
+        try {
+            setLoading(true)
+            const response  = await ossmmasofApi.post<ResponseDto<PagoResponseDto>>(UrlServices.DELETE_PAGO, payload)
+            const message   = 'Pago eliminado exitosamente'
 
             return handleApiResponse<PagoResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -73,7 +103,9 @@ const useServicesPagos = () => {
         setMessage,
         getList,
         store,
-        updateAmount
+        update,
+        updateAmount,
+        remove
     }
 }
 

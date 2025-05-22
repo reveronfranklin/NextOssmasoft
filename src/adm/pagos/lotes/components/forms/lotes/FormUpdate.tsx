@@ -100,8 +100,6 @@ const FormUpdate = () => {
         dispatch(resetLoteShow())
         reset(defaultValues)
         clearDefaultValues()
-
-        console.log(defaultValues)
     }
 
     const handleUpdatePagoLote = async (lote: LoteDto) => {
