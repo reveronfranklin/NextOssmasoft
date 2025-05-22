@@ -31,7 +31,7 @@ const DataGridComponent = () => {
     const columnsDataGridListPucByOrden = ColumnsDataGridListPucByOrden()
     const qc: QueryClient = useQueryClient()
 
-    const { codigoOrdenPago} = useSelector((state: RootState) => state.admOrdenPago)
+    const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
     const filter: IfilterByOrdenPago = { codigoOrdenPago }
 
     const { getListPucByOrdenPago, fetchUpdatePucByOrdenPago } = useServices()

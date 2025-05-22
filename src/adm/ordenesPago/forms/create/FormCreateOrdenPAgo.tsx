@@ -15,6 +15,7 @@ import {
 } from "src/store/apps/ordenPago"
 import useServices from '../../services/useServices'
 import FormOrdenPago from '../FormOrdenPago'
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 const FormCreateOrdenPago = () => {
     const qc: QueryClient = useQueryClient()
@@ -69,15 +70,18 @@ const FormCreateOrdenPago = () => {
                 conFactura
             }
 
-            const response = await createOrden(payload)
+            const response: any = await createOrden(payload)
 
-            const { data } = response
+            const { isValid, data } = response
 
-            if (data) {
+            if (isValid && data) {
+
+                const { conFactura, codigoOrdenPago } = data
+
                 dispatch(setCompromisoSeleccionadoDetalle(data))
 
-                dispatch(setConFactura(data[0]?.conFactura))
-                dispatch(setCodigoOrdenPago(data[0]?.codigoOrdenPago))
+                dispatch(setConFactura(conFactura))
+                dispatch(setCodigoOrdenPago(codigoOrdenPago))
 
                 setTimeout(() => {
                     changeViewToEdit()
@@ -139,6 +143,12 @@ const FormCreateOrdenPago = () => {
                         loading={loading}
                     />
                 </Grid>
+                <AlertMessage
+                    message={message?.text ?? ''}
+                    severity={message?.isValid ? 'success' : 'error'}
+                    duration={message?.isValid ? 2000 : 5000}
+                    show={message?.text ? true : false}
+                />
             </Grid>
         </>
     )

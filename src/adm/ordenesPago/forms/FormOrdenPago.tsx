@@ -246,12 +246,12 @@ const FormOrdenPago = (props: {
                                                 onChange={() => setValue('conFactura', !value)}
                                                 color='primary'
                                                 size='small'
-                                                disabled={documentCount >= 1}
+                                                disabled={ typeOperation === 'create' ? false : documentCount >= 1 }
                                             />
                                         )}
                                     />
                                 }
-                                label={ true ? 'con Factura' : 'sin Factura'}
+                                label={ true ? 'con Factura' : 'sin Factura' }
                             />
                         </Grid>
                         <Grid container spacing={0}>
