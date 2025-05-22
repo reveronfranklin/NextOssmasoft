@@ -13,6 +13,7 @@ import {
     setPagoShow,
     setCodigoPago
 } from 'src/store/apps/pagos/lote-pagos';
+import { parse } from 'path';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
@@ -112,7 +113,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
             editable: true,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(Number(params.row.monto))}
+                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(parseFloat(params.row.monto))}
                 </Typography>
             )
         }
