@@ -12,6 +12,8 @@ export enum UrlServices {
 
     GET_PAGOS                   = '/AdmPagos/GetByLote',
     CREATE_PAGO                 = '/AdmPagos/Create',
+    UPDATE_PAGO                 = '/AdmPagos/Update',
+    DELETE_PAGO                 = '/AdmPagos/Delete',
     UPDATE_MONTO_PAGO           = '/AdmPagos/UpdateMonto',
 
     GET_ORDEN_PAGO_PENDIENTES   = '/AdmOrdenesPagoPendientesPago/GetAll'

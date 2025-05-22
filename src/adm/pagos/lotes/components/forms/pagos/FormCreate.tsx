@@ -79,7 +79,7 @@ const FormCreate = () => {
             const montoPorPagar = parseFloat(beneficiarioSelectedOP?.montoPorPagar) || 0
 
             setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
-            setValue('motivo', beneficiarioSelectedOP?.motivo)
+            setValue('motivo', beneficiarioSelectedOP?.motivo ? beneficiarioSelectedOP?.motivo.trim() : null)
             setValue('monto', montoPorPagar)
             setMonto(montoPorPagar)
             setBeneficiarioSelected(selected)
@@ -117,7 +117,8 @@ const FormCreate = () => {
 
         try {
             const payload: PagoDto = {
-                ...formValues
+                ...formValues,
+                motivo: formValues.motivo ? formValues.motivo.trim() : null
             }
 
             const response = await store(payload)
