@@ -63,6 +63,7 @@ const FormCreate = () => {
         mode: 'onChange'
     })
 
+<<<<<<< HEAD
     const stateMonto = getFieldState('monto')
 
     const setErrorMonto = () => {
@@ -70,6 +71,51 @@ const FormCreate = () => {
             type: 'manual',
             message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
         }, { shouldFocus: true })
+=======
+    const handleClearPago = () => {
+        setBeneficiarios([] as AdmBeneficiariosPendientesPago[])
+        setBeneficiarioSelected({} as AdmBeneficiariosPendientesPago)
+        setMonto(0)
+        reset(defaultValues)
+    }
+
+    const handleOnChangeBeneficiario = (selected: any) => {
+        const beneficiarioSelectedOP        = selected
+        const codigoBeneficiarioSelectedOp  = beneficiarioSelectedOP.codigoBeneficiarioOp || null
+
+        if (!codigoBeneficiarioSelectedOp) {
+            handleClearPago()
+        } else {
+            const montoPorPagar = parseFloat(beneficiarioSelectedOP?.montoPorPagar) || 0
+
+            setValue('numeroOrdenPago', beneficiarioSelectedOP?.numeroOrdenPago)
+            setValue('motivo', beneficiarioSelectedOP?.motivo ? beneficiarioSelectedOP?.motivo.trim() : null)
+            setValue('monto', montoPorPagar)
+            setMonto(montoPorPagar)
+            setBeneficiarioSelected(selected)
+        }
+
+        return codigoBeneficiarioSelectedOp
+    }
+
+    const handleOnChangeOrdenPagoPendiente = (selected: any) => {
+        const ordenPagoSelected         = selected
+        const codigoOrdenPagoSelected   = ordenPagoSelected?.codigoOrdenPago || null
+        const beneficiariosPendientes   = ordenPagoSelected?.admBeneficiariosPendientesPago ?? []
+        const listBeneficiariosSelected = codigoOrdenPagoSelected ? beneficiariosPendientes : []
+
+        if (!codigoOrdenPagoSelected) {
+            handleClearPago()
+        } else {
+            setBeneficiarios(listBeneficiariosSelected)
+        }
+
+        return codigoOrdenPagoSelected
+    }
+
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+>>>>>>> a2f32928517542154431f86075523af359ec5d7c
     }
 
     useEffect(() => {
@@ -81,6 +127,7 @@ const FormCreate = () => {
         }
     }, [monto, setError, clearErrors, trigger])
 
+<<<<<<< HEAD
     const handleClearPago = () => {
         setBeneficiarios([] as AdmBeneficiariosPendientesPago[])
         setBeneficiarioSelected({} as AdmBeneficiariosPendientesPago)
@@ -134,6 +181,8 @@ const FormCreate = () => {
         setDialogOpen(false)
     }
 
+=======
+>>>>>>> a2f32928517542154431f86075523af359ec5d7c
     const handleCreatePago = async (formValues: PagoDto) => {
         setIsFormEnabled(false)
         handleCloseDialog()
@@ -165,6 +214,15 @@ const FormCreate = () => {
             beneficiarioSelected !== null &&
             Object.keys(beneficiarioSelected).length > 0
         )
+<<<<<<< HEAD
+    }
+
+    const handleOnChangeAmount = (amount: string) => {
+        const amountToPay = parseFloat(amount) || 0
+        setMonto(amountToPay)
+        setValue('monto', amountToPay)
+=======
+>>>>>>> a2f32928517542154431f86075523af359ec5d7c
     }
 
     const handleOnChangeAmount = (amount: string) => {
@@ -172,6 +230,18 @@ const FormCreate = () => {
         setMonto(amountToPay)
         setValue('monto', amountToPay)
     }
+
+    useEffect(() => {
+        if (monto <= 0) {
+            setError('monto', {
+                type: 'manual',
+                message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
+            }, { shouldFocus: true })
+        } else {
+            clearErrors('monto')
+            trigger('monto')
+        }
+    }, [monto, setError, clearErrors, trigger])
 
     return (
         <>
