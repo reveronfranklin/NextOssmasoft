@@ -13,7 +13,6 @@ import {
     setPagoShow,
     setCodigoPago
 } from 'src/store/apps/pagos/lote-pagos';
-import { parse } from 'path';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()

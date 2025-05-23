@@ -60,18 +60,35 @@ const FormUpdate = () => {
         clearErrors,
         trigger,
         watch,
+        getFieldState,
         formState: { errors, isValid }
     } = useForm<PagoDto>({
         defaultValues,
         mode: 'onChange'
     })
 
-    const watchMotivo = watch('motivo')
-    const watchMonto  = watch('monto')
+    const watchMonto = watch('monto')
+    const stateMonto = getFieldState('monto')
+
+    const setErrorMonto = () => {
+        setError('monto', {
+            type: 'manual',
+            message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
+        }, { shouldFocus: true })
+    }
 
     useEffect(() => {
         setMonto(watchMonto || 0)
     }, [watchMonto, setMonto])
+
+    useEffect(() => {
+        if (monto <= 0) {
+            setErrorMonto()
+        } else {
+            clearErrors('monto')
+            trigger('monto')
+        }
+    }, [monto, setError, clearErrors, trigger])
 
     const clearDefaultValues = () => {
         setValue('motivo', null)
@@ -87,7 +104,11 @@ const FormUpdate = () => {
     }
 
     const handleOpenDialog = () => {
-        setDialogOpen(true)
+        if (stateMonto.invalid) {
+            setErrorMonto()
+        } else {
+            setDialogOpen(true)
+        }
     }
 
     const handleCloseDialog = () => {
@@ -111,6 +132,7 @@ const FormUpdate = () => {
         } catch (e: any) {
             console.error('handleUpdatePago', e)
         } finally {
+            console.log('numeroOrdenPago', numeroOrdenPago)
             setIsFormEnabled(true)
             qc.invalidateQueries({
                 queryKey: ['lotePagosTable']
@@ -123,18 +145,6 @@ const FormUpdate = () => {
         setMonto(amountToPay)
         setValue('monto', amountToPay)
     }
-
-    useEffect(() => {
-        if (monto <= 0) {
-            setError('monto', {
-                type: 'manual',
-                message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
-            }, { shouldFocus: true })
-        } else {
-            clearErrors('monto')
-            trigger('monto')
-        }
-    }, [monto, setError, clearErrors, trigger])
 
     const handleOpenDialogDelete = () => {
         setDialogDeleteOpen(true)
