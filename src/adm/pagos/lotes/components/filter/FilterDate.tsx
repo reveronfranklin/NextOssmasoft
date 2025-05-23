@@ -13,13 +13,7 @@ import { FechaPagoDto, LoteFilterFechaPagoDto } from '../../interfaces';
 import generateDateRangesByYear from '../../helpers/dateRangesYear'
 
 const StyledCustomInput = styled(CustomInput)(() => ({
-    width: "100%",
-    "& .MuiInputBase-root": {
-        width: "100%"
-    },
-    "& .MuiInputBase-input": {
-        width: "100%"
-    }
+    width: '100%'
 }))
 
 const FilterDate = () => {

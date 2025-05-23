@@ -1,9 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { PagoResponseDto } from 'src/adm/pagos/lotes/interfaces'
 
 export const admLotePagosSlice = createSlice({
     name: 'admLotePagos',
     initialState: {
-        CodigoLote: null,
+        codigoLote: null,
+        pago: {} as PagoResponseDto,
+        codigoPago: null,
         isOpenDialogPago: false,
         typeOperation: null
     },
@@ -15,12 +18,24 @@ export const admLotePagosSlice = createSlice({
             state.isOpenDialogPago = action.payload
         },
         setCodigoLote: (state, action) => {
-            state.CodigoLote = action.payload
+            state.codigoLote = action.payload
+        },
+        setCodigoPago: (state, action) => {
+            state.pago.codigoPago = action.payload
+        },
+        setPagoShow: (state, action) => {
+            state.pago = action.payload
+        },
+        resetPagoShow: (state): void => {
+            state.pago = {} as PagoResponseDto
         }
     }
 })
 export const {
     setTypeOperation,
     setIsOpenDialogPago,
-    setCodigoLote
+    setCodigoLote,
+    setCodigoPago,
+    setPagoShow,
+    resetPagoShow
 } = admLotePagosSlice.actions

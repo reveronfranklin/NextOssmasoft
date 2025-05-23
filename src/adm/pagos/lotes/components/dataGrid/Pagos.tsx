@@ -6,7 +6,7 @@ import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
 import { RootState } from 'src/store';
-import { setIsOpenDialogPago, setTypeOperation } from 'src/store/apps/pagos/lote-pagos';
+import { setIsOpenDialogPago, setTypeOperation, setCodigoLote } from 'src/store/apps/pagos/lote-pagos';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServicesPagos } from '../../services';
@@ -28,7 +28,7 @@ const DataGridComponent = () => {
     const dispatch              = useDispatch()
 
     const {
-        CodigoLote,
+        codigoLote,
     } = useSelector((state: RootState) => state.admLote )
 
     const {
@@ -44,18 +44,18 @@ const DataGridComponent = () => {
         pageSize,
         pageNumber,
         searchText,
-        CodigoLote: CodigoLote
+        codigoLote: codigoLote
     } as PagoFilterDto
 
     const query = useQuery({
-        queryKey: ['lotePagosTable', CodigoLote, pageSize, pageNumber, searchText],
+        queryKey: ['lotePagosTable', codigoLote, pageSize, pageNumber, searchText],
         queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['lotePagosTable', CodigoLote, pageSize, pageNumber, searchText])
+            return qc.getQueryData(['lotePagosTable', codigoLote, pageSize, pageNumber, searchText])
         },
         staleTime: staleTime,
         retry: 3,
-        enabled: (CodigoLote !== null)
+        enabled: (codigoLote !== null)
     }, qc)
 
     const rows      = query?.data?.data || []
@@ -93,7 +93,7 @@ const DataGridComponent = () => {
 
     const handleOnCellEditCommit = async (cell: any) => {
         const updateAmountData: PagoAmountDto = {
-            codigoBeneficiarioPago: cell.row.codigoBeneficiarioPago,
+            codigoBeneficiarioPago: cell.row?.codigoBeneficiarioPago,
             monto: Number(cell.value)
         }
 
@@ -102,15 +102,15 @@ const DataGridComponent = () => {
         } catch (error) {
           console.error('handleOnCellEditCommit', error)
         } finally {
-          qc.invalidateQueries({ queryKey: ['lotePagosTable'] })
+          /* qc.invalidateQueries({ queryKey: ['lotePagosTable'] }) */
         }
     }
 
     const handleCreate = async () => {
-        console.log('handleCreate')
         dispatch(setTypeOperation('create'))
         setTimeout(() => {
             dispatch(setIsOpenDialogPago(true))
+            dispatch(setCodigoLote(codigoLote))
         }, 1500)
     }
 

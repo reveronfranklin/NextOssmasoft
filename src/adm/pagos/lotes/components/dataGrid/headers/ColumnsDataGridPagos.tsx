@@ -5,13 +5,23 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-import FormatNumber from '../../../../../../utilities/format-numbers'
+import FormatNumber from '../../../../../../utilities/format-numbers';
+import { PagoDto } from '../../../interfaces';
+import {
+    setTypeOperation,
+    setIsOpenDialogPago,
+    setPagoShow,
+    setCodigoPago
+} from 'src/store/apps/pagos/lote-pagos';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (pago: any) => {
-        console.log(pago)
+    const handleEdit = (pago: PagoDto) => {
+        dispatch(setTypeOperation('update'))
+        dispatch(setIsOpenDialogPago(true))
+        dispatch(setPagoShow(pago))
+        dispatch(setCodigoPago(pago.codigoPago))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -102,7 +112,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
             editable: true,
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(Number(params.row.monto))}
+                    {params.row.monto === null ? 'NO DISPONIBLE' : FormatNumber(parseFloat(params.row.monto))}
                 </Typography>
             )
         }

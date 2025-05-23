@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
-import { useDispatch, useSelector } from 'react-redux';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
-import DatePicker from 'react-datepicker';
-import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
-import BlockIcon from '@mui/icons-material/Block'; // Para anular
-import SettingsIcon from '@mui/icons-material/Settings';
+import { styled } from '@mui/material/styles';
 import {
     Box,
     Grid,
@@ -18,110 +13,137 @@ import {
 } from '@mui/material';
 
 import { RootState } from 'src/store';
-import { useServices } from '../../../services';
-import { setIsOpenDialogLote, resetLoteShow } from 'src/store/apps/pagos/lotes'
-import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto } from '../../../interfaces';
-import { TipoPago, MaestroCuenta } from '../../autoComplete';
-import { getDateByObject } from 'src/utilities/ge-date-by-object'
-import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import dayjs from 'dayjs';
+import { NumericFormat } from 'react-number-format';
+import { useServicesPagos } from '../../../services';
+import { setIsOpenDialogPago, resetPagoShow } from 'src/store/apps/pagos/lote-pagos'
+import { PagoDto, PagoDeleteDto } from '../../../interfaces';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
-const FormUpdate = () => {
-    const [isFormEnabled, setIsFormEnabled]                     = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]                           = useState<boolean>(false)
-    const [dialogDeleteOpen, setDialogDeleteOpen]               = useState<boolean>(false)
-    const [dialogChangeStatusOpen, setDialogChangeStatusOpen]   = useState<boolean>(false)
-    const [statusLote, setStatusLote]                           = useState<string>('')
+const StyledCustomInput = styled(TextField)(() => ({
+    width: '100%'
+}))
 
-    const [fechaPagoLote, setFechaPagoLote] = useState<FechaPagoDto>({
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate()
-    })
+const FormUpdate = () => {
+    const [monto, setMonto]                         = useState<number>(0)
+    const [isFormEnabled, setIsFormEnabled]         = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]               = useState(false)
+    const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
     const dispatch          = useDispatch()
     const qc: QueryClient   = useQueryClient()
-    const { lote }          = useSelector((state: RootState) => state.admLote )
     const rules             = getRules()
+    const { pago }          = useSelector((state: RootState) => state.admLotePagos )
 
     const {
         update,
         remove,
-        approve,
-        cancel,
         message,
         loading
-    } = useServices()
+    } = useServicesPagos()
 
-    const defaultValues: LoteDto = {
-        codigoLotePago: lote.codigoLotePago,
-        tipoPagoId: lote.tipoPagoId,
-        fechaPago: lote.fechaPago,
-        codigoCuentaBanco: lote.codigoCuentaBanco,
-        codigoPresupuesto: lote.codigoPresupuesto ?? 19,
-        titulo: lote.titulo
+    const defaultValues: PagoDto = {
+        numeroOrdenPago: pago.numeroOrdenPago,
+        codigoPago: pago.codigoPago,
+        codigoBeneficiarioPago: pago.codigoBeneficiarioPago,
+        monto: pago.monto,
+        motivo: pago?.motivo ? pago.motivo.trim() : null
     }
-
-    useEffect(() => {
-        setFechaPagoLote(lote.fechaPagoDto)
-    }, [lote])
 
     const {
         control,
         handleSubmit,
         reset,
         setValue,
+        setError,
+        clearErrors,
+        trigger,
+        watch,
+        getFieldState,
         formState: { errors, isValid }
-    } = useForm<LoteDto>({
+    } = useForm<PagoDto>({
         defaultValues,
         mode: 'onChange'
     })
 
+    const watchMonto = watch('monto')
+    const stateMonto = getFieldState('monto')
+
+    const setErrorMonto = () => {
+        setError('monto', {
+            type: 'manual',
+            message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
+        }, { shouldFocus: true })
+    }
+
+    useEffect(() => {
+        setMonto(watchMonto || 0)
+    }, [watchMonto, setMonto])
+
+    useEffect(() => {
+        if (monto <= 0) {
+            setErrorMonto()
+        } else {
+            clearErrors('monto')
+            trigger('monto')
+        }
+    }, [monto, setError, clearErrors, trigger])
+
+    const clearDefaultValues = () => {
+        setValue('motivo', null)
+        setValue('monto', 0)
+        setMonto(0)
+        trigger(['monto', 'motivo'])
+    }
+
+    const handleClearPago = () => {
+        dispatch(resetPagoShow())
+        reset(defaultValues)
+        clearDefaultValues()
+    }
+
     const handleOpenDialog = () => {
-        setDialogOpen(true)
+        if (stateMonto.invalid) {
+            setErrorMonto()
+        } else {
+            setDialogOpen(true)
+        }
     }
 
     const handleCloseDialog = () => {
         setDialogOpen(false)
     }
 
-    const clearDefaultValues = () => {
-        setValue('tipoPagoId', null)
-        setValue('fechaPago', null)
-        setValue('codigoCuentaBanco', null)
-        setValue('codigoPresupuesto', 19)
-        setValue('titulo', null)
-    }
+    const handleUpdatePago = async (formValues: PagoDto) => {
+        const { numeroOrdenPago, ...data } = formValues
 
-    const handleClearPagoLote = () => {
-        dispatch(resetLoteShow())
-        reset(defaultValues)
-        clearDefaultValues()
-
-        console.log(defaultValues)
-    }
-
-    const handleUpdatePagoLote = async (lote: LoteDto) => {
         setIsFormEnabled(false)
         handleCloseDialog()
 
         try {
-            const payload: LoteDto = {
-                ...lote
+
+            const payload: PagoDto = {
+                ...data,
+                motivo: formValues.motivo ? formValues.motivo.trim() : null
             }
 
             await update(payload)
         } catch (e: any) {
-            console.error('handleUpdatePagoLote', e)
+            console.error('handleUpdatePago', e)
         } finally {
+            console.log('numeroOrdenPago', numeroOrdenPago)
             setIsFormEnabled(true)
             qc.invalidateQueries({
-                queryKey: ['lotesTable']
+                queryKey: ['lotePagosTable']
             })
         }
+    }
+
+    const handleOnChangeAmount = (amount: string) => {
+        const amountToPay = parseFloat(amount) || 0
+        setMonto(amountToPay)
+        setValue('monto', amountToPay)
     }
 
     const handleOpenDialogDelete = () => {
@@ -137,76 +159,22 @@ const FormUpdate = () => {
         handleCloseDialogDelete()
 
         try {
-            const payload: LoteDeleteDto = {
-                codigoLotePago: lote.codigoLotePago
+            const payload: PagoDeleteDto = {
+                codigoPago: pago.codigoPago
             }
 
             const response = await remove(payload)
 
             if (response?.isValid) {
-                dispatch(setIsOpenDialogLote(false))
-                handleClearPagoLote()
+                dispatch(setIsOpenDialogPago(false))
+                handleClearPago()
             }
         } catch (e: any) {
             console.error('handleDelete', e)
         } finally {
             setIsFormEnabled(true)
             qc.invalidateQueries({
-                queryKey: ['lotesTable']
-            })
-        }
-    }
-
-    const handleFechaLotePagoChange = (date: Date | null) => {
-        if (date && dayjs(date).isValid()) {
-            const fechaPagoLotePagoObj  = fechaToFechaObj(date)
-            const fechaPagoLote         = dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
-
-            setValue('fechaPago', fechaPagoLote)
-            setFechaPagoLote(fechaPagoLotePagoObj)
-        }
-    }
-
-    const getActionIcon = (actionName: string) => {
-        switch (actionName?.toLowerCase()) {
-            case 'aprobar': return <CheckCircleIcon />
-            case 'anular': return <BlockIcon />
-            default: return <SettingsIcon />
-        }
-    }
-
-    const handleOpenDialogChangeStatus = (status: string) => {
-        setStatusLote(status)
-        setDialogChangeStatusOpen(true)
-    }
-
-    const handleCloseDialogChangeStatus = () => {
-        setStatusLote('')
-        setDialogChangeStatusOpen(false)
-    }
-
-    const handleChangeStatusLote = async () => {
-        setIsFormEnabled(false)
-        handleCloseDialogChangeStatus()
-
-        try {
-            const payload: LoteStatusDto = {
-                codigoLotePago: lote.codigoLotePago,
-                status: (statusLote === 'Aprobar' ? 'AP' : 'AN')
-            }
-
-            const response = (statusLote === 'Aprobar') ? await approve(payload) : await cancel(payload)
-
-            if (response?.isValid) {
-                dispatch(setIsOpenDialogLote(false))
-                handleClearPagoLote()
-            }
-        } catch (e: any) {
-            console.error('handleChangeStatusLote', e)
-        } finally {
-            setIsFormEnabled(true)
-            qc.invalidateQueries({
-                queryKey: ['lotesTable']
+                queryKey: ['lotePagosTable']
             })
         }
     }
@@ -228,82 +196,81 @@ const FormUpdate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
-                                                    name="titulo"
+                                                    name="numeroOrdenPago"
                                                     control={control}
-                                                    rules={ rules.titulo }
+                                                    rules={ rules.numeroOrdenPago }
                                                     render={({ field: { value, onChange } }) => (
                                                         <TextField
                                                             type="text"
                                                             fullWidth
-                                                            label="Título"
+                                                            label="Número orden de pago"
                                                             placeholder="Título"
                                                             value={value || ''}
                                                             multiline
-                                                            onChange={(e) => {
-                                                                const textUpperCase = e.target.value.toUpperCase()
-                                                                onChange(textUpperCase)
-                                                            }}
-                                                            error={!!errors.titulo}
-                                                            helperText={errors.titulo?.message}
+                                                            onChange={onChange}
+                                                            error={!!errors.numeroOrdenPago}
+                                                            helperText={errors.numeroOrdenPago?.message}
                                                             required
-                                                            autoFocus
+                                                            disabled
                                                         />
                                                     )}
                                                 />
                                             </FormControl>
                                         </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
-                                            <DatePickerWrapper>
-                                                <DatePicker
-                                                    selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
-                                                    id='date-time-picker-desde'
-                                                    dateFormat='dd/MM/yyyy'
-                                                    onChange={(date: Date) => { handleFechaLotePagoChange(date) }}
-                                                    placeholderText='Fecha pago lote'
-                                                    customInput={<CustomInput label='Fecha pago lote' />}
-                                                    popperPlacement='left-start'
-                                                    required
-                                                />
-                                            </DatePickerWrapper>
-                                        </Grid>
-                                        <Grid item sm={8} xs={8} sx={{ padding: '5px' }}>
-                                            <Controller
-                                                name="tipoPagoId"
-                                                control={control}
-                                                rules={ rules.tipoPagoId }
-                                                render={({ field: { value, onChange } }) => (
-                                                    <TipoPago
-                                                        id={value || null}
-                                                        onSelectionChange={(selected) => onChange(selected?.id || null)}
-                                                        error={errors.tipoPagoId?.message}
-                                                        required
-                                                    />
-                                                )}
+                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                            <NumericFormat
+                                                value={monto}
+                                                customInput={StyledCustomInput}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                allowNegative={false}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                label="Monto"
+                                                required
+                                                onFocus={(event) => {
+                                                    event.target.select()
+                                                }}
+                                                onValueChange={(values: any) => {
+                                                    const { value } = values
+                                                    handleOnChangeAmount(value)
+                                                }}
+                                                placeholder='Monto'
+                                                inputProps={{
+                                                    type: 'text'
+                                                }}
+                                                error={!!errors.monto}
+                                                helperText={errors.monto?.message}
                                             />
                                         </Grid>
                                     </Grid>
-
                                     <Grid container spacing={0} item sm={12} xs={12}>
                                         <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
-                                            <Controller
-                                                name="codigoCuentaBanco"
-                                                control={control}
-                                                rules={ rules.codigoCuentaBanco }
-                                                render={({ field: { value, onChange } }) => (
-                                                    <MaestroCuenta
-                                                        id={value || null}
-                                                        onSelectionChange={(selected) => onChange(selected?.codigoCuentaBanco || null)}
-                                                        error={errors.codigoCuentaBanco?.message}
-                                                        required
-                                                    />
-                                                )}
-                                            />
+                                            <FormControl fullWidth>
+                                                <Controller
+                                                    name='motivo'
+                                                    control={control}
+                                                    rules={ rules.motivo }
+                                                    render={({ field: { value, onChange } }) => (
+                                                        <TextField
+                                                            value={value || ''}
+                                                            label="Motivo"
+                                                            onChange={(e) => {
+                                                                onChange(e)
+                                                            }}
+                                                            placeholder='Motivo'
+                                                            multiline
+                                                            rows={6}
+                                                            helperText={errors.motivo?.message || 'Caracteres máximo 2000'}
+                                                            error={!!errors.motivo}
+                                                            required
+                                                        />
+                                                    )}
+                                                />
+                                            </FormControl>
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -311,7 +278,7 @@ const FormUpdate = () => {
                                 <DialogConfirmation
                                     open={dialogOpen}
                                     onClose={handleCloseDialog}
-                                    onConfirm={handleSubmit(handleUpdatePagoLote)}
+                                    onConfirm={handleSubmit(handleUpdatePago)}
                                     loading={loading}
                                     title="Actualizar registro"
                                     content="¿Desea continuar con la actualización de este registro?"
@@ -326,29 +293,13 @@ const FormUpdate = () => {
                                     content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
                                 />
 
-                                <DialogConfirmation
-                                    open={dialogChangeStatusOpen}
-                                    onClose={handleCloseDialogChangeStatus}
-                                    onConfirm={handleChangeStatusLote}
-                                    loading={loading}
-                                    title={`${statusLote} lote`}
-                                    content={`¿Está seguro que desea ${statusLote.toLowerCase()} este registro? Esta acción no se puede deshacer.`}
-                                />
-
-                                <Box
-                                    sx={{
-                                        marginTop: 60,
-                                        position: 'sticky',
-                                        bottom: 0,
-                                        padding: '1rem'
-                                    }}
-                                >
+                                <Box sx={{ paddingTop: 6 }}>
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         size='small'
                                         onClick={handleOpenDialog}
-                                        disabled={!isValid && loading}
+                                        disabled={!isValid}
                                     >
                                         Actualizar
                                     </Button>
@@ -361,34 +312,10 @@ const FormUpdate = () => {
                                     >
                                         Eliminar
                                     </Button>
-                                    {
-                                        lote.status == 'PE' &&
-                                            <Button
-                                                sx={{ mx: 1 }}
-                                                variant='outlined'
-                                                size='small'
-                                                onClick={() => handleOpenDialogChangeStatus('Aprobar')}
-                                                disabled={!isValid && loading}
-                                            >
-                                                { getActionIcon('aprobar') } Aprobar
-                                            </Button>
-                                    }
-                                    {
-                                        lote.status == 'AP' &&
-                                            <Button
-                                                sx={{ mx: 4 }}
-                                                variant='outlined'
-                                                size='small'
-                                                onClick={() => handleOpenDialogChangeStatus('Anular')}
-                                                disabled={!isValid && loading}
-                                            >
-                                                { getActionIcon('anular') } Anular
-                                            </Button>
-                                    }
                                     <Button
                                         color='primary'
                                         size='small'
-                                        onClick={handleClearPagoLote}
+                                        onClick={handleClearPago}
                                     >
                                         <CleaningServices /> Limpiar
                                     </Button>

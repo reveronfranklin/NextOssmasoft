@@ -6,7 +6,7 @@ export const admLoteSlice = createSlice({
     initialState: {
         typeOperation: null,
         isOpenDialogLote: false,
-        CodigoLote: null,
+        codigoLote: null,
         lote: {} as LoteResponseDto,
         batchPaymentDate: {} as LoteFilterFechaPagoDto
     },
@@ -27,7 +27,7 @@ export const admLoteSlice = createSlice({
             state.batchPaymentDate = action.payload
         },
         setCodigoLote: (state, action) => {
-            state.CodigoLote = action.payload
+            state.codigoLote = action.payload
         }
     }
 })
