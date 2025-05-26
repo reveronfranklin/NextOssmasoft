@@ -15,7 +15,7 @@ export interface IApiResponseBase {
   statusCode?: number;
 }
 export interface IApiResponse<T> extends IApiResponseBase {
-  data: T[]
+  data?: T[]
 }
 
 export interface IApiFlexibleResponse<T> extends IApiResponseBase {
@@ -23,5 +23,5 @@ export interface IApiFlexibleResponse<T> extends IApiResponseBase {
 }
 
 export interface ISingleResponse<T> extends IApiResponseBase {
-  data: T | null
+  data?: T | null
 }
