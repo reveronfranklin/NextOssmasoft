@@ -40,7 +40,8 @@ export const handleApiResponse = <T>(
     data: apiResponse.data,
     isValid: apiResponse.isValid,
     linkData: apiResponse.linkData,
-    linkDataArlternative: apiResponse.linkDataArlternative,
+
+    // linkDataArlternative: apiResponse.linkDataArlternative,
     message: message,
     page: apiResponse.page,
     totalPage: apiResponse.totalPage,

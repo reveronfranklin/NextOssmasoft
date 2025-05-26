@@ -1,4 +1,6 @@
-import React from 'react'
+"use client"
+
+import React, { useState } from 'react'
 import { Box, Button, Grid, TextField } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import { RootState } from "src/store"
@@ -7,6 +9,9 @@ import { useEffect } from "react"
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { useServicesRetencionesOp } from '../../services/index'
 import SearchIcon from '@mui/icons-material/Search'
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
+
 import {
   setIsOpenDialogConfirmButtons,
   setRetencionOpSeleccionado,
@@ -23,6 +28,12 @@ import { IDeleteRetencionOp } from '../../interfaces/retencionesOp/deleteRetenci
 
 import TipoRetencion from 'src/adm/ordenesPago/components/AutoComplete/TipoRetencion'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
+import calcularMontoRetencion from '../../helpers/montoRetencion'
+import { NumericFormat } from 'react-number-format'
+import FormatNumber from 'src/utilities/format-numbers'
+
+import { useDocumentosOpData } from '../../hooks/useDocumentosOpData'
+
 
 interface getValuesForm {
   tipoRetencion: number
@@ -33,11 +44,31 @@ interface getValuesForm {
 }
 
 const FormCreateRetencionesOp = () => {
+  const [isDisabledRetencion, setIsDisabledRetencion] = useState<boolean>(false)
+  const [tipoRetencionId, setTipoRetencionId] = useState<number>(0)
+  const [porRetencion, setPorRetencion] = useState<number>(0)
+
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
 
-  const { codigoOrdenPago, retencionOpSeleccionado, isOpenDialogConfirmButtons, retencionSeleccionado, tipoRetencion } = useSelector((state: RootState) => state.admOrdenPago)
+  const { prefetchDocumentos } = useDocumentosOpData()
+
+  const {
+    isOpenDialogConfirmButtons,
+    codigoOrdenPago,
+    retencionOpSeleccionado,
+    retencionSeleccionado,
+    tipoRetencion,
+    baseTotalDocumentos,
+  } = useSelector((state: RootState) => state.admOrdenPago)
+
   const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
+
+  if (!baseTotalDocumentos) {
+    prefetchDocumentos({ codigoOrdenPago })
+      .then()
+      .catch()
+  }
 
   const { control, setValue, getValues, formState: { isValid } } = useForm<any>({
     defaultValues: {
@@ -46,7 +77,10 @@ const FormCreateRetencionesOp = () => {
       montoRetencion: retencionOpSeleccionado?.montoRetencion ?? '',
       montoRetenido: retencionOpSeleccionado?.montoRetenido ?? '',
       descripcionTipoRetencion: retencionOpSeleccionado?.descripcionTipoRetencion ?? '',
-      codigoRetencion: retencionOpSeleccionado?.codigoRetencion ?? 0
+      codigoRetencion: retencionOpSeleccionado?.codigoRetencion ?? 0,
+
+      porcentajeRetencion: 0,
+      baseTotalDocumento: baseTotalDocumentos || 0,
     },
     mode: 'onChange',
   })
@@ -54,17 +88,25 @@ const FormCreateRetencionesOp = () => {
   const handleCreateOrden = async (): Promise<void> => {
     const formData: getValuesForm = getValues()
 
+    if (!formData.tipoRetencion || !formData.montoRetencion || !presupuestoSeleccionado.codigoPresupuesto) {
+      console.log('Faltan datos obligatorios')
+
+      return
+    }
+
     try {
       const payload: ICreateRetencionOp = {
         codigoRetencionOp: 0,
         codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
-        porRetencion: 0,
+        porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: 0,
+        baseImponible: baseTotalDocumentos,
         codigoRetencion: Number(formData.codigoRetencion),
       }
+
+      console.log('Payload para crear retención:', payload)
 
       await createRetencionOp(payload)
       clearForm()
@@ -81,17 +123,25 @@ const FormCreateRetencionesOp = () => {
   const handleUpdateOrden = async (): Promise<void> => {
     const formData: getValuesForm = getValues()
 
+    if (!formData.tipoRetencion || !formData.montoRetencion || !presupuestoSeleccionado.codigoPresupuesto) {
+      console.log('Faltan datos obligatorios')
+
+      return
+    }
+
     try {
       const payload: IUpdateRetencionOp = {
         codigoRetencionOp: retencionOpSeleccionado.codigoRetencionOp,
         codigoOrdenPago: retencionOpSeleccionado.codigoOrdenPago,
         tipoRetencionId: Number(formData.tipoRetencion),
         codigoRetencion: Number(formData.codigoRetencion),
-        porRetencion: 0,
+        porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: 0
+        baseImponible: baseTotalDocumentos || 0,
       }
+
+      console.log('Payload para actualizar retención:', payload)
 
       await updateRetencionOp(payload)
       clearForm()
@@ -127,14 +177,17 @@ const FormCreateRetencionesOp = () => {
   const clearForm = async (): Promise<void> => {
     setValue('tipoRetencion', '')
     setValue('conceptoPago', '')
-    setValue('montoRetencion', '')
+    setValue('montoRetencion', 0)
     setValue('montoRetenido', '')
     setValue('descripcionTipoRetencion', '')
     setValue('numeroComprobante', '')
 
+    setPorRetencion(0)
+    setTipoRetencionId(0)
     dispatch(setTipoRetencion(0))
     dispatch(setRetencionOpSeleccionado(null))
     dispatch(setRetencionSeleccionado(null))
+    setIsDisabledRetencion(false)
   }
 
   const viewDialogListRetenciones = () => {
@@ -143,19 +196,35 @@ const FormCreateRetencionesOp = () => {
 
   useEffect(() => {
     if (retencionOpSeleccionado) {
+      setTipoRetencionId(retencionOpSeleccionado?.tipoRetencionId || 0);
+      setPorRetencion(retencionOpSeleccionado?.porRetencion || 0);
+
       setValue('tipoRetencion', retencionOpSeleccionado?.tipoRetencionId)
       setValue('conceptoPago', retencionOpSeleccionado?.conceptoPago)
       setValue('montoRetencion', retencionOpSeleccionado?.montoRetencion)
       setValue('montoRetenido', retencionOpSeleccionado?.montoRetenido)
       setValue('descripcionTipoRetencion', retencionOpSeleccionado?.descripcionTipoRetencion)
       setValue('numeroComprobante', retencionOpSeleccionado?.numeroComprobante)
+    } else {
+      clearForm();
+      setTipoRetencionId(0);
     }
   }, [retencionOpSeleccionado, setValue])
 
   useEffect(() => {
-    if (retencionSeleccionado) {
-      setValue('conceptoPago', retencionSeleccionado?.descripcionTipoRetencion ?? '')
-      setValue('codigoRetencion', retencionSeleccionado?.codigoRetencion ?? 0)
+    if (retencionSeleccionado && retencionSeleccionado.porRetencion) {
+      const { descripcionTipoRetencion, codigoRetencion, porRetencion } = retencionSeleccionado
+
+      setValue('conceptoPago', descripcionTipoRetencion || '')
+      setValue('codigoRetencion', codigoRetencion || 0)
+      setPorRetencion(porRetencion || 0)
+
+      const respuestaMontoRetencion = calcularMontoRetencion(baseTotalDocumentos, porRetencion)
+
+      if (respuestaMontoRetencion) {
+        setIsDisabledRetencion(true)
+        setValue('montoRetencion', respuestaMontoRetencion)
+      }
     }
   }, [retencionSeleccionado, setValue])
 
@@ -164,13 +233,19 @@ const FormCreateRetencionesOp = () => {
     dispatch(setTipoRetencion(tipoRetencionId))
   }
 
+  useEffect(() => {
+    return () => {
+      dispatch(setRetencionOpSeleccionado(null));
+    };
+  }, [])
+
   return (
     <Box>
       <form>
         <Grid container spacing={0} paddingTop={0} justifyContent="flex">
           <Grid container item sm={12} xs={12} sx={{ padding: 2 }}>
             <TipoRetencion
-              id={retencionOpSeleccionado?.tipoRetencionId || 0}
+              id={tipoRetencionId}
               onSelectionChange={(value: any) => handleTipoRetencion(value.id)}
             />
           </Grid>
@@ -190,6 +265,42 @@ const FormCreateRetencionesOp = () => {
                   />
                 )}
               />
+              <Tooltip
+                title={
+                  <Box sx={{
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    p: 0.5,
+                    color: 'common.white'
+                  }}>
+                    % Retención: { FormatNumber(porRetencion) }
+                  </Box>
+                }
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: 'primary.main',
+                      fontSize: '1rem',
+                      fontWeight: 'medium',
+                      boxShadow: 3
+                    }
+                  },
+                  arrow: {
+                    sx: {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+              >
+                <InfoIcon
+                  sx={{
+                    paddingLeft: .5,
+                    fontSize: '1.4rem',
+                    color: porRetencion > 0 ? 'primary.dark' : 'action.active',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+              </Tooltip>
               <Button
                 onClick={viewDialogListRetenciones}
                 variant="contained"
@@ -207,35 +318,89 @@ const FormCreateRetencionesOp = () => {
               </Button>
             </Box>
           </Grid>
+
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-            <Controller
-              name='montoRetencion'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  fullWidth
-                  value={value}
-                  onChange={onChange}
-                  label='Monto Retención'
-                  variant='outlined'
-                  size='small'
+            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+              <Controller
+                name='montoRetencion'
+                control={control}
+                render={({ field: { value, onChange, ref } }) => (
+                  <NumericFormat
+                    customInput={TextField}
+                    value={value}
+                    onValueChange={(values) => {
+                      onChange(values.floatValue);
+                    }}
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    decimalScale={2}
+                    fullWidth
+                    label='Monto Retención'
+                    variant='outlined'
+                    size='small'
+                    disabled={isDisabledRetencion}
+                    inputRef={ref}
+                  />
+                )}
+              />
+              <Tooltip
+                title={
+                  <Box sx={{
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    p: 0.5,
+                    color: 'common.white'
+                  }}>
+                    Base Total: { FormatNumber(baseTotalDocumentos) }
+                  </Box>
+                }
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: 'primary.main',
+                      fontSize: '1rem',
+                      fontWeight: 'medium',
+                      boxShadow: 3
+                    }
+                  },
+                  arrow: {
+                    sx: {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+              >
+                <InfoIcon
+                  sx={{
+                    paddingLeft: .5,
+                    fontSize: '1.4rem',
+                    color: baseTotalDocumentos > 0 ? 'primary.dark' : 'action.active',
+                    transition: 'all 0.2s ease'
+                  }}
                 />
-              )}
-            />
+              </Tooltip>
+            </Box>
           </Grid>
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
               name='montoRetencion'
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                  fullWidth
+              render={({ field: { value, onChange, ref } }) => (
+                <NumericFormat
+                  customInput={TextField}
                   value={value}
-                  onChange={onChange}
+                  onValueChange={(values) => {
+                    onChange(values.floatValue);
+                  }}
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  decimalScale={2}
+                  fullWidth
                   label='Monto Retenido'
                   variant='outlined'
                   size='small'
                   disabled
+                  inputRef={ref}
                 />
               )}
             />

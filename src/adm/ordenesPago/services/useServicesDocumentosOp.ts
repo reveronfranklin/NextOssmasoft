@@ -7,6 +7,7 @@ import { RootState } from "src/store"
 import { useDispatch } from 'react-redux'
 
 import { IGetListByOrdenPago } from '../interfaces/documentosOp/listDocumentoByOrdenPago'
+import { Documentos } from '../interfaces/documentosOp/listDocumentoByOrdenPago'
 import { ICreateDocumentosOp } from '../interfaces/documentosOp/createDocumentosOp'
 import { IUpdateDocumentosOp } from '../interfaces/documentosOp/updateDocumentosOp'
 import { IDeleteDocumentoOp } from '../interfaces/documentosOp/deleteDocumentosOp'
@@ -29,14 +30,12 @@ const useServicesDocumentosOp = () => {
   const dispatch = useDispatch()
   const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
-  const getListDocumentos = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<IGetListByOrdenPago>> => {
+  const getListDocumentos = useCallback(async (filters: IGetListByOrdenPago): Promise<IApiResponse<Documentos>> => {
     try {
       setLoading(true)
 
-      const responseFetch = await ossmmasofApi.post<IResponseBase<IGetListByOrdenPago>>(UrlServices.GETDOCUMENTOSOPBYORDENPAGO, filters)
-      const responseHandleApi = handleApiResponse<IGetListByOrdenPago>(responseFetch.data, undefined, setMessage, setError)
-
-      dispatch(setDocumentCount(responseHandleApi?.cantidadRegistros))
+      const responseFetch = await ossmmasofApi.post<IResponseBase<Documentos>>(UrlServices.GETDOCUMENTOSOPBYORDENPAGO, filters)
+      const responseHandleApi = handleApiResponse<Documentos>(responseFetch.data, undefined, setMessage, setError)
 
       return responseHandleApi
     } catch (e: any) {

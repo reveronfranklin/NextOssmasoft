@@ -1,14 +1,19 @@
+"use client"
+
 import { useState, useCallback } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
-import Spinner from 'src/@core/components/spinner'
-import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
-import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
-import ColumnsDataGridListCompromiso from '../../config/Datagrid/columnsDataGridListDocumentosOp'
+import { Box, Grid, styled } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
 import { IGetListByOrdenPago } from './../../interfaces/documentosOp/listDocumentoByOrdenPago'
-import { setDocumentCount } from "src/store/apps/ordenPago"
+import { setDocumentCount, setBaseTotalDocumentos } from "src/store/apps/ordenPago"
+import { useDispatch } from 'react-redux'
+import { useDocumentosOpData } from '../../hooks/useDocumentosOpData'
+
+import ColumnsDataGridListCompromiso from '../../config/Datagrid/columnsDataGridListDocumentosOp'
+import FormatNumber from 'src/utilities/format-numbers'
+import Spinner from 'src/@core/components/spinner'
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 600,
@@ -19,29 +24,26 @@ const DataGridComponent = () => {
   const [pageNumber, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(5)
 
-  const qc: QueryClient = useQueryClient()
   const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
-
-  const { getListDocumentos } = useServicesDocumentosOp()
+  const { fetchDocumentos } = useDocumentosOpData();
 
   const columnsDataGridListCompromiso = ColumnsDataGridListCompromiso()
+  const dispatch = useDispatch()
 
   const filter: IGetListByOrdenPago = { codigoOrdenPago }
 
   const query = useQuery({
     queryKey: ['documentosTable', pageSize, pageNumber, codigoOrdenPago],
-    queryFn: () => getListDocumentos(filter),
-    initialData: () => {
-      return qc.getQueryData(['documentosTable', pageSize, pageNumber, codigoOrdenPago])
-    },
-    staleTime: 1000 * 60,
-    retry: 3,
-  }, qc)
+    queryFn: () => fetchDocumentos(filter),
+  })
 
-  const rows: any[] = query?.data?.data || []
-  const rowCount = query?.data?.cantidadRegistros
+  const rows = query.isSuccess ? query.data.data : []
 
-  setDocumentCount(rowCount)
+  const rowCount = query.isSuccess ? query.data.cantidadRegistros : 0;
+  const total1 = query.data?.total1 ?? 0
+
+  dispatch(setDocumentCount(rowCount))
+  dispatch(setBaseTotalDocumentos(total1))
 
   const handlePageChange = useCallback((newPage: number) => {
     setPage(newPage)
@@ -54,13 +56,23 @@ const DataGridComponent = () => {
 
   return (
     <>
+      <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+        <Grid item xs={2} sm={6}>
+          <small style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
+              <label style={{ marginRight: '5px' }}><b>Base Total:</b></label>
+              {FormatNumber(total1)}
+            </div>
+          </small>
+        </Grid>
+      </Grid>
       {
         query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
           <StyledDataGridContainer>
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoDocumentoOp}
+              getRowId={(row) => row.codigoDocumentoOp }
               rows={rows}
               rowCount={rowCount}
               columns={columnsDataGridListCompromiso}
