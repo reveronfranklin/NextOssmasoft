@@ -196,6 +196,7 @@ const FormCreateRetencionesOp = () => {
 
   useEffect(() => {
     if (retencionOpSeleccionado) {
+      setIsDisabledRetencion(true)
       setTipoRetencionId(retencionOpSeleccionado?.tipoRetencionId || 0);
       setPorRetencion(retencionOpSeleccionado?.porRetencion || 0);
 
