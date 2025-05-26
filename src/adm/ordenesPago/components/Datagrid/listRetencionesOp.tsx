@@ -56,8 +56,9 @@ const DataGridComponent = () => {
 
   const handleDoubleClick = (data: { row: Retencion }) => {
     const { row } = data
-    dispatch(setIsCollapseRetenciones(true))
+
     dispatch(setRetencionOpSeleccionado(row))
+    dispatch(setIsCollapseRetenciones(true))
   }
 
   return (

@@ -34,6 +34,17 @@ function ColumnsDataGridRetencionesOp() {
     },
     {
       flex: 0,
+      headerName: 'Base',
+      field: 'baseImponible',
+      editable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography variant='body2' sx={{ color: 'text.primary' }}>
+          {params.row.baseImponible === 0 ? 0 : FormatNumber(params.row.baseImponible)}
+        </Typography>
+      )
+    },
+    {
+      flex: 0,
       headerName: '%',
       field: 'porRetencion',
       editable: false,

@@ -77,6 +77,7 @@ const DataGridComponent = () => {
 
         try {
             const response = await fetchUpdatePucByOrdenPago(updateDto)
+
             if (response?.data?.isValid) {
                 toast.success('Registro actualizado')
             }
