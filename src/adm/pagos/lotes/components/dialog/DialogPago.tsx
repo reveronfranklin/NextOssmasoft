@@ -5,12 +5,9 @@ import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
 import Icon from 'src/@core/components/icon';
 import { RootState } from 'src/store';
-import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
-import TwoColumnLayout from '../../../../shared/views/twoColumnLayout';
-import TabsComponent from '../../../../shared/components/Tabs';
-import { tabs } from '../tabs/config';
-import FormCreate from '../forms/lotes/FormCreate';
-import FormUpdate from '../forms/lotes/FormUpdate';
+import { setIsOpenDialogPago, setTypeOperation } from 'src/store/apps/pagos/lote-pagos';
+import FromCreate from '../forms/pagos/FormCreate';
+import FromUpdate from '../forms/pagos/FormUpdate';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -21,10 +18,10 @@ const Transition = forwardRef(function Transition(
 
 const DialogLote = () => {
     const dispatch = useDispatch()
-    const { typeOperation, isOpenDialogLote } = useSelector((state: RootState) => state.admLote )
+    const { typeOperation, isOpenDialogPago } = useSelector((state: RootState) => state.admLotePagos )
 
     const handleClose = () => {
-        dispatch(setIsOpenDialogLote(false))
+        dispatch(setIsOpenDialogPago(false))
         dispatch(setTypeOperation(null))
     }
 
@@ -34,19 +31,8 @@ const DialogLote = () => {
                 <div key={typeOperation}>
                     {
                         typeOperation === 'create'
-                        ? <FormCreate />
-                        : (
-                            <TwoColumnLayout
-                                leftContent={
-                                    <FormUpdate />
-                                }
-                                rightContent={
-                                    <TabsComponent
-                                        tabs={tabs}
-                                    />
-                                }
-                            />
-                        )
+                        ? <FromCreate />
+                        : <FromUpdate />
                     }
                 </div>
             </Fade>
@@ -57,9 +43,9 @@ const DialogLote = () => {
         <Card>
             <Dialog
                 fullWidth
-                maxWidth={ typeOperation === 'create' ? 'md' : 'xl' }
+                maxWidth='lg'
                 scroll='body'
-                open={isOpenDialogLote}
+                open={isOpenDialogPago}
                 TransitionComponent={Transition}
                 onClose={() => handleClose()}
                 aria-labelledby='modal-modal-title'
@@ -67,7 +53,7 @@ const DialogLote = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: (typeOperation === 'create' ? '50vh' : '80vh' ),
+                        height: '70vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0
@@ -82,7 +68,7 @@ const DialogLote = () => {
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Lotes de pago ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
+                                Pagos ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
                             </Typography>
                             <IconButton
                                 size='small'
