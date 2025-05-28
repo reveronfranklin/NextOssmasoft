@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useSelector, useDispatch } from 'react-redux'
+import useInvalidateReset from 'src/hooks/useInvalidateReset'
 import { RootState } from 'src/store'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import dayjs from 'dayjs'
@@ -44,11 +45,13 @@ const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
   const [baseImponible, setBaseImponible] = useState<number>(0)
   const [montoImpuesto, setMontoImpuesto] = useState<number>(0)
+  const [montoImpuestoExento, setMontoImpuestoExento] = useState<number>(0)
   const [retencionMonto, setRetencionMonto] = useState<number>(0)
   const [impuesto, setImpuesto] = useState<number>(0)
   const [estatusFisico, setEstatusFisico] = useState<number>(0)
   const autocompleteRef = useRef()
 
+  const invalidateReset = useInvalidateReset()
   const dispatch = useDispatch()
   const qc: QueryClient = useQueryClient()
   const {
@@ -155,19 +158,19 @@ const FormCreateDocumentosOp = () => {
     }
   }, [setValue, typeOperationDocumento, reset])
 
-  const invalidateAndReset = (nameTable: string) => {
-    if (nameTable && nameTable !== null) {
-      qc.invalidateQueries({
-        queryKey: [nameTable]
-      })
-    }
-    clearForm()
-    dispatch(setIsOpenDialogConfirmButtons(false))
+  // const invalidateAndReset = (nameTable: string) => {
+  //   if (nameTable && nameTable !== null) {
+  //     qc.invalidateQueries({
+  //       queryKey: [nameTable]
+  //     })
+  //   }
+  //   clearForm()
+  //   dispatch(setIsOpenDialogConfirmButtons(false))
 
-    setTimeout(() => {
-      dispatch(setIsOpenDialogDocumentosEdit(false))
-    }, 10000)
-  }
+  //   setTimeout(() => {
+  //     dispatch(setIsOpenDialogDocumentosEdit(false))
+  //   }, 10000)
+  // }
 
   const handleCreateDocumento = async (): Promise<void> => {
     try {
@@ -197,7 +200,10 @@ const FormCreateDocumentosOp = () => {
       const result = await createDocumentos(newDocumento)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+          resetForm: () => clearForm(),
+        })
       }
     } catch (e: any) {
       console.error(e)
@@ -234,7 +240,9 @@ const FormCreateDocumentosOp = () => {
       const result = await updateDocumentos(Documento)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+        })
       }
     } catch (e: any) {
       console.error(e)
@@ -252,7 +260,10 @@ const FormCreateDocumentosOp = () => {
       const result = await deleteDocumentos(data)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+          resetForm: () => clearForm(),
+        })
       }
     } catch (e: any) {
       console.error(e)
@@ -265,6 +276,7 @@ const FormCreateDocumentosOp = () => {
     setBaseImponible(0)
     setMontoDocumento(0)
     setMontoImpuesto(0)
+    setMontoImpuestoExento(0)
 
     setValue('codigoDocumentoOp', 0)
     setValue('codigoOrdenPago', 0)
@@ -359,6 +371,7 @@ const FormCreateDocumentosOp = () => {
       setMontoDocumento(documentoOpSeleccionado['montoDocumento'])
       setBaseImponible(documentoOpSeleccionado['baseImponible'])
       setMontoImpuesto(documentoOpSeleccionado['montoImpuesto'])
+      setMontoImpuestoExento(documentoOpSeleccionado['montoImpuestoExento'])
     }
   }, [documentoOpSeleccionado])
 
@@ -724,30 +737,26 @@ const FormCreateDocumentosOp = () => {
             </Grid>
 
             <Grid item xs={3}>
-              <Controller
-                name='montoImpuestoExento'
-                control={control}
-                rules={{
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: 'Solo se permiten números'
-                  },
-                  minLength: {
-                    value: 1,
-                    message: 'Mínimo 1 dígito requerido'
-                  }
+              <NumericFormat
+                value={montoImpuestoExento}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='Impuesto Exento'
+                onFocus={event => {
+                  event.target.select()
                 }}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    fullWidth
-                    value={value}
-                    onChange={onChange}
-                    label='Monto Impuesto Exento'
-                    variant='outlined'
-                    error={!!errors.montoImpuestoExento}
-                    helperText={errors.montoImpuestoExento ? errors.montoImpuestoExento.message : null}
-                  />
-                )}
+                placeholder='0,00'
+                error={Boolean(errors.montoImpuesto)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
               />
             </Grid>
 
