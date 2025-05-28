@@ -10,7 +10,6 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import dayjs from 'dayjs'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { NumericFormat } from 'react-number-format'
 
 // Components
@@ -25,7 +24,6 @@ import CustomButtonDialog from './../../components/BottonsActions'
 // Store actions
 import {
   setIsOpenDialogConfirmButtons,
-  setIsOpenDialogDocumentosEdit,
   resetDocumentoOpSeleccionado,
   setDocumentoOpSeleccionado,
   setIsOpenDialogImpuestoDocumentosEdit
@@ -53,7 +51,6 @@ const FormCreateDocumentosOp = () => {
 
   const invalidateReset = useInvalidateReset()
   const dispatch = useDispatch()
-  const qc: QueryClient = useQueryClient()
   const {
     documentoOpSeleccionado,
     typeOperationDocumento,
@@ -157,20 +154,6 @@ const FormCreateDocumentosOp = () => {
       reset(defaultValues)
     }
   }, [setValue, typeOperationDocumento, reset])
-
-  // const invalidateAndReset = (nameTable: string) => {
-  //   if (nameTable && nameTable !== null) {
-  //     qc.invalidateQueries({
-  //       queryKey: [nameTable]
-  //     })
-  //   }
-  //   clearForm()
-  //   dispatch(setIsOpenDialogConfirmButtons(false))
-
-  //   setTimeout(() => {
-  //     dispatch(setIsOpenDialogDocumentosEdit(false))
-  //   }, 10000)
-  // }
 
   const handleCreateDocumento = async (): Promise<void> => {
     try {
