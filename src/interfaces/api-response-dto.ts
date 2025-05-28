@@ -1,3 +1,4 @@
+
 export interface IApiResponseBase {
   isValid?: boolean;
   linkData?: string | null;

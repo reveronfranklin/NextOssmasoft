@@ -9,8 +9,8 @@ import ColumnsDataGridListPucByOrden from '../../config/Datagrid/columnsDataGrid
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import Spinner from 'src/@core/components/spinner'
 import useServices from '../../services/useServices'
-import toast from 'react-hot-toast'
 import FormatNumber from 'src/utilities/format-numbers'
+import useInvalidateReset from 'src/hooks/useInvalidateReset'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
@@ -30,6 +30,7 @@ const DataGridComponent = () => {
 
     const columnsDataGridListPucByOrden = ColumnsDataGridListPucByOrden()
     const qc: QueryClient = useQueryClient()
+    const invalidateReset = useInvalidateReset()
 
     const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
     const filter: IfilterByOrdenPago = { codigoOrdenPago }
@@ -78,13 +79,16 @@ const DataGridComponent = () => {
         try {
             const response = await fetchUpdatePucByOrdenPago(updateDto)
 
-            if (response?.data?.isValid) {
-                toast.success('Registro actualizado')
+            if (response?.isValid) {
+                invalidateReset({
+                    tables: ['listPucByOrdenPago', 'listCompromisoByOrdenPago', 'compromisosTable'],
+                    resetForm: () => {  console.log('Form reset') },
+                    delay: 10000,
+                    closeDialogs: true
+                })
             }
         } catch (error) {
             console.error(error)
-        } finally {
-            qc.invalidateQueries({ queryKey: ['listPucByOrdenPago'] })
         }
     }, [fetchUpdatePucByOrdenPago, qc])
 
