@@ -104,8 +104,8 @@ const FormCreateDocumentosOp = () => {
 
   useEffect(() => {
     const calculateValues = async () => {
-      if (montoDocumento > 0 && impuesto !== 0) {
-        const base = await calcularBaseImponible(montoDocumento, impuesto)
+      if (montoDocumento > 0 && impuesto !== 0 && montoImpuestoExento >= 0) {
+        const base = await calcularBaseImponible(montoDocumento, impuesto, montoImpuestoExento)
         setBaseImponible(base)
 
         if (base > 0) {
@@ -123,7 +123,7 @@ const FormCreateDocumentosOp = () => {
     }
 
     calculateValues()
-  }, [montoDocumento, impuesto])
+  }, [montoDocumento, impuesto, montoImpuestoExento])
 
   useEffect(() => {
     const calculateMontoRetenido = async () => {
@@ -174,7 +174,7 @@ const FormCreateDocumentosOp = () => {
         baseImponible: Number(baseImponible),
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
-        montoImpuestoExento: getValues('montoImpuestoExento'),
+        montoImpuestoExento: Number(montoImpuestoExento),
         montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
@@ -214,7 +214,7 @@ const FormCreateDocumentosOp = () => {
         baseImponible: Number(baseImponible),
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
-        montoImpuestoExento: getValues('montoImpuestoExento'),
+        montoImpuestoExento: Number(montoImpuestoExento),
         montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
@@ -679,7 +679,7 @@ const FormCreateDocumentosOp = () => {
                 allowNegative={false}
                 decimalScale={2}
                 fixedDecimalScale={true}
-                label='% Impuesto'
+                label='Impuesto'
                 onFocus={event => {
                   event.target.select()
                 }}
@@ -729,8 +729,9 @@ const FormCreateDocumentosOp = () => {
                 decimalScale={2}
                 fixedDecimalScale={true}
                 label='Impuesto Exento'
-                onFocus={event => {
-                  event.target.select()
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setMontoImpuestoExento(value || 0)
                 }}
                 placeholder='0,00'
                 error={Boolean(errors.montoImpuesto)}
