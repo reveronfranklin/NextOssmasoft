@@ -7,6 +7,7 @@ import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
 import { RootState } from 'src/store';
 import { setIsOpenDialogPago, setTypeOperation, setCodigoLote } from 'src/store/apps/pagos/lote-pagos';
+import { selectLoteStatus } from 'src/store/apps/pagos/lotes';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServicesPagos } from '../../services';
@@ -27,9 +28,8 @@ const DataGridComponent = () => {
     const qc: QueryClient       = useQueryClient()
     const dispatch              = useDispatch()
 
-    const {
-        codigoLote,
-    } = useSelector((state: RootState) => state.admLote )
+    const { codigoLote }    = useSelector((state: RootState) => state.admLote )
+    const loteStatus        = useSelector(selectLoteStatus)
 
     const {
         getList,
@@ -101,8 +101,6 @@ const DataGridComponent = () => {
           await updateAmount(updateAmountData)
         } catch (error) {
           console.error('handleOnCellEditCommit', error)
-        } finally {
-          /* qc.invalidateQueries({ queryKey: ['lotePagosTable'] }) */
         }
     }
 
@@ -112,6 +110,18 @@ const DataGridComponent = () => {
             dispatch(setIsOpenDialogPago(true))
             dispatch(setCodigoLote(codigoLote))
         }, 1500)
+    }
+
+    const handleDownloadFile = async () => {
+        console.log('handleDownloadFile')
+
+        /* const element = document.createElement('a')
+        const file = new Blob([textToDownload], { type: 'text/plain' })
+        element.href = URL.createObjectURL(file)
+        element.download = nameFile
+        document.body.appendChild(element)
+        element.click()
+        document.body.removeChild(element) */
     }
 
     return (
@@ -146,6 +156,8 @@ const DataGridComponent = () => {
                                     clearSearch: () => handleSearch(''),
                                     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
                                     onAdd: handleCreate,
+                                    onDownloadFile: handleDownloadFile,
+                                    downloadFile: (loteStatus === 'AP'),
                                     sx: {
                                         marginTop: 6,
                                         marginRight: 0,

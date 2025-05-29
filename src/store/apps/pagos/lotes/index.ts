@@ -31,6 +31,10 @@ export const admLoteSlice = createSlice({
         }
     }
 })
+
+// Selectores (Getters)
+export const selectLoteStatus = (state: any) => state.admLote.lote.status;
+
 export const {
     setTypeOperation,
     setIsOpenDialogLote,
