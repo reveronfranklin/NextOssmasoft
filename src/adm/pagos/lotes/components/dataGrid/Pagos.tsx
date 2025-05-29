@@ -31,13 +31,17 @@ const DataGridComponent = () => {
     const { codigoLote }    = useSelector((state: RootState) => state.admLote )
     const loteStatus        = useSelector(selectLoteStatus)
     const loteFileName      = useSelector(selectLoteFileName)
-    const { downloadFile }  = useServices()
 
     const {
         getList,
         updateAmount,
         message
     } = useServicesPagos()
+
+    const {
+        downloadFile,
+        message: messageDownloadFile
+    }  = useServices()
 
     const columns   = useColumnsDataGrid()
     const staleTime = 1000 * 60 * 60
@@ -115,10 +119,16 @@ const DataGridComponent = () => {
     }
 
     const handleDownloadFile = async (fileName: string) => {
+        if (!fileName) {
+            console.error('File name is required for downloading.')
+
+            return
+        }
+
         const downloadedFile = await downloadFile(fileName)
 
-        if (!downloadedFile) {
-            console.error('Error downloading file:', downloadedFile)
+        if (!downloadedFile || messageDownloadFile?.text) {
+            console.error('Error downloading file:', messageDownloadFile?.text || downloadedFile?.message)
 
             return
         }
@@ -131,6 +141,20 @@ const DataGridComponent = () => {
         document.body.appendChild(element)
         element.click()
         document.body.removeChild(element)
+    }
+
+    const getSeverity = (): any => {
+        let severity = 'success'
+
+        if (message?.text) {
+            severity = message?.isValid ? 'success' : 'error'
+        }
+
+        if (messageDownloadFile?.text) {
+            severity = messageDownloadFile?.isValid ? 'success' : 'error'
+        }
+
+        return severity
     }
 
     return (
@@ -177,10 +201,10 @@ const DataGridComponent = () => {
                             }}
                         />
                         <AlertMessage
-                            message={message?.text ?? ''}
-                            severity={message?.isValid ? 'success' : 'error'}
+                            message={(message?.text || messageDownloadFile?.text) ?? ''}
+                            severity={getSeverity()}
                             duration={10000}
-                            show={message?.text ? true : false}
+                            show={(message?.text || messageDownloadFile?.text) ? true : false}
                         />
                     </StyledDataGridContainer>
                 )
