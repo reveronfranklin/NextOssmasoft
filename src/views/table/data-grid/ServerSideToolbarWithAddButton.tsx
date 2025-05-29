@@ -9,12 +9,14 @@ interface ServerSideToolbarWithAddButtonProps {
   clearSearch: () => void;
   onChange: (e: ChangeEvent) => void;
   onAdd: () => void;
+  onDownloadFile: () => void;
+  downloadFile?: boolean;
   sx: any;
 }
 
 const ServerSideToolbarWithAddButton = (props: ServerSideToolbarWithAddButtonProps) => {
   // Extraer todas las props
-  const { onAdd, value, clearSearch, onChange, sx, ...otherProps } = props
+  const { onAdd, onDownloadFile, value, clearSearch, onChange, sx, downloadFile = false, ...otherProps } = props
 
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
@@ -24,6 +26,15 @@ const ServerSideToolbarWithAddButton = (props: ServerSideToolbarWithAddButtonPro
           <Icon icon='ci:add-row' fontSize={20} />
         </IconButton>
       </Tooltip>
+
+      {/* Boton download */}
+      { downloadFile && (
+        <Tooltip title='Descargar .txt'>
+          <IconButton color='primary' size='small' onClick={onDownloadFile} sx={sx}>
+          <Icon icon='ci:download' fontSize={20}/>
+          </IconButton>
+        </Tooltip>
+      )}
 
       {/* Pasar las props requeridas al ServerSideToolbar */}
       <ServerSideToolbar
