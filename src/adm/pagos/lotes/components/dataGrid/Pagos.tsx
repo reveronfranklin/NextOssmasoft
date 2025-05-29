@@ -39,7 +39,6 @@ const DataGridComponent = () => {
         message
     } = useServicesPagos()
 
-
     const columns   = useColumnsDataGrid()
     const staleTime = 1000 * 60 * 60
 
@@ -120,6 +119,7 @@ const DataGridComponent = () => {
 
         if (!downloadedFile) {
             console.error('Error downloading file:', downloadedFile)
+
             return
         }
 

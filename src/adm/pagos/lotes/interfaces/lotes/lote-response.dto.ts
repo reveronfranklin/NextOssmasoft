@@ -13,7 +13,7 @@ export interface LoteResponseDto {
     status:              string;
     titulo:              string;
     codigoPresupuesto:   number;
-    fileName:            string;
+    fileName?:            string;
 }
 
 export interface FechaPagoDto {
