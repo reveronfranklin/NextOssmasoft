@@ -16,5 +16,7 @@ export enum UrlServices {
     DELETE_PAGO                 = '/AdmPagos/Delete',
     UPDATE_MONTO_PAGO           = '/AdmPagos/UpdateMonto',
 
-    GET_ORDEN_PAGO_PENDIENTES   = '/AdmOrdenesPagoPendientesPago/GetAll'
+    GET_ORDEN_PAGO_PENDIENTES   = '/AdmOrdenesPagoPendientesPago/GetAll',
+
+    GET_FILE_LOTE               = '/Files/GetTxtFiles/',
 }

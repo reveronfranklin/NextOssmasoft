@@ -7,10 +7,10 @@ import Spinner from 'src/@core/components/spinner';
 import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
 import { RootState } from 'src/store';
 import { setIsOpenDialogPago, setTypeOperation, setCodigoLote } from 'src/store/apps/pagos/lote-pagos';
-import { selectLoteStatus } from 'src/store/apps/pagos/lotes';
+import { selectLoteStatus, selectLoteFileName } from 'src/store/apps/pagos/lotes';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
-import { useServicesPagos } from '../../services';
+import { useServices, useServicesPagos } from '../../services';
 import { PagoFilterDto, PagoAmountDto } from '../../interfaces';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -19,10 +19,10 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage]                                     = useState<number>(0)
-    const [pageSize, setPageSize]                                   = useState<number>(5)
-    const [searchText, setSearchText]                               = useState<string>('')
-    const [buffer, setBuffer]                                       = useState<string>('')
+    const [pageNumber, setPage]         = useState<number>(0)
+    const [pageSize, setPageSize]       = useState<number>(5)
+    const [searchText, setSearchText]   = useState<string>('')
+    const [buffer, setBuffer]           = useState<string>('')
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
@@ -30,12 +30,15 @@ const DataGridComponent = () => {
 
     const { codigoLote }    = useSelector((state: RootState) => state.admLote )
     const loteStatus        = useSelector(selectLoteStatus)
+    const loteFileName      = useSelector(selectLoteFileName)
+    const { downloadFile }  = useServices()
 
     const {
         getList,
         updateAmount,
         message
-    }  = useServicesPagos()
+    } = useServicesPagos()
+
 
     const columns   = useColumnsDataGrid()
     const staleTime = 1000 * 60 * 60
@@ -112,16 +115,22 @@ const DataGridComponent = () => {
         }, 1500)
     }
 
-    const handleDownloadFile = async () => {
-        console.log('handleDownloadFile')
+    const handleDownloadFile = async (fileName: string) => {
+        const downloadedFile = await downloadFile(fileName)
 
-        /* const element = document.createElement('a')
-        const file = new Blob([textToDownload], { type: 'text/plain' })
-        element.href = URL.createObjectURL(file)
-        element.download = nameFile
+        if (!downloadedFile) {
+            console.error('Error downloading file:', downloadedFile)
+            return
+        }
+
+        const element       = document.createElement('a')
+        const file          = new Blob([downloadedFile], { type: 'text/plain' })
+        element.href        = URL.createObjectURL(file)
+        element.download    = fileName
+
         document.body.appendChild(element)
         element.click()
-        document.body.removeChild(element) */
+        document.body.removeChild(element)
     }
 
     return (
@@ -156,7 +165,7 @@ const DataGridComponent = () => {
                                     clearSearch: () => handleSearch(''),
                                     onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
                                     onAdd: handleCreate,
-                                    onDownloadFile: handleDownloadFile,
+                                    onDownloadFile: () => handleDownloadFile(loteFileName),
                                     downloadFile: (loteStatus === 'AP'),
                                     sx: {
                                         marginTop: 6,

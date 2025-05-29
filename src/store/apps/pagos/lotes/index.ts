@@ -33,7 +33,8 @@ export const admLoteSlice = createSlice({
 })
 
 // Selectores (Getters)
-export const selectLoteStatus = (state: any) => state.admLote.lote.status;
+export const selectLoteStatus   = (state: any) => state.admLote.lote.status;
+export const selectLoteFileName = (state: any) => state.admLote.lote.fileName;
 
 export const {
     setTypeOperation,
