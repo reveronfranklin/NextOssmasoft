@@ -5,10 +5,10 @@
  * @returns {number} - La base imponible.
  */
 
-const calcularBaseImponible = async (montoDocumento, porcentajeIva) => {
+const calcularBaseImponible = async (montoDocumento, porcentajeIva, montoImpuestoExento) => {
   return new Promise((resolve) => {
     if (montoDocumento > 0) {
-      const baseImponible = Math.round((montoDocumento / (1 + (porcentajeIva / 100))) * 100) / 100
+      const baseImponible = parseFloat(((montoDocumento - montoImpuestoExento) / ((porcentajeIva / 100) + 1)).toFixed(2))
       resolve(baseImponible)
     } else {
       resolve(0)

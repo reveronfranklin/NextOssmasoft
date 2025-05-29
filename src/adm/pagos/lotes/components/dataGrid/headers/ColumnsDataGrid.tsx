@@ -5,12 +5,12 @@ import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-
 import { LoteDto } from '../../../interfaces';
 import {
     setIsOpenDialogLote,
     setLoteShow,
-    setTypeOperation
+    setTypeOperation,
+    setCodigoLote
 } from 'src/store/apps/pagos/lotes';
 
 const useColumnsDataGrid = (): GridColDef[] => {
@@ -20,6 +20,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
         dispatch(setTypeOperation('update'))
         dispatch(setIsOpenDialogLote(true))
         dispatch(setLoteShow(lote))
+        dispatch(setCodigoLote(lote.codigoLotePago))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -89,7 +90,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
         },
         {
             flex: 1.5,
-            headerName: 'Numero de cuenta',
+            headerName: 'Número de cuenta',
             field: 'numeroCuenta',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>

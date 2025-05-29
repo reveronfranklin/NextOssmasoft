@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled, Typography } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
@@ -36,9 +36,9 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
   const { tipoRetencion } = useSelector((state: RootState) => state.admOrdenPago)
 
   const query = useQuery({
-    queryKey: ['retencionesTable'],
+    queryKey: ['retencionesTable', tipoRetencion],
     queryFn: () => getRetenciones(),
-    initialData: () => qc.getQueryData(['retencionesTable']),
+    initialData: () => qc.getQueryData(['retencionesTable', tipoRetencion]),
     staleTime: 1000 * 60,
   })
 
@@ -78,6 +78,12 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
   }
 
   const paginatedRows = filteredRows.slice(pageNumber * pageSize, pageNumber * pageSize + pageSize)
+
+  useEffect(() => {
+    if (tipoRetencion !== undefined) {
+      query.refetch()
+    }
+  }, [tipoRetencion])
 
   return (
     <>

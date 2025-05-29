@@ -6,6 +6,7 @@ export const admLoteSlice = createSlice({
     initialState: {
         typeOperation: null,
         isOpenDialogLote: false,
+        codigoLote: null,
         lote: {} as LoteResponseDto,
         batchPaymentDate: {} as LoteFilterFechaPagoDto
     },
@@ -24,13 +25,22 @@ export const admLoteSlice = createSlice({
         },
         setBatchPaymentDate: (state, action) => {
             state.batchPaymentDate = action.payload
+        },
+        setCodigoLote: (state, action) => {
+            state.codigoLote = action.payload
         }
     }
 })
+
+// Selectores (Getters)
+export const selectLoteStatus   = (state: any) => state.admLote.lote.status;
+export const selectLoteFileName = (state: any) => state.admLote.lote.fileName;
+
 export const {
     setTypeOperation,
     setIsOpenDialogLote,
     setLoteShow,
     resetLoteShow,
-    setBatchPaymentDate
+    setBatchPaymentDate,
+    setCodigoLote
 } = admLoteSlice.actions

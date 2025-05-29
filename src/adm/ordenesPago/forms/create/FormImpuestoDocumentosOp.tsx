@@ -541,39 +541,41 @@ const FormImpuestoDocumentosOp = () => {
           </Grid>
         </Grid>
       </form>
-      <CustomButtonDialog
-        saveButtonConfig={{
-          label: 'Crear',
-          onClick: handleCreateImpuestoDocumentosOp,
-          show: !showOnlyCreate,
-          confirm: true,
-          disabled: !isValid || loading
-        }}
-        updateButtonConfig={{
-          label: 'Actualizar',
-          onClick: handleUpdateImpuestoDocumentosOp,
-          show: showOnlyCreate,
-          confirm: true,
-          disabled: !isValid || loading
-        }}
-        deleteButtonConfig={{
-          label: 'Eliminar',
-          onClick: handleDeleteImpuestoDocumentosOp,
-          show: showOnlyCreate,
-          confirm: true,
-          disabled: false
-        }}
-        clearButtonConfig={{
-          label: 'Limpiar',
-          onClick: async () => clearForm(),
-          show: false,
-          disabled: false
-        }}
-        loading={loading}
-        isOpenDialog={isOpenDialogConfirmButtons}
-        setIsOpenDialog={setIsOpenDialogConfirmButtons}
-        isFormValid={isValid}
-      />
+      <Box sx={{ paddingTop: 4 }}>
+        <CustomButtonDialog
+          saveButtonConfig={{
+            label: 'Crear',
+            onClick: handleCreateImpuestoDocumentosOp,
+            show: !showOnlyCreate,
+            confirm: true,
+            disabled: !isValid || loading
+          }}
+          updateButtonConfig={{
+            label: 'Actualizar',
+            onClick: handleUpdateImpuestoDocumentosOp,
+            show: showOnlyCreate,
+            confirm: true,
+            disabled: !isValid || loading
+          }}
+          deleteButtonConfig={{
+            label: 'Eliminar',
+            onClick: handleDeleteImpuestoDocumentosOp,
+            show: showOnlyCreate,
+            confirm: true,
+            disabled: false
+          }}
+          clearButtonConfig={{
+            label: 'Limpiar',
+            onClick: async () => clearForm(),
+            show: false,
+            disabled: false
+          }}
+          loading={loading}
+          isOpenDialog={isOpenDialogConfirmButtons}
+          setIsOpenDialog={setIsOpenDialogConfirmButtons}
+          isFormValid={isValid}
+        />
+      </Box>
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}

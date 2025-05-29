@@ -4,12 +4,12 @@ import { Controller, useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useSelector, useDispatch } from 'react-redux'
+import useInvalidateReset from 'src/hooks/useInvalidateReset'
 import { RootState } from 'src/store'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import dayjs from 'dayjs'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
-import { useQueryClient, QueryClient } from '@tanstack/react-query'
 import { NumericFormat } from 'react-number-format'
 
 // Components
@@ -20,12 +20,10 @@ import TipoOperacion from '../../components/AutoComplete/documentos/TipoOperaci�
 import TipoTransaction from '../../components/AutoComplete/documentos/TipoTransaccion'
 import useServicesDocumentosOp from '../../services/useServicesDocumentosOp'
 import CustomButtonDialog from './../../components/BottonsActions'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 
 // Store actions
 import {
   setIsOpenDialogConfirmButtons,
-  setIsOpenDialogDocumentosEdit,
   resetDocumentoOpSeleccionado,
   setDocumentoOpSeleccionado,
   setIsOpenDialogImpuestoDocumentosEdit
@@ -39,17 +37,20 @@ import calcularBaseImponible from '../../helpers/baseImponible'
 import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
+
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
   const [baseImponible, setBaseImponible] = useState<number>(0)
   const [montoImpuesto, setMontoImpuesto] = useState<number>(0)
+  const [montoImpuestoExento, setMontoImpuestoExento] = useState<number>(0)
   const [retencionMonto, setRetencionMonto] = useState<number>(0)
   const [impuesto, setImpuesto] = useState<number>(0)
   const [estatusFisico, setEstatusFisico] = useState<number>(0)
   const autocompleteRef = useRef()
 
+  const invalidateReset = useInvalidateReset()
   const dispatch = useDispatch()
-  const qc: QueryClient = useQueryClient()
   const {
     documentoOpSeleccionado,
     typeOperationDocumento,
@@ -58,8 +59,9 @@ const FormCreateDocumentosOp = () => {
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const {
+    message,
     presupuestoSeleccionado,
-    message, loading,
+    loading,
     createDocumentos,
     updateDocumentos,
     deleteDocumentos
@@ -102,8 +104,8 @@ const FormCreateDocumentosOp = () => {
 
   useEffect(() => {
     const calculateValues = async () => {
-      if (montoDocumento > 0 && impuesto !== 0) {
-        const base = await calcularBaseImponible(montoDocumento, impuesto)
+      if (montoDocumento > 0 && impuesto !== 0 && montoImpuestoExento >= 0) {
+        const base = await calcularBaseImponible(montoDocumento, impuesto, montoImpuestoExento)
         setBaseImponible(base)
 
         if (base > 0) {
@@ -121,7 +123,7 @@ const FormCreateDocumentosOp = () => {
     }
 
     calculateValues()
-  }, [montoDocumento, impuesto])
+  }, [montoDocumento, impuesto, montoImpuestoExento])
 
   useEffect(() => {
     const calculateMontoRetenido = async () => {
@@ -153,20 +155,6 @@ const FormCreateDocumentosOp = () => {
     }
   }, [setValue, typeOperationDocumento, reset])
 
-  const invalidateAndReset = (nameTable: string) => {
-    if (nameTable && nameTable !== null) {
-      qc.invalidateQueries({
-        queryKey: [nameTable]
-      })
-    }
-    clearForm()
-    dispatch(setIsOpenDialogConfirmButtons(false))
-
-    setTimeout(() => {
-      dispatch(setIsOpenDialogDocumentosEdit(false))
-    }, 10000)
-  }
-
   const handleCreateDocumento = async (): Promise<void> => {
     try {
       const newDocumento: ICreateDocumentosOp = {
@@ -186,7 +174,7 @@ const FormCreateDocumentosOp = () => {
         baseImponible: Number(baseImponible),
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
-        montoImpuestoExento: getValues('montoImpuestoExento'),
+        montoImpuestoExento: Number(montoImpuestoExento),
         montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
@@ -195,10 +183,15 @@ const FormCreateDocumentosOp = () => {
       const result = await createDocumentos(newDocumento)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+          resetForm: () => clearForm(),
+        })
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -221,7 +214,7 @@ const FormCreateDocumentosOp = () => {
         baseImponible: Number(baseImponible),
         montoImpuesto,
         numeroDocumentoAfectado: getValues('numeroDocumentoAfectado'),
-        montoImpuestoExento: getValues('montoImpuestoExento'),
+        montoImpuestoExento: Number(montoImpuestoExento),
         montoRetenido: retencionMonto,
         codigoPresupuesto: getValues('codigoPresupuesto'),
         numeroExpediente: getValues('numeroExpediente')
@@ -230,10 +223,14 @@ const FormCreateDocumentosOp = () => {
       const result = await updateDocumentos(Documento)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+        })
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -246,10 +243,15 @@ const FormCreateDocumentosOp = () => {
       const result = await deleteDocumentos(data)
 
       if (result?.isValid) {
-        invalidateAndReset('documentosTable')
+        invalidateReset({
+          tables: ['documentosTable'],
+          resetForm: () => clearForm(),
+        })
       }
     } catch (e: any) {
       console.error(e)
+    } finally {
+      dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
 
@@ -257,6 +259,7 @@ const FormCreateDocumentosOp = () => {
     setBaseImponible(0)
     setMontoDocumento(0)
     setMontoImpuesto(0)
+    setMontoImpuestoExento(0)
 
     setValue('codigoDocumentoOp', 0)
     setValue('codigoOrdenPago', 0)
@@ -351,6 +354,7 @@ const FormCreateDocumentosOp = () => {
       setMontoDocumento(documentoOpSeleccionado['montoDocumento'])
       setBaseImponible(documentoOpSeleccionado['baseImponible'])
       setMontoImpuesto(documentoOpSeleccionado['montoImpuesto'])
+      setMontoImpuestoExento(documentoOpSeleccionado['montoImpuestoExento'])
     }
   }, [documentoOpSeleccionado])
 
@@ -675,7 +679,7 @@ const FormCreateDocumentosOp = () => {
                 allowNegative={false}
                 decimalScale={2}
                 fixedDecimalScale={true}
-                label='% Impuesto'
+                label='Impuesto'
                 onFocus={event => {
                   event.target.select()
                 }}
@@ -716,30 +720,27 @@ const FormCreateDocumentosOp = () => {
             </Grid>
 
             <Grid item xs={3}>
-              <Controller
-                name='montoImpuestoExento'
-                control={control}
-                rules={{
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: 'Solo se permiten números'
-                  },
-                  minLength: {
-                    value: 1,
-                    message: 'Mínimo 1 dígito requerido'
-                  }
+              <NumericFormat
+                value={montoImpuestoExento}
+                customInput={TextField}
+                thousandSeparator='.'
+                decimalSeparator=','
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label='Impuesto Exento'
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  setMontoImpuestoExento(value || 0)
                 }}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    fullWidth
-                    value={value}
-                    onChange={onChange}
-                    label='Monto Impuesto Exento'
-                    variant='outlined'
-                    error={!!errors.montoImpuestoExento}
-                    helperText={errors.montoImpuestoExento ? errors.montoImpuestoExento.message : null}
-                  />
-                )}
+                placeholder='0,00'
+                error={Boolean(errors.montoImpuesto)}
+                aria-describedby='validation-async-cantidad'
+                inputProps={{
+                  type: 'text',
+                  inputMode: 'numeric',
+                  autoFocus: true
+                }}
               />
             </Grid>
 
@@ -838,13 +839,13 @@ const FormCreateDocumentosOp = () => {
           >
             Impuestos
           </Button>
+          <AlertMessage
+            message={message?.text ?? ''}
+            severity={message?.isValid ? 'success' : 'error'}
+            duration={message?.isValid ? 2000 : 4000}
+            show={message?.text ? true : false}
+          />
         </>
-        <AlertMessage
-          message={message?.text ?? ''}
-          severity={message?.isValid ? 'success' : 'error'}
-          duration={message?.isValid ? 2000 : 5000}
-          show={message?.text ? true : false}
-        />
       </Box>
     </>
   )

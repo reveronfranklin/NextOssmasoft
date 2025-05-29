@@ -6,7 +6,14 @@ import IconButton from '@mui/material/IconButton'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store';
 import { useDispatch } from "react-redux"
-import { setIsOpenDialogOrdenPagoDetalle, setTypeOperation, setConFactura, setCodigoOrdenPago } from "src/store/apps/ordenPago"
+import {
+    setIsOpenDialogOrdenPagoDetalle,
+    setTypeOperation,
+    setConFactura,
+    setCodigoOrdenPago,
+    setBaseTotalDocumentos,
+    setRetencionOpSeleccionado,
+} from "src/store/apps/ordenPago"
 import FormCreateOrdenPago from '../../forms/create/FormCreateOrdenPAgo'
 import FormUpdateOrdenPago from '../../forms/edit/FormUpdateOrdenPago'
 import ListaCompromiso from '../../components/ListCompromiso/listaCompromisos'
@@ -27,6 +34,8 @@ const DialogAdmOrdenPagoDetalle = () => {
     const handleClose = () => {
         setIsClosing(true)
         dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+        dispatch(setBaseTotalDocumentos(0))
+        dispatch(setRetencionOpSeleccionado(null))
 
         setTimeout(() => {
             dispatch(setTypeOperation(null))
