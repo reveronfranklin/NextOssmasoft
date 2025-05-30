@@ -29,7 +29,7 @@ import MensajeCompromiso from './mensajeCompromiso'
 
 export interface FormInputs {
     codigoOrdenPago: number,
-    descripcionStatus: string,
+    estatusText: string,
     iva: number ,
     islr: number,
     fechaOrdenPagoString: string | Date,
@@ -98,7 +98,7 @@ const FormOrdenPago = (props: {
 
     const defaultValues: any = {
         codigoOrdenPago: 0,
-        descripcionStatus: 'PENDIENTE',
+        estatusText: '',
         frecuenciaPagoId: 0,
         tipoPagoId: 0,
         tipoOrdenId: 0,        iva: 0,
@@ -189,7 +189,7 @@ const FormOrdenPago = (props: {
     useEffect(() => {
         if (orden && Object.keys(orden).length) {
             if (typeOperation === 'update') {
-                setValue('descripcionStatus', orden.descripcionStatus ?? '')
+                setValue('estatusText', orden.estatusText ?? '')
             }
 
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
@@ -259,7 +259,7 @@ const FormOrdenPago = (props: {
                                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                     <FormControl fullWidth>
                                         <Controller
-                                            name="descripcionStatus"
+                                            name="estatusText"
                                             control={control}
                                             render={({ field: { value, onChange } }) => (
                                                 <TextField
@@ -267,12 +267,12 @@ const FormOrdenPago = (props: {
                                                     label="Estatus"
                                                     placeholder="Estatus"
                                                     value={value || ''}
-                                                    rows={4}
+                                                    rows={6}
                                                     multiline
                                                     onChange={onChange}
                                                     disabled={true}
-                                                    error={!!errors.descripcionStatus}
-                                                    helperText={errors.descripcionStatus?.message}
+                                                    error={!!errors.estatusText}
+                                                    helperText={errors.estatusText?.message}
                                                 />
                                             )}
                                         />
@@ -367,7 +367,7 @@ const FormOrdenPago = (props: {
                                             <Controller
                                                 name="cantidadPago"
                                                 control={control}
-                                                rules={{ required: 'Estatus is required' }}
+                                                rules={{ required: 'cantidad de pago' }}
                                                 defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
                                                 render={({ field: { value, onChange } }) => {
                                                     return (

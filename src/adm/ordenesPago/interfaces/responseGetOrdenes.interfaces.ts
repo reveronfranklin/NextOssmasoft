@@ -43,6 +43,7 @@ export interface Orden {
     numeroComprobante4: null;
     origenId: number;
     conFactura: boolean;
+    estatusText: string | null;
 }
 
 export interface FechaOrdenPagoObj {

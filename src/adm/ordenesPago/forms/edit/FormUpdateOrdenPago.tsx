@@ -107,6 +107,7 @@ const FormUpdateOrdenPago = () => {
     const handleGestionOrdenPago = () => {
         const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
         const filter = { codigoOrdenPago }
+
         setShowMessage(false)
 
         const actionConfigs: any = {
@@ -115,14 +116,14 @@ const FormUpdateOrdenPago = () => {
                 message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Aprobar',
                 newStatus: 'AP',
-                showButton: true
+                showButton: true,
             },
             AP: {
                 action: anularOrdenPago,
                 message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Anular',
                 newStatus: 'AN',
-                showButton: true
+                showButton: true,
             }
         }
 
@@ -156,14 +157,28 @@ const FormUpdateOrdenPago = () => {
 
     useEffect(() => {
         if (gestionMessage?.text) {
-            setCurrentMessage(gestionMessage)
+            const status = compromisoSeleccionadoListaDetalle.status
+            const severity = status === 'AP' ? 'success' :
+                            status === 'AN' ? 'warning' :
+                            'info'
+            setCurrentMessage({
+                text: gestionMessage.text,
+                isValid: gestionMessage.isValid,
+                severity,
+                timestamp: Date.now(),
+            })
             setShowMessage(true)
         }
         else if (serviceMessage?.text) {
-            setCurrentMessage(serviceMessage)
+            setCurrentMessage({
+                text: serviceMessage.text,
+                isValid: serviceMessage.isValid,
+                severity: serviceMessage.isValid ? 'success' : 'error',
+                timestamp: Date.now()
+            });
             setShowMessage(true)
         }
-    }, [gestionMessage, serviceMessage])
+    }, [gestionMessage, serviceMessage, compromisoSeleccionadoListaDetalle.status])
 
     useEffect(() => {
         setGestionConfig(handleGestionOrdenPago())
@@ -194,8 +209,8 @@ const FormUpdateOrdenPago = () => {
             />
             <AlertMessage
                 message={currentMessage?.text ?? ''}
-                severity={currentMessage?.isValid ? 'success' : 'error'}
-                duration={4000}
+                severity={currentMessage?.severity || 'info'}
+                duration={10000}
                 show={showMessage}
             />
         </>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
-import { Box, styled } from '@mui/material'
+import { Box, styled, Grid } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetencionesOp'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux'
 import { Retencion } from '../../interfaces/responseRetenciones.interfaces'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
+import FormatNumber from 'src/utilities/format-numbers'
 
 const StyledDataGridContainer = styled(Box)(() => ({
   height: 400,
@@ -45,6 +46,11 @@ const DataGridComponent = () => {
   const rows = query?.data?.data || []
   const rowCount = query?.data?.data?.length || 0
 
+  const total1 = query.data?.total1 ?? 0
+  const total2 = query.data?.total2 ?? 0
+  const total3 = query.data?.total3 ?? 0
+  const total4 = query.data?.total4 ?? 0
+
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
   }
@@ -63,6 +69,20 @@ const DataGridComponent = () => {
 
   return (
     <>
+      <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+        <Grid item xs={2} sm={6}>
+          <small style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
+              <label style={{ marginRight: '5px' }}><b>Monto Retencion:</b></label>
+              {FormatNumber(total3)}
+            </div>
+            <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
+              <label style={{ marginRight: '5px' }}><b>Monto Retenido:</b></label>
+              {FormatNumber(total2)}
+            </div>
+          </small>
+        </Grid>
+      </Grid>
       {
         query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
           <StyledDataGridContainer>
