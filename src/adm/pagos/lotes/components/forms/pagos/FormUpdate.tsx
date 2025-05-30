@@ -240,7 +240,12 @@ const FormUpdate = () => {
                                                 }}
                                                 placeholder='Monto'
                                                 inputProps={{
-                                                    type: 'text'
+                                                    type: 'text',
+                                                    onKeyDown: (event) => {
+                                                        if (event.key === 'Enter') {
+                                                            event.preventDefault()
+                                                        }
+                                                    }
                                                 }}
                                                 error={!!errors.monto}
                                                 helperText={errors.monto?.message}

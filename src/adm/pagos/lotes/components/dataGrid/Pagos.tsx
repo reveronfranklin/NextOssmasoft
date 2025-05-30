@@ -12,6 +12,7 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServices, useServicesPagos } from '../../services';
 import { PagoFilterDto, PagoAmountDto } from '../../interfaces';
+import validateAmount from '../../helpers/validateAmount';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 'auto',
@@ -98,13 +99,20 @@ const DataGridComponent = () => {
     }
 
     const handleOnCellEditCommit = async (cell: any) => {
+        const value = Number(cell.value)
+        const monto = validateAmount(value)
+
         const updateAmountData: PagoAmountDto = {
             codigoBeneficiarioPago: cell.row?.codigoBeneficiarioPago,
-            monto: Number(cell.value)
+            monto: monto
         }
 
         try {
-          await updateAmount(updateAmountData)
+          const result = await updateAmount(updateAmountData)
+
+          if (result?.isValid) {
+            qc.invalidateQueries({ queryKey: ['lotePagosTable'] })
+          }
         } catch (error) {
           console.error('handleOnCellEditCommit', error)
         }

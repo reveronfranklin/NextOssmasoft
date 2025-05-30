@@ -187,6 +187,12 @@ const FormCreate = () => {
 
     return (
         <>
+            <AlertMessage
+                message={message?.text ?? ''}
+                severity={message?.isValid ? 'success' : 'error'}
+                duration={8000}
+                show={message?.text ? true : false}
+            />
             <Grid container spacing={5} paddingTop={1}>
                 <Grid
                     item
@@ -360,12 +366,6 @@ const FormCreate = () => {
                     </Box>
                 </Grid>
             </Grid>
-            <AlertMessage
-                message={message?.text ?? ''}
-                severity={message?.isValid ? 'success' : 'error'}
-                duration={8000}
-                show={message?.text ? true : false}
-            />
         </>
     )
 }
