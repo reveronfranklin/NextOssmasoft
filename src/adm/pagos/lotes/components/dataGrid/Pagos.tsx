@@ -9,9 +9,11 @@ import { RootState } from 'src/store';
 import { setIsOpenDialogPago, setTypeOperation, setCodigoLote } from 'src/store/apps/pagos/lote-pagos';
 import { selectLoteStatus, selectLoteFileName } from 'src/store/apps/pagos/lotes';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import useInvalidateReset from 'src/hooks/useInvalidateReset';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServices, useServicesPagos } from '../../services';
 import { PagoFilterDto, PagoAmountDto } from '../../interfaces';
+import validateAmount from '../../helpers/validateAmount';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 'auto',
@@ -26,6 +28,7 @@ const DataGridComponent = () => {
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
+    const invalidateReset       = useInvalidateReset()
     const dispatch              = useDispatch()
 
     const { codigoLote }    = useSelector((state: RootState) => state.admLote )
@@ -98,13 +101,22 @@ const DataGridComponent = () => {
     }
 
     const handleOnCellEditCommit = async (cell: any) => {
+        const value = Number(cell.value)
+        const monto = validateAmount(value)
+
         const updateAmountData: PagoAmountDto = {
             codigoBeneficiarioPago: cell.row?.codigoBeneficiarioPago,
-            monto: Number(cell.value)
+            monto: monto
         }
 
         try {
-          await updateAmount(updateAmountData)
+          const result = await updateAmount(updateAmountData)
+
+          if (result?.isValid) {
+            invalidateReset({
+                tables: ['lotePagosTable', 'ordenPagoPendientes']
+            })
+          }
         } catch (error) {
           console.error('handleOnCellEditCommit', error)
         }
