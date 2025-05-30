@@ -109,6 +109,19 @@ const useServices = () => {
         }
     }, [])
 
+    const downloadFile = useCallback(async (fileName: string): Promise<any> => {
+        try {
+            setLoading(true)
+            const response = await ossmmasofApi.get<ResponseDto<string>>(`${UrlServices.GET_FILE_LOTE}${fileName}`)
+
+            return response.data
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     return {
         error,
         message,
@@ -121,7 +134,8 @@ const useServices = () => {
         update,
         remove,
         approve,
-        cancel
+        cancel,
+        downloadFile
     }
 }
 
