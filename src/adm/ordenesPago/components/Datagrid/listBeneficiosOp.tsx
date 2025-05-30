@@ -50,8 +50,6 @@ const DataGridComponent = () => {
 
   const total1 = query.data?.total1 ?? 0
   const total2 = query.data?.total2 ?? 0
-  const total3 = query.data?.total3 ?? 0
-  const total4 = query.data?.total4 ?? 0
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
