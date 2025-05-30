@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -18,6 +17,7 @@ import { useServicesPagos } from '../../../services';
 import { setIsOpenDialogPago, resetPagoShow } from 'src/store/apps/pagos/lote-pagos'
 import { PagoDto, PagoDeleteDto } from '../../../interfaces';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import useInvalidateReset from 'src/hooks/useInvalidateReset';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
@@ -32,7 +32,7 @@ const FormUpdate = () => {
     const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
 
     const dispatch          = useDispatch()
-    const qc: QueryClient   = useQueryClient()
+    const invalidateReset   = useInvalidateReset()
     const rules             = getRules()
     const { pago }          = useSelector((state: RootState) => state.admLotePagos )
 
@@ -134,8 +134,8 @@ const FormUpdate = () => {
         } finally {
             console.log('numeroOrdenPago', numeroOrdenPago)
             setIsFormEnabled(true)
-            qc.invalidateQueries({
-                queryKey: ['lotePagosTable']
+            invalidateReset({
+                tables: ['lotePagosTable', 'ordenPagoPendientes']
             })
         }
     }
@@ -173,8 +173,8 @@ const FormUpdate = () => {
             console.error('handleDelete', e)
         } finally {
             setIsFormEnabled(true)
-            qc.invalidateQueries({
-                queryKey: ['lotePagosTable']
+            invalidateReset({
+                tables: ['lotePagosTable', 'ordenPagoPendientes']
             })
         }
     }

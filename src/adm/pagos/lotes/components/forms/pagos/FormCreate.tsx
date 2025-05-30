@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -15,6 +14,7 @@ import { useServicesPagos } from '../../../services';
 import { PagoDto, AdmBeneficiariosPendientesPago } from '../../../interfaces';
 import { OrdenPagoPendiente, BeneficiariosOrdenPago } from '../../autoComplete';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import useInvalidateReset from 'src/hooks/useInvalidateReset';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 
@@ -29,7 +29,7 @@ const FormCreate = () => {
     const [beneficiarios, setBeneficiarios]                 = useState<AdmBeneficiariosPendientesPago[]>([])
     const [beneficiarioSelected, setBeneficiarioSelected]   = useState<AdmBeneficiariosPendientesPago>({} as AdmBeneficiariosPendientesPago)
 
-    const qc: QueryClient   = useQueryClient()
+    const invalidateReset   = useInvalidateReset()
     const rules             = getRules()
 
     const {
@@ -153,8 +153,8 @@ const FormCreate = () => {
             console.error('handleCreatePago', e)
         } finally {
             setIsFormEnabled(true)
-            qc.invalidateQueries({
-                queryKey: ['lotePagosTable']
+            invalidateReset({
+                tables: ['lotePagosTable', 'ordenPagoPendientes']
             })
         }
     }
