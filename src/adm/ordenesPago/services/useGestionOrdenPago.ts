@@ -43,7 +43,7 @@ const useGestionOrdenPago = () => {
     try {
       setLoading(true)
       const responseFetch = await ossmmasofApi.post<IResponseBase<IGestionOrdenPago>>(UrlServices.ANULARORDENPAGO, filters)
-      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento creado con éxito', setMessage, setError)
+      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento ANULADO', setMessage, setError)
 
       if (onSuccess) onSuccess()
 
