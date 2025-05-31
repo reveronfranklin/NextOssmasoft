@@ -50,7 +50,6 @@ const FormPucByOrdenPagoEdit = () => {
                     tables: ['listPucByOrdenPago', 'listCompromisoByOrdenPago', 'compromisosTable'],
                     resetForm: () => { console.log('Form reset') },
                     delay: 10000,
-                    closeDialogs: true
                 })
             } else {
                 message.text = response.message || 'Error al actualizar el Puc'

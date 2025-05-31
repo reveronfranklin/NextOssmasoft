@@ -1,38 +1,47 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
-import {
-  setIsOpenDialogConfirmButtons,
-  setIsOpenDialogDocumentosEdit,
-} from 'src/store/apps/ordenPago'
+
+type InvalidateResetOptions = {
+  tables?: string[];
+  resetForm?: () => void;
+  delay?: number;
+  closeActions?: (() => void) | (() => void)[];
+};
 
 const useInvalidateReset = () => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
 
-  return ({
-    tables = [],
-    resetForm,
-    delay = 10000,
-    closeDialogs = true
-  }: {
-    tables?: string[];
-    resetForm?: () => void;
-    delay?: number;
-    closeDialogs?: boolean;
-  }) => {
+  return (options: InvalidateResetOptions = {}) => {
+    const {
+      tables = [],
+      resetForm,
+      delay = 10000,
+      closeActions
+    } = options
+
     tables.forEach(table => {
       queryClient.invalidateQueries({ queryKey: [table] });
     });
 
     resetForm?.();
 
-    if (closeDialogs) {
-      dispatch(setIsOpenDialogConfirmButtons(false));
-      setTimeout(() => {
-        dispatch(setIsOpenDialogDocumentosEdit(false));
-      }, delay);
+    if (closeActions) {
+      if (Array.isArray(closeActions)) {
+        if (delay > 0) {
+          setTimeout(() => {
+            closeActions.forEach(action => action());
+          }, delay);
+        } else {
+          closeActions.forEach(action => action());
+        }
+      } else {
+        if (delay > 0) {
+          setTimeout(() => closeActions(), delay);
+        } else {
+          closeActions();
+        }
+      }
     }
   };
 };
 
-export default useInvalidateReset;
+export default useInvalidateReset

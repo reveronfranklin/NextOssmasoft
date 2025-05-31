@@ -84,7 +84,6 @@ const DataGridComponent = () => {
                     tables: ['listPucByOrdenPago', 'listCompromisoByOrdenPago', 'compromisosTable'],
                     resetForm: () => {  console.log('Form reset') },
                     delay: 10000,
-                    closeDialogs: true
                 })
             }
         } catch (error) {
