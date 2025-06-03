@@ -83,6 +83,7 @@ function ColumnsDataGridListPucByOrden() {
             ),
             valueFormatter: (params: GridRenderCellParams) => {
                 const value = params.value
+
                 return (
                     <NumericFormat
                         thousandSeparator="."
