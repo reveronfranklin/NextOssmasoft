@@ -12,7 +12,7 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useInvalidateReset from 'src/hooks/useInvalidateReset';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServices, useServicesPagos } from '../../services';
-import { PagoFilterDto, PagoAmountDto } from '../../interfaces';
+import { PagoFilterDto, PagoAmountDto, PagoResponseDto } from '../../interfaces';
 import validateAmount from '../../helpers/validateAmount';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -101,11 +101,19 @@ const DataGridComponent = () => {
     }
 
     const handleOnCellEditCommit = async (cell: any) => {
-        const value = Number(cell.value)
-        const monto = validateAmount(value)
+        const codigoPago    = cell.id
+        const value         = Number(cell.value)
+        const monto         = validateAmount(value)
+
+        let codigoBeneficiarioPago = cell?.row?.codigoBeneficiarioPago
+
+        if (!codigoBeneficiarioPago) {
+            const row = rows.find((row: PagoResponseDto) => row.codigoPago === codigoPago)
+            codigoBeneficiarioPago = row.codigoBeneficiarioPago
+        }
 
         const updateAmountData: PagoAmountDto = {
-            codigoBeneficiarioPago: cell.row?.codigoBeneficiarioPago,
+            codigoBeneficiarioPago: codigoBeneficiarioPago,
             monto: monto
         }
 
