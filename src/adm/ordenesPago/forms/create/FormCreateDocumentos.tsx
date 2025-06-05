@@ -38,6 +38,7 @@ import calculoImpuesto from '../../helpers/calculoImpuesto'
 import calcularMontoRetenido from '../../helpers/montoRetenido'
 
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
+import FormatNumber from 'src/utilities/format-numbers'
 
 const FormCreateDocumentosOp = () => {
   const [montoDocumento, setMontoDocumento] = useState<number>(0)
@@ -56,6 +57,7 @@ const FormCreateDocumentosOp = () => {
     typeOperationDocumento,
     isOpenDialogConfirmButtons,
     codigoOrdenPago,
+    totalCompromiso,
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const {
@@ -364,6 +366,16 @@ const FormCreateDocumentosOp = () => {
 
   return (
     <>
+      <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+        <Grid item xs={2} sm={6}>
+          <small style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end', flexDirection: 'column' }}>
+              <label style={{ marginRight: '5px' }}><b>Monto Total Compromiso:</b></label>
+              {FormatNumber(totalCompromiso)}
+            </div>
+          </small>
+        </Grid>
+      </Grid>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2} paddingTop={0} justifyContent='flex-start'>
           <Grid container item xs={12} spacing={2} sx={{ marginBottom: 1 }}>
