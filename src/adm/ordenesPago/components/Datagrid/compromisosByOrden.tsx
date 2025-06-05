@@ -5,7 +5,7 @@ import Spinner from 'src/@core/components/spinner'
 import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import ColumnsDataGridListCompromisoByOrden from '../../config/Datagrid/columnsDataGridListCompromisoByOrden'
-import { setIsOpenDialogListPucOrdenPago, setCodigoIdentificadorCompromiso } from "src/store/apps/ordenPago"
+import { setIsOpenDialogListPucOrdenPago, setCodigoIdentificadorCompromiso, setTotalCompromiso } from "src/store/apps/ordenPago"
 import { useDispatch } from 'react-redux'
 import { RootState } from "src/store"
 import { useSelector } from "react-redux"
@@ -44,6 +44,14 @@ const DataGridComponent = () => {
 
     const rows = query?.data?.data || []
     const rowCount = rows.length || 0
+
+    const total1 = query?.data?.total1 || 0
+
+    useEffect(() => {
+        if (total1) {
+            dispatch(setTotalCompromiso(total1))
+        }
+    }, [dispatch, total1])
 
     useEffect(() => {
         qc.prefetchQuery({

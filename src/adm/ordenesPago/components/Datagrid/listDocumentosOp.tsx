@@ -41,6 +41,7 @@ const DataGridComponent = () => {
 
   const rowCount = query.isSuccess ? query.data.cantidadRegistros : 0;
   const total1 = query.data?.total1 ?? 0
+  const total2 = query.data?.total2 ?? 0
 
   dispatch(setDocumentCount(rowCount))
   dispatch(setBaseTotalDocumentos(total1))
@@ -60,8 +61,8 @@ const DataGridComponent = () => {
         <Grid item xs={2} sm={6}>
           <small style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
             <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
-              <label style={{ marginRight: '5px' }}><b>Base Total:</b></label>
-              {FormatNumber(total1)}
+              <label style={{ marginRight: '5px' }}><b>Monto total documento:</b></label>
+              {FormatNumber(total1 + total2)}
             </div>
           </small>
         </Grid>

@@ -35,6 +35,7 @@ export const admOrdenPagoSlice = createSlice({
         codigoIdentificador: 0,
         tipoRetencion: 0,
         baseTotalDocumentos: 0,
+        totalCompromiso: 0,
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -121,6 +122,9 @@ export const admOrdenPagoSlice = createSlice({
         setBaseTotalDocumentos: (state, action) => {
             state.baseTotalDocumentos = action.payload
         },
+        setTotalCompromiso: (state, action) => {
+            state.totalCompromiso = action.payload
+        }
     }
 })
 export const {
@@ -151,5 +155,6 @@ export const {
     setDocumentCount,
     setCodigoIdentificadorCompromiso,
     setTipoRetencion,
-    setBaseTotalDocumentos
+    setBaseTotalDocumentos,
+    setTotalCompromiso,
 } = admOrdenPagoSlice.actions
