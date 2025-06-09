@@ -1,2 +1,4 @@
 export { default as MaestroCuenta } from './MaestroCuenta'
 export { default as TipoPago } from './TipoPago'
+export { default as OrdenPagoPendiente } from './OrdenPagoPendiente'
+export { default as BeneficiariosOrdenPago } from './BeneficiariosOrdenPago'

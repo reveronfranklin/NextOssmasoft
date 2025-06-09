@@ -9,7 +9,7 @@ import { useSelector } from "react-redux"
 import { IUpdateFieldDto } from 'src/interfaces/rh/i-update-field-dto'
 
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
-import { IApiResponse } from 'src/interfaces/api-response-dto'
+import { IApiResponse, IApiFlexibleResponse} from 'src/interfaces/api-response-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 import { useQueryClient, QueryClient } from '@tanstack/react-query'
 
@@ -112,7 +112,7 @@ const useServices = () => {
         }
     }, [])
 
-    const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<IApiResponse<ICreateOrdenPago>> => {
+    const createOrden = useCallback(async (filters: ICreateOrdenPago): Promise<IApiFlexibleResponse<ICreateOrdenPago>> => {
         try {
             setLoading(true)
             const responseCreatetOrden = await ossmmasofApi.post<any>(UrlServices.CREATEORDENPAGO, filters)
@@ -127,7 +127,7 @@ const useServices = () => {
         }
     }, [])
 
-    const updateOrden = useCallback(async (filters: IUpdateOrdenPago): Promise<IApiResponse<IUpdateOrdenPago>> => {
+    const updateOrden = useCallback(async (filters: IUpdateOrdenPago): Promise<IApiFlexibleResponse<IUpdateOrdenPago>> => {
         try {
             setLoading(true)
             const responseUpdateOrden = await ossmmasofApi.post<any>(UrlServices.UPDATEORDENPAGO, filters)

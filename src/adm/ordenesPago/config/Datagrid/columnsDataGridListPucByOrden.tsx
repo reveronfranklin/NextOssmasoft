@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import Icon from 'src/@core/components/icon'
 import Box from '@mui/material/Box'
 import FormatNumber from 'src/utilities/format-numbers'
+import { NumericFormat } from 'react-number-format'
 
 function ColumnsDataGridListPucByOrden() {
     const dispatch = useDispatch()
@@ -79,7 +80,23 @@ function ColumnsDataGridListPucByOrden() {
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
                     {params.row.monto === '' ? 'NO DISPONIBLE' : FormatNumber(params.row.monto)}
                 </Typography>
-            )
+            ),
+            valueFormatter: (params: GridRenderCellParams) => {
+                const value = params.value
+
+                return (
+                    <NumericFormat
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        allowNegative={false}
+                        decimalScale={2}
+                        fixedDecimalScale={true}
+                        value={value}
+                        displayType='text'
+                        prefix=''
+                    />
+                )
+            }
         }
     ]
 }

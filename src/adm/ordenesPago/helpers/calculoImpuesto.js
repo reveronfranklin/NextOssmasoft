@@ -8,8 +8,8 @@
 const calculoImpuesto = async (base, porcentajeIva) => {
   return new Promise((resolve) => {
     if (base > 0) {
-      const montoImpuesto = Math.round((base * (porcentajeIva / 100)) * 100) / 100;
-      resolve(montoImpuesto);
+      const montoImpuesto = parseFloat((base * (porcentajeIva / 100)).toFixed(2))
+      resolve(montoImpuesto)
     } else {
       resolve(0)
     }
