@@ -106,7 +106,7 @@ const FormOrdenPago = (props: {
         islr: 0,
         fechaOrdenPagoString: '',
         origenDescripcion: '',
-        cantidadPago: 0,
+        cantidadPago: 1,
         fecha: '',
         plazoPagoDesde: 0,
         plazoPagoHasta: 0,
@@ -193,7 +193,7 @@ const FormOrdenPago = (props: {
             }
 
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
-            setValue('cantidadPago', orden.cantidadPago ?? '')
+            setValue('cantidadPago', orden.cantidadPago ?? 1)
             setValue('nombreProveedor', orden.nombreProveedor ?? '')
             setValue('motivo', orden.motivo ?? '')
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
@@ -367,21 +367,18 @@ const FormOrdenPago = (props: {
                                             <Controller
                                                 name="cantidadPago"
                                                 control={control}
-                                                rules={{ required: 'cantidad de pago' }}
-                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                                render={({ field: { value, onChange } }) => {
-                                                    return (
-                                                        <TextField
-                                                            fullWidth
-                                                            label="Cantidad de Pagos"
-                                                            placeholder="Cantidad de Pagos"
-                                                            value={value}
-                                                            onChange={onChange}
-                                                            error={!!errors.cantidadPago}
-                                                            helperText={errors.cantidadPago?.message}
-                                                        />
-                                                    )
-                                                }}
+                                                defaultValue={1}
+                                                render={({ field: { value } }) => (
+                                                    <TextField
+                                                        fullWidth
+                                                        label="N°"
+                                                        value={value}
+                                                        disabled
+                                                        InputProps={{
+                                                            readOnly: true,
+                                                        }}
+                                                    />
+                                                )}
                                             />
                                         </FormControl>
                                     </Grid>
@@ -390,17 +387,16 @@ const FormOrdenPago = (props: {
                                             <Controller
                                                 name="cantidadPago"
                                                 control={control}
-                                                rules={{ required: 'Este campo es requerido' }}
-                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                                render={({ field: { value, onChange } }) => (
+                                                defaultValue={1}
+                                                render={({ field: { value } }) => (
                                                     <TextField
                                                         fullWidth
                                                         label="N°"
-                                                        placeholder="N°"
                                                         value={value}
-                                                        onChange={onChange}
-                                                        error={!!errors.cantidadPago}
-                                                        helperText={errors.cantidadPago?.message}
+                                                        disabled
+                                                        InputProps={{
+                                                            readOnly: true,
+                                                        }}
                                                     />
                                                 )}
                                             />

@@ -24,6 +24,7 @@ import CustomButtonDialog from './../../components/BottonsActions'
 // Store actions
 import {
   setIsOpenDialogConfirmButtons,
+  setIsOpenDialogDocumentosEdit,
   resetDocumentoOpSeleccionado,
   setDocumentoOpSeleccionado,
   setIsOpenDialogImpuestoDocumentosEdit
@@ -128,17 +129,36 @@ const FormCreateDocumentosOp = () => {
   }, [montoDocumento, impuesto, montoImpuestoExento])
 
   useEffect(() => {
-    const calculateMontoRetenido = async () => {
-      if (montoImpuesto > 0) {
-        const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico)
-        setRetencionMonto(montoRetenido)
+    const calculateTaxes = async () => {
+      if (estatusFisico === 0) {
+        setMontoImpuestoExento(montoDocumento);
+        setRetencionMonto(0); // Asegurar que retención sea 0 en este caso
       } else {
-        setRetencionMonto(0)
+        if (montoImpuesto > 0) {
+          const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico);
+          setRetencionMonto(montoRetenido);
+        } else {
+          setRetencionMonto(0);
+        }
+        setMontoImpuestoExento(0); // Asegurar que exento sea 0 en este caso
       }
-    }
+    };
 
-    calculateMontoRetenido()
-  }, [montoImpuesto, estatusFisico])
+    calculateTaxes();
+  }, [montoImpuesto, estatusFisico, montoDocumento]); // Añadir montoDocumento a las dependencias
+
+  // useEffect(() => {
+  //   const calculateMontoRetenido = async () => {
+  //     if (montoImpuesto > 0) {
+  //       const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico)
+  //       setRetencionMonto(montoRetenido)
+  //     } else {
+  //       setRetencionMonto(0)
+  //     }
+  //   }
+
+  //   calculateMontoRetenido()
+  // }, [montoImpuesto, estatusFisico])
 
   const handleTipoImpuestoChange = (tipoImpuesto: any) => {
     setValue('tipoImpuestoId', tipoImpuesto.id)
@@ -188,6 +208,10 @@ const FormCreateDocumentosOp = () => {
         invalidateReset({
           tables: ['documentosTable'],
           resetForm: () => clearForm(),
+          delay: 5000,
+          closeActions: [
+            () => dispatch(setIsOpenDialogDocumentosEdit(false)),
+          ]
         })
       }
     } catch (e: any) {
@@ -227,6 +251,10 @@ const FormCreateDocumentosOp = () => {
       if (result?.isValid) {
         invalidateReset({
           tables: ['documentosTable'],
+          delay: 5000,
+          closeActions: [
+            () => dispatch(setIsOpenDialogDocumentosEdit(false)),
+          ]
         })
       }
     } catch (e: any) {
@@ -248,6 +276,10 @@ const FormCreateDocumentosOp = () => {
         invalidateReset({
           tables: ['documentosTable'],
           resetForm: () => clearForm(),
+          delay: 5000,
+          closeActions: [
+            () => dispatch(setIsOpenDialogDocumentosEdit(false)),
+          ]
         })
       }
     } catch (e: any) {
@@ -564,10 +596,6 @@ const FormCreateDocumentosOp = () => {
                 control={control}
                 rules={{
                   required: 'Este campo es requerido',
-                  pattern: {
-                    value: /^[a-zA-Z0-9]+$/,
-                    message: 'hay un caracter no permitido'
-                  },
                   maxLength: {
                     value: 20,
                     message: 'Máximo 20 dígitos permitidos'
@@ -597,10 +625,6 @@ const FormCreateDocumentosOp = () => {
                 control={control}
                 rules={{
                   required: 'Este campo es requerido',
-                  pattern: {
-                    value: /^[a-zA-Z0-9]+$/,
-                    message: 'hay un caracter no permitido'
-                  },
                   maxLength: {
                     value: 20,
                     message: 'Máximo 20 dígitos permitidos'
@@ -726,6 +750,7 @@ const FormCreateDocumentosOp = () => {
                     onChange={onChange}
                     label='Número Documento Afectado'
                     variant='outlined'
+                    disabled={true}
                   />
                 )}
               />
@@ -792,7 +817,13 @@ const FormCreateDocumentosOp = () => {
                   }
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <TextField fullWidth value={value ?? ''} onChange={onChange} label='Número Expediente' variant='outlined' />
+                  <TextField
+                    fullWidth value={value ?? ''}
+                    onChange={onChange}
+                    label='Número Expediente'
+                    variant='outlined'
+                    disabled={true}
+                  />
                 )}
               />
             </Grid>
