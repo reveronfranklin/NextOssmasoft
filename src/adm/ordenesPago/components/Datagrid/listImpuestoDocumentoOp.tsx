@@ -5,7 +5,7 @@ import Spinner from 'src/@core/components/spinner'
 import { useServicesImpuestosDocumentosOp } from '../../services/index'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import columnsDataGridListImpuestoDocumentoOp from '../../config/Datagrid/columnsDataGridListImpuestoDocumentoOp'
-import { setImpuestoDocumentoOpSeleccionado } from "src/store/apps/ordenPago"
+import { setImpuestoDocumentoOpSeleccionado, setBaseImponibleDocumentosOp } from "src/store/apps/ordenPago"
 import FormatNumber from 'src/utilities/format-numbers'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
@@ -48,6 +48,8 @@ const DataGridComponent = () => {
   const total2 = query.data?.total2 ?? 0 //total MontoImpuesto
   const total3 = query.data?.total3 ?? 0 //impuesto exento
   const total4 = query.data?.total4 ?? 0 //monto retenido
+
+  dispatch(setBaseImponibleDocumentosOp(total1))
 
   const handleDoubleClick = (data: any) => {
     const { row } = data
