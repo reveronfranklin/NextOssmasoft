@@ -19,4 +19,6 @@ export enum UrlServices {
     GET_ORDEN_PAGO_PENDIENTES   = '/AdmOrdenesPagoPendientesPago/GetAll',
 
     GET_FILE_LOTE               = '/Files/GetTxtFiles/',
+
+    GET_PROVEEDORES             = '/AdmProveedores/GetAllProveedoresContactos',
 }

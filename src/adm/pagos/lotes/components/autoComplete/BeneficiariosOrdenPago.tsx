@@ -58,11 +58,11 @@ const BeneficiariosOrdenPago = ({
                     <Autocomplete
                         options={ListBeneficiarios}
                         value={selectedValue}
-                        id="autocomplete-tipo-pago"
+                        id="autocomplete-beneficiarios-orden-pago"
                         getOptionLabel={(option) => `${option.codigoBeneficiarioOp} - ${option.nombreProveedor}`}
                         onChange={handleChange}
                         renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
-                        key={`tipo-pago-${id || 'empty'}`}
+                        key={`beneficiarios-orden-pago"-${id || 'empty'}`}
                     />
                     {
                         error && <FormHelperText error>{error}</FormHelperText>

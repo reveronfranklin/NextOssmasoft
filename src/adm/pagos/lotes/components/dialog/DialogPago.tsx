@@ -7,7 +7,9 @@ import Icon from 'src/@core/components/icon';
 import { RootState } from 'src/store';
 import { setIsOpenDialogPago, setTypeOperation } from 'src/store/apps/pagos/lote-pagos';
 import FromCreate from '../forms/pagos/FormCreate';
+import FromCreateTow from '../forms/pagos/FormCreateTwo';
 import FromUpdate from '../forms/pagos/FormUpdate';
+import FromUpdateTow from '../forms/pagos/FormUpdateTwo';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -18,11 +20,24 @@ const Transition = forwardRef(function Transition(
 
 const DialogLote = () => {
     const dispatch = useDispatch()
-    const { typeOperation, isOpenDialogPago } = useSelector((state: RootState) => state.admLotePagos )
+    const { typeOperation, isOpenDialogPago }   = useSelector((state: RootState) => state.admLotePagos )
+    const { withOrdenPago }                     = useSelector((state: RootState) => state.admLote )
 
     const handleClose = () => {
         dispatch(setIsOpenDialogPago(false))
         dispatch(setTypeOperation(null))
+    }
+
+    const handleForms = () => {
+        if (withOrdenPago && typeOperation === 'create') {
+            return <FromCreate />
+        } else if (withOrdenPago && typeOperation === 'update') {
+            return <FromUpdate />
+        } else if (!withOrdenPago && typeOperation === 'create') {
+            return <FromCreateTow />
+        } else if (!withOrdenPago && typeOperation === 'update') {
+            return <FromUpdateTow />
+        }
     }
 
     const setFormComponent = () => {
@@ -30,9 +45,7 @@ const DialogLote = () => {
             <Fade in={true} timeout={500}>
                 <div key={typeOperation}>
                     {
-                        typeOperation === 'create'
-                        ? <FromCreate />
-                        : <FromUpdate />
+                        handleForms()
                     }
                 </div>
             </Fade>
@@ -68,7 +81,11 @@ const DialogLote = () => {
                             }}
                         >
                             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                Pagos ({ typeOperation === 'update' ? 'Editar' : 'Crear' })
+                                Pagos ({
+                                    (typeOperation === 'update')
+                                        ? `Editar ${withOrdenPago ? '' : '- Sin Orden de Pago'}`
+                                        : `Crear ${withOrdenPago ? '' : '- Sin Orden de Pago'}`
+                                })
                             </Typography>
                             <IconButton
                                 size='small'
