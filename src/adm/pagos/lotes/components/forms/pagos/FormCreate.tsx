@@ -230,7 +230,7 @@ const FormCreate = () => {
                                                             <BeneficiariosOrdenPago
                                                                 id={value || null}
                                                                 onSelectionChange={(selected) => onChange(handleOnChangeBeneficiario(selected))}
-                                                                error={errors.codigoOrdenPago?.message}
+                                                                error={errors.codigoBeneficiarioOP?.message}
                                                                 required
                                                                 options={beneficiarios}
                                                             />

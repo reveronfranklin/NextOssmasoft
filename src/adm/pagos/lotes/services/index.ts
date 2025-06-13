@@ -12,3 +12,6 @@ export { default as useServicesPagos } from './useServicesPagos';
 
 /* Services 'Orden Pago' */
 export { default as useServicesOrdenPago } from './useServicesOrdenPago';
+
+/* Services 'Proveedores Contactos' */
+export { default as useServicesProveedoresContacto } from './useServicesProveedoresContacto';

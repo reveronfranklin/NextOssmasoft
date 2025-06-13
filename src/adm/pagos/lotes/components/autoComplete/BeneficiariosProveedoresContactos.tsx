@@ -1,40 +1,35 @@
 import { useEffect, useState } from 'react';
 import { Skeleton, Autocomplete, TextField, FormControl, FormHelperText } from '@mui/material';
 import { useQueryClient, useQuery, type QueryClient } from '@tanstack/react-query';
-import { useServicesOrdenPago } from '../../services';
-import type { AutoCompleteProps, OrdenPagoResponseDto, OrdenPagoFilterDto } from '../../interfaces';
+import { useServicesProveedoresContacto  } from '../../services';
+import type { AutoCompleteProps, ProveeedorResponseDto } from '../../interfaces';
 
-const OrdenPagoPendiente = ({
+const BeneficiariosProveedoresContactos = ({
     id,
     onSelectionChange,
     error,
-    label = 'Orden Pago Pendiente',
+    label = 'Beneficiario Proveedor Contacto',
     required = false,
     autoFocus = false
 } : AutoCompleteProps) => {
-    const [selectedValue, setSelectedValue]                         = useState<OrdenPagoResponseDto | null>(null)
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
+    const [selectedValue, setSelectedValue] = useState<ProveeedorResponseDto | null>(null)
 
-    const {
-        presupuestoSeleccionado,
-        getList
-    } = useServicesOrdenPago()
-
-    const qc: QueryClient = useQueryClient()
-
-    const payload: OrdenPagoFilterDto = {
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto
-    }
+    const { getList }       = useServicesProveedoresContacto()
+    const qc: QueryClient   = useQueryClient()
 
     const query = useQuery({
-        queryKey: ['ordenPagoPendientes'],
-        queryFn: () => getList(payload),
+        queryKey: ['beneficiariosProveedoresContactos'],
+        queryFn: () => getList(),
         retry: 3,
-        staleTime: 5000 * 60 * 60,
-        enabled: isPresupuestoSeleccionado
+        staleTime: 5000 * 60 * 60
     }, qc)
 
-    const ListOrdenPagoPendiente: OrdenPagoResponseDto[] = query.data?.data ?? []
+    const ListBeneficiariosProveedoresContacto: ProveeedorResponseDto[] = query.data?.data ?? []
+
+    // Filter to remove duplicates based on codigoProveedor
+    const uniqueBeneficiarios = ListBeneficiariosProveedoresContacto.filter((beneficiario, index, self) =>
+        index === self.findIndex((b) => b.codigoProveedor === beneficiario.codigoProveedor)
+    )
 
     useEffect(() => {
         if (id === null || id === 0 || id === undefined) {
@@ -43,17 +38,9 @@ const OrdenPagoPendiente = ({
           return
         }
 
-        const value = ListOrdenPagoPendiente.find((item) => item?.codigoOrdenPago === id)
+        const value = uniqueBeneficiarios.find((item) => item?.codigoProveedor === id)
         setSelectedValue(value ?? null)
-    }, [id, ListOrdenPagoPendiente])
-
-    useEffect(() => {
-        if (presupuestoSeleccionado.codigoPresupuesto > 0) {
-            setIsPresupuestoSeleccionado(true)
-        } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
-            setIsPresupuestoSeleccionado(false)
-        }
-    }, [ presupuestoSeleccionado.codigoPresupuesto ])
+    }, [id, uniqueBeneficiarios])
 
     const handleChange = (event: any, newValue: any) => {
         if (newValue) {
@@ -61,7 +48,7 @@ const OrdenPagoPendiente = ({
             setSelectedValue(newValue)
         } else {
             onSelectionChange({
-                codigoOrdenPago: 0,
+                codigoProveedor: 0,
                 value: 0
             })
             setSelectedValue(null)
@@ -84,15 +71,15 @@ const OrdenPagoPendiente = ({
             ) : (
                 <>
                     <Autocomplete
-                        options={ListOrdenPagoPendiente}
+                        options={uniqueBeneficiarios}
                         value={selectedValue}
-                        id="autocomplete-orden-pago-pendiente"
+                        id="autocomplete-beneficiarios-proveedores-contactos"
                         getOptionLabel={(option) => {
-                            return `${option.codigoOrdenPago} - ${option.tipoOrdenPago} - ${option.numeroOrdenPago}`
+                            return `${option.codigoProveedor} - ${option.nombreProveedor}`
                         }}
                         onChange={handleChange}
                         renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
-                        key={`orden-pago-pendiente-${id || 'empty'}`}
+                        key={`beneficiarios-proveedores-contactos-${id} || 'empty'}`}
                     />
                     {
                         error && <FormHelperText error>{error}</FormHelperText>
@@ -103,4 +90,4 @@ const OrdenPagoPendiente = ({
     )
 }
 
-export default OrdenPagoPendiente
+export default BeneficiariosProveedoresContactos
