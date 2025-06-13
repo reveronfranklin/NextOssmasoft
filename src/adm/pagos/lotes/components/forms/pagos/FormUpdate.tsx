@@ -34,6 +34,7 @@ const FormUpdate = () => {
     const dispatch          = useDispatch()
     const invalidateReset   = useInvalidateReset()
     const rules             = getRules()
+    const { withOrdenPago } = useSelector((state: RootState) => state.admLote )
     const { pago }          = useSelector((state: RootState) => state.admLotePagos )
 
     const {
@@ -44,7 +45,7 @@ const FormUpdate = () => {
     } = useServicesPagos()
 
     const defaultValues: PagoDto = {
-        numeroOrdenPago: pago.numeroOrdenPago,
+        numeroOrdenPago: pago?.numeroOrdenPago ?? null,
         codigoPago: pago.codigoPago,
         codigoBeneficiarioPago: pago.codigoBeneficiarioPago,
         monto: pago.monto,
@@ -196,31 +197,41 @@ const FormUpdate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
-                                            <FormControl fullWidth>
-                                                <Controller
-                                                    name="numeroOrdenPago"
-                                                    control={control}
-                                                    rules={ rules.numeroOrdenPago }
-                                                    render={({ field: { value, onChange } }) => (
-                                                        <TextField
-                                                            type="text"
-                                                            fullWidth
-                                                            label="Número orden de pago"
-                                                            placeholder="Título"
-                                                            value={value || ''}
-                                                            multiline
-                                                            onChange={onChange}
-                                                            error={!!errors.numeroOrdenPago}
-                                                            helperText={errors.numeroOrdenPago?.message}
-                                                            required
-                                                            disabled
+                                        {
+                                            withOrdenPago &&
+                                            (
+                                                <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                                    <FormControl fullWidth>
+                                                        <Controller
+                                                            name="numeroOrdenPago"
+                                                            control={control}
+                                                            rules={ rules.numeroOrdenPago }
+                                                            render={({ field: { value, onChange } }) => (
+                                                                <TextField
+                                                                    type="text"
+                                                                    fullWidth
+                                                                    label="Número orden de pago"
+                                                                    placeholder="Título"
+                                                                    value={value || ''}
+                                                                    multiline
+                                                                    onChange={onChange}
+                                                                    error={!!errors.numeroOrdenPago}
+                                                                    helperText={errors.numeroOrdenPago?.message}
+                                                                    required
+                                                                    disabled
+                                                                />
+                                                            )}
                                                         />
-                                                    )}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                                    </FormControl>
+                                                </Grid>
+                                            )
+                                        }
+                                        <Grid
+                                            item
+                                            sm={ withOrdenPago ? 6 : 12 }
+                                            xs={ withOrdenPago ? 6 : 12 }
+                                            sx={{ padding: '5px' }}
+                                        >
                                             <NumericFormat
                                                 value={monto}
                                                 customInput={StyledCustomInput}

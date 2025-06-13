@@ -9,7 +9,6 @@ import { setIsOpenDialogPago, setTypeOperation } from 'src/store/apps/pagos/lote
 import FromCreate from '../forms/pagos/FormCreate';
 import FromCreateTow from '../forms/pagos/FormCreateTwo';
 import FromUpdate from '../forms/pagos/FormUpdate';
-import FromUpdateTow from '../forms/pagos/FormUpdateTwo';
 
 const Transition = forwardRef(function Transition(
     props: FadeProps & { children?: ReactElement<any, any> },
@@ -31,12 +30,10 @@ const DialogLote = () => {
     const handleForms = () => {
         if (withOrdenPago && typeOperation === 'create') {
             return <FromCreate />
-        } else if (withOrdenPago && typeOperation === 'update') {
-            return <FromUpdate />
         } else if (!withOrdenPago && typeOperation === 'create') {
             return <FromCreateTow />
-        } else if (!withOrdenPago && typeOperation === 'update') {
-            return <FromUpdateTow />
+        } else if (typeOperation === 'update') {
+            return <FromUpdate />
         }
     }
 
