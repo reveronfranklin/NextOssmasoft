@@ -4,7 +4,6 @@ const OperatorSelector = ({ onOperatorSelect }) => {
   const operators = ['+', '-', '*', '/', '(', ')'];
   return (
     <div style={{ marginBottom: '20px' }}>
-      <h3>Operadores:</h3>
       <div style={{ display: 'flex', gap: '10px' }}>
         {operators.map((op) => (
           <button

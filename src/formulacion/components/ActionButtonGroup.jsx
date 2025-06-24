@@ -19,7 +19,7 @@ const ActionButtonGroup = ({ onEvaluate, onClear }) => {
         onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
         onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
       >
-        Evaluar Fórmula
+        Guardar
       </button>
       <button
         onClick={onClear}

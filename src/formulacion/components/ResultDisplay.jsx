@@ -1,4 +1,3 @@
-// src/components/ResultDisplay.jsx
 import React from 'react';
 
 const ResultDisplay = ({ result, error }) => {
@@ -20,7 +19,7 @@ const ResultDisplay = ({ result, error }) => {
     );
   }
 
-  return null; // No mostrar nada si no hay resultado ni error
+  return null;
 };
 
 export default ResultDisplay;

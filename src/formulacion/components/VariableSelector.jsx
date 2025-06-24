@@ -1,36 +1,34 @@
-// src/components/VariableSelector.jsx
 import React from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 
 const VariableSelector = ({ variables, onVariableSelect }) => {
+  const options = variables.map((variable) => ({
+    label: variable.description,
+    value: variable.code,
+  }));
+
   return (
-    <div style={{ marginBottom: '20px' }}>
-      <h3>Variables Disponibles:</h3>
+    <div style={{ marginBottom: '10px' }}>
+      <h4>Variables:</h4>
       {variables.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-          {variables.map((variable) => (
-            <button
-              key={variable.name}
-              onClick={() => onVariableSelect(variable.name)}
-              style={{
-                padding: '10px 15px',
-                cursor: 'pointer',
-                backgroundColor: '#e0f7fa',
-                border: '1px solid #b2ebf2',
-                borderRadius: '5px',
-                fontSize: '1em',
-                fontWeight: 'bold',
-                color: '#00796b',
-                transition: 'background-color 0.2s, transform 0.2s',
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b2ebf2'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e0f7fa'}
-              onMouseDown={(e) => e.currentTarget.style.transform = 'translateY(1px)'}
-              onMouseUp={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              {variable.name} ({variable.value})
-            </button>
-          ))}
-        </div>
+        <Autocomplete
+          disablePortal
+          options={options}
+          sx={{ width: '100%', mb: 2 }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Selecciona una variable"
+              variant="outlined"
+            />
+          )}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              onVariableSelect(`[${newValue.value}]`);
+            }
+          }}
+          value={null}
+        />
       ) : (
         <p>No hay variables definidas.</p>
       )}
