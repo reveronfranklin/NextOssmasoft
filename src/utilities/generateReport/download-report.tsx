@@ -20,8 +20,6 @@ const DownloadReport = async (props: any) => {
       }
     })
 
-    console.log('response', response.data)
-
     const blob = new Blob([response.data], { type: 'application/pdf' })
 
     return URL.createObjectURL(blob)
