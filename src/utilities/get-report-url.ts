@@ -1,8 +1,8 @@
 import authConfig from 'src/configs/auth'
 
 export const getReportUrl = (fileName?: string): string => {
-  const urlProduction: string | undefined = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
-  const urlDevelopment: string | undefined = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
+  const urlProduction: string | undefined = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
+  const urlDevelopment: string | undefined = process.env.NEXT_PUBLIC_BASE_URL_API_NET
 
   const urlBase: string | undefined = !authConfig.isProduction ? urlDevelopment : urlProduction
 
