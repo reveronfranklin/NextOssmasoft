@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Container, Paper, Grid, Box } from '@mui/material';
 import useFormulaBuilder from './hooks/useFormulaBuilder';
 import FormulaInput from './components/FormulaInput';
@@ -7,6 +7,8 @@ import FuncionesSelector from './components/FuncionesSelector';
 import OperatorSelector from './components/OperatorSelector';
 import ResultDisplay from './components/ResultDisplay';
 import ActionButtonGroup from './components/ActionButtonGroup';
+
+import useFormulaService from 'src/formulacion/services/formula/UseFormulaService';
 
 export default function FormulaBuilder({ initialVariables: propInitialVariables = [], initialFunctions: propInitialFunctions = [] }) {
   const variablesToUse = [
@@ -23,6 +25,20 @@ export default function FormulaBuilder({ initialVariables: propInitialVariables 
     { code: 'MIN(', description: 'MÍNIMO(valor1, valor2, ...)' },
     { code: 'SI(condicion, valor_verdadero, valor_falso)', description: 'SI(condicion, verdadero, falso)' },
   ];
+
+  const { getListFormulas } = useFormulaService();
+
+  useEffect(() => {
+    const filter = {
+      page: 1,
+      limit: 10,
+      searchText: '',
+    }
+
+    getListFormulas(filter).then(response => {
+      console.log('Formulas:', response);
+    });
+  }, []);
 
   const {
     formula,
