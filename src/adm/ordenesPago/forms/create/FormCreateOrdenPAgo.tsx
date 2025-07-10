@@ -45,12 +45,9 @@ const FormCreateOrdenPago = () => {
                 motivo,
                 frecuenciaPagoId,
                 tipoPagoId,
-                cantidadPago,
                 tipoOrdenId,
                 conFactura
             } = dataFormOrder
-
-            const cantidadPagoNumber = Number(cantidadPago)
 
             const payload: ICreateOrdenPago = {
                 codigoOrdenPago: 0,
@@ -58,7 +55,7 @@ const FormCreateOrdenPago = () => {
                 codigoCompromiso,
                 fechaOrdenPago: fechaCompromiso,
                 tipoOrdenPagoId: tipoOrdenId,
-                cantidadPago: cantidadPagoNumber,
+                cantidadPago: 1,
                 frecuenciaPagoId,
                 tipoPagoId,
                 motivo,

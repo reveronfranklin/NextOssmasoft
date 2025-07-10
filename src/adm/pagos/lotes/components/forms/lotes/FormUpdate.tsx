@@ -9,24 +9,18 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-    Box,
-    Grid,
-    TextField,
-    FormControl,
-    Button
-} from '@mui/material';
-
+import { Box, Grid, TextField, FormControl, Button } from '@mui/material';
 import { RootState } from 'src/store';
 import { useServices } from '../../../services';
-import { setIsOpenDialogLote, resetLoteShow } from 'src/store/apps/pagos/lotes'
-import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto } from '../../../interfaces';
+import { setIsOpenDialogLote, resetLoteShow, setWithOrdenPago } from 'src/store/apps/pagos/lotes'
+import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto, DescriptivaResponseDto, ResponseDto } from '../../../interfaces';
 import { TipoPago, MaestroCuenta } from '../../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import dayjs from 'dayjs';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import usePause from '../../../hooks/usePause';
 import getRules from './rules';
 
 const FormUpdate = () => {
@@ -45,6 +39,7 @@ const FormUpdate = () => {
     const dispatch          = useDispatch()
     const qc: QueryClient   = useQueryClient()
     const { lote }          = useSelector((state: RootState) => state.admLote )
+    const { pause }         = usePause()
     const rules             = getRules()
 
     const {
@@ -65,20 +60,46 @@ const FormUpdate = () => {
         titulo: lote.titulo
     }
 
-    useEffect(() => {
-        setFechaPagoLote(lote.fechaPagoDto)
-    }, [lote])
-
     const {
         control,
         handleSubmit,
         reset,
         setValue,
+        watch,
         formState: { errors, isValid }
     } = useForm<LoteDto>({
         defaultValues,
         mode: 'onChange'
     })
+
+    const tipoPagoId = watch('tipoPagoId')
+
+    const handlePause = async () => {
+        await pause(800)
+
+        const tipoPagoTableCache: ResponseDto<DescriptivaResponseDto> | undefined = qc.getQueryData(['TipoPago'])
+
+        if (tipoPagoTableCache?.data) {
+            const tipoPago = tipoPagoTableCache.data.find((item) => item.id === tipoPagoId)
+
+            if (tipoPago) {
+                const withOrdenPago = tipoPago?.titulo
+                    ?
+                        tipoPago.titulo
+                            .trim()
+                            .toUpperCase()
+                            .includes('CON')
+                    : false
+
+                dispatch(setWithOrdenPago(withOrdenPago))
+            }
+        }
+    }
+
+    useEffect(() => {
+        setFechaPagoLote(lote.fechaPagoDto)
+        handlePause()
+    }, [lote, tipoPagoId, qc])
 
     const handleOpenDialog = () => {
         setDialogOpen(true)

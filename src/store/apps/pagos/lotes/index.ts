@@ -8,7 +8,8 @@ export const admLoteSlice = createSlice({
         isOpenDialogLote: false,
         codigoLote: null,
         lote: {} as LoteResponseDto,
-        batchPaymentDate: {} as LoteFilterFechaPagoDto
+        batchPaymentDate: {} as LoteFilterFechaPagoDto,
+        withOrdenPago: false
     },
     reducers: {
         setTypeOperation: (state, action) => {
@@ -28,6 +29,9 @@ export const admLoteSlice = createSlice({
         },
         setCodigoLote: (state, action) => {
             state.codigoLote = action.payload
+        },
+        setWithOrdenPago: (state, action) => {
+            state.withOrdenPago = action.payload
         }
     }
 })
@@ -42,5 +46,6 @@ export const {
     setLoteShow,
     resetLoteShow,
     setBatchPaymentDate,
-    setCodigoLote
+    setCodigoLote,
+    setWithOrdenPago
 } = admLoteSlice.actions

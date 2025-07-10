@@ -77,7 +77,7 @@ const MaestroCuenta = ({
                         }}
                         onChange={handleChange}
                         renderInput={(params) => <TextField {...params} label={label} required={required} error={!!error} autoFocus={autoFocus} />}
-                        key={`cuenta-${id || 'empty'}`}
+                        key={`maestro-cuenta-${id || 'empty'}`}
                     />
                     {
                         error && <FormHelperText error>{error}</FormHelperText>

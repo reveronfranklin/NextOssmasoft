@@ -44,7 +44,8 @@ const FormImpuestoDocumentosOp = () => {
     impuestoDocumentoOpSeleccionado,
     retencionSeleccionado,
     documentoOpSeleccionado,
-    isOpenDialogConfirmButtons
+    isOpenDialogConfirmButtons,
+    baseImponibleDocumentosOp
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const showOnlyCreate = impuestoDocumentoOpSeleccionado?.codigoDocumentoOp ?? false
@@ -81,9 +82,9 @@ const FormImpuestoDocumentosOp = () => {
     defaultValues
   })
 
-  const baseImponible = watch('baseImponible')
+  const baseImponible       = watch('baseImponible')
   const montoImpuestoExento = watch('montoImpuestoExento')
-  const montoImpuesto = watch('montoImpuesto')
+  const montoImpuesto       = watch('montoImpuesto')
 
   const baseImponibleRules = {
     required: 'Este campo es obligatorio',
@@ -106,7 +107,7 @@ const FormImpuestoDocumentosOp = () => {
 
       calcularMontoRetenido(valorFinal, montoImpuestoExento)
     }
-  }, [baseImponible, setValue])
+  }, [baseImponible, porRetencion, setValue])
 
   const calcularMontoRetenido = (impuesto: number, exento: number) => {
     if (exento < 0) {
@@ -255,6 +256,12 @@ const FormImpuestoDocumentosOp = () => {
       }
     }
   }, [impuestoDocumentoOpSeleccionado])
+
+  useEffect(() => {
+    if (baseImponibleDocumentosOp > 0) {
+      setValue('baseImponible', baseImponibleDocumentosOp)
+    }
+  }, [baseImponibleDocumentosOp, setValue])
 
   const onSubmit = (data: any) => {
     console.log(data)

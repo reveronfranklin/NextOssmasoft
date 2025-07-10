@@ -30,3 +30,6 @@ export * from './autoComplete/auto-complete-props.interface'
 /* Interface 'Ordenes Pago' */
 export * from './ordenPago/orden-pago-filter.dto'
 export * from './ordenPago/orden-pago-response.dto'
+
+/* Interface 'Proveedores Contacto' */
+export * from './proveedores/proveedor-response.dto'
