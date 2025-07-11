@@ -19,11 +19,23 @@ import {
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
+    const sxAutoCutText = {
+        color: 'text.primary',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: '300px'
+    }
+
     const handleEdit = (pago: PagoDto) => {
         dispatch(setTypeOperation('update'))
         dispatch(setIsOpenDialogPago(true))
         dispatch(setPagoShow(pago))
         dispatch(setCodigoPago(pago.codigoPago))
+    }
+
+    const handleDialogViewerPdf = (pago: PagoDto) => {
+        console.log('test row:'  , pago)
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -36,7 +48,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
 
     const columns = useMemo<GridColDef[]>(() => [
         {
-            flex: 1,
+            flex: 1.2,
             minWidth: 40,
             sortable: false,
             headerName: 'Acciones',
@@ -48,21 +60,32 @@ const useColumnsDataGrid = (): GridColDef[] => {
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
+                    <Tooltip title="Ver PDF">
+                        <StyledIconButton
+                            size='small'
+                            onClick={() => handleDialogViewerPdf(row)}
+                        >
+                            <Icon icon='mdi:file-pdf-box' fontSize={20} />
+                        </StyledIconButton>
+                    </Tooltip>
                 </Box>
             )
         },
         {
-            flex: 1,
+            flex: 1.2,
             headerName: 'Número Orden Pago',
             field: 'numeroOrdenPago',
             renderCell: (params: GridRenderCellParams) => (
-                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                <Typography
+                    variant='body2'
+                    sx={sxAutoCutText}
+                >
                     {params.row.numeroOrdenPago === '' ? 'NO DISPONIBLE' : params.row.numeroOrdenPago}
                 </Typography>
             )
         },
         {
-            flex: 1,
+            flex: 1.2,
             headerName: 'Código de pago',
             field: 'codigoPago',
             renderCell: (params: GridRenderCellParams) => (
@@ -72,37 +95,27 @@ const useColumnsDataGrid = (): GridColDef[] => {
             )
         },
         {
-            flex: 2,
+            flex: 1.5,
             headerName: 'Nombre Proveedor',
             field: 'nombreProveedor',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography
                     variant='body2'
-                    sx={{
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: '300px'
-                    }}>
+                    sx={sxAutoCutText}
+                >
                     {params.row.nombreProveedor === '' ? 'NO DISPONIBLE' : params.row.nombreProveedor}
                 </Typography>
             )
         },
         {
-            flex: 2,
+            flex: 1.5,
             headerName: 'Motivo',
             field: 'motivo',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography
                     variant='body2'
-                    sx={{
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: '300px'
-                    }}>
+                    sx={sxAutoCutText}
+                >
                     {params.row.motivo === '' ? 'NO DISPONIBLE' : params.row.motivo}
                 </Typography>
             )
