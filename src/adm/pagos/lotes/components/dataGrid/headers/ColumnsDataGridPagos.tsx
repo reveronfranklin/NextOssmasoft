@@ -13,7 +13,9 @@ import {
     setTypeOperation,
     setIsOpenDialogPago,
     setPagoShow,
-    setCodigoPago
+    setCodigoLote,
+    setCodigoPago,
+    setIsOpenViewerPdf
 } from 'src/store/apps/pagos/lote-pagos';
 
 const useColumnsDataGrid = (): GridColDef[] => {
@@ -34,8 +36,10 @@ const useColumnsDataGrid = (): GridColDef[] => {
         dispatch(setCodigoPago(pago.codigoPago))
     }
 
-    const handleDialogViewerPdf = (pago: PagoDto) => {
-        console.log('test row:'  , pago)
+    const handleDialogViewerPdf = (codigoLote: number, codigoPago: number) => {
+        dispatch(setIsOpenViewerPdf(true))
+        dispatch(setCodigoPago(codigoPago))
+        dispatch(setCodigoLote(codigoLote))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -63,7 +67,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
                     <Tooltip title="Ver PDF">
                         <StyledIconButton
                             size='small'
-                            onClick={() => handleDialogViewerPdf(row)}
+                            onClick={() => handleDialogViewerPdf(row.codigoLote, row.codigoPago)}
                         >
                             <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>

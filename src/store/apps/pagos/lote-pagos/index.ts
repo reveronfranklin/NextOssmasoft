@@ -8,7 +8,8 @@ export const admLotePagosSlice = createSlice({
         pago: {} as PagoResponseDto,
         codigoPago: null,
         isOpenDialogPago: false,
-        typeOperation: null
+        typeOperation: null,
+        isOpenViewerPdf: false
     },
     reducers: {
         setTypeOperation: (state, action) => {
@@ -17,11 +18,14 @@ export const admLotePagosSlice = createSlice({
         setIsOpenDialogPago: (state, action) => {
             state.isOpenDialogPago = action.payload
         },
+        setIsOpenViewerPdf: (state, action) => {
+            state.isOpenViewerPdf = action.payload
+        },
         setCodigoLote: (state, action) => {
             state.codigoLote = action.payload
         },
         setCodigoPago: (state, action) => {
-            state.pago.codigoPago = action.payload
+            state.codigoPago = action.payload
         },
         setPagoShow: (state, action) => {
             state.pago = action.payload
@@ -34,6 +38,7 @@ export const admLotePagosSlice = createSlice({
 export const {
     setTypeOperation,
     setIsOpenDialogPago,
+    setIsOpenViewerPdf,
     setCodigoLote,
     setCodigoPago,
     setPagoShow,
