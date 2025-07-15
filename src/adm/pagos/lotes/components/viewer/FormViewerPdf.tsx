@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, MenuItem, Box, Typography, CircularProgress } from '@mui/material'
-import ReportViewAsync from 'src/share/components/Reports/forms/ReportViewAsync'
-import { RootState } from "src/store"
-import { useSelector } from "react-redux"
-import { UrlServices } from '../../enums/UrlServices.enum'
-import Icon from 'src/@core/components/icon'
-import { reportOptions } from '../../config/reportOptions'
-import HandleReportApiTo from 'src/utilities/generateReport/download-report-api-to'
+import { useSelector } from 'react-redux';
+import { TextField, MenuItem, Box, Typography, CircularProgress } from '@mui/material';
+import { RootState } from 'src/store'
+import Icon from 'src/@core/components/icon';
+import ReportViewAsync from 'src/share/components/Reports/forms/ReportViewAsync';
+import HandleReportApiTo from 'src/utilities/generateReport/download-report-api-to';
+import { UrlServices } from '../../enums/urlServices.enum';
+import { reportOptions } from './options/index';
 
 const FormViewerPdf: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState(reportOptions[0].value)
   const [isLoading, setIsLoading] = useState(false);
   const [reportUrl, setReportUrl] = useState('')
 
-  const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
+  const {
+    codigoLote,
+    codigoPago
+  } = useSelector((state: RootState) => state.admLotePagos )
 
   const fetchReport = async (reportType: string) => {
     try {
       const params = {
-        CodigoOrdenPago: codigoOrdenPago
+        codigoLotePago: codigoLote,
+        codigoPago: codigoPago
       }
 
       const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params }) || ''
@@ -31,7 +35,7 @@ const FormViewerPdf: React.FC = () => {
 
   useEffect(() => {
     fetchReport(selectedReport)
-  }, [codigoOrdenPago])
+  }, [codigoLote, codigoPago])
 
   const handleReportChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {

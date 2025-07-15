@@ -21,4 +21,6 @@ export enum UrlServices {
     GET_FILE_LOTE               = '/Files/GetTxtFiles/',
 
     GET_PROVEEDORES             = '/AdmProveedores/GetAllProveedoresContactos',
+
+    GET_REPORT_BY_DEBIT_NOTE    = '/api-v1.0/debit-note-third-parties/pdf/report'
 }
