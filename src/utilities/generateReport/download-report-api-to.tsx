@@ -28,8 +28,6 @@ const DownloadReportApiTo = async (props: any) => {
       Usuario: JSON.parse(window.localStorage.getItem('userData') || '{}').username || '',
     } as IReportApiTo
 
-    console.log('DownloadReportApiTo', payload)
-
     const response = await axios.post(urlApi, payload, {
       responseType: 'blob',
       headers: {
