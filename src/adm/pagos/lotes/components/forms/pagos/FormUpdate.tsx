@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import {
     Box,
     Grid,
@@ -14,7 +15,7 @@ import {
 import { RootState } from 'src/store';
 import { NumericFormat } from 'react-number-format';
 import { useServicesPagos } from '../../../services';
-import { setIsOpenDialogPago, resetPagoShow } from 'src/store/apps/pagos/lote-pagos'
+import { setIsOpenDialogPago, resetPagoShow, setIsOpenViewerPdf, setCodigoPago, setCodigoLote } from 'src/store/apps/pagos/lote-pagos'
 import { PagoDto, PagoDeleteDto } from '../../../interfaces';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import useInvalidateReset from 'src/hooks/useInvalidateReset';
@@ -180,6 +181,15 @@ const FormUpdate = () => {
         }
     }
 
+    const onViewerPdf = () => {
+        const codigoPago        = pago.codigoPago
+        const codigoLotePago    = pago.codigoLote
+
+        dispatch(setIsOpenViewerPdf(true))
+        dispatch(setCodigoPago(codigoPago))
+        dispatch(setCodigoLote(codigoLotePago))
+    }
+
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>
@@ -334,6 +344,13 @@ const FormUpdate = () => {
                                         onClick={handleClearPago}
                                     >
                                         <CleaningServices /> Limpiar
+                                    </Button>
+                                    <Button
+                                        color='primary'
+                                        size='small'
+                                        onClick={onViewerPdf}
+                                    >
+                                        <PictureAsPdfIcon /> VER PDF
                                     </Button>
                                 </Box>
                             </form>

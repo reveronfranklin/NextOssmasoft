@@ -22,7 +22,7 @@ const FormViewerPdf: React.FC = () => {
     try {
       const params = {
         codigoLotePago: codigoLote,
-        codigoPago: codigoPago
+        codigoPago: codigoPago ?? 0
       }
 
       const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params }) || ''

@@ -9,10 +9,12 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Box, Grid, TextField, FormControl, Button } from '@mui/material';
 import { RootState } from 'src/store';
 import { useServices } from '../../../services';
 import { setIsOpenDialogLote, resetLoteShow, setWithOrdenPago } from 'src/store/apps/pagos/lotes'
+import { setIsOpenViewerPdf, setCodigoLote, setCodigoPago } from 'src/store/apps/pagos/lote-pagos';
 import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto, DescriptivaResponseDto, ResponseDto } from '../../../interfaces';
 import { TipoPago, MaestroCuenta } from '../../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
@@ -230,6 +232,14 @@ const FormUpdate = () => {
         }
     }
 
+    const onViewerPdf = () => {
+        const codigoLotePago = lote.codigoLotePago
+
+        dispatch(setIsOpenViewerPdf(true))
+        dispatch(setCodigoPago(0))
+        dispatch(setCodigoLote(codigoLotePago))
+    }
+
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>
@@ -410,6 +420,13 @@ const FormUpdate = () => {
                                         onClick={handleClearPagoLote}
                                     >
                                         <CleaningServices /> Limpiar
+                                    </Button>
+                                    <Button
+                                        color='primary'
+                                        size='small'
+                                        onClick={onViewerPdf}
+                                    >
+                                        <PictureAsPdfIcon /> VER PDF
                                     </Button>
                                 </Box>
                             </form>
