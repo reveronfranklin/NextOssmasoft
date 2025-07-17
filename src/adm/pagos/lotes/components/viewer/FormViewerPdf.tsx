@@ -19,13 +19,15 @@ const FormViewerPdf: React.FC = () => {
   } = useSelector((state: RootState) => state.admLotePagos )
 
   const fetchReport = async (reportType: string) => {
+    const module = 'AdmLotePago'
+
     try {
       const params = {
         codigoLotePago: codigoLote,
         codigoPago: codigoPago ?? 0
       }
 
-      const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params }) || ''
+      const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params, module }) || ''
 
       setReportUrl(objectURL)
     } catch (error) {
