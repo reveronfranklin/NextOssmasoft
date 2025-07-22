@@ -1,3 +1,5 @@
+import { IFormulaBase } from './FormulaBase.interfaces';
+
 export interface DTOFormulaCreate {
   formula: string;
   descripcion: string;
@@ -5,14 +7,4 @@ export interface DTOFormulaCreate {
   codigoEmpresa: number;
 }
 
-export interface IFormulaCreateResponse {
-  id: number;
-  descripcion: string;
-  formula: string;
-  estado: string;
-  fechaIns: Date;
-  usuarioInsert: number;
-  fechaUpd: Date;
-  usuarioUpdate: any;
-  codigoEmpresa: number;
-}
+export type IFormulaCreateResponse = IFormulaBase

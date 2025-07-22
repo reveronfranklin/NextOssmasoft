@@ -1,15 +1,17 @@
+import { TipoVariableEnum } from '../../enums/TipoVariable.enum';
+
 export interface DTOVariableGetAll {
   page: number;
   limit: number;
   searchText: string;
-  tipoVariable: string;
+  tipoVariable: TipoVariableEnum;
 }
 
 export interface IVariableGetAllResponse {
   id: number;
   code: number;
   descripcion: string;
-  tipoVariable: string;
+  tipoVariable: TipoVariableEnum;
   estado: string;
   fechaIns: Date;
   usuarioInsert: number;

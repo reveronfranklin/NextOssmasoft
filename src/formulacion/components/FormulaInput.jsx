@@ -3,6 +3,7 @@ import { TextField, FormHelperText } from '@mui/material';
 
 const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
   const localInputRef = useRef(null);
+
   // Estado local para errores de validación personalizados
   const [customValidationError, setCustomValidationError] = useState(null);
 
@@ -38,6 +39,7 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
 
         if (insertedIsOperator && lastCharIsOperator) {
             setCustomValidationError("No se pueden insertar dos operadores seguidos.");
+
             // No actualizamos la fórmula, evitando el error.
             return;
         } else {
@@ -81,6 +83,7 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
 
     // 2. Validación: No dos operadores seguidos (durante la escritura)
     const operators = ['+', '-', '*', '/', '^'];
+
     // Obtener el último carácter de la fórmula ANTES del nuevo texto
     const formulaBeforeChange = formula.substring(0, cursorPosition - (newText.length - formula.length)); // Esto obtiene la parte de la fórmula ANTES del carácter que se está evaluando
     const lastCharOfOldFormula = formulaBeforeChange.charAt(formulaBeforeChange.length - 1);
@@ -89,10 +92,12 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
 
     if (operators.includes(insertedChar) && operators.includes(lastCharOfOldFormula)) {
         setCustomValidationError("No se pueden escribir dos operadores seguidos.");
+
         // Si hay un error, no actualizamos la fórmula para prevenir la entrada inválida.
         // O podrías actualizarla y mostrar el error, dejando que la validación del parser lo maneje.
         // Aquí decidimos prevenirlo para una mejor UX.
         e.preventDefault(); // Esto no funciona en onChange para prevenir, solo en onKeyDown.
+
         // La mejor manera de prevenir en onChange es no llamar a setFormula.
         return; // Detiene la actualización del estado si es un operador doble
     } else {
@@ -113,7 +118,8 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
       // Previene la inserción si el usuario teclea ')'
       setCustomValidationError("El paréntesis de cierre ')' se añade automáticamente.");
       e.preventDefault(); // Previene que el carácter se escriba
-      return; // No ejecutar más lógica para este evento
+      
+return; // No ejecutar más lógica para este evento
     }
 
     // Validación 2: Cierre automático de paréntesis '('
@@ -126,7 +132,8 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
         input.setSelectionRange(start + 1, start + 1);
       }, 0);
       setCustomValidationError(null); // Limpiar cualquier error previo
-      return; // No ejecutar más lógica para este evento
+      
+return; // No ejecutar más lógica para este evento
     }
 
     // Validación 3: No dos operadores seguidos (para teclas de operador)
@@ -135,7 +142,8 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
       if (operators.includes(lastCharBeforeCursor)) {
         setCustomValidationError("No se pueden insertar dos operadores seguidos.");
         e.preventDefault(); // Previene que el segundo operador se escriba
-        return; // No ejecutar más lógica para este evento
+        
+return; // No ejecutar más lógica para este evento
       }
       setCustomValidationError(null); // Limpiar error si la entrada es válida
     }
@@ -157,7 +165,7 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
         onKeyDown={handleKeyDown} // Añade el manejador de teclado
         placeholder="Escribe tu fórmula aquí, o selecciona variables, funciones y operadores..."
         multiline
-        rows={10}
+        rows={2}
         variant="outlined"
         fullWidth
         label="Fórmula"
@@ -165,6 +173,7 @@ const FormulaInput = forwardRef(({ formula, setFormula, syntaxError }, ref) => {
         sx={{
           '& .MuiInputBase-input': {
             fontSize: '1.2em',
+
             // minHeight: '100px',
             resize: 'vertical',
           },

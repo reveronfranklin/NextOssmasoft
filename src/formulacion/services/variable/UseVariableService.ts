@@ -7,12 +7,14 @@ import { DTOVariableCreate, IVariableCreateResponse } from 'src/formulacion/inte
 import { DTOVariableUpdate, IVariableUpdateResponse } from 'src/formulacion/interfaces/variable/Update.interfaces'
 import { DTOVariableDelete, IVariableDeleteResponse } from 'src/formulacion/interfaces/variable/Delete.intrefaces'
 
+import { IVariableService } from 'src/formulacion/interfaces/variable/VariableService.interfaces'
+
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
 import { IApiResponse } from 'src/interfaces/api-response-dto'
 import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
-const useVariableService = () => {
+const useVariableService = (): IVariableService => {
   const [error, setError] = useState<string>('')
   const [message, setMessage] = useState<IAlertMessageDto>({
     text: '',
