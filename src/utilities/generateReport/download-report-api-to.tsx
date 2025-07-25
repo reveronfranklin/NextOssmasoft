@@ -7,7 +7,7 @@ interface IReportApiTo {
 }
 
 const DownloadReportApiTo = async (props: any) => {
-  const { tipoReporte, params, module } = props
+  const { tipoReporte, params, moduleReport } = props
 
   const urlProductionReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
   const urlDevelopmentReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
@@ -20,7 +20,7 @@ const DownloadReportApiTo = async (props: any) => {
 
   try {
     const urlReport = `${urlReportBase}${tipoReporte}`
-    const urlApi = `${urlBase}/${module}/Report`
+    const urlApi = `${urlBase}/${moduleReport}/Report`
 
     const payload = {
       ...params,
