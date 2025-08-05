@@ -18,28 +18,15 @@ const FormViewerPdf: React.FC = () => {
     codigoPago
   } = useSelector((state: RootState) => state.admLotePagos )
 
-  const getParams = (reportType: string) => {
-    if (reportType.includes('debit-note-third-parties')) {
-      const payloadDebitNote = {
-        paymentBatchCode: codigoLote,
-        paymentCode: codigoPago ?? 0
-      }
-
-      return payloadDebitNote
-    } else {
-      const payloadElectronicPayments = {
-        batchCode: codigoLote
-      }
-
-      return payloadElectronicPayments
-    }
-  }
-
   const fetchReport = async (reportType: string) => {
     const moduleReport  = 'AdmLotePago'
-    const params        = getParams(reportType)
 
     try {
+      const params = {
+        codigoLotePago: codigoLote,
+        codigoPago: codigoPago ?? 0
+      }
+
       const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params, moduleReport }) || ''
 
       setReportUrl(objectURL)
