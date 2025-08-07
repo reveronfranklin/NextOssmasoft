@@ -5,7 +5,7 @@ const FormularioVariable = ({ initialValues = {}, onChange }) => {
   const [values, setValues] = React.useState(initialValues);
 
   React.useEffect(() => {
-    setValues(initialValues);
+    setValues(initialValues || {});
   }, [initialValues]);
 
   const handleChange = (e) => {
@@ -27,9 +27,18 @@ const FormularioVariable = ({ initialValues = {}, onChange }) => {
         required
       />
       <TextField
-        name="tipoVariable"
-        label = "tipoVariable"
-        value={values.descripcion || ''}
+        name="code"
+        label="Código"
+        value={values.code || ''}
+        onChange={handleChange}
+        fullWidth
+        margin="dense"
+        required
+      />
+      <TextField
+        name="tipo"
+        label="Tipo de Variable"
+        value={values.tipo || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"
