@@ -5,8 +5,9 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CrudModal = ({
   open,
@@ -15,32 +16,51 @@ const CrudModal = ({
   onSubmit,
   onDelete,
   isEdit = false,
-  isCreate = false,
-  isDelete = false,
   children,
+  formValues = {},
 }) => {
-  const handleSubmit = (e) => {
-    onSubmit && onSubmit(e);
+  const handleSubmit = (e, action) => {
+    e.preventDefault();
+    if (action === 'delete' && onDelete) {
+      onDelete(formValues, action);
+    } else if (onSubmit) {
+      onSubmit(formValues, action);
+    }
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
-      <form onSubmit={handleSubmit}>
+      <DialogTitle>
+        {title}
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            color: (theme) => theme.palette.grey[500],
+            ml: 2,
+            position: 'absolute',
+            right: 8,
+            top: 8,
+          }}
+          size="small"
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <form>
         <DialogContent>
           {children}
         </DialogContent>
         <DialogActions>
           {isEdit && onDelete && (
-            <Button color="error" onClick={() => onDelete(formValues)}>
+            <Button color="error" onClick={(e) => handleSubmit(e, 'delete')}>
               Eliminar
             </Button>
           )}
-          <Button onClick={onClose}>Cancelar</Button>
           <Button
-            type="submit"
             variant="contained"
             color="primary"
+            onClick={(e) => handleSubmit(e, isEdit ? 'edit' : 'create')}
           >
             {isEdit ? 'Actualizar' : 'Crear'}
           </Button>

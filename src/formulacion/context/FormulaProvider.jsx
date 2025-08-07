@@ -8,11 +8,12 @@ export default function FormulaProvider({
   formulaService: formulaServiceProp,
   variableService: variableServiceProp
 }) {
-  // Usa los servicios inyectados o los hooks por defecto
-  const formulaService = formulaServiceProp || useFormulaService();
-  const variableService = variableServiceProp || useVariableService();
+  const formulaServiceFromHook = useFormulaService();
+  const variableServiceFromHook = useVariableService();
 
-  // Memoriza el value para evitar renders innecesarios
+  const formulaService = formulaServiceProp || formulaServiceFromHook;
+  const variableService = variableServiceProp || variableServiceFromHook;
+
   const value = useMemo(() => ({
     formulaService,
     variableService,

@@ -1,13 +1,15 @@
 export interface DTOVariableUpdate {
   id: number;
+  code: string;
   descripcion: string;
   tipoVariable: string;
-  estado: string;
+  usuarioUpdate: number;
   codigoEmpresa: number;
 }
 
 export interface IVariableUpdateResponse {
   id: number;
+  code: string;
   descripcion: string;
   tipoVariable: string;
   estado: string;

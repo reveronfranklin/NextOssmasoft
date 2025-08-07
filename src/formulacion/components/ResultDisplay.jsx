@@ -13,8 +13,10 @@ const ResultDisplay = ({ result, error }) => {
         fontSize: '1.1em'
         }}
       >
-        <h3>Error de Evaluación:</h3>
-        <p>{error}</p>
+        {/* <h3>Error de Evaluación:</h3> */}
+        <small>
+          {error}
+        </small>
       </div>
     );
   }
@@ -23,14 +25,19 @@ const ResultDisplay = ({ result, error }) => {
     return (
       <div style={{
         marginTop: '20px',
-        padding: '15px',
+        padding: '10px',
         backgroundColor: '#e8f5e9',
         border: '1px solid #c8e6c9',
-        borderRadius: '8px'
+        borderRadius: '5px'
         }}
       >
-        <h3>Resultado:</h3>
-        <p style={{ fontSize: '1.8em', fontWeight: 'bold', color: '#2e7d32' }}>{result}</p>
+        <small style={{
+            fontSize: '1.2em',
+            color: '#2e7d32',
+          }}
+        >
+          {result}
+        </small>
       </div>
     );
   }

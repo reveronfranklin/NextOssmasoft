@@ -1,5 +1,5 @@
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
-import { IApiResponse, IApiFlexibleResponse, ISingleResponse } from 'src/interfaces/api-response-dto';
+import { IApiResponse, IApiFlexibleResponse } from 'src/interfaces/api-response-dto';
 import { DTOGetAllFormula, IFormulaResponse} from 'src/formulacion/interfaces/formula/GetAll.interfaces'
 import { DTOFormulaCreate, IFormulaCreateResponse} from 'src/formulacion/interfaces/formula/Create.interfaces'
 import { DTOFormulaUpdate, IFormulaUpdateResponse } from 'src/formulacion/interfaces/formula/Update.intrefaces'

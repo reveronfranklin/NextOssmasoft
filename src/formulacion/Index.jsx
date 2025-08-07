@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { Container, Paper, Grid, Box, TextField } from '@mui/material';
 import FormulaInput from './components/FormulaInput';
 import VariableSelector from './components/VariableSelector';
@@ -12,12 +12,19 @@ import useFormulaService from 'src/formulacion/services/formula/UseFormulaServic
 import useVariableService from 'src/formulacion/services/variable/UseVariableService';
 import FormulaProvider from './context/FormulaProvider';
 
+import useFormulaHistory from 'src/formulacion/hooks/useFormulaHistory';
+
 export default function FormulaBuilder({
   formulaService: formulaServiceProp,
   variableService: variableServiceProp
 }) {
-  const formulaService = formulaServiceProp || useFormulaService();
-  const variableService = variableServiceProp || useVariableService();
+  const formulaServiceFromHook = useFormulaService();
+  const variableServiceFromHook = useVariableService();
+
+  // const builderClearFormula = useFormulaBuilderClear();
+
+  const formulaService = formulaServiceProp || formulaServiceFromHook;
+  const variableService = variableServiceProp || variableServiceFromHook;
 
   const services = React.useMemo(() => ({
     formulaService,
@@ -27,51 +34,76 @@ export default function FormulaBuilder({
   const {
     description,
     setDescription,
-    formula,
-    setFormula,
-    variables: availableVariables,
+    variables: availableVariables, setVariables,
     functions: availableFormulas,
     result,
     error,
     syntaxError,
-    handleCreate,
-    handleUpdate,
+    handleCreate: handleBuilderCreate,
+    handleUpdate: handleBuilderUpdate,
     handleDelete,
-    clearFormula,
+    clearFormula: builderClearFormula,
     selectedFormula,
-    setSelectedFormula
+    setSelectedFormula,
+    editingItem,
+    setEditingItem
   } = useFormulaBuilder(services)
+
+  const {
+    formula,
+    setFormula,
+    undo,
+    clearAllHistory,
+    history: formulaHistory,
+  } = useFormulaHistory('');
 
   const formulaInputRef = useRef(null)
 
-  const insertTextIntoFormulaInput = (text = '', description = '') => {
-    if (selectedFormula && selectedFormula.id) return;
+  const memoizedVariables = React.useMemo(
+    () => availableVariables,
+    [availableVariables]
+  );
 
-    if (description) {
-      setDescription(description);
+  const getFormulaFromInput = React.useCallback(() => {
+    return formulaInputRef.current?.getFormulaValue() || '';
+  }, []);
+
+  const insertTextIntoFormulaInput = React.useCallback((text = '', description = '', type = 'variable') => {
+    console.log(description)
+    const currentFormula = getFormulaFromInput();
+
+    if (type === 'formula') {
+      if (currentFormula === text) return;
+      if (selectedFormula && selectedFormula.id) return;
     }
 
-    if (formulaInputRef.current && typeof formulaInputRef.current.insertText === 'function') {
-      formulaInputRef.current.insertText(text);
+    formulaInputRef.current?.insertText(text);
+  }, [getFormulaFromInput, selectedFormula]);
+
+  const handleEvaluate = useCallback(() => {
+    const currentFormula = getFormulaFromInput();
+
+    if (selectedFormula.id !== 0) {
+      handleBuilderUpdate(currentFormula);
     } else {
-      const inputElement = formulaInputRef.current?.inputElement;
-      if (inputElement) {
-        const start = inputElement.selectionStart || 0;
-        const end = inputElement.selectionEnd || 0;
-
-        setFormula(prev => {
-          const newValue = prev.substring(0, start) + text + prev.substring(end);
-
-          return newValue;
-        });
-
-        setTimeout(() => {
-          inputElement.focus();
-          inputElement.setSelectionRange(start + text.length, start + text.length);
-        }, 0);
-      }
+      handleBuilderCreate(currentFormula);
     }
-  };
+  }, [selectedFormula.id, getFormulaFromInput, handleBuilderUpdate, handleBuilderCreate]);
+
+  const handleClear = useCallback(() => {
+    formulaInputRef.current?.setFormulaValue('');
+    builderClearFormula;
+  }, [builderClearFormula]);
+
+  useEffect(() => {
+    if (selectedFormula && selectedFormula.formula !== undefined && formulaInputRef.current) {
+      formulaInputRef.current.setFormulaValue(selectedFormula.formula);
+      setDescription(selectedFormula.descripcion || '');
+    } else if (formulaInputRef.current) {
+      formulaInputRef.current.setFormulaValue('');
+      setDescription('');
+    }
+  }, [selectedFormula, setDescription]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
@@ -85,52 +117,51 @@ export default function FormulaBuilder({
               fullWidth
               margin="normal"
             />
-
             <FormulaInput
               ref={formulaInputRef}
+              syntaxError={syntaxError}
               formula={formula}
               setFormula={setFormula}
-              syntaxError={syntaxError}
             />
-
             <ActionButtonGroup
-              onEvaluate = {
-                selectedFormula.id !== 0 ? handleUpdate : handleCreate
-              }
-              onClear={clearFormula}
+              onEvaluate={handleEvaluate}
+              onDeleteFormula={handleDelete}
+              onClear={handleClear}
+              onUndo={undo}
+              clearAllHistory={clearAllHistory}
+              formulaHistory={formulaHistory}
               sx={{ mt: 2, mb: 1 }}
               isEdit={selectedFormula.id !== 0}
+              clearDisabled={getFormulaFromInput().trim() === ''}
             />
-
             <ResultDisplay
               result={result}
               error={error}
             />
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <OperatorSelector
               onOperatorSelect={insertTextIntoFormulaInput}
             />
-
-            {availableVariables && availableVariables.length > 0 && (
+            { memoizedVariables && memoizedVariables.length > 0 && (
               <Box sx={{ mt: 2 }}>
                 <FormulaProvider>
                   <VariableSelector
-                    variables={availableVariables}
+                    variables={memoizedVariables}
+                    setVariables={setVariables}
                     onVariableSelect={insertTextIntoFormulaInput}
+                    setEditingItem={setEditingItem}
+                    editingItem={editingItem}
                   />
                 </FormulaProvider>
               </Box>
             )}
           </Grid>
-
           <Grid item xs={12} sm={12}>
             <FormulaProvider >
               <ListFormulas
                 formulas={availableFormulas}
                 onFunctionSelect={insertTextIntoFormulaInput}
-                onDeleteFormula={handleDelete}
                 setSelectedFormula={setSelectedFormula}
               />
             </FormulaProvider>

@@ -6,6 +6,7 @@ import useInvalidateReset from 'src/hooks/useInvalidateReset';
 
 import { IFormulaService } from 'src/formulacion/interfaces/formula/FormulaService.interfaces'
 import { IVariableService } from 'src/formulacion/interfaces/variable/VariableService.interfaces'
+import { randomInt } from 'mathjs';
 
 // import { IFormulaBase } from './../interfaces/formula/FormulaBase.interfaces';
 
@@ -15,8 +16,10 @@ interface FormulaBuilderServices {
 }
 
 const useFormulaBuilder = (services: FormulaBuilderServices) => {
-  //estados básicos
-  const [formula, setFormula] = useState('');
+  //estados de variables y funciones
+  const [editingItem, setEditingItem] = useState<any>({});
+
+  //estados básicos formulación
   const [description, setDescription] = useState('');
   const [selectedFormula, setSelectedFormula] = useState<any>({
     id: 0,
@@ -29,15 +32,9 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
     usuarioUpdate: null,
     codigoEmpresa: 0,
   });
-  const [loading, setLoading] = useState({
-    variables: false,
-    functions: false,
-  });
-
-  //hooks perzonalizados
   const invalidateReset = useInvalidateReset();
-  const { variables, functions } = useVariablesAndFunctions(services);
-  const { syntaxError, validationResult, validateFormula, resetValidation } = useFormulaValidation();
+  const { variables, setVariables, functions, setFunctions } = useVariablesAndFunctions(services);
+  const { syntaxError, validateFormula, resetValidation } = useFormulaValidation();
   const {
     onDeleteFormula,
     onUpdateFormula,
@@ -49,65 +46,70 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
     invalidateTable: () => invalidateReset({ tables: ['formulasTable'] }),
   });
 
-  //Efectos
-  useEffect(() => {
-    if (selectedFormula ) {
-      if (selectedFormula.formula !== formula) {
-        setFormula(selectedFormula?.formula || '');
-        setDescription(selectedFormula?.descripcion || '');
-      }
-    }
-  }, [selectedFormula]);
-
   useEffect(() => {
     if (description !== null && description !== '') {
       setDescription(description);
     }
   }, [description]);
 
-  // Lógica de scope (simplificada)
-  const getScope = useCallback(() => {
+  const getFormulaFromInput = useCallback((formula: string) => {
+    const regex = /\[([^\]]+)\]/g;
+    const found = [];
+    let match;
+
+    while ((match = regex.exec(formula)) !== null) {
+      found.push(match[1]);
+    }
+
+    return Array.from(new Set(found));
+  }, []);
+
+  const getScope = useCallback((formula: string) => {
     const scope: Record<string, any> = {};
+    const usedVars = getFormulaFromInput(formula);
 
-    // Aquí iría la lógica para agregar variables/funciones al scope
+    usedVars.forEach(varName => {
+      const variable = variables.find((v: any) => v.code === varName);
+      if (variable) scope[varName] = randomInt(1, 20);
+    });
+
     return scope;
-  }, [variables, functions]);
+  }, [variables, functions, getFormulaFromInput]);
 
-  // Handlers optimizados
-  const handleCreate = useCallback(async () => {
-    const isValid = validateFormula(formula, getScope());
+  const handleCreate = useCallback(async (currentFormula: string): Promise<void> => {
+    const isValid = validateFormula(currentFormula, getScope(currentFormula));
     if (!isValid) return;
 
     const createdFormula = await onCreateFormula({
-      formula: formula,
+      formula: currentFormula,
       descripcion: description,
       usuarioInsert: 1,
-      codigoEmpresa: 13,
+      codigoEmpresa: 13, //TODO::revisar
     });
 
     if (createdFormula) {
       setSelectedFormula(createdFormula);
     }
-  }, [formula, description]);
+  }, [description, getScope, onCreateFormula, validateFormula]);
 
-  const handleUpdate = useCallback(async () => {
-    const isValid = validateFormula(formula, getScope());
+  const handleUpdate = useCallback(async (currentFormula: string): Promise<void> => {
+    const isValid = validateFormula(currentFormula, getScope(currentFormula));
     if (!isValid) return;
 
     const updatedFormula = await onUpdateFormula({
       id: selectedFormula.id,
       descripcion: description,
-      formula: formula,
+      formula: currentFormula,
       usuarioInsert: 1,
-      codigoEmpresa: 13,
+      codigoEmpresa: 13, //TODO:revisar
     });
 
     if (updatedFormula) {
       setSelectedFormula(updatedFormula);
     }
-  }, [formula, description, selectedFormula]);
+  }, [description, selectedFormula, getScope, onUpdateFormula, validateFormula]);
 
-  const handleDelete = useCallback(async () => {
+  const handleDelete = useCallback(async (): Promise<void> => {
     if (!selectedFormula.id) {
       setError('ID de la fórmula no proporcionado.');
 
@@ -117,10 +119,16 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
     await onDeleteFormula(selectedFormula.id);
   }, [selectedFormula, onDeleteFormula]);
 
-  //limpiar formularios
+  useEffect(() => {
+    console.log('revisar') //TODO revisa
+    if (editingItem) {
+      setDescription(editingItem.descripcion);
+      setSelectedFormula(editingItem);
+    }
+  }, [editingItem]);
+
   const clearFormula = useCallback(() => {
     setDescription('');
-    setFormula('');
     setResult(null);
     setError(null);
     resetValidation();
@@ -140,20 +148,19 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
   return {
     description,
     setDescription,
-    formula,
-    setFormula,
-    variables,
-    functions,
+    variables, setVariables,
+    functions, setFunctions,
     result,
     error,
     syntaxError,
-    loading,
     handleCreate,
     handleUpdate,
     handleDelete,
     clearFormula,
     selectedFormula,
-    setSelectedFormula
+    setSelectedFormula,
+    editingItem,
+    setEditingItem
   };
 };
 

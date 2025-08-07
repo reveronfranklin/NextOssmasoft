@@ -1,8 +1,16 @@
 import { useState, useCallback } from 'react';
 
-const useCrudModal = () => {
+type UseCrudModalReturn = {
+  modalOpen: boolean;
+  editingItem: any;
+  handleOpenModal: (item?: any) => void;
+  handleCloseModal: () => void;
+  setEditingItem: React.Dispatch<React.SetStateAction<any>>;
+};
+
+const useCrudModal = (): UseCrudModalReturn => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState<any>({});
 
   const handleOpenModal = useCallback((item = null) => {
     setEditingItem(item);

@@ -10,7 +10,6 @@ export const useVariablesAndFunctions = (services: {
 }) => {
   const [variables, setVariables] = useState<any>([]);
   const [functions, setFunctions] = useState<any>([]);
-  const [loading, setLoading] = useState({ variables: false, functions: false });
 
   useEffect(() => {
     const fetchVariables = async () => {
@@ -20,6 +19,7 @@ export const useVariablesAndFunctions = (services: {
         searchText: '',
         tipoVariable: TipoVariableEnum.FUNCION
       });
+
       if (response.isValid) {
         setVariables(response.data);
       }
@@ -42,5 +42,10 @@ export const useVariablesAndFunctions = (services: {
     fetchFunctions();
   }, [services.formulaService.getListFormulas]);
 
-  return { variables, functions, loading };
+  return {
+    variables,
+    setVariables,
+    functions,
+    setFunctions,
+  };
 };

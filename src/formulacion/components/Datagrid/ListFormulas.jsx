@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
@@ -6,18 +6,14 @@ import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { useFormulaContext } from 'src/formulacion/context/FormulaContext';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-
 const StyledDataGridContainer = styled(Box)(() => ({
-  height: 400,
+  height: 500,
   overflowY: 'auto',
 }))
 
 const ListFormulas = ({
     formulas,
     onFunctionSelect,
-    onDeleteFormula,
     setSelectedFormula
   }) => {
   const [pageNumber, setPage] = useState(1)
@@ -27,13 +23,15 @@ const ListFormulas = ({
   const debounceTimeoutRef = useRef(null)
 
   const [isQueryEnabled, setIsQueryEnabled] = useState(false);
+
   const [rows, setRows] = useState(formulas || []);
   const [rowCount, setRowCount] = useState(formulas ? formulas.length : 0);
 
   const { formulaService } = useFormulaContext();
   const { getListFormulas } = formulaService;
 
-  const columnsDataGridListCompromiso = [{
+  const columnsDataGridListCompromiso = [
+    {
       flex: 0,
       field: 'id',
       headerName: 'ID',
@@ -43,41 +41,20 @@ const ListFormulas = ({
       flex: 0,
       field: 'descripcion',
       headerName: 'Descripcion',
-      width: 200
-    },
-    {
-      flex: 0,
-      field: 'formula',
-      headerName: 'Formula',
-      width: 750
+      width: 350
     },
     {
       flex: 1,
-      field: 'acciones',
-      headerName: 'Acciones',
-      width: 100,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <IconButton
-          color="error"
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteFormula(params.row.id);
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      ),
-    },
+      field: 'formula',
+      headerName: 'Formula',
+    }
   ]
 
   const query = useQuery({
     queryKey: ['formulasTable', pageSize, pageNumber, searchText],
     queryFn: () => getListFormulas({
-      page: 1,
-      limit: 10,
+      page: pageNumber,
+      limit: pageSize,
       searchText
     }),
     enabled: isQueryEnabled
@@ -103,42 +80,29 @@ const ListFormulas = ({
     }
   }, [pageNumber, pageSize, searchText]);
 
-  const handlePageChange = useCallback((newPage) => {
-    setPage(newPage)
-  }, [])
+  const handlePageChange = (newPage) => {
+    setPage(newPage + 1);
+  }
 
-  const handleSizeChange = useCallback((newPageSize) => {
-    setPage(0)
-    setPageSize(newPageSize)
-  }, [])
+  const handleSizeChange = (newPageSize) => {
+    setPage(1);
+    setPageSize(newPageSize);
+  }
 
   const handleRowClick = (params) => {
     const formula = `[${params.row.formula}]`
     const description = params.row.descripcion || ''
 
     setSelectedFormula(params.row);
-    onFunctionSelect(formula, description);
+    onFunctionSelect(formula, description, 'formula');
   }
 
   const handleSearch = (value) => {
-    if (value === '') {
-      setSearchText('')
-      setBuffer('')
-
-      return
-    }
-
-    const newBuffer = value
-    setBuffer(newBuffer)
-    debouncedSearch()
-  }
-
-  const debouncedSearch = () => {
-    clearTimeout(debounceTimeoutRef.current)
-
+    setBuffer(value);
+    clearTimeout(debounceTimeoutRef.current);
     debounceTimeoutRef.current = setTimeout(() => {
-      setSearchText(buffer)
-    }, 2500)
+      setSearchText(value);
+    }, 500);
   }
 
   return (
@@ -155,7 +119,7 @@ const ListFormulas = ({
               rowCount={rowCount}
               columns={columnsDataGridListCompromiso}
               pageSize={pageSize}
-              page={pageNumber}
+              page={pageNumber - 1} // DataGrid espera base 0
               getRowHeight={() => 'auto'}
               sortingMode='server'
               paginationMode='server'

@@ -37,7 +37,7 @@ const FuncionesSelector = ({ functions, onFunctionSelect }) => {
   } = useCrudModal();
 
   const { formulaService } = useFormulaContext();
-  const { createFormula, updateFormula, deleteFormula } = formulaService;
+  const { createFormula, deleteFormula } = formulaService;
 
   const handleSubmit = async (e) => {
     console.log('handleSubmit', e);

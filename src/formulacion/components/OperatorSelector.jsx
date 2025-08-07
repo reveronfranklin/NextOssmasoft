@@ -2,9 +2,9 @@ import React from 'react';
 
 const OperatorSelector = ({ onOperatorSelect }) => {
   const operators = ['+', '-', '*', '/', '(', ')'];
-  
+
 return (
-    <div style={{ marginBottom: '20px' }}>
+    <div style={{ marginBottom: '20px', paddingTop: '20px' }}>
       <div style={{ display: 'flex', gap: '10px' }}>
         {operators.map((op) => (
           <button
