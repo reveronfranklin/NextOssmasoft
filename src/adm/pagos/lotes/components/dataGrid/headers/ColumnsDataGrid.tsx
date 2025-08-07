@@ -6,12 +6,19 @@ import { useDispatch } from 'react-redux';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
 import { LoteDto } from '../../../interfaces';
+
 import {
     setIsOpenDialogLote,
     setLoteShow,
     setTypeOperation,
     setCodigoLote
 } from 'src/store/apps/pagos/lotes';
+
+import {
+    setCodigoLote as setCodigoLotePagos,
+    setCodigoPago,
+    setIsOpenViewerPdf
+} from 'src/store/apps/pagos/lote-pagos';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
@@ -21,6 +28,12 @@ const useColumnsDataGrid = (): GridColDef[] => {
         dispatch(setIsOpenDialogLote(true))
         dispatch(setLoteShow(lote))
         dispatch(setCodigoLote(lote.codigoLotePago))
+    }
+
+    const handleDialogViewerPdf = (codigoLotePago: number) => {
+        dispatch(setIsOpenViewerPdf(true))
+        dispatch(setCodigoPago(0))
+        dispatch(setCodigoLotePagos(codigoLotePago))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -53,7 +66,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
 
     const columns = useMemo<GridColDef[]>(() => [
         {
-            flex: 0,
+            flex: 1,
             minWidth: 40,
             sortable: false,
             headerName: 'Acciones',
@@ -63,6 +76,14 @@ const useColumnsDataGrid = (): GridColDef[] => {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                        </StyledIconButton>
+                    </Tooltip>
+                    <Tooltip title="Ver PDF">
+                        <StyledIconButton
+                            size='small'
+                            onClick={() => handleDialogViewerPdf(row.codigoLotePago)}
+                        >
+                            <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>
@@ -119,7 +140,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
             )
         },
         {
-            flex: 0.5,
+            flex: 1,
             headerName: 'Estatus',
             field: 'status',
             renderCell: (params: GridRenderCellParams) => (
