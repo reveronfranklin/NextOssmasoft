@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import FormulaValidator from '../services/formulaParser';
+import FormulaValidator from '../../shared/utils/formulaParser';
 
 export const useFormulaValidation = () => {
   const [syntaxError, setSyntaxError] = useState<string | null>(null);

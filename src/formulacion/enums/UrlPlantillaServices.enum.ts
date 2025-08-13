@@ -1,6 +1,9 @@
 export enum UrlPlantillaServices {
-  GETALLPLANTILLAS = '/plantillas',
-  CREATEPLANTILLA = '/plantillas',
-  UPDATEPLANTILLA = '/plantillas',
-  DELETEPLANTILLA = '/plantillas',
+  FINDALLPROCESO = 'proceso/findAll', //findAllProceso
+  FINDALLPROCESODETALLE = 'proceso-detalle/findAllProcesoDetalleByProceso', //findAllProcesoDetalleByProceso
+  GETALLPLANTILLASBYCODIGODETALLE = 'plantilla-calculo/getAllByCodigoDetalleProceso', //getAllPlantillas por codigo detalle de proceso
+
+  CREATEPLANTILLA = 'plantilla-calculo/create',
+  UPDATEPLANTILLA = 'plantilla-calculo/update',
+  DELETEPLANTILLA = 'plantilla-calculo/delete',
 }

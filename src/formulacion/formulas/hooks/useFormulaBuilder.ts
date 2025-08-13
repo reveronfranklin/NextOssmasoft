@@ -1,22 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useVariablesAndFunctions } from './useVariablesAndFunctions';
-import { useFormulaCRUD } from './useFormulaCRUD'
-import { useFormulaValidation } from './useFormulaValidation';
+import { useVariablesAndFunctions } from '../../shared/hooks/useVariablesAndFunctions';
+import { useFormulaCRUD } from '../../hooks/useFormulaCRUD';
+import { useFormulaValidation } from '../../shared/hooks/useFormulaValidation';
 import useInvalidateReset from 'src/hooks/useInvalidateReset';
+import { randomInt } from 'mathjs';
 
 import { IFormulaService } from 'src/formulacion/interfaces/formula/FormulaService.interfaces'
 import { IVariableService } from 'src/formulacion/interfaces/variable/VariableService.interfaces'
-import { randomInt } from 'mathjs';
+import { IPlantillaService } from 'src/formulacion/interfaces/plantilla/PlantillaService.interfaces'
 
 // import { IFormulaBase } from './../interfaces/formula/FormulaBase.interfaces';
-
 interface FormulaBuilderServices {
   formulaService: IFormulaService;
   variableService: IVariableService;
+  plantillaService: IPlantillaService;
 }
 
-const useFormulaBuilder = (services: FormulaBuilderServices) => {
-  //estados de variables y funciones
+const useFormulaBuilder: any = (services: FormulaBuilderServices) => {
+  //estados de variables, funciones y plantillas
   const [editingItem, setEditingItem] = useState<any>({});
 
   //estados básicos formulación
@@ -33,7 +34,7 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
     codigoEmpresa: 0,
   });
   const invalidateReset = useInvalidateReset();
-  const { variables, setVariables, functions, setFunctions } = useVariablesAndFunctions(services);
+  const { variables, setVariables, functions, setFunctions, plantillas, setPlantillas } = useVariablesAndFunctions(services);
   const { syntaxError, validateFormula, resetValidation } = useFormulaValidation();
   const {
     onDeleteFormula,
@@ -150,6 +151,8 @@ const useFormulaBuilder = (services: FormulaBuilderServices) => {
     setDescription,
     variables, setVariables,
     functions, setFunctions,
+    plantillas, setPlantillas,
+    getScope,
     result,
     error,
     syntaxError,

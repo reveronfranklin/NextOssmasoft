@@ -7,8 +7,8 @@ export default function useFormulaHistory(initialValue = '') {
   const updateFormula = useCallback((newFormula: string) => {
     setFormula(prevFormula => {
       setHistory(prevHistory => (prevFormula !== newFormula ? [...prevHistory, prevFormula] : prevHistory));
-      
-return newFormula;
+
+    return newFormula;
     });
   }, []);
 
@@ -17,8 +17,8 @@ return newFormula;
       if (prev.length === 0) return prev;
       const last = prev[prev.length - 1];
       setFormula(last ?? '');
-      
-return prev.slice(0, -1);
+
+    return prev.slice(0, -1);
     });
   }, []);
 

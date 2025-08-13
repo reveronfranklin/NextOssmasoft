@@ -1,41 +1,53 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { Container, Paper, Grid, Box, TextField } from '@mui/material';
-import FormulaInput from './components/FormulaInput';
-import VariableSelector from './components/VariableSelector';
-import OperatorSelector from './components/OperatorSelector';
-import ResultDisplay from './components/ResultDisplay';
-import ActionButtonGroup from './components/ActionButtonGroup';
+
+//componentes comunes
+import FormulaInput from '../shared/components/FormulaInput';
+import VariableSelector from '../shared/components/VariableSelector';
+import PlantillaSelector from '../shared/components/PlantillaSelector';
+import OperatorSelector from '../shared/components/OperatorSelector';
+import ResultDisplay from '../shared/components/ResultDisplay';
+import ActionButtonGroup from '../shared/components/ActionButtonGroup';
 import ListFormulas from './components/Datagrid/ListFormulas';
 
+//contextos y hooks
+import FormulaProvider from '../context/FormulaProvider';
 import useFormulaBuilder from './hooks/useFormulaBuilder';
-import useFormulaService from 'src/formulacion/services/formula/UseFormulaService';
-import useVariableService from 'src/formulacion/services/variable/UseVariableService';
-import FormulaProvider from './context/FormulaProvider';
+import useFormulaHistory from './../shared/hooks/useFormulaHistory.ts';
 
-import useFormulaHistory from 'src/formulacion/hooks/useFormulaHistory';
+//servicios
+import useFormulaService from '../services/formula/UseFormulaService';
+import useVariableService from '../services/variable/UseVariableService';
+import usePlantillaService from '../services/plantilla/UsePlantillaService';
 
 export default function FormulaBuilder({
   formulaService: formulaServiceProp,
-  variableService: variableServiceProp
+  variableService: variableServiceProp,
+  plantillaService: plantillaServiceProp
 }) {
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
+  const plantillaServiceFromHook = usePlantillaService();
 
   // const builderClearFormula = useFormulaBuilderClear();
 
-  const formulaService = formulaServiceProp || formulaServiceFromHook;
-  const variableService = variableServiceProp || variableServiceFromHook;
+  const formulaService = formulaServiceProp ?? formulaServiceFromHook;
+  const variableService = variableServiceProp ?? variableServiceFromHook;
+  const plantillaService = plantillaServiceProp ?? plantillaServiceFromHook;
 
   const services = React.useMemo(() => ({
     formulaService,
-    variableService
-  }), [formulaService, variableService]);
+    variableService,
+    plantillaService
+  }), [formulaService, variableService, plantillaService]);
 
   const {
     description,
     setDescription,
     variables: availableVariables, setVariables,
     functions: availableFormulas,
+    // plantillas: availablePlantillas, setPlantillas,
+    getScope,
     result,
     error,
     syntaxError,
@@ -156,6 +168,18 @@ export default function FormulaBuilder({
                 </FormulaProvider>
               </Box>
             )}
+            {/* {availablePlantillas && availablePlantillas.length > 0 && (
+              <Box sx={{ mt: 2 }}>
+                <FormulaProvider>
+                  <PlantillaSelector
+                    plantillas={availablePlantillas}
+                    onPlantillaSelect={insertTextIntoFormulaInput}
+                    setEditingItem={setEditingItem}
+                    editingItem={editingItem}
+                  />
+                </FormulaProvider>
+              </Box>
+            )} */}
           </Grid>
           <Grid item xs={12} sm={12}>
             <FormulaProvider >

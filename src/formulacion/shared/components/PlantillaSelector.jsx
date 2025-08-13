@@ -1,10 +1,11 @@
 import React from 'react';
 import { Autocomplete, TextField, Box } from '@mui/material';
-import ButtonCrud from './ui/BotonCrud';
-import CrudModal from '../views/CrudModal';
-import { useFormulaContext } from '../context/FormulaContext';
-import useCrudModal from 'src/formulacion/hooks/useCrudModal';
-import FormularioVariable from 'src/formulacion/views/Variables/Formulario';
+import ButtonCrud from '../../shared/components/BotonCrud';
+import CrudModal from '../../views/CrudModal';
+import useCrudModal from '../../shared/hooks/useCrudModal';
+import FormularioPlantilla from '../../views/Plantillas/Formulario';
+
+import { useFormulaContext } from '../../context/FormulaContext';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,12 +13,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-const VariableSelector = React.memo(({
-  variables,
-  setVariables,
-  onVariableSelect,
+const PlantillaSelector = React.memo(({
+  plantillas,
+  onPlantillaSelect,
   setEditingItem,
-  editingItem,
+  editingItem
 }) => {
   const [autoValue, setAutoValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -29,8 +29,8 @@ const VariableSelector = React.memo(({
   const autocompleteTextFieldRef = React.useRef(null);
 
   const options = React.useMemo(() => {
-    const favs = variables.filter(v => favoritas.includes(v.code));
-    const rest = variables.filter(v => !favoritas.includes(v.code));
+    const favs = plantillas.filter(v => favoritas.includes(v.code));
+    const rest = plantillas.filter(v => !favoritas.includes(v.code));
     const mapVar = v => ({
       label: v.descripcion,
       value: v.code,
@@ -39,20 +39,18 @@ const VariableSelector = React.memo(({
       id: v.id,
       ...v
     });
-    
-return [...favs.map(mapVar), ...rest.map(mapVar)]
-      .sort((a, b) => a.tipo.localeCompare(b.tipo));
-  }, [variables, favoritas]);
 
-  const {
-    modalOpen,
-    handleOpenModal,
-    handleCloseModal,
-  } = useCrudModal();
+    return [...favs.map(mapVar), ...rest.map(mapVar)]
+      // .sort((a, b) => a.tipo.localeCompare(b.tipo));
+  }, [plantillas, favoritas]);
 
+  //control del modal de edición
+  const { modalOpen, handleOpenModal, handleCloseModal } = useCrudModal();
+
+  //campos del formulario
   const fields = [{
-      name: 'code',
-      label: 'Código',
+      name: 'plantilla',
+      label: 'Plantilla',
       required: true,
       disabled: !!editingItem
     },
@@ -63,95 +61,36 @@ return [...favs.map(mapVar), ...rest.map(mapVar)]
     }
   ];
 
-  const { variableService } = useFormulaContext();
-  const {
-    createVariable,
-    updateVariable,
-    deleteVariable
-  } = variableService;
+  //contexto para operaciones crud de plantillas
+  const { plantillaService } = useFormulaContext();
+  const { createPlantilla, updatePlantilla, deletePlantilla } = plantillaService;
 
-  const handleSubmit = async(form, action) => {
-    if (!form.code || !form.descripcion || !form.tipo) {
-      console.error('Faltan campos requeridos');
-
-      return;
-    }
-
-    const payload = {
-      id: form.id || null,
-      code: form.code,
-      descripcion: form.descripcion,
-      tipoVariable: form.tipo,
-      codigoEmpresa: form.codigoEmpresa
-    }
-
-    try {
-      if (action === 'edit' && form) {
-        console.log('form', form);
-
-        payload.usuarioUpdate = form.usuarioUpdate;
-        console.log('payload', payload);
-
-        const updated = await updateVariable(payload);
-        console.log('Variable actualizada:', updated);
-
-        if (updated.isValid === false) {
-          console.error('Error al actualizar la variable');
-
-          return;
-        } else {
-          setVariables(prev =>
-            prev.map(v => v.code === updated.data.code ? { ...v, ...updated.data } : v)
-          );
-
-          setTimeout(() => {
-            handleCloseModal();
-          }, 3000);
-        }
-
-        // console.log('Variable actualizada:', updated);
-      } else if (action === 'create') {
-        payload.usuarioInsert = form.usuarioInsert;
-        console.log('payload', payload);
-
-        const created = await createVariable(payload);
-        console.log('Variable creada:', created);
-
-        if (created.isValid === false) {
-          console.error('Error al crear la variable');
-
-          return;
-        } else {
-          setVariables(prev => [...prev, created.data]);
-          handleCloseModal();
-        }
-      }
-    } catch (error) {
-      console.error('Error al guardar la variable:', error);
+  const handleSubmit = async (form, action) => {
+    switch (action) {
+      case 'create':
+        await createPlantilla(form);
+        break;
+      case 'update':
+        await updatePlantilla(form);
+        break;
+      case 'delete':
+        await deletePlantilla(form.id);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleDelete = async (form, action) => {
-    if (!form.value || !form.label || !form.tipo) {
-      console.error('Faltan campos requeridos');
-      console.error('tipo', action);
-
-      return;
-    }
-
-    try {
-      await deleteVariable(editingItem.code);
-
-      // handleCloseModal();
-    } catch (error) {
-      console.error('Error al eliminar la variable:', error);
+  const handleDelete = (item) => {
+    if (window.confirm(`¿Está seguro de eliminar la plantilla ${item.codigo}?`)) {
+      deletePlantilla(item.id);
     }
   };
 
   return (
     <div style={{ marginBottom: '10px' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <h4 style={{ flex: 1, margin: 0 }}>Lista de variables:</h4>
+        <h4 style={{ flex: 1, margin: 0 }}>Lista de plantillas:</h4>
         <ButtonCrud
           icon={<AddIcon />}
           onClick={() => {
@@ -161,7 +100,7 @@ return [...favs.map(mapVar), ...rest.map(mapVar)]
           color="primary"
         />
       </Box>
-      { variables.length > 0 ? (
+      { plantillas.length > 0 ? (
         <Autocomplete
           key={autoKey}
           disablePortal
@@ -261,12 +200,11 @@ return [...favs.map(mapVar), ...rest.map(mapVar)]
           )}
         />
       ) : (
-        <p>No hay variables definidas.</p>
+        <p>No hay plantillas definidas</p>
       )}
-
       <CrudModal
         open={modalOpen}
-        title={editingItem ? 'Editar Variable' : 'Agregar Variable'}
+        title={editingItem ? 'Editar Plantilla' : 'Agregar Plantilla'}
         initialValues={editingItem || { code: '', descripcion: '', tipo: '' }}
         fields={fields}
         onClose={handleCloseModal}
@@ -275,7 +213,7 @@ return [...favs.map(mapVar), ...rest.map(mapVar)]
         isEdit={!!editingItem}
         formValues={editingItem}
       >
-        <FormularioVariable
+        <FormularioPlantilla
           initialValues={editingItem || { code: '', descripcion: '', tipo: '', id: '' }}
           onChange={setEditingItem}
         />
@@ -284,4 +222,4 @@ return [...favs.map(mapVar), ...rest.map(mapVar)]
   );
 });
 
-export default VariableSelector;
+export default PlantillaSelector;
