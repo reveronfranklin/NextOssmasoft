@@ -18,6 +18,7 @@ export const useFormulaCRUD = ({ formulaService, invalidateTable }: FormulaCRUDP
     } else {
       setError(response.message || 'Error en la operación');
     }
+
     setTimeout(() => {
       setResult(null);
       setError(null);

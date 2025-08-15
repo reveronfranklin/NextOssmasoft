@@ -76,6 +76,7 @@ const usePlantillaService = (): IPlantillaService => {
       setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaCreateResponse>>(UrlPlantillaServices.CREATEPLANTILLA, filters)
       const responseHandleApi = handleApiResponse<IPlantillaCreateResponse>(responseFetch.data, 'Plantilla creada con éxito', setMessage, setError)
+
       return responseHandleApi
     } catch (e: any) {
       return handleApiError(e, setMessage, setError)
@@ -89,6 +90,7 @@ const usePlantillaService = (): IPlantillaService => {
       setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaUpdateResponse>>(UrlPlantillaServices.UPDATEPLANTILLA, filters)
       const responseHandleApi = handleApiResponse<IPlantillaUpdateResponse>(responseFetch.data, 'Plantilla actualizada con éxito', setMessage, setError)
+
       return responseHandleApi
     } catch (e: any) {
       return handleApiError(e, setMessage, setError)
@@ -102,6 +104,7 @@ const usePlantillaService = (): IPlantillaService => {
       setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaDeleteResponse>>(UrlPlantillaServices.DELETEPLANTILLA, filters)
       const responseHandleApi = handleApiResponse<IPlantillaDeleteResponse>(responseFetch.data, 'Plantilla eliminada con éxito', setMessage, setError)
+
       return responseHandleApi
     } catch (e: any) {
       return handleApiError(e, setMessage, setError)

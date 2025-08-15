@@ -22,7 +22,6 @@ import useFormulaService from '../services/formula/UseFormulaService';
 import useVariableService from '../services/variable/UseVariableService';
 import usePlantillaService from '../services/plantilla/UsePlantillaService';
 
-
 interface Proceso {
   id: number
   nombre: string
@@ -46,7 +45,7 @@ const procesosMock: Proceso[] = [
 
 // Mock detalles por proceso
 const detalleProcesoMock: Record<number, DetalleProceso[]> = {
-  1: [
+  14: [
     { id: 11, codigo: 'DET-NOM-01', descripcion: 'Detalle Sueldos' },
     { id: 12, codigo: 'DET-NOM-02', descripcion: 'Detalle Beneficios' }
   ],
@@ -111,8 +110,13 @@ export default function PlantillaIndex({
   }), [formulaService, variableService, plantillaService]);
 
   // Custom hook to manage plantilla builder logic
-  const { plantillas, setPlantillas } = usePlantillaBuilder(services)
-  console.log('Plantillas index:', plantillas)
+  const {
+    plantillas, setPlantillas,
+    error, message,
+    getListProcesos,
+    getListDetalleProcesos,
+    getPlantillasByDetalleProceso
+  } = usePlantillaBuilder(services)
 
   // TODO: Reemplazar mocks por servicios:
   // const { getDetallesProceso } = useDetalleProcesoService()
@@ -148,8 +152,13 @@ export default function PlantillaIndex({
     if (detalleSeleccionado != null) fetchPlantillas(detalleSeleccionado)
   }, [detalleSeleccionado, fetchPlantillas])
 
+  //Cuando se selecciona del proceso
   const handleProcesoChange = (e: SelectChangeEvent) => {
     const value = e.target.value
+    console.log('Proceso seleccionado:', Number(value))
+
+    getListDetalleProcesos(Number(value))
+
     setProcesoId(value === '' ? '' : Number(value))
   }
 
@@ -191,7 +200,7 @@ export default function PlantillaIndex({
             </FormControl>
           </Box>
 
-          {/* <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <Grid
               item
               xs={12}
@@ -266,7 +275,7 @@ export default function PlantillaIndex({
                 loading={loadingPlantillas}
               />
             </Grid>
-          </Grid> */}
+          </Grid>
         </Paper>
       </Container>
     </Box>
