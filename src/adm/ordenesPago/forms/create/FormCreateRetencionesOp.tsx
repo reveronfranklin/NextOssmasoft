@@ -18,8 +18,9 @@ import {
   setRetencionSeleccionado,
   setIsOpenDialogListRetenciones,
   setTipoRetencion,
-  setBaseTotalDocumentos,
-  setTotalCompromiso
+
+  // setBaseTotalDocumentos,
+  // setTotalCompromiso
 } from "src/store/apps/ordenPago"
 
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
@@ -33,7 +34,9 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import calcularMontoRetencion from '../../helpers/montoRetencion'
 import { NumericFormat } from 'react-number-format'
 import FormatNumber from 'src/utilities/format-numbers'
+
 import { useDocumentosOpData } from '../../hooks/useDocumentosOpData'
+
 interface getValuesForm {
   tipoRetencion: number
   conceptoPago: string
