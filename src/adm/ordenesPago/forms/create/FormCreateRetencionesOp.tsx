@@ -112,7 +112,7 @@ const FormCreateRetencionesOp = () => {
         porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: baseTotalDocumentos || totalCompromiso,
+        baseImponible: baseTotalDocumentos === 0 ? totalCompromiso : baseTotalDocumentos,
         codigoRetencion: Number(formData.codigoRetencion),
       }
 
@@ -145,7 +145,7 @@ const FormCreateRetencionesOp = () => {
         porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: baseTotalDocumentos || totalCompromiso,
+        baseImponible: baseTotalDocumentos === 0 ? totalCompromiso : baseTotalDocumentos,
       }
 
       await updateRetencionOp(payload)
