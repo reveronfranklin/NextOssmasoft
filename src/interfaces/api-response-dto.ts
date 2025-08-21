@@ -15,6 +15,7 @@ export interface IApiResponseBase {
   error?: string;
   statusCode?: number;
 }
+
 export interface IApiResponse<T> extends IApiResponseBase {
   data?: T[]
 }
