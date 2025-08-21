@@ -88,13 +88,9 @@ const VariableSelector = React.memo(({
 
     try {
       if (action === 'edit' && form) {
-        console.log('form', form);
-
         payload.usuarioUpdate = form.usuarioUpdate;
-        console.log('payload', payload);
 
         const updated = await updateVariable(payload);
-        console.log('Variable actualizada:', updated);
 
         if (updated.isValid === false) {
           console.error('Error al actualizar la variable');
@@ -110,13 +106,10 @@ const VariableSelector = React.memo(({
           }, 3000);
         }
 
-        // console.log('Variable actualizada:', updated);
       } else if (action === 'create') {
         payload.usuarioInsert = form.usuarioInsert;
-        console.log('payload', payload);
 
         const created = await createVariable(payload);
-        console.log('Variable creada:', created);
 
         if (created.isValid === false) {
           console.error('Error al crear la variable');

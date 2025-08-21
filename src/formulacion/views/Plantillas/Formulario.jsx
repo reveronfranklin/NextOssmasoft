@@ -17,10 +17,20 @@ const FormularioPlantilla = ({ initialValues = {}, onChange }) => {
 
   return (
     <>
+      <pre>{JSON.stringify(values, null, 2)}</pre>
+      <TextField
+        name="code"
+        label="Código"
+        value={values.code || ''}
+        onChange={handleChange}
+        fullWidth
+        margin="dense"
+        required
+      />
       <TextField
         name="descripcion"
         label="Descripción"
-        value={values.descripcion || ''}
+        value={values.descripcionFormula || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"
@@ -29,16 +39,16 @@ const FormularioPlantilla = ({ initialValues = {}, onChange }) => {
       <TextField
         name="formula"
         label="Fórmula"
-        value={values.formula || ''}
+        value={values.formulaValue || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"
         required
       />
       <TextField
-        name="formula"
-        label="Fórmula"
-        value={values.formula || ''}
+        name="Estado"
+        label="Estado"
+        value={values.estado || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"

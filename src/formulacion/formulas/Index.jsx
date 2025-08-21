@@ -4,7 +4,6 @@ import { Container, Paper, Grid, Box, TextField } from '@mui/material';
 //componentes comunes
 import FormulaInput from '../shared/components/FormulaInput';
 import VariableSelector from '../shared/components/VariableSelector';
-import PlantillaSelector from '../shared/components/PlantillaSelector';
 import OperatorSelector from '../shared/components/OperatorSelector';
 import ResultDisplay from '../shared/components/ResultDisplay';
 import ActionButtonGroup from '../shared/components/ActionButtonGroup';
@@ -46,7 +45,6 @@ export default function FormulaBuilder({
     setDescription,
     variables: availableVariables, setVariables,
     functions: availableFormulas,
-    // plantillas: availablePlantillas, setPlantillas,
     getScope,
     result,
     error,
@@ -100,11 +98,12 @@ export default function FormulaBuilder({
     } else {
       handleBuilderCreate(currentFormula);
     }
-  }, [selectedFormula.id, getFormulaFromInput, handleBuilderUpdate, handleBuilderCreate]);
+  }, [selectedFormula, getFormulaFromInput, handleBuilderUpdate, handleBuilderCreate]);
 
   const handleClear = useCallback(() => {
+    setSelectedFormula(null);
     formulaInputRef.current?.setFormulaValue('');
-    builderClearFormula;
+    builderClearFormula();
   }, [builderClearFormula]);
 
   useEffect(() => {
@@ -116,6 +115,10 @@ export default function FormulaBuilder({
       setDescription('');
     }
   }, [selectedFormula, setDescription]);
+
+  useEffect(() => {
+    setSelectedFormula(null);
+  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
@@ -135,6 +138,9 @@ export default function FormulaBuilder({
               formula={formula}
               setFormula={setFormula}
             />
+            {/* {
+              <pre>{JSON.stringify(selectedFormula, null, 2)}</pre>
+            } */}
             <ActionButtonGroup
               onEvaluate={handleEvaluate}
               onDeleteFormula={handleDelete}
@@ -143,7 +149,7 @@ export default function FormulaBuilder({
               clearAllHistory={clearAllHistory}
               formulaHistory={formulaHistory}
               sx={{ mt: 2, mb: 1 }}
-              isEdit={selectedFormula.id !== 0}
+              isEdit={!!selectedFormula && selectedFormula.id !== 0}
               clearDisabled={getFormulaFromInput().trim() === ''}
             />
             <ResultDisplay
@@ -168,18 +174,6 @@ export default function FormulaBuilder({
                 </FormulaProvider>
               </Box>
             )}
-            {/* {availablePlantillas && availablePlantillas.length > 0 && (
-              <Box sx={{ mt: 2 }}>
-                <FormulaProvider>
-                  <PlantillaSelector
-                    plantillas={availablePlantillas}
-                    onPlantillaSelect={insertTextIntoFormulaInput}
-                    setEditingItem={setEditingItem}
-                    editingItem={editingItem}
-                  />
-                </FormulaProvider>
-              </Box>
-            )} */}
           </Grid>
           <Grid item xs={12} sm={12}>
             <FormulaProvider >

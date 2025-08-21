@@ -58,8 +58,9 @@ const usePlantillaService = (): IPlantillaService => {
 
   // Obtener plantillas por código de detalle de proceso
   const getPlantillasByDetalleProceso = useCallback(async (filters: DTOGetAllByCodigoDetalleProceso): Promise<IApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>> => {
+    setLoading(true)
+
     try {
-      setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IGetAllByCodigoDetalleProcesoResponse[]>>(UrlPlantillaServices.GETALLPLANTILLASBYCODIGODETALLE, filters)
       const responseHandleApi = handleApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>(responseFetch.data, undefined, setMessage, setError)
 
@@ -72,8 +73,9 @@ const usePlantillaService = (): IPlantillaService => {
   }, [])
 
   const createPlantilla = useCallback(async (filters: CreatePlantillaDTO): Promise<IApiResponse<IPlantillaCreateResponse>> => {
+    setLoading(true)
+
     try {
-      setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaCreateResponse>>(UrlPlantillaServices.CREATEPLANTILLA, filters)
       const responseHandleApi = handleApiResponse<IPlantillaCreateResponse>(responseFetch.data, 'Plantilla creada con éxito', setMessage, setError)
 
@@ -86,8 +88,10 @@ const usePlantillaService = (): IPlantillaService => {
   }, [])
 
   const updatePlantilla = useCallback(async (filters: UpdatePlantillaDTO): Promise<IApiResponse<IPlantillaUpdateResponse>> => {
+    setLoading(true)
+    console.log('services update', filters)
+
     try {
-      setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaUpdateResponse>>(UrlPlantillaServices.UPDATEPLANTILLA, filters)
       const responseHandleApi = handleApiResponse<IPlantillaUpdateResponse>(responseFetch.data, 'Plantilla actualizada con éxito', setMessage, setError)
 

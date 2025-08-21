@@ -18,7 +18,10 @@ const usePlantillaBuilder = (services: FormulaBuilderServices) => {
     error, message,
     getListProcesos,
     getListDetalleProcesos,
-    getPlantillasByDetalleProceso
+    getPlantillasByDetalleProceso,
+    createPlantilla,
+    updatePlantilla,
+    deletePlantilla
   } = PlantillaCRUD({
     plantillaService: services.plantillaService,
     invalidateTable: () => {},
@@ -29,7 +32,10 @@ const usePlantillaBuilder = (services: FormulaBuilderServices) => {
     error, message,
     getListProcesos,
     getListDetalleProcesos,
-    getPlantillasByDetalleProceso
+    getPlantillasByDetalleProceso,
+    createPlantilla,
+    updatePlantilla,
+    deletePlantilla,
   };
 };
 

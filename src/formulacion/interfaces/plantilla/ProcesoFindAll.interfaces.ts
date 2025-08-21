@@ -12,6 +12,6 @@ export interface IProcesoFindAllResponse {
   fechaIns: Date;
   usuarioInsert: number;
   fechaUpd: Date;
-  usuarioUpdate: any;
+  usuarioUpdate: string | null;
   codigoEmpresa: number;
 }

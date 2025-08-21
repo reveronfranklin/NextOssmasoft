@@ -1,79 +1,24 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import {
-  Box,
-  Container,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  CircularProgress,
-  Typography,
-  SelectChangeEvent
-} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Box, Container, Paper, Grid, FormControl, InputLabel, Select, MenuItem, CircularProgress, Typography, SelectChangeEvent } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add';
 
 import usePlantillaBuilder from './hooks/UsePlantillaBuilder';
+
 import DetalleProcesoAsociado from './components/DetalleProcesoAsociado'
 import PlantillasDetalleProceso from './components/PlantillasDetalleProceso'
+import ListaVariablePorProceso from './components/ListaVariablePorProceso';
 
-//servicios
 import useFormulaService from '../services/formula/UseFormulaService';
 import useVariableService from '../services/variable/UseVariableService';
 import usePlantillaService from '../services/plantilla/UsePlantillaService';
 
-interface Proceso {
-  id: number
-  nombre: string
-}
-interface DetalleProceso {
-  id: number
-  codigo: string
-  descripcion: string
-}
-interface Plantilla {
-  id: number
-  codigo: string
-  descripcion: string
-}
+import { DTOProcesoFindAll, IProcesoFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoFindAll.interfaces'
+import { DTOProcesoDetalleFindAll, IProcesoDetalleFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
+import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse } from 'src/formulacion/interfaces/plantilla/GetAllByCodigoDetalleProceso.interfaces'
 
-const procesosMock: Proceso[] = [
-  { id: 1, nombre: 'Proceso de Nómina' },
-  { id: 2, nombre: 'Proceso de Presupuesto' },
-  { id: 3, nombre: 'Proceso de Ejecución' }
-]
-
-// Mock detalles por proceso
-const detalleProcesoMock: Record<number, DetalleProceso[]> = {
-  14: [
-    { id: 11, codigo: 'DET-NOM-01', descripcion: 'Detalle Sueldos' },
-    { id: 12, codigo: 'DET-NOM-02', descripcion: 'Detalle Beneficios' }
-  ],
-  2: [
-    { id: 21, codigo: 'DET-PRE-01', descripcion: 'Detalle Proyección' },
-    { id: 22, codigo: 'DET-PRE-02', descripcion: 'Detalle Ajustes' }
-  ],
-  3: [
-    { id: 31, codigo: 'DET-EJE-01', descripcion: 'Detalle Compromisos' },
-    { id: 32, codigo: 'DET-EJE-02', descripcion: 'Detalle Pagos' }
-  ]
-}
-
-// Mock plantillas por detalle
-const plantillasMock: Record<number, Plantilla[]> = {
-  11: [
-    { id: 1001, codigo: 'PL-SUEL-BASE', descripcion: 'Plantilla Sueldos Base' },
-    { id: 1002, codigo: 'PL-SUEL-VAR', descripcion: 'Plantilla Sueldos Variables' }
-  ],
-  12: [
-    { id: 1003, codigo: 'PL-BEN-A', descripcion: 'Beneficios Alimentación' },
-    { id: 1004, codigo: 'PL-BEN-S', descripcion: 'Beneficios Salud' }
-  ],
-  21: [{ id: 1005, codigo: 'PL-PROY-INI', descripcion: 'Proyección Inicial' }],
-  22: [{ id: 1006, codigo: 'PL-AJUSTE-M', descripcion: 'Ajuste Mensual' }],
-  31: [{ id: 1007, codigo: 'PL-COMP-GEN', descripcion: 'Compromiso General' }],
-  32: [{ id: 1008, codigo: 'PL-PAG-PROG', descripcion: 'Pagos Programados' }]
-}
+import CrudModal from '../views/CrudModal';
+import useCrudModal from '../shared/hooks/useCrudModal';
+import FormularioPlantilla from '../views/Plantillas/Formulario';
 
 interface PlantillaIndexProps {
   formulaService?: ReturnType<typeof useFormulaService> | null;
@@ -88,12 +33,16 @@ export default function PlantillaIndex({
 }: PlantillaIndexProps) {
   const [procesoId, setProcesoId] = useState<number | ''>('')
   const [detalleSeleccionado, setDetalleSeleccionado] = useState<number | null>(null)
+  const [plantillaSeleccionada, setPlantillaSeleccionada] = useState<IGetAllByCodigoDetalleProcesoResponse | null>(null);
 
+  const [procesos, setProcesos] = useState<IProcesoFindAllResponse[]>([]);
+  const [loadingProcesos, setLoadingProcesos] = useState(false);
+
+  const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
   const [loadingDetalle, setLoadingDetalle] = useState(false)
-  const [loadingPlantillas, setLoadingPlantillas] = useState(false)
 
-  const [detalles, setDetalles] = useState<DetalleProceso[]>([])
-  // const [plantillas, setPlantillas] = useState<Plantilla[]>([])
+  const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
+  const [loadingPlantillas, setLoadingPlantillas] = useState(false)
 
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
@@ -109,61 +58,123 @@ export default function PlantillaIndex({
     plantillaService
   }), [formulaService, variableService, plantillaService]);
 
-  // Custom hook to manage plantilla builder logic
   const {
-    plantillas, setPlantillas,
-    error, message,
     getListProcesos,
     getListDetalleProcesos,
-    getPlantillasByDetalleProceso
+    getPlantillasByDetalleProceso,
+    createPlantilla,
+    updatePlantilla,
+    deletePlantilla,
   } = usePlantillaBuilder(services)
 
-  // TODO: Reemplazar mocks por servicios:
-  // const { getDetallesProceso } = useDetalleProcesoService()
-  // const { getPlantillasPorDetalle } = usePlantillaService()
-
-  const procesos = useMemo(() => procesosMock, [])
-
-  const fetchDetalles = useCallback((procId: number) => {
-    setLoadingDetalle(true)
-    setDetalles([])
-    setDetalleSeleccionado(null)
-    setPlantillas([])
-    setTimeout(() => {
-      setDetalles(detalleProcesoMock[procId] || [])
-      setLoadingDetalle(false)
-    }, 500)
-  }, [])
-
-  const fetchPlantillas = useCallback((detalleId: number) => {
-    setLoadingPlantillas(true)
-    setPlantillas([])
-    setTimeout(() => {
-      setPlantillas(plantillasMock[detalleId] || [])
-      setLoadingPlantillas(false)
-    }, 500)
-  }, [])
+  const {
+    modalOpen,
+    handleOpenModal,
+    handleCloseModal,
+  } = useCrudModal();
 
   useEffect(() => {
-    if (procesoId !== '') fetchDetalles(Number(procesoId))
-  }, [procesoId, fetchDetalles])
+    const fetchProcesos = async () => {
+      setLoadingProcesos(true);
 
+      const payload: DTOProcesoFindAll = {
+        page: 1,
+        limit: 50,
+        searchText: ""
+      }
+
+      const response = await getListProcesos(payload);
+
+      if (response && response.isValid && Array.isArray(response.data)) {
+        const procesosFindAll: IProcesoFindAllResponse[] = response.data
+        setProcesos(procesosFindAll);
+      } else {
+        setProcesos([]);
+      }
+      setLoadingProcesos(false);
+    };
+    fetchProcesos();
+  }, [getListProcesos]);
+
+  //DETALLE DEL PROCESO
   useEffect(() => {
-    if (detalleSeleccionado != null) fetchPlantillas(detalleSeleccionado)
-  }, [detalleSeleccionado, fetchPlantillas])
+    if (detalleSeleccionado != null) {
+      const fetchPlantillas = async () => {
+        const payload: DTOGetAllByCodigoDetalleProceso = {
+          page: 1,
+          limit: 20,
+          searchText: "",
+          id: detalleSeleccionado
+        }
 
-  //Cuando se selecciona del proceso
-  const handleProcesoChange = (e: SelectChangeEvent) => {
+        const response = await getPlantillasByDetalleProceso(payload);
+
+        if (response && response.isValid && Array.isArray(response.data)) {
+          setPlantillas(response.data);
+        } else {
+          setPlantillas([]);
+        }
+      };
+      fetchPlantillas();
+    }
+  }, [detalleSeleccionado, getPlantillasByDetalleProceso]);
+
+  //SELECCIONAR PROCESO
+  const handleProcesoChange = async (e: SelectChangeEvent) => {
     const value = e.target.value
-    console.log('Proceso seleccionado:', Number(value))
-
-    getListDetalleProcesos(Number(value))
-
     setProcesoId(value === '' ? '' : Number(value))
+
+    setDetalles([]);
+    setDetalleSeleccionado(null);
+
+    const payload: DTOProcesoDetalleFindAll = {
+      "limit": 10,
+      "page": 1,
+      "searchText": "",
+      "codigoProceso": Number(value)
+    }
+
+    const response = await getListDetalleProcesos(payload);
+
+    if (response && response.isValid && Array.isArray(response.data)) {
+      setDetalles(response.data);
+    } else {
+      setDetalles([]);
+    }
   }
 
+  const handleOpenModalPlantilla = (plantilla: IGetAllByCodigoDetalleProcesoResponse) => {
+    setPlantillaSeleccionada(plantilla);
+    handleOpenModal();
+  };
+
+  const handleDelete = async (form: any, action: any) => {
+    try {
+      console.log('deleted', form)
+      await deletePlantilla(form);
+    } catch (error) {
+      console.error('Error deleting plantilla:', error);
+    }
+  }
+
+  const handleSubmit = async (form: any, action: any) => {
+    try {
+      if (action === 'edit' && form) {
+        console.log('Editing form:', form);
+        const updateResponse = await updatePlantilla(form);
+
+        console.log('updateResponse', updateResponse)
+      } else if (action === 'create') {
+        console.log('Created form', form)
+        await createPlantilla(form);
+      }
+    } catch (error) {
+      console.error('Error submitting plantilla:', error);
+    }
+  };
+
   return (
-    <Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       <Container maxWidth="xl" sx={{ flex: 1, display: 'flex', flexDirection: 'column', py: 2 }}>
         <Paper
           elevation={3}
@@ -175,7 +186,6 @@ export default function PlantillaIndex({
             borderRadius: 3
           }}
         >
-
           <Box sx={{ p: 3, borderBottom: theme => `1px solid ${theme.palette.divider}` }}>
             <FormControl fullWidth size="small">
               <InputLabel id="proceso-label">Proceso</InputLabel>
@@ -185,8 +195,8 @@ export default function PlantillaIndex({
                 value={procesoId === '' ? '' : String(procesoId)}
                 onChange={handleProcesoChange}
               >
-                {Array.isArray(plantillas) && plantillas.length > 0 ? (
-                  plantillas.map((p: any) => (
+                {Array.isArray(procesos) && procesos.length > 0 ? (
+                  procesos.map((p: IProcesoFindAllResponse) => (
                     <MenuItem key={p.id} value={p.id}>
                       {p.descripcion}
                     </MenuItem>
@@ -199,6 +209,12 @@ export default function PlantillaIndex({
               </Select>
             </FormControl>
           </Box>
+
+          {procesoId !== '' && <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+            <Grid item xs={12} md={6}>
+              <ListaVariablePorProceso procesoId={procesoId} />
+            </Grid>
+          </Grid>}
 
           <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <Grid
@@ -252,9 +268,25 @@ export default function PlantillaIndex({
                 p: 3
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Plantillas del Detalle
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Plantillas del Detalle
+                </Typography>
+                <Box sx={{ flex: 1 }} />
+                <AddIcon
+                  sx={{
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                    fontSize: 28,
+                    mr: 1
+                  }}
+                  titleAccess="Nueva Plantilla"
+                  onClick={() => {
+                    setPlantillaSeleccionada(null);
+                    handleOpenModal();
+                  }}
+                />
+              </Box>
 
               {detalleSeleccionado == null && (
                 <Typography variant="body2" color="text.secondary">
@@ -273,10 +305,28 @@ export default function PlantillaIndex({
                 plantillas={plantillas}
                 detalleId={detalleSeleccionado}
                 loading={loadingPlantillas}
+                onSelectPlantilla={handleOpenModalPlantilla}
               />
             </Grid>
           </Grid>
         </Paper>
+
+        <CrudModal
+          open={modalOpen}
+          title={plantillaSeleccionada ? "Editar Plantilla" : "Nueva Plantilla"}
+          initialValues={plantillaSeleccionada || { code: '', descripcion: '', tipo: '' }}
+          fields={null}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmit}
+          onDelete={handleDelete}
+          isEdit={!!plantillaSeleccionada}
+          formValues={plantillaSeleccionada || {}}
+        >
+          <FormularioPlantilla
+            initialValues={plantillaSeleccionada || { code: '', descripcion: '', tipo: '' }}
+            onChange={setPlantillaSeleccionada}
+          />
+        </CrudModal>
       </Container>
     </Box>
   )

@@ -1,17 +1,28 @@
 import React from 'react';
 import { List, ListItemButton, ListItemText, Paper, Box } from '@mui/material';
 
-const PlantillasDetalleProceso = ({ plantillas, detalleId, loading }) => {
+interface PlantillasDetalleProcesoProps {
+  plantillas: any[];
+  detalleId: number | null;
+  loading: boolean;
+  onSelectPlantilla: (plantilla: any) => void;
+}
+
+const PlantillasDetalleProceso = ({ plantillas, detalleId, loading, onSelectPlantilla }: PlantillasDetalleProcesoProps) => {
   if (detalleId == null) return null;
 
   return (
     <Paper variant="outlined" sx={{ borderRadius: 2 }}>
       <List dense disablePadding>
-        {plantillas.map(pl => (
-          <ListItemButton key={pl.id} sx={{ py: 1, px: 2 }}>
+        {plantillas.map((pl: any) => (
+          <ListItemButton
+            key={pl.id}
+            sx={{ py: 1, px: 2 }}
+            onClick={() => onSelectPlantilla(pl)}
+          >
             <ListItemText
-              primary={pl.codigo}
-              secondary={pl.descripcion}
+              primary={pl.code}
+              secondary={pl.descripcionFormula}
               primaryTypographyProps={{ fontWeight: 500 }}
             />
           </ListItemButton>
