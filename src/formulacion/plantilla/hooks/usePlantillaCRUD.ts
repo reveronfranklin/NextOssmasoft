@@ -1,18 +1,18 @@
 import { useCallback, useState } from 'react';
 import { IPlantillaService } from 'src/formulacion/interfaces/plantilla/PlantillaService.interfaces';
 
-import { CreatePlantillaDTO, IPlantillaCreateResponse } from 'src/formulacion/interfaces/plantilla/Create.interfaces'
-import { UpdatePlantillaDTO, IPlantillaUpdateResponse } from 'src/formulacion/interfaces/plantilla/Update.interfaces'
-import { DeletePlantillaDTO, IPlantillaDeleteResponse } from 'src/formulacion/interfaces/plantilla/Delete.interfaces'
+import { CreatePlantillaDTO } from 'src/formulacion/interfaces/plantilla/Create.interfaces'
+import { UpdatePlantillaDTO } from 'src/formulacion/interfaces/plantilla/Update.interfaces'
+import { DeletePlantillaDTO } from 'src/formulacion/interfaces/plantilla/Delete.interfaces'
 
 interface IPlantillaCRUD {
   plantillaService: IPlantillaService;
   invalidateTable: () => void;
 }
 
-export const PlantillaCRUD = ({ plantillaService, invalidateTable }: IPlantillaCRUD) => {
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+export const PlantillaCRUD = ({ plantillaService }: IPlantillaCRUD) => {
+  const [error] = useState<string | null>(null);
+  const [message] = useState<string | null>(null);
 
   const getListProcesos = useCallback(async (filters: any) => {
 

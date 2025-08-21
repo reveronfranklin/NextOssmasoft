@@ -45,7 +45,6 @@ export default function FormulaBuilder({
     setDescription,
     variables: availableVariables, setVariables,
     functions: availableFormulas,
-    getScope,
     result,
     error,
     syntaxError,

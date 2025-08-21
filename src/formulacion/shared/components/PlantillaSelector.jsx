@@ -15,7 +15,6 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 const PlantillaSelector = React.memo(({
   plantillas,
-  onPlantillaSelect,
   setEditingItem,
   editingItem
 }) => {
@@ -41,6 +40,7 @@ const PlantillaSelector = React.memo(({
     });
 
     return [...favs.map(mapVar), ...rest.map(mapVar)]
+
       // .sort((a, b) => a.tipo.localeCompare(b.tipo));
   }, [plantillas, favoritas]);
 

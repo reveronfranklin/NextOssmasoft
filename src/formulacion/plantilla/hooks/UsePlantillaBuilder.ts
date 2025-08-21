@@ -1,5 +1,6 @@
 import { useVariablesAndFunctions } from '../../shared/hooks/useVariablesAndFunctions';
 import { PlantillaCRUD } from './usePlantillaCRUD'
+
 // import { IBuilderServices } from 'src/formulacion/interfaces/BuilderServices.interfaces';
 
 import { IFormulaService } from 'src/formulacion/interfaces/formula/FormulaService.interfaces'
@@ -24,7 +25,7 @@ const usePlantillaBuilder = (services: FormulaBuilderServices) => {
     deletePlantilla
   } = PlantillaCRUD({
     plantillaService: services.plantillaService,
-    invalidateTable: () => {},
+    invalidateTable: () => console.log('Table invalidated'),
   });
 
   return {

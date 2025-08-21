@@ -36,13 +36,16 @@ export default function PlantillaIndex({
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState<IGetAllByCodigoDetalleProcesoResponse | null>(null);
 
   const [procesos, setProcesos] = useState<IProcesoFindAllResponse[]>([]);
-  const [loadingProcesos, setLoadingProcesos] = useState(false);
+
+  // const [loadingProcesos, setLoadingProcesos] = useState(false);
 
   const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
-  const [loadingDetalle, setLoadingDetalle] = useState(false)
+
+  // const [loadingDetalle, setLoadingDetalle] = useState(false)
 
   const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
-  const [loadingPlantillas, setLoadingPlantillas] = useState(false)
+
+  // const [loadingPlantillas, setLoadingPlantillas] = useState(false)
 
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
@@ -75,7 +78,7 @@ export default function PlantillaIndex({
 
   useEffect(() => {
     const fetchProcesos = async () => {
-      setLoadingProcesos(true);
+      // setLoadingProcesos(true);
 
       const payload: DTOProcesoFindAll = {
         page: 1,
@@ -91,7 +94,8 @@ export default function PlantillaIndex({
       } else {
         setProcesos([]);
       }
-      setLoadingProcesos(false);
+
+      // setLoadingProcesos(false);
     };
     fetchProcesos();
   }, [getListProcesos]);
@@ -151,6 +155,8 @@ export default function PlantillaIndex({
   const handleDelete = async (form: any, action: any) => {
     try {
       console.log('deleted', form)
+      console.log('action', action)
+
       await deletePlantilla(form);
     } catch (error) {
       console.error('Error deleting plantilla:', error);
