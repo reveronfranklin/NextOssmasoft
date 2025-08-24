@@ -9,7 +9,12 @@ const withTM = require('next-transpile-modules')([
   '@fullcalendar/react',
   '@fullcalendar/daygrid',
   '@fullcalendar/list',
-  '@fullcalendar/timegrid'
+  '@fullcalendar/timegrid',
+  'mathjs',
+  'complex.js',
+  'fraction.js',
+  'decimal.js',
+  'typed-function'
 ])
 
 module.exports = withTM({
@@ -19,14 +24,27 @@ module.exports = withTM({
   experimental: {
     esmExternals: false
   },
-  typescript: { 
-  
+  typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: [
+    'mathjs',
+    'complex.js',
+    'fraction.js',
+    'decimal.js',
+    'typed-function'
+  ],
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
       apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
+    }
+
+    // Añade esto para mathjs
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
     }
 
     return config
