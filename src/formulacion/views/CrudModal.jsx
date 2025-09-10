@@ -4,10 +4,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   IconButton
 } from '@mui/material';
+
 import CloseIcon from '@mui/icons-material/Close';
+import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfirm"
 
 const CrudModal = ({
   open,
@@ -19,8 +20,7 @@ const CrudModal = ({
   children,
   formValues = {},
 }) => {
-  const handleSubmit = (e, action) => {
-    e.preventDefault();
+  const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {
       onDelete(formValues, action);
     } else if (onSubmit) {
@@ -53,17 +53,28 @@ const CrudModal = ({
         </DialogContent>
         <DialogActions>
           {isEdit && onDelete && (
-            <Button color="error" onClick={(e) => handleSubmit(e, 'delete')}>
+            <ButtonWithConfirm
+              color="error"
+              dialogTitle="¿Eliminar variable?"
+              confirmText="¿Estás seguro de que deseas eliminar esta variable?"
+              onAction={() => handleSubmit('delete')}
+            >
               Eliminar
-            </Button>
+            </ButtonWithConfirm>
           )}
-          <Button
+          <ButtonWithConfirm
             variant="contained"
             color="primary"
-            onClick={(e) => handleSubmit(e, isEdit ? 'edit' : 'create')}
+            dialogTitle={isEdit ? '¿Actualizar variable?' : '¿Crear variable?'}
+            confirmText={
+              isEdit
+                ? 'Si'
+                : 'SI'
+            }
+            onAction={() => handleSubmit(isEdit ? 'edit' : 'create')}
           >
             {isEdit ? 'Actualizar' : 'Crear'}
-          </Button>
+          </ButtonWithConfirm>
         </DialogActions>
       </form>
     </Dialog>

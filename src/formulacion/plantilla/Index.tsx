@@ -3,6 +3,7 @@ import { Box, Container, Paper, Grid, FormControl, InputLabel, Select, MenuItem,
 import AddIcon from '@mui/icons-material/Add';
 
 import usePlantillaBuilder from './hooks/UsePlantillaBuilder';
+import useFormulaBuilder from './../formulas/hooks/useFormulaBuilder';
 
 import DetalleProcesoAsociado from './components/DetalleProcesoAsociado'
 import PlantillasDetalleProceso from './components/PlantillasDetalleProceso'
@@ -19,7 +20,6 @@ import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse 
 import CrudModal from '../views/CrudModal';
 import useCrudModal from '../shared/hooks/useCrudModal';
 import FormularioPlantilla from '../views/Plantillas/Formulario';
-
 interface PlantillaIndexProps {
   formulaService?: ReturnType<typeof useFormulaService> | null;
   variableService?: ReturnType<typeof useVariableService> | null;
@@ -41,11 +41,11 @@ export default function PlantillaIndex({
 
   const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
 
-  // const [loadingDetalle, setLoadingDetalle] = useState(false)
+  const [loadingDetalle, setLoadingDetalle] = useState(false)
 
   const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
 
-  // const [loadingPlantillas, setLoadingPlantillas] = useState(false)
+  const [loadingPlantillas, setLoadingPlantillas] = useState(false)
 
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
@@ -69,6 +69,10 @@ export default function PlantillaIndex({
     updatePlantilla,
     deletePlantilla,
   } = usePlantillaBuilder(services)
+
+  const {
+    variables: availableVariables, setVariables,
+  } = useFormulaBuilder(services)
 
   const {
     modalOpen,
@@ -331,6 +335,7 @@ export default function PlantillaIndex({
           <FormularioPlantilla
             initialValues={plantillaSeleccionada || { code: '', descripcion: '', tipo: '' }}
             onChange={setPlantillaSeleccionada}
+            availableVariables={availableVariables}
           />
         </CrudModal>
       </Container>

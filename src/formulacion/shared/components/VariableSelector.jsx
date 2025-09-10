@@ -16,9 +16,13 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 const VariableSelector = React.memo(({
   variables,
   setVariables,
+  selectedVariableId,
   onVariableSelect,
+  selectedVariable,
+  setSelectedVariable,
   setEditingItem,
   editingItem,
+  fetchVariables
 }) => {
   const [autoValue, setAutoValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -37,6 +41,7 @@ const VariableSelector = React.memo(({
       value: v.code,
       tipo: v.TipoVariable,
       codigoEmpresa: v.codigoEmpresa,
+      usuarioUpdate: v.usuarioUpdate,
       id: v.id,
       ...v
     });
@@ -72,23 +77,23 @@ const VariableSelector = React.memo(({
   } = variableService;
 
   const handleSubmit = async(form, action) => {
-    if (!form.code || !form.descripcion || !form.tipo) {
+    if (!form.code || !form.descripcion || !form.tipo || !form.codigoEmpresa) {
       console.error('Faltan campos requeridos');
 
       return;
     }
 
     const payload = {
-      id: form.id || null,
+      id: form.id,
       code: form.code,
       descripcion: form.descripcion,
       tipoVariable: form.tipo,
-      codigoEmpresa: form.codigoEmpresa
+      codigoEmpresa: form.codigoEmpresa,
     }
 
     try {
       if (action === 'edit' && form) {
-        payload.usuarioUpdate = form.usuarioUpdate;
+        payload.usuarioUpdate = form.usuarioUpdate ?? 13;
 
         const updated = await updateVariable(payload);
 
@@ -100,6 +105,9 @@ const VariableSelector = React.memo(({
           setVariables(prev =>
             prev.map(v => v.code === updated.data.code ? { ...v, ...updated.data } : v)
           );
+
+          setSelectedVariable(updated.data[0]);
+          fetchVariables();
 
           setTimeout(() => {
             handleCloseModal();
@@ -117,7 +125,11 @@ const VariableSelector = React.memo(({
           return;
         } else {
           setVariables(prev => [...prev, created.data]);
-          handleCloseModal();
+          fetchVariables();
+
+          setTimeout(() => {
+            handleCloseModal();
+          }, 3000);
         }
       }
     } catch (error) {
@@ -136,11 +148,68 @@ const VariableSelector = React.memo(({
     try {
       await deleteVariable(editingItem.code);
 
-      // handleCloseModal();
+      setVariables(prev => prev.filter(v => v.code !== editingItem.code));
+      setSelectedVariable(null);
+      fetchVariables();
+
+      setTimeout(() => {
+        handleCloseModal();
+      }, 3000);
+
     } catch (error) {
       console.error('Error al eliminar la variable:', error);
     }
   };
+
+  // Cuando se edita una variable desde el CRUD
+  const handleEditVariable = (option) => {
+    console.log('Editando variable:', option);
+    setAutoValue(null);
+    // setEditingItem({
+    //   code: option.value,
+    //   descripcion: option.label,
+    //   tipo: option.tipo,
+    //   ...option
+    // });
+    setSelectedVariable(option); // <-- Actualiza el estado del CRUD
+    handleOpenModal();
+  };
+
+  // Cuando se selecciona una variable en el Autocomplete (para insertar en fórmula)
+  const handleAutocompleteChange = (event, newValue) => {
+    if (newValue) {
+      onVariableSelect(newValue); // Para insertar en la fórmula
+      setAutoValue(null);
+      setInputValue('');
+      setAutoKey(k => k + 1);
+      setTimeout(() => {
+        setOpen(true);
+        if (autocompleteTextFieldRef.current) {
+          autocompleteTextFieldRef.current.value = '';
+          const inputEvent = new Event('input', {
+            bubbles: true
+          });
+          autocompleteTextFieldRef.current.dispatchEvent(inputEvent);
+          autocompleteTextFieldRef.current.focus();
+        }
+      }, 100);
+    }
+  };
+
+  React.useEffect(() => {
+    const selected = variables.find(v => v.id === selectedVariableId) || null;
+    setAutoValue(selected ? {
+      label: selected.descripcion,
+      value: selected.code,
+      tipo: selected.TipoVariable,
+      codigoEmpresa: selected.codigoEmpresa,
+      usuarioUpdate: selected.usuarioUpdate,
+      id: selected.id,
+      ...selected
+    } : null);
+
+    // onVariableSelect(selected);
+  }, [selectedVariableId, variables]);
 
   return (
     <div style={{ marginBottom: '10px' }}>
@@ -149,6 +218,7 @@ const VariableSelector = React.memo(({
         <ButtonCrud
           icon={<AddIcon />}
           onClick={() => {
+            setSelectedVariable(null);
             setEditingItem(null);
             handleOpenModal();
           }}
@@ -173,25 +243,7 @@ const VariableSelector = React.memo(({
           }}
           disableCloseOnSelect
           isOptionEqualToValue={(option, value) => option.value === value?.value}
-          onChange={(event, newValue) => {
-            if (newValue) {
-              onVariableSelect(`[${newValue.value}]`, 'variable');
-              setAutoValue(null);
-              setInputValue('');
-              setAutoKey(k => k + 1);
-              setTimeout(() => {
-                setOpen(true);
-                if (autocompleteTextFieldRef.current) {
-                  autocompleteTextFieldRef.current.value = '';
-
-                  const inputEvent = new Event('input', { bubbles: true });
-                  autocompleteTextFieldRef.current.dispatchEvent(inputEvent);
-
-                  autocompleteTextFieldRef.current.focus();
-                }
-              }, 100);
-            }
-          }}
+          onChange={handleAutocompleteChange}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -237,14 +289,7 @@ const VariableSelector = React.memo(({
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setAutoValue(null);
-                  setEditingItem({
-                    code: option.value,
-                    descripcion: option.label,
-                    tipo: option.tipo,
-                    ...option
-                  });
-                  handleOpenModal();
+                  handleEditVariable(option);
                 }}
                 sx={{ ml: 1 }}
                 aria-label="Editar"
@@ -260,18 +305,23 @@ const VariableSelector = React.memo(({
 
       <CrudModal
         open={modalOpen}
-        title={editingItem ? 'Editar Variable' : 'Agregar Variable'}
-        initialValues={editingItem || { code: '', descripcion: '', tipo: '' }}
+        title={selectedVariable && selectedVariable.id ? 'Editar' : 'Crear'}
+        initialValues={selectedVariable || { code: '', descripcion: '', tipo: '' }}
         fields={fields}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
         onDelete={handleDelete}
-        isEdit={!!editingItem}
-        formValues={editingItem}
+        isEdit={!!selectedVariable && selectedVariable.id !== 0}
+        formValues={selectedVariable}
       >
         <FormularioVariable
-          initialValues={editingItem || { code: '', descripcion: '', tipo: '', id: '' }}
-          onChange={setEditingItem}
+          initialValues={selectedVariable || { code: '', descripcion: '', tipo: '', id: 0 }}
+          onChange={setSelectedVariable}
+          availableVariables = {
+            variables
+              .filter(v => v.TipoVariable !== 'FUNCION')
+              .filter(v => !selectedVariable || v.code !== selectedVariable.code)
+          }
         />
       </CrudModal>
     </div>

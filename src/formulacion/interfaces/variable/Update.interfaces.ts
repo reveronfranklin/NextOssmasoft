@@ -5,6 +5,15 @@ export interface DTOVariableUpdate {
   tipoVariable: string;
   usuarioUpdate: number;
   codigoEmpresa: number;
+  parametros: Iparametro[] | [];
+}
+
+export interface Iparametro {
+  id: number;
+  variableId: number;
+  code: string;
+  orden: number;
+  estado: string;
 }
 
 export interface IVariableUpdateResponse {

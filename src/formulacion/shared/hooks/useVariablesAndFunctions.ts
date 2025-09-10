@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { TipoVariableEnum } from 'src/formulacion/enums/TipoVariable.enum'
+import { useState, useEffect, useCallback } from 'react';
 import { IFormulaService } from 'src/formulacion/interfaces/formula/FormulaService.interfaces'
 import { IVariableService } from 'src/formulacion/interfaces/variable/VariableService.interfaces'
 import { IPlantillaService } from 'src/formulacion/interfaces/plantilla/PlantillaService.interfaces'
@@ -13,53 +12,55 @@ export const useVariablesAndFunctions = (services: {
   const [functions, setFunctions] = useState<any>([]);
   const [plantillas, setPlantillas] = useState<any>([]);
 
-  useEffect(() => {
-    const fetchVariables = async () => {
-      const response = await services.variableService.getListVariables({
-        page: 1,
-        limit: 10,
-        searchText: '',
-        tipoVariable: TipoVariableEnum.FUNCION
-      });
+  const fetchVariables = useCallback(async () => {
+    const response = await services.variableService.getListVariables({
+      page: 1,
+      limit: 10,
+      searchText: ''
+    });
 
-      if (response.isValid) {
-        setVariables(response.data);
-      }
-    };
-    fetchVariables();
+    if (response.isValid) {
+      console.log('Variables fetched:', response.data);
+      setVariables(response.data);
+    }
   }, [services.variableService.getListVariables]);
 
   useEffect(() => {
-    const fetchFunctions = async () => {
-      const response = await services.formulaService.getListFormulas({
-        page: 1,
-        limit: 10,
-        searchText: ''
-      });
+    fetchVariables();
+  }, [fetchVariables]);
 
-      if (response.isValid) {
-        setFunctions(response.data);
-      }
-    };
-    fetchFunctions();
+  const fetchFunctions = useCallback(async () => {
+    const response = await services.formulaService.getListFormulas({
+      page: 1,
+      limit: 10,
+      searchText: ''
+    });
+
+    if (response.isValid) {
+      setFunctions(response.data);
+    }
   }, [services.formulaService.getListFormulas]);
 
   useEffect(() => {
-    const fetchPlantillas = async () => {
-      const response = await services.plantillaService.getListProcesos({
-        page: 1,
-        limit: 10,
-        searchText: '',
-      });
+    fetchFunctions();
+  }, [fetchFunctions]);
 
-      console.log('Plantillas fetched:', response);
+  const fetchPlantillas = useCallback(async () => {
+    const response = await services.plantillaService.getListProcesos({
+      page: 1,
+      limit: 10,
+      searchText: '',
+    });
 
-      if (response.isValid) {
-        setPlantillas(response.data);
-      }
-    };
-    fetchPlantillas();
+    if (response.isValid) {
+      setPlantillas(response.data);
+    }
   }, [services.plantillaService.getListProcesos]);
+
+
+  useEffect(() => {
+    fetchPlantillas();
+  }, [fetchPlantillas]);
 
   return {
     variables,
@@ -68,5 +69,8 @@ export const useVariablesAndFunctions = (services: {
     setFunctions,
     plantillas,
     setPlantillas,
+    fetchVariables,
+    fetchFunctions,
+    fetchPlantillas
   };
 };
