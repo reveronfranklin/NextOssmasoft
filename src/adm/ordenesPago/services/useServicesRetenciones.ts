@@ -31,6 +31,7 @@ const useServicesRetencionesOp = () => {
       setLoading(true)
       const responseGetOrdenes = await ossmmasofApi.get<any>(UrlServices.GETADMRETENCIONES)
       if (responseGetOrdenes.data.isValid) {
+
         return responseGetOrdenes.data
       }
       setMessage(responseGetOrdenes.data.message)

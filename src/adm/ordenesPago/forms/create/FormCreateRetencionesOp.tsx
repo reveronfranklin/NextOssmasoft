@@ -17,7 +17,10 @@ import {
   setRetencionOpSeleccionado,
   setRetencionSeleccionado,
   setIsOpenDialogListRetenciones,
-  setTipoRetencion
+  setTipoRetencion,
+
+  // setBaseTotalDocumentos,
+  // setTotalCompromiso
 } from "src/store/apps/ordenPago"
 
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
@@ -33,7 +36,6 @@ import { NumericFormat } from 'react-number-format'
 import FormatNumber from 'src/utilities/format-numbers'
 
 import { useDocumentosOpData } from '../../hooks/useDocumentosOpData'
-
 
 interface getValuesForm {
   tipoRetencion: number
@@ -60,9 +62,17 @@ const FormCreateRetencionesOp = () => {
     retencionSeleccionado,
     tipoRetencion,
     baseTotalDocumentos,
+    totalCompromiso
   } = useSelector((state: RootState) => state.admOrdenPago)
 
-  const { message, loading, presupuestoSeleccionado, createRetencionOp, updateRetencionOp, deleteRetencionOp } = useServicesRetencionesOp()
+  const {
+    message,
+    loading,
+    presupuestoSeleccionado,
+    createRetencionOp,
+    updateRetencionOp,
+    deleteRetencionOp
+  } = useServicesRetencionesOp()
 
   if (!baseTotalDocumentos) {
     prefetchDocumentos({ codigoOrdenPago })
@@ -80,7 +90,7 @@ const FormCreateRetencionesOp = () => {
       codigoRetencion: retencionOpSeleccionado?.codigoRetencion ?? 0,
 
       porcentajeRetencion: 0,
-      baseTotalDocumento: baseTotalDocumentos || 0,
+      baseTotalDocumento: baseTotalDocumentos || totalCompromiso,
     },
     mode: 'onChange',
   })
@@ -102,20 +112,17 @@ const FormCreateRetencionesOp = () => {
         porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: baseTotalDocumentos,
+        baseImponible: baseTotalDocumentos === 0 ? totalCompromiso : baseTotalDocumentos,
         codigoRetencion: Number(formData.codigoRetencion),
       }
-
-      console.log('Payload para crear retención:', payload)
 
       await createRetencionOp(payload)
       clearForm()
     } catch (error) {
       console.log(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesOpTable']
-      })
+      qc.invalidateQueries({ queryKey: ['retencionesOpTable'] })
+      qc.invalidateQueries({ queryKey: ['beneficioOpTable'] })
       dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
@@ -138,19 +145,16 @@ const FormCreateRetencionesOp = () => {
         porRetencion: retencionSeleccionado?.porRetencion || 0,
         montoRetencion: Number(formData.montoRetencion),
         codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto,
-        baseImponible: baseTotalDocumentos || 0,
+        baseImponible: baseTotalDocumentos === 0 ? totalCompromiso : baseTotalDocumentos,
       }
-
-      console.log('Payload para actualizar retención:', payload)
 
       await updateRetencionOp(payload)
       clearForm()
     } catch (error) {
       console.log(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesOpTable']
-      })
+      qc.invalidateQueries({ queryKey: ['retencionesOpTable'] })
+      qc.invalidateQueries({ queryKey: ['beneficioOpTable'] })
       dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
@@ -167,9 +171,8 @@ const FormCreateRetencionesOp = () => {
     } catch (error) {
       console.log(error)
     } finally {
-      qc.invalidateQueries({
-        queryKey: ['retencionesOpTable']
-      })
+      qc.invalidateQueries({ queryKey: ['retencionesOpTable'] })
+      qc.invalidateQueries({ queryKey: ['beneficioOpTable'] })
       dispatch(setIsOpenDialogConfirmButtons(false))
     }
   }
@@ -188,6 +191,9 @@ const FormCreateRetencionesOp = () => {
     dispatch(setRetencionOpSeleccionado(null))
     dispatch(setRetencionSeleccionado(null))
     setIsDisabledRetencion(false)
+
+    // dispatch(setBaseTotalDocumentos(0))
+    // dispatch(setTotalCompromiso(0))
   }
 
   const viewDialogListRetenciones = () => {
@@ -220,7 +226,9 @@ const FormCreateRetencionesOp = () => {
       setValue('codigoRetencion', codigoRetencion || 0)
       setPorRetencion(porRetencion || 0)
 
-      const respuestaMontoRetencion = calcularMontoRetencion(baseTotalDocumentos, porRetencion)
+      const respuestaMontoRetencion = baseTotalDocumentos === 0 ?
+        calcularMontoRetencion(totalCompromiso, porRetencion)
+        : calcularMontoRetencion(baseTotalDocumentos, porRetencion)
 
       if (respuestaMontoRetencion) {
         setIsDisabledRetencion(true)
@@ -352,7 +360,7 @@ const FormCreateRetencionesOp = () => {
                     p: 0.5,
                     color: 'common.white'
                   }}>
-                    Base Total: { FormatNumber(baseTotalDocumentos) }
+                    Base Total: {baseTotalDocumentos === 0 ? FormatNumber(totalCompromiso) : FormatNumber(baseTotalDocumentos)}
                   </Box>
                 }
                 componentsProps={{
@@ -375,7 +383,7 @@ const FormCreateRetencionesOp = () => {
                   sx={{
                     paddingLeft: .5,
                     fontSize: '1.4rem',
-                    color: baseTotalDocumentos > 0 ? 'primary.dark' : 'action.active',
+                    color: baseTotalDocumentos > 0 || totalCompromiso > 0 ? 'primary.dark' : 'action.active',
                     transition: 'all 0.2s ease'
                   }}
                 />

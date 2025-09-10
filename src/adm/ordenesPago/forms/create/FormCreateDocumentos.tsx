@@ -131,8 +131,7 @@ const FormCreateDocumentosOp = () => {
   useEffect(() => {
     const calculateTaxes = async () => {
       if (estatusFisico === 0) {
-        setMontoImpuestoExento(montoDocumento);
-        setRetencionMonto(0); // Asegurar que retención sea 0 en este caso
+        setRetencionMonto(0);
       } else {
         if (montoImpuesto > 0) {
           const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico);
@@ -140,25 +139,11 @@ const FormCreateDocumentosOp = () => {
         } else {
           setRetencionMonto(0);
         }
-        setMontoImpuestoExento(0); // Asegurar que exento sea 0 en este caso
       }
     };
 
     calculateTaxes();
-  }, [montoImpuesto, estatusFisico, montoDocumento]); // Añadir montoDocumento a las dependencias
-
-  // useEffect(() => {
-  //   const calculateMontoRetenido = async () => {
-  //     if (montoImpuesto > 0) {
-  //       const montoRetenido = await calcularMontoRetenido(montoImpuesto, estatusFisico)
-  //       setRetencionMonto(montoRetenido)
-  //     } else {
-  //       setRetencionMonto(0)
-  //     }
-  //   }
-
-  //   calculateMontoRetenido()
-  // }, [montoImpuesto, estatusFisico])
+  }, [montoImpuesto, estatusFisico, montoDocumento]);
 
   const handleTipoImpuestoChange = (tipoImpuesto: any) => {
     setValue('tipoImpuestoId', tipoImpuesto.id)
