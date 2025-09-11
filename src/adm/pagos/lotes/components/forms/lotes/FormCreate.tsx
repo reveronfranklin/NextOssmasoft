@@ -14,9 +14,9 @@ import {
     Button
 } from '@mui/material';
 
-import { useServices } from '../../services';
-import { LoteDto, FechaPagoDto } from '../../interfaces';
-import { TipoPago, MaestroCuenta } from '../autoComplete';
+import { useServices } from '../../../services';
+import { LoteDto, FechaPagoDto } from '../../../interfaces';
+import { TipoPago, MaestroCuenta } from '../../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import dayjs from 'dayjs';

@@ -318,7 +318,7 @@ const FormCreateRetenciones = () => {
           </Grid>
         </Grid>
       </form>
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ paddingTop: 4 }}>
         <CustomButtonDialog
           saveButtonConfig={{
             label: 'Crear',

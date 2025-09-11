@@ -7,7 +7,7 @@ import Layout from 'src/adm/ordenesPago/views/Layout'
 const OrdenesPago = () => {
     return (
         <Grid item xs={12}>
-            <CardContent title='Solicitud de Compromiso'>
+            <CardContent title='Ordenes de Pago'>
                 <Grid container spacing={6}>
                     <Grid item xs={6}>
                         <FilterOnlyPresupuesto />

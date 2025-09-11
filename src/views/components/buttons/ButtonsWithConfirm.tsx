@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, forwardRef } from 'react';
 import Button, { ButtonProps } from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -17,7 +17,7 @@ type ButtonWithConfirmProps = {
   showLoading?: boolean
 } & ButtonProps
 
-export const ButtonWithConfirm = ({
+export const ButtonWithConfirm = forwardRef<HTMLButtonElement, ButtonWithConfirmProps>(({
   children,
   onAction,
   confirmTitle = "Confirmar acción",
@@ -27,7 +27,7 @@ export const ButtonWithConfirm = ({
   disableBackdropClick = false,
   showLoading = false,
   ...buttonProps
-}: ButtonWithConfirmProps) => {
+}) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -97,4 +97,4 @@ export const ButtonWithConfirm = ({
       </Dialog>
     </>
   )
-}
+})

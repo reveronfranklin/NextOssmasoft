@@ -23,14 +23,13 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings'
-import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 import MensajeCompromiso from './mensajeCompromiso'
 
 export interface FormInputs {
     codigoOrdenPago: number,
-    descripcionStatus: string,
+    estatusText: string,
     iva: number ,
     islr: number,
     fechaOrdenPagoString: string | Date,
@@ -54,6 +53,7 @@ export interface IFechaDto {
 }
 
 const FormOrdenPago = (props: {
+        modo?: string,
         orden?: any,
         onFormData: any,
         onFormClear?: any,
@@ -65,12 +65,12 @@ const FormOrdenPago = (props: {
     }) => {
 
     const {
+        modo,
         orden,
         onFormData,
         handleGestionOrdenPago,
         titleButton,
         onViewerPdf,
-        message,
         loading,
         onFormClear,
     } = props
@@ -81,7 +81,7 @@ const FormOrdenPago = (props: {
     const [tipoPagoId, setTipoPagoId] = useState<number>(0)
     const [frecuenciaPagoId, setFrecuenciaPagoId] = useState<number>(0)
 
-    const [isOrdenPagoLoaded, setIsOrdenPagoLoaded] = useState<boolean>(Object.keys(orden).length > 0)
+    const [ordenLocal, setOrdenLocal] = useState<any>(orden)
 
     const [open, setOpen] = useState<boolean>(false)
     const [fecha] = useState<IFechaDto>({
@@ -98,7 +98,7 @@ const FormOrdenPago = (props: {
 
     const defaultValues: any = {
         codigoOrdenPago: 0,
-        descripcionStatus: 'PENDIENTE',
+        estatusText: '',
         frecuenciaPagoId: 0,
         tipoPagoId: 0,
         tipoOrdenId: 0,        iva: 0,
@@ -106,7 +106,7 @@ const FormOrdenPago = (props: {
         islr: 0,
         fechaOrdenPagoString: '',
         origenDescripcion: '',
-        cantidadPago: 0,
+        cantidadPago: 1,
         fecha: '',
         plazoPagoDesde: 0,
         plazoPagoHasta: 0,
@@ -188,13 +188,12 @@ const FormOrdenPago = (props: {
 
     useEffect(() => {
         if (orden && Object.keys(orden).length) {
-            setIsOrdenPagoLoaded(true)
             if (typeOperation === 'update') {
-                setValue('descripcionStatus', orden.descripcionStatus ?? '')
+                setValue('estatusText', orden.estatusText ?? '')
             }
 
             setValue('origenDescripcion', orden.origenDescripcion ? orden.origenDescripcion : orden.descripcionTipoOrdenPago)
-            setValue('cantidadPago', orden.cantidadPago ?? '')
+            setValue('cantidadPago', orden.cantidadPago ?? 1)
             setValue('nombreProveedor', orden.nombreProveedor ?? '')
             setValue('motivo', orden.motivo ?? '')
             setValue('numeroOrdenPago', Number(orden.numeroOrdenPago) ?? 0)
@@ -214,6 +213,14 @@ const FormOrdenPago = (props: {
         if (open && !loading) handleClose()
     }, [orden, loading, setValue ])
 
+    useEffect(() => {
+        if (modo === 'creacion' && !orden) {
+            setOrdenLocal({})
+        } else {
+            setOrdenLocal(orden)
+        }
+    }, [modo, orden])
+
     const getActionIcon = (actionName: string) => {
         switch (actionName?.toLowerCase()) {
             case 'aprobar': return <CheckCircleIcon />
@@ -224,7 +231,7 @@ const FormOrdenPago = (props: {
 
     return (
         <Box>
-            { isOrdenPagoLoaded ?
+            { Object.keys(ordenLocal || {}).length > 0 ?
                 <form>
                     <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                         <Grid item xs={12} sx={{ paddingTop: 1 }}>
@@ -239,12 +246,12 @@ const FormOrdenPago = (props: {
                                                 onChange={() => setValue('conFactura', !value)}
                                                 color='primary'
                                                 size='small'
-                                                disabled={documentCount >= 1}
+                                                disabled={ typeOperation === 'create' ? false : documentCount >= 1 }
                                             />
                                         )}
                                     />
                                 }
-                                label={ true ? 'con Factura' : 'sin Factura'}
+                                label={ true ? 'con Factura' : 'sin Factura' }
                             />
                         </Grid>
                         <Grid container spacing={0}>
@@ -252,7 +259,7 @@ const FormOrdenPago = (props: {
                                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                     <FormControl fullWidth>
                                         <Controller
-                                            name="descripcionStatus"
+                                            name="estatusText"
                                             control={control}
                                             render={({ field: { value, onChange } }) => (
                                                 <TextField
@@ -260,12 +267,12 @@ const FormOrdenPago = (props: {
                                                     label="Estatus"
                                                     placeholder="Estatus"
                                                     value={value || ''}
-                                                    rows={4}
+                                                    rows={6}
                                                     multiline
                                                     onChange={onChange}
                                                     disabled={true}
-                                                    error={!!errors.descripcionStatus}
-                                                    helperText={errors.descripcionStatus?.message}
+                                                    error={!!errors.estatusText}
+                                                    helperText={errors.estatusText?.message}
                                                 />
                                             )}
                                         />
@@ -360,21 +367,18 @@ const FormOrdenPago = (props: {
                                             <Controller
                                                 name="cantidadPago"
                                                 control={control}
-                                                rules={{ required: 'Estatus is required' }}
-                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                                render={({ field: { value, onChange } }) => {
-                                                    return (
-                                                        <TextField
-                                                            fullWidth
-                                                            label="Cantidad de Pagos"
-                                                            placeholder="Cantidad de Pagos"
-                                                            value={value}
-                                                            onChange={onChange}
-                                                            error={!!errors.cantidadPago}
-                                                            helperText={errors.cantidadPago?.message}
-                                                        />
-                                                    )
-                                                }}
+                                                defaultValue={1}
+                                                render={({ field: { value } }) => (
+                                                    <TextField
+                                                        fullWidth
+                                                        label="N°"
+                                                        value={value}
+                                                        disabled
+                                                        InputProps={{
+                                                            readOnly: true,
+                                                        }}
+                                                    />
+                                                )}
                                             />
                                         </FormControl>
                                     </Grid>
@@ -383,17 +387,16 @@ const FormOrdenPago = (props: {
                                             <Controller
                                                 name="cantidadPago"
                                                 control={control}
-                                                rules={{ required: 'Este campo es requerido' }}
-                                                defaultValue={typeOperation === 'update' ? orden?.cantidadPago : ''}
-                                                render={({ field: { value, onChange } }) => (
+                                                defaultValue={1}
+                                                render={({ field: { value } }) => (
                                                     <TextField
                                                         fullWidth
                                                         label="N°"
-                                                        placeholder="N°"
                                                         value={value}
-                                                        onChange={onChange}
-                                                        error={!!errors.cantidadPago}
-                                                        helperText={errors.cantidadPago?.message}
+                                                        disabled
+                                                        InputProps={{
+                                                            readOnly: true,
+                                                        }}
                                                     />
                                                 )}
                                             />
@@ -562,12 +565,6 @@ const FormOrdenPago = (props: {
                                 </ButtonWithConfirm>
                             </span>
                         )}
-                        <AlertMessage
-                            message={message?.text ?? ''}
-                            severity={message?.isValid ? 'success' : 'error'}
-                            duration={10000}
-                            show={message?.text ? true : false}
-                        />
                     </Box>
                 </form> : <MensajeCompromiso />
             }

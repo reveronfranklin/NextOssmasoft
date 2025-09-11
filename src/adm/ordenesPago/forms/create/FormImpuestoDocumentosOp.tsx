@@ -44,7 +44,8 @@ const FormImpuestoDocumentosOp = () => {
     impuestoDocumentoOpSeleccionado,
     retencionSeleccionado,
     documentoOpSeleccionado,
-    isOpenDialogConfirmButtons
+    isOpenDialogConfirmButtons,
+    baseImponibleDocumentosOp
   } = useSelector((state: RootState) => state.admOrdenPago)
 
   const showOnlyCreate = impuestoDocumentoOpSeleccionado?.codigoDocumentoOp ?? false
@@ -81,9 +82,9 @@ const FormImpuestoDocumentosOp = () => {
     defaultValues
   })
 
-  const baseImponible = watch('baseImponible')
+  const baseImponible       = watch('baseImponible')
   const montoImpuestoExento = watch('montoImpuestoExento')
-  const montoImpuesto = watch('montoImpuesto')
+  const montoImpuesto       = watch('montoImpuesto')
 
   const baseImponibleRules = {
     required: 'Este campo es obligatorio',
@@ -106,7 +107,7 @@ const FormImpuestoDocumentosOp = () => {
 
       calcularMontoRetenido(valorFinal, montoImpuestoExento)
     }
-  }, [baseImponible, setValue])
+  }, [baseImponible, porRetencion, setValue])
 
   const calcularMontoRetenido = (impuesto: number, exento: number) => {
     if (exento < 0) {
@@ -255,6 +256,12 @@ const FormImpuestoDocumentosOp = () => {
       }
     }
   }, [impuestoDocumentoOpSeleccionado])
+
+  useEffect(() => {
+    if (baseImponibleDocumentosOp > 0) {
+      setValue('baseImponible', baseImponibleDocumentosOp)
+    }
+  }, [baseImponibleDocumentosOp, setValue])
 
   const onSubmit = (data: any) => {
     console.log(data)
@@ -541,39 +548,41 @@ const FormImpuestoDocumentosOp = () => {
           </Grid>
         </Grid>
       </form>
-      <CustomButtonDialog
-        saveButtonConfig={{
-          label: 'Crear',
-          onClick: handleCreateImpuestoDocumentosOp,
-          show: !showOnlyCreate,
-          confirm: true,
-          disabled: !isValid || loading
-        }}
-        updateButtonConfig={{
-          label: 'Actualizar',
-          onClick: handleUpdateImpuestoDocumentosOp,
-          show: showOnlyCreate,
-          confirm: true,
-          disabled: !isValid || loading
-        }}
-        deleteButtonConfig={{
-          label: 'Eliminar',
-          onClick: handleDeleteImpuestoDocumentosOp,
-          show: showOnlyCreate,
-          confirm: true,
-          disabled: false
-        }}
-        clearButtonConfig={{
-          label: 'Limpiar',
-          onClick: async () => clearForm(),
-          show: false,
-          disabled: false
-        }}
-        loading={loading}
-        isOpenDialog={isOpenDialogConfirmButtons}
-        setIsOpenDialog={setIsOpenDialogConfirmButtons}
-        isFormValid={isValid}
-      />
+      <Box sx={{ paddingTop: 4 }}>
+        <CustomButtonDialog
+          saveButtonConfig={{
+            label: 'Crear',
+            onClick: handleCreateImpuestoDocumentosOp,
+            show: !showOnlyCreate,
+            confirm: true,
+            disabled: !isValid || loading
+          }}
+          updateButtonConfig={{
+            label: 'Actualizar',
+            onClick: handleUpdateImpuestoDocumentosOp,
+            show: showOnlyCreate,
+            confirm: true,
+            disabled: !isValid || loading
+          }}
+          deleteButtonConfig={{
+            label: 'Eliminar',
+            onClick: handleDeleteImpuestoDocumentosOp,
+            show: showOnlyCreate,
+            confirm: true,
+            disabled: false
+          }}
+          clearButtonConfig={{
+            label: 'Limpiar',
+            onClick: async () => clearForm(),
+            show: false,
+            disabled: false
+          }}
+          loading={loading}
+          isOpenDialog={isOpenDialogConfirmButtons}
+          setIsOpenDialog={setIsOpenDialogConfirmButtons}
+          isFormValid={isValid}
+        />
+      </Box>
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}

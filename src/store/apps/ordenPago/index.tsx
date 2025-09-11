@@ -26,12 +26,17 @@ export const admOrdenPagoSlice = createSlice({
         beneficioOpSeleccionado: {} as IBeneficiarioOp,
         documentoOpSeleccionado: {} as Documentos,
         impuestoDocumentoOpSeleccionado: {} as any,
-        pucSeleccionado: {} as any,
+        pucSeleccionado: {
+            monto: 0
+        } as any,
         codigoOrdenPago: 0,
         conFactura: Boolean,
         documentCount: 0,
         codigoIdentificador: 0,
-        tipoRetencion: 0
+        tipoRetencion: 0,
+        baseTotalDocumentos: 0,
+        baseImponibleDocumentosOp: 0,
+        totalCompromiso: 0,
     },
     reducers: {
         setIsOpenDialogListCompromiso: (state, action) => {
@@ -114,6 +119,15 @@ export const admOrdenPagoSlice = createSlice({
         },
         setIsOpenDialogImpuestoDocumentosEdit: (state, action) => {
             state.isOpenDialogImpuestoDocumentosEdit = action.payload
+        },
+        setBaseTotalDocumentos: (state, action) => {
+            state.baseTotalDocumentos = action.payload
+        },
+        setBaseImponibleDocumentosOp: (state, action) => {
+            state.baseImponibleDocumentosOp = action.payload
+        },
+        setTotalCompromiso: (state, action) => {
+            state.totalCompromiso = action.payload
         }
     }
 })
@@ -145,4 +159,7 @@ export const {
     setDocumentCount,
     setCodigoIdentificadorCompromiso,
     setTipoRetencion,
+    setBaseTotalDocumentos,
+    setTotalCompromiso,
+    setBaseImponibleDocumentosOp,
 } = admOrdenPagoSlice.actions

@@ -1,4 +1,3 @@
-import { Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { RootState } from "src/store"
@@ -10,12 +9,15 @@ import {
     setCompromisoSeleccionadoDetalle,
     setIsOpenViewerPdf
 } from "src/store/apps/ordenPago"
-import TabsComponent from '../../components/Tabs'
+import TabsComponent from '../../../shared/components/Tabs'
+import { tabs } from '../../config/tabsOrdenPago'
 import FormOrdenPago from '../../forms/FormOrdenPago'
 import useServices from '../../services/useServices'
 import { useServicesRetenciones, useGestionOrdenPago } from '../../services/index'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+
+import TwoColumnLayout from '../../../shared/views/twoColumnLayout'
 
 interface GestionConfig {
     handle: () => Promise<any> | void;
@@ -105,6 +107,7 @@ const FormUpdateOrdenPago = () => {
     const handleGestionOrdenPago = () => {
         const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
         const filter = { codigoOrdenPago }
+
         setShowMessage(false)
 
         const actionConfigs: any = {
@@ -113,14 +116,14 @@ const FormUpdateOrdenPago = () => {
                 message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Aprobar',
                 newStatus: 'AP',
-                showButton: true
+                showButton: true,
             },
             AP: {
                 action: anularOrdenPago,
                 message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Anular',
                 newStatus: 'AN',
-                showButton: true
+                showButton: true,
             }
         }
 
@@ -154,14 +157,28 @@ const FormUpdateOrdenPago = () => {
 
     useEffect(() => {
         if (gestionMessage?.text) {
-            setCurrentMessage(gestionMessage)
+            const status = compromisoSeleccionadoListaDetalle.status
+            const severity = status === 'AP' ? 'success' :
+                            status === 'AN' ? 'warning' :
+                            'info'
+            setCurrentMessage({
+                text: gestionMessage.text,
+                isValid: gestionMessage.isValid,
+                severity,
+                timestamp: Date.now(),
+            })
             setShowMessage(true)
         }
         else if (serviceMessage?.text) {
-            setCurrentMessage(serviceMessage)
+            setCurrentMessage({
+                text: serviceMessage.text,
+                isValid: serviceMessage.isValid,
+                severity: serviceMessage.isValid ? 'success' : 'error',
+                timestamp: Date.now()
+            });
             setShowMessage(true)
         }
-    }, [gestionMessage, serviceMessage])
+    }, [gestionMessage, serviceMessage, compromisoSeleccionadoListaDetalle.status])
 
     useEffect(() => {
         setGestionConfig(handleGestionOrdenPago())
@@ -169,19 +186,10 @@ const FormUpdateOrdenPago = () => {
 
     return (
         <>
-            <Grid container spacing={0} paddingLeft={0} paddingBottom={0}>
-                <Grid item sm={12} xs={12}>
-                    <Box display="flex" gap={2} ml="1.5rem">
-                    </Box>
-                </Grid>
-                <Grid item sm={6} xs={12} sx={{
-                    overflow: 'auto',
-                    padding: '10px',
-                    paddingBottom: '0px',
-                    borderRight: '1px solid #e0e0e0',
-                    position: 'relative',
-                }}>
+            <TwoColumnLayout
+                leftContent={
                     <FormOrdenPago
+                        modo="edicion"
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
                         onFormClear={handleClearCompromiso}
@@ -191,17 +199,20 @@ const FormUpdateOrdenPago = () => {
                         message={currentMessage}
                         loading={loading}
                     />
-                    <AlertMessage
-                        message={currentMessage?.text ?? ''}
-                        severity={currentMessage?.isValid ? 'success' : 'error'}
-                        duration={8000}
-                        show={showMessage}
+                }
+                rightContent={
+                    <TabsComponent
+                        tabs={tabs}
+                        hasInvoice={compromisoSeleccionadoListaDetalle.conFactura}
                     />
-                </Grid>
-                <Grid item sm={6} xs={12}>
-                    <TabsComponent />
-                </Grid>
-            </Grid>
+                }
+            />
+            <AlertMessage
+                message={currentMessage?.text ?? ''}
+                severity={currentMessage?.severity || 'info'}
+                duration={10000}
+                show={showMessage}
+            />
         </>
     )
 }

@@ -2,13 +2,12 @@ import axios from 'axios'
 import authConfig from 'src/configs/auth'
 
 interface IReportApiTo {
-  CodigoOrdenPago: number;
   Report: string;
   Usuario: string;
 }
 
 const DownloadReportApiTo = async (props: any) => {
-  const { tipoReporte, CodigoOrdenPago } = props
+  const { tipoReporte, params, moduleReport } = props
 
   const urlProductionReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT_PRODUCTION
   const urlDevelopmentReport = process.env.NEXT_PUBLIC_BASE_URL_API_NET_REPORT
@@ -21,13 +20,13 @@ const DownloadReportApiTo = async (props: any) => {
 
   try {
     const urlReport = `${urlReportBase}${tipoReporte}`
-    const urlApi = `${urlBase}/AdmOrdenPago/Report`
+    const urlApi = `${urlBase}/${moduleReport}/Report`
 
-    const payload: IReportApiTo = {
-      CodigoOrdenPago,
+    const payload = {
+      ...params,
       Report: urlReport,
       Usuario: JSON.parse(window.localStorage.getItem('userData') || '{}').username || '',
-    }
+    } as IReportApiTo
 
     const response = await axios.post(urlApi, payload, {
       responseType: 'blob',

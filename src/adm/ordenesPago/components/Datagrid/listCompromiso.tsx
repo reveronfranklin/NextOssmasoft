@@ -55,6 +55,7 @@ const DataGridComponent = () => {
 
     const handleDoubleClick = (data: any) => {
         const { row } = data
+        console.log('compromiso seleccionado', row)
 
         dispatch(setCompromisoSeleccionadoDetalle(row))
         setTimeout(() => {

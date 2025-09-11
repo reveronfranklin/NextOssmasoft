@@ -21,7 +21,7 @@ const Transition = forwardRef(function Transition(
 
 const DialogReportInfo = ()  => {
   const dispatch = useDispatch();
-  const {verReportViewActive} = useSelector((state: RootState) => state.reportView)
+  const { reportName, verReportViewActive} = useSelector((state: RootState) => state.reportView)
 
   const handleSetShow= (active:boolean)=>{
     dispatch(setVerReportViewActive(active))
@@ -54,9 +54,9 @@ const DialogReportInfo = ()  => {
             <Icon icon='mdi:close' />
           </IconButton>
           <ReportViewAsync
-            url="your-url"
-            width="your-width"
-            height="your-height"
+            url={reportName}
+            width="100%"
+            height="700px"
           />
         </DialogContent>
         <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'start' }}>

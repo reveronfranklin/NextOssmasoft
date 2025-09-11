@@ -10,6 +10,7 @@ import {
     LoteResponseDto,
     LoteFilterDto,
     LoteDto,
+    LoteDeleteDto,
     LoteStatusDto
 } from '../interfaces';
 
@@ -22,7 +23,8 @@ const useServices = () => {
         isValid: true
     })
 
-    const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+    const presupuestoSeleccionado   = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
+    const batchPaymentDate          = useSelector((state: RootState) => state.admLote.batchPaymentDate )
 
     const getList = useCallback(async (payload: LoteFilterDto): Promise<any> => {
         try {
@@ -35,13 +37,13 @@ const useServices = () => {
         } finally {
             setLoading(false)
         }
-    }, [presupuestoSeleccionado.codigoPresupuesto])
+    }, [ presupuestoSeleccionado.codigoPresupuesto, batchPaymentDate ])
 
     const store = useCallback(async (payload: LoteDto): Promise<any> => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CREATE_LOTE, payload)
-            const message   = 'Lote de pago creada exitosamente'
+            const message   = 'Lote de pago creado exitosamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -55,7 +57,7 @@ const useServices = () => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.UPDATE_LOTE, payload)
-            const message   = 'Lote de pago exitosamente'
+            const message   = 'Lote de pago actualizado exitosamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -65,11 +67,11 @@ const useServices = () => {
         }
     }, [])
 
-    const remove = useCallback(async (payload: any): Promise<any> => {
+    const remove = useCallback(async (payload: LoteDeleteDto): Promise<any> => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.DELETE_LOTE, payload)
-            const message   = 'Lote de pago eliminada exitosamente'
+            const message   = 'Lote de pago eliminado exitosamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -78,13 +80,12 @@ const useServices = () => {
             setLoading(false)
         }
     }, [])
-
 
     const approve = useCallback(async (payload: LoteStatusDto): Promise<any> => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.APPROVE_LOTE, payload)
-            const message   = 'Lote de pago aprobado'
+            const message   = 'Lote de pago aprobado correctamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
@@ -98,9 +99,22 @@ const useServices = () => {
         try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CANCEL_LOTE, payload)
-            const message   = 'Lote de pago anulado'
+            const message   = 'Lote de pago anulado correctamente'
 
             return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
+        } catch (e: any) {
+            return handleApiError(e, setMessage, setError)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const downloadFile = useCallback(async (fileName: string): Promise<any> => {
+        try {
+            setLoading(true)
+            const response = await ossmmasofApi.get<ResponseDto<string>>(`${UrlServices.GET_FILE_LOTE}${fileName}`)
+
+            return response.data
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
@@ -113,13 +127,15 @@ const useServices = () => {
         message,
         loading,
         presupuestoSeleccionado,
+        batchPaymentDate,
         setMessage,
         getList,
         store,
         update,
         remove,
         approve,
-        cancel
+        cancel,
+        downloadFile
     }
 }
 

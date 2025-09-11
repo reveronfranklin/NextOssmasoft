@@ -9,24 +9,20 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-    Box,
-    Grid,
-    TextField,
-    FormControl,
-    Button
-} from '@mui/material';
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { Box, Grid, TextField, FormControl, Button } from '@mui/material';
 import { RootState } from 'src/store';
-import { useServices } from '../../services';
-import { setIsOpenDialogLote, resetLoteShow } from 'src/store/apps/pagos/lotes'
-import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto } from '../../interfaces';
-import { TipoPago, MaestroCuenta } from '../autoComplete';
+import { useServices } from '../../../services';
+import { setIsOpenDialogLote, resetLoteShow, setWithOrdenPago } from 'src/store/apps/pagos/lotes'
+import { setIsOpenViewerPdf, setCodigoLote, setCodigoPago } from 'src/store/apps/pagos/lote-pagos';
+import { LoteDto, FechaPagoDto, LoteDeleteDto, LoteStatusDto, DescriptivaResponseDto, ResponseDto } from '../../../interfaces';
+import { TipoPago, MaestroCuenta } from '../../autoComplete';
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import dayjs from 'dayjs';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import usePause from '../../../hooks/usePause';
 import getRules from './rules';
 
 const FormUpdate = () => {
@@ -45,6 +41,7 @@ const FormUpdate = () => {
     const dispatch          = useDispatch()
     const qc: QueryClient   = useQueryClient()
     const { lote }          = useSelector((state: RootState) => state.admLote )
+    const { pause }         = usePause()
     const rules             = getRules()
 
     const {
@@ -65,20 +62,46 @@ const FormUpdate = () => {
         titulo: lote.titulo
     }
 
-    useEffect(() => {
-        setFechaPagoLote(lote.fechaPagoDto)
-    }, [lote])
-
     const {
         control,
         handleSubmit,
         reset,
         setValue,
+        watch,
         formState: { errors, isValid }
     } = useForm<LoteDto>({
         defaultValues,
         mode: 'onChange'
     })
+
+    const tipoPagoId = watch('tipoPagoId')
+
+    const handlePause = async () => {
+        await pause(800)
+
+        const tipoPagoTableCache: ResponseDto<DescriptivaResponseDto> | undefined = qc.getQueryData(['TipoPago'])
+
+        if (tipoPagoTableCache?.data) {
+            const tipoPago = tipoPagoTableCache.data.find((item) => item.id === tipoPagoId)
+
+            if (tipoPago) {
+                const withOrdenPago = tipoPago?.titulo
+                    ?
+                        tipoPago.titulo
+                            .trim()
+                            .toUpperCase()
+                            .includes('CON')
+                    : false
+
+                dispatch(setWithOrdenPago(withOrdenPago))
+            }
+        }
+    }
+
+    useEffect(() => {
+        setFechaPagoLote(lote.fechaPagoDto)
+        handlePause()
+    }, [lote, tipoPagoId, qc])
 
     const handleOpenDialog = () => {
         setDialogOpen(true)
@@ -100,8 +123,6 @@ const FormUpdate = () => {
         dispatch(resetLoteShow())
         reset(defaultValues)
         clearDefaultValues()
-
-        console.log(defaultValues)
     }
 
     const handleUpdatePagoLote = async (lote: LoteDto) => {
@@ -211,6 +232,14 @@ const FormUpdate = () => {
         }
     }
 
+    const onViewerPdf = () => {
+        const codigoLotePago = lote.codigoLotePago
+
+        dispatch(setIsOpenViewerPdf(true))
+        dispatch(setCodigoPago(0))
+        dispatch(setCodigoLote(codigoLotePago))
+    }
+
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>
@@ -228,7 +257,7 @@ const FormUpdate = () => {
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
                                     <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={9} xs={9} sx={{ padding: '5px' }}>
+                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                             <FormControl fullWidth>
                                                 <Controller
                                                     name="titulo"
@@ -255,7 +284,10 @@ const FormUpdate = () => {
                                                 />
                                             </FormControl>
                                         </Grid>
-                                        <Grid item sm={3} xs={3} sx={{ padding: '5px' }}>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={4} xs={4} sx={{ padding: '5px' }}>
                                             <DatePickerWrapper>
                                                 <DatePicker
                                                     selected={fechaPagoLote ? getDateByObject(fechaPagoLote) : null}
@@ -269,10 +301,7 @@ const FormUpdate = () => {
                                                 />
                                             </DatePickerWrapper>
                                         </Grid>
-                                    </Grid>
-
-                                    <Grid container spacing={0} item sm={12} xs={12}>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                        <Grid item sm={8} xs={8} sx={{ padding: '5px' }}>
                                             <Controller
                                                 name="tipoPagoId"
                                                 control={control}
@@ -287,7 +316,10 @@ const FormUpdate = () => {
                                                 )}
                                             />
                                         </Grid>
-                                        <Grid item sm={6} xs={6} sx={{ padding: '5px' }}>
+                                    </Grid>
+
+                                    <Grid container spacing={0} item sm={12} xs={12}>
+                                        <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
                                             <Controller
                                                 name="codigoCuentaBanco"
                                                 control={control}
@@ -332,7 +364,14 @@ const FormUpdate = () => {
                                     content={`¿Está seguro que desea ${statusLote.toLowerCase()} este registro? Esta acción no se puede deshacer.`}
                                 />
 
-                                <Box sx={{ paddingTop: 6 }}>
+                                <Box
+                                    sx={{
+                                        marginTop: 60,
+                                        position: 'sticky',
+                                        bottom: 0,
+                                        padding: '1rem'
+                                    }}
+                                >
                                     <Button
                                         variant='contained'
                                         color='primary'
@@ -381,6 +420,13 @@ const FormUpdate = () => {
                                         onClick={handleClearPagoLote}
                                     >
                                         <CleaningServices /> Limpiar
+                                    </Button>
+                                    <Button
+                                        color='primary'
+                                        size='small'
+                                        onClick={onViewerPdf}
+                                    >
+                                        <PictureAsPdfIcon /> VER PDF
                                     </Button>
                                 </Box>
                             </form>
