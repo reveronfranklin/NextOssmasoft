@@ -4,12 +4,13 @@ import { UrlParametroVariable } from 'src/formulacion/enums/UrlParametroVariable
 
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers'
 import { IApiResponse } from 'src/interfaces/api-response-dto'
-import { IResponseBase } from 'src/interfaces/response-base-dto'
+
+// import { IResponseBase } from 'src/interfaces/response-base-dto'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 
 const UseParametroVariable = () => {
     const [error, setError] = useState<string>('')
-  const [message, setMessage] = useState<IAlertMessageDto>({
+  const [message] = useState<IAlertMessageDto>({
     text: '',
     isValid: true,
     timestamp: Date.now(),
@@ -37,6 +38,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(`${UrlParametroVariable.FINDALLBYVARIABLEIDPARAMETROVARIABLE}/${variableId}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+      
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -52,6 +54,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(`${UrlParametroVariable.FINDONEPARAMETROVARIABLE}/${id}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+      
       return responseHandleApi as IApiResponse<any>
     } catch (e: any) {
 
@@ -66,6 +69,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.post(UrlParametroVariable.CREATEPARAMETROVARIABLE, data)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+      
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -81,6 +85,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.put(`${UrlParametroVariable.UPDATEPARAMETROVARIABLE}/${id}`, data)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+      
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -96,6 +101,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.delete(`${UrlParametroVariable.DELETEPARAMETROVARIABLE}/${id}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {

@@ -49,11 +49,8 @@ const FormularioPlantilla = ({
           <FormulaProvider>
             <VariableSelector
               variables={memoizedVariables}
-              setVariables={() => {}}
               selectedVariableId={values.variableId || null}
               onVariableSelect={handleVariableSelect}
-              setEditingItem={() => {}}
-              editingItem={{}}
             />
           </FormulaProvider>
         </Box>

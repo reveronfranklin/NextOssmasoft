@@ -83,6 +83,7 @@ class FormulaValidator {
   build() {
     this
       .validateParentheses()
+      
       // .evaluateWithMathjs()
       // .validateBrackets()
       // .validateVariables()

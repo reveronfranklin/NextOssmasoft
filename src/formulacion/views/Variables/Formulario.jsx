@@ -7,22 +7,15 @@ import {
   Paper,
   Typography,
   Button,
-  Chip,
-  IconButton
+  Chip
 } from '@mui/material';
 import SelectorTipoVariable from 'src/formulacion/shared/components/SelectorTipoVariable';
 import { TipoVariableEnum } from 'src/formulacion/enums/TipoVariable.enum';
 
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
-import BlockIcon from '@mui/icons-material/Block';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import RestoreIcon from '@mui/icons-material/Restore';
 
 const FormularioVariable = ({
   initialValues = {},
@@ -36,7 +29,6 @@ const FormularioVariable = ({
   const [selectedVariable, setSelectedVariable] = React.useState(null);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [draggedItem, setDraggedItem] = React.useState(null);
-  const [draggedOverItem, setDraggedOverItem] = React.useState(null);
   const [showVariableSelector, setShowVariableSelector] = React.useState(false);
   const [selectedNewVariable, setSelectedNewVariable] = React.useState(null);
 
