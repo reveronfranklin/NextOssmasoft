@@ -150,8 +150,11 @@ export default function FormulaBuilder({
               formula={formula}
               setFormula={setFormula}
             />
-            <pre>{JSON.stringify(selectedFormula, null, 2)}</pre>
-            <pre>{JSON.stringify(selectedVariable, null, 2)}</pre>
+
+            {/* <pre>{JSON.stringify(selectedFormula, null, 2)}</pre> */}
+
+            {/* <pre>{JSON.stringify(selectedVariable, null, 2)}</pre> */}
+
             <ActionButtonGroup
               onEvaluate={handleEvaluate}
               onDeleteFormula={handleDelete}

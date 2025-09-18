@@ -77,23 +77,33 @@ const VariableSelector = React.memo(({
   } = variableService;
 
   const handleSubmit = async(form, action) => {
-    if (!form.code || !form.descripcion || !form.tipo || !form.codigoEmpresa) {
+    console.log('Formulario enviado:', form, 'Acción:', action);
+
+    if (!form) {
+
+      return;
+    }
+
+    if (!form.code || !form.descripcion || !form.tipo) {
       console.error('Faltan campos requeridos');
 
       return;
     }
 
     const payload = {
-      id: form.id,
       code: form.code,
       descripcion: form.descripcion,
       tipoVariable: form.tipo,
-      codigoEmpresa: form.codigoEmpresa,
+      codigoEmpresa: form.codigoEmpresa || 13,
+      parametros: form.Parametros.length ? form.Parametros : []
     }
 
     try {
       if (action === 'edit' && form) {
+        payload.id = form.id;
         payload.usuarioUpdate = form.usuarioUpdate ?? 13;
+
+        console.log(payload)
 
         const updated = await updateVariable(payload);
 
@@ -115,7 +125,7 @@ const VariableSelector = React.memo(({
         }
 
       } else if (action === 'create') {
-        payload.usuarioInsert = form.usuarioInsert;
+        payload.usuarioInsert = 1;
 
         const created = await createVariable(payload);
 

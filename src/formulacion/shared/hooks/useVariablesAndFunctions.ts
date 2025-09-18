@@ -15,7 +15,7 @@ export const useVariablesAndFunctions = (services: {
   const fetchVariables = useCallback(async () => {
     const response = await services.variableService.getListVariables({
       page: 1,
-      limit: 10,
+      limit: 100,
       searchText: ''
     });
 
