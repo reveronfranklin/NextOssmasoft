@@ -52,10 +52,11 @@ export default function FormulaBuilder({
     handleUpdate: handleBuilderUpdate,
     handleDelete,
     clearFormula: builderClearFormula,
-    selectedFormula,
-    setSelectedFormula,
+    selectedFormula, setSelectedFormula,
+    selectedVariable, setSelectedVariable,
     editingItem,
-    setEditingItem
+    setEditingItem,
+    fetchVariables
   } = useFormulaBuilder(services)
 
   const {
@@ -77,16 +78,25 @@ export default function FormulaBuilder({
     return formulaInputRef.current?.getFormulaValue() || '';
   }, []);
 
-  const insertTextIntoFormulaInput = React.useCallback((text = '', description = '', type = 'variable') => {
-    console.log(description)
+  const insertTextIntoFormulaInput = React.useCallback((data, type = 'variable') => {
+    let value = '';
+
+    if (type === 'operator' || (data && data.type === 'operator')) {
+      value = data.value;
+    } else if (data && data.TipoVariable === 'FUNCION') {
+      value = data.Funcion;
+    } else {
+      value = `[${data.value}]`;
+    }
+
     const currentFormula = getFormulaFromInput();
 
     if (type === 'formula') {
-      if (currentFormula === text) return;
+      if (currentFormula === value) return;
       if (selectedFormula && selectedFormula.id) return;
     }
 
-    formulaInputRef.current?.insertText(text);
+    formulaInputRef.current?.insertText(value);
   }, [getFormulaFromInput, selectedFormula]);
 
   const handleEvaluate = useCallback(() => {
@@ -116,7 +126,17 @@ export default function FormulaBuilder({
   }, [selectedFormula, setDescription]);
 
   useEffect(() => {
-    setSelectedFormula(null);
+    setSelectedFormula({
+      "id": 0,
+      "descripcion": "",
+      "formula": "",
+      "estado": "",
+      "fechaIns": "",
+      "usuarioInsert": 0,
+      "fechaUpd": "",
+      "usuarioUpdate": null,
+      "codigoEmpresa": 0
+    });
   }, []);
 
   return (
@@ -137,9 +157,11 @@ export default function FormulaBuilder({
               formula={formula}
               setFormula={setFormula}
             />
-            {/* {
-              <pre>{JSON.stringify(selectedFormula, null, 2)}</pre>
-            } */}
+
+            {/* <pre>{JSON.stringify(selectedFormula, null, 2)}</pre> */}
+
+            {/* <pre>{JSON.stringify(selectedVariable, null, 2)}</pre> */}
+
             <ActionButtonGroup
               onEvaluate={handleEvaluate}
               onDeleteFormula={handleDelete}
@@ -167,8 +189,11 @@ export default function FormulaBuilder({
                     variables={memoizedVariables}
                     setVariables={setVariables}
                     onVariableSelect={insertTextIntoFormulaInput}
+                    selectedVariable={selectedVariable}
+                    setSelectedVariable={setSelectedVariable}
                     setEditingItem={setEditingItem}
                     editingItem={editingItem}
+                    fetchVariables={fetchVariables}
                   />
                 </FormulaProvider>
               </Box>

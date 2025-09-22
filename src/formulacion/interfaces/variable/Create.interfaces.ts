@@ -1,8 +1,18 @@
 export interface DTOVariableCreate {
+  code: string;
   descripcion: string;
   tipoVariable: string;
-  estado: string;
+  usuarioInsert: number;
   codigoEmpresa: number;
+  parametros: Iparametro[] | [];
+}
+
+export interface Iparametro {
+  id: number;
+  variableId: number;
+  code: string;
+  orden: number;
+  estado: string;
 }
 
 export interface IVariableCreateResponse {

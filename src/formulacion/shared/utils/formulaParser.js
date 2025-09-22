@@ -75,18 +75,19 @@ class FormulaValidator {
       return this;
     } catch (error) {
       this.errors.push(error.message);
-      
-return this;
+
+      return this;
     }
   }
 
   build() {
     this
       .validateParentheses()
-      .evaluateWithMathjs()
-      .validateBrackets()
-      .validateVariables()
-      .validateOperators()
+      
+      // .evaluateWithMathjs()
+      // .validateBrackets()
+      // .validateVariables()
+      // .validateOperators()
 
     return {
       isValid: this.errors.length === 0,

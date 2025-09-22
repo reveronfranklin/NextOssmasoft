@@ -22,6 +22,7 @@ const useFormulaBuilder: any = (services: FormulaBuilderServices) => {
 
   //estados básicos formulación
   const [description, setDescription] = useState('');
+  const [selectedVariable, setSelectedVariable] = useState(null);
   const [selectedFormula, setSelectedFormula] = useState<any>({
     id: 0,
     descripcion: '',
@@ -33,8 +34,17 @@ const useFormulaBuilder: any = (services: FormulaBuilderServices) => {
     usuarioUpdate: null,
     codigoEmpresa: 0,
   });
+
   const invalidateReset = useInvalidateReset();
-  const { variables, setVariables, functions, setFunctions, plantillas, setPlantillas } = useVariablesAndFunctions(services);
+  const {
+    variables,
+    setVariables,
+    functions,
+    setFunctions,
+    plantillas,
+    setPlantillas,
+    fetchVariables
+  } = useVariablesAndFunctions(services);
   const { syntaxError, validateFormula, resetValidation } = useFormulaValidation();
   const {
     onDeleteFormula,
@@ -98,7 +108,7 @@ const useFormulaBuilder: any = (services: FormulaBuilderServices) => {
     if (!isValid) return;
 
     const updatedFormula = await onUpdateFormula({
-      id: selectedFormula.id,
+      id: selectedFormula && selectedFormula.id,
       descripcion: description,
       formula: currentFormula,
       usuarioInsert: 1,
@@ -160,10 +170,11 @@ const useFormulaBuilder: any = (services: FormulaBuilderServices) => {
     handleUpdate,
     handleDelete,
     clearFormula,
-    selectedFormula,
-    setSelectedFormula,
+    selectedFormula, setSelectedFormula,
+    selectedVariable, setSelectedVariable,
     editingItem,
-    setEditingItem
+    setEditingItem,
+    fetchVariables
   };
 };
 
