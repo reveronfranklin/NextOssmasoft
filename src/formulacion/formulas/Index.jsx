@@ -78,9 +78,16 @@ export default function FormulaBuilder({
     return formulaInputRef.current?.getFormulaValue() || '';
   }, []);
 
-  //esta funcion la usan operador, selector de variable y grid de funciones para inyectar valores a la formula que se esta editando
   const insertTextIntoFormulaInput = React.useCallback((data, type = 'variable') => {
-    const value = data && data.TipoVariable === 'FUNCION' ? data.Funcion : `[${data.value}]`
+    let value = '';
+
+    if (type === 'operator' || (data && data.type === 'operator')) {
+      value = data.value;
+    } else if (data && data.TipoVariable === 'FUNCION') {
+      value = data.Funcion;
+    } else {
+      value = `[${data.value}]`;
+    }
 
     const currentFormula = getFormulaFromInput();
 
