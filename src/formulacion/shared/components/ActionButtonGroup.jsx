@@ -58,7 +58,7 @@ const ActionButtonGroup = ({
             startIcon={<DeleteIcon />}
             confirmMessage="¿Está seguro de eliminar esta fórmula?"
           >
-            {"Borrar fórmula"}
+            {"Eliminar"}
           </ButtonWithConfirm>
         </Tooltip>
       )}

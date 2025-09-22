@@ -3,13 +3,13 @@ import React from 'react';
 const OperatorSelector = ({ onOperatorSelect }) => {
   const operators = ['+', '-', '*', '/', '(', ')'];
 
-return (
+  return (
     <div style={{ marginBottom: '20px', paddingTop: '20px' }}>
       <div style={{ display: 'flex', gap: '10px' }}>
         {operators.map((op) => (
           <button
             key={op}
-            onClick={() => onOperatorSelect(op)}
+            onClick={() => onOperatorSelect({ value: op, type: 'operator' })}
             style={{
               padding: '10px 15px',
               cursor: 'pointer',

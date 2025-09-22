@@ -13,7 +13,10 @@ const useCrudModal = (): UseCrudModalReturn => {
   const [editingItem, setEditingItem] = useState<any>({});
 
   const handleOpenModal = useCallback((item = null) => {
-    setEditingItem(item);
+
+    console.log('Opening modal with item:', item);
+
+    // setEditingItem(item);
     setModalOpen(true);
   }, []);
 

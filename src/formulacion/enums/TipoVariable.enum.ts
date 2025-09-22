@@ -1,5 +1,5 @@
 export enum TipoVariableEnum {
-  ENTRADA   = 'Entrada',
-  CALCULO   = 'Calculo',
-  FUNCION   = 'Funcion',
+  ENTRADA = 'ENTRADA',
+  CALCULO = 'CALCULO',
+  FUNCION = 'FUNCION',
 }
