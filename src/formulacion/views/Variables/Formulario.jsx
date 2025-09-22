@@ -29,10 +29,10 @@ const FormularioVariable = ({
   const [selectedVariable, setSelectedVariable] = React.useState(null);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [draggedItem, setDraggedItem] = React.useState(null);
+
   const [showVariableSelector, setShowVariableSelector] = React.useState(false);
   const [selectedNewVariable, setSelectedNewVariable] = React.useState(null);
 
-  // Función para extraer propiedades de parámetro
   const extractParametroProperties = (variable) => {
     return {
       id: variable.id || 0,
@@ -43,36 +43,31 @@ const FormularioVariable = ({
     };
   };
 
-  // Efecto para cargar automáticamente ParametrosVariables cuando estén disponibles
   React.useEffect(() => {
     if (initialValues.ParametrosVariables && initialValues.ParametrosVariables.length > 0) {
-      // Convertir ParametrosVariables a Parametros
-      const parametrosFromVariables = initialValues.ParametrosVariables.map(variable => 
+      const parametrosFromVariables = initialValues.ParametrosVariables.map(variable =>
         extractParametroProperties(variable)
       );
-      
-      // Combinar con los parámetros existentes (si los hay)
+
       const combinedParametros = [
         ...(values.Parametros || []),
         ...parametrosFromVariables
       ];
-      
-      // Eliminar duplicados
+
       const uniqueParametros = combinedParametros.filter((param, index, self) =>
         index === self.findIndex(p => p.variableId === param.variableId)
       );
-      
+
       const newValues = {
         ...values,
         Parametros: uniqueParametros
       };
-      
+
       setValues(newValues);
       onChange && onChange(newValues);
     }
   }, [initialValues.ParametrosVariables]);
 
-  // Efecto para sincronizar con initialValues
   React.useEffect(() => {
     if (initialValues.id !== values.id) {
       setValues({
@@ -110,17 +105,14 @@ const FormularioVariable = ({
     onChange && onChange(newValues);
   };
 
-  // Obtener el icono apropiado según el estado
   const getStateIcon = (estado) => {
     return estado === 'ACTIVE' ? <ToggleOnIcon /> : <ToggleOffIcon />;
   };
 
-  // Obtener el color apropiado según el estado
   const getStateColor = (estado) => {
     return estado === 'ACTIVE' ? 'success' : 'default';
   };
 
-  // Funciones para drag & drop
   const handleDragStart = (e, index) => {
     setDraggedItem(index);
     e.dataTransfer.effectAllowed = 'move';
@@ -132,7 +124,6 @@ const FormularioVariable = ({
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     if (draggedItem === null || draggedItem === index) return;
-    setDraggedOverItem(index);
   };
 
   const handleDragEnter = (e, index) => {
@@ -155,36 +146,33 @@ const FormularioVariable = ({
     e.preventDefault();
     if (draggedItem === null || draggedItem === index) return;
 
-    // Reordenar los parámetros
     const newParametros = [...values.Parametros];
     const draggedParam = newParametros[draggedItem];
-    
+
     newParametros.splice(draggedItem, 1);
     newParametros.splice(index, 0, draggedParam);
-    
-    // Actualizar el orden
+
     const parametrosWithOrder = newParametros.map((param, idx) => ({
       ...param,
       orden: idx
     }));
-    
+
     const newValues = {
       ...values,
       Parametros: parametrosWithOrder
     };
-    
+
     setValues(newValues);
     onChange && onChange(newValues);
-    
-    // Resetear estados y estilos
+
     setDraggedItem(null);
-    setDraggedOverItem(null);
+
     e.currentTarget.style.opacity = '1';
     e.currentTarget.style.transform = 'scale(1)';
     e.currentTarget.style.backgroundColor = '';
   };
 
-  const handleDragEnd = (e) => {
+  const handleDragEnd = () => {
     const items = document.querySelectorAll('.draggable-chip');
     items.forEach(item => {
       item.style.opacity = '1';
@@ -192,7 +180,6 @@ const FormularioVariable = ({
       item.style.backgroundColor = '';
     });
     setDraggedItem(null);
-    setDraggedOverItem(null);
   };
 
   const handleAddVariable = (variable) => {
@@ -212,12 +199,10 @@ const FormularioVariable = ({
     setShowVariableSelector(false);
   };
 
-  // Obtener las variables seleccionadas completas
   const getSelectedVariables = () => {
     if (!values.Parametros || values.Parametros.length === 0) return [];
-    
+
     return values.Parametros.map(parametro => {
-      // Buscar en availableVariables primero
       const availableVar = availableVariables.find(v => v.id === parametro.variableId);
       if (availableVar) {
         return {
@@ -225,8 +210,7 @@ const FormularioVariable = ({
           estado: parametro.estado || 'ACTIVE'
         };
       }
-      
-      // Si no está en availableVariables, usar los datos del parámetro
+
       return {
         id: parametro.variableId,
         code: parametro.code,
@@ -335,7 +319,6 @@ const FormularioVariable = ({
             )}
           </Box>
 
-          {/* Lista de chips con drag & drop */}
           <Box
             sx={{
               display: 'flex',
@@ -399,7 +382,6 @@ const FormularioVariable = ({
         </Box>
       )}
 
-      {/* Modal de mantenimiento */}
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
@@ -421,8 +403,8 @@ const FormularioVariable = ({
             <>
               <Typography id="variable-modal-title" variant="h6" component="h2">
                 Parámetro seleccionado: {selectedVariable.code}
-                <Chip 
-                  label={selectedVariable.estado === 'ACTIVE' ? 'ACTIVO' : 'INACTIVO'} 
+                <Chip
+                  label={selectedVariable.estado === 'ACTIVE' ? 'ACTIVO' : 'INACTIVO'}
                   color={getStateColor(selectedVariable.estado)}
                   size="small"
                   sx={{ ml: 1 }}
@@ -457,16 +439,10 @@ const FormularioVariable = ({
                 >
                   {selectedVariable.estado === 'ACTIVE' ? 'Inactivar' : 'Activar'}
                 </Button>
-                
+
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button onClick={handleCloseModal} variant="outlined">
                     Cancelar
-                  </Button>
-                  <Button
-                    onClick={() => {}}
-                    variant="contained"
-                  >
-                    Guardar
                   </Button>
                 </Box>
               </Box>

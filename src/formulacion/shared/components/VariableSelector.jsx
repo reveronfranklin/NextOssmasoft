@@ -175,6 +175,7 @@ const VariableSelector = React.memo(({
   const handleEditVariable = (option) => {
     console.log('Editando variable:', option);
     setAutoValue(null);
+
     // setEditingItem({
     //   code: option.value,
     //   descripcion: option.label,

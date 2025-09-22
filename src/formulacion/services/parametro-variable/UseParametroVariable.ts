@@ -23,6 +23,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(UrlParametroVariable.GETALLPARAMETROVARIABLE)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -38,7 +39,6 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(`${UrlParametroVariable.FINDALLBYVARIABLEIDPARAMETROVARIABLE}/${variableId}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
-      
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -54,7 +54,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(`${UrlParametroVariable.FINDONEPARAMETROVARIABLE}/${id}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
-      
+
       return responseHandleApi as IApiResponse<any>
     } catch (e: any) {
 
@@ -69,7 +69,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.post(UrlParametroVariable.CREATEPARAMETROVARIABLE, data)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
-      
+
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
@@ -85,7 +85,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.put(`${UrlParametroVariable.UPDATEPARAMETROVARIABLE}/${id}`, data)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
-      
+
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {

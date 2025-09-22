@@ -20,6 +20,7 @@ import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse 
 import CrudModal from '../views/CrudModal';
 import useCrudModal from '../shared/hooks/useCrudModal';
 import FormularioPlantilla from '../views/Plantillas/Formulario';
+
 interface PlantillaIndexProps {
   formulaService?: ReturnType<typeof useFormulaService> | null;
   variableService?: ReturnType<typeof useVariableService> | null;
@@ -41,11 +42,11 @@ export default function PlantillaIndex({
 
   const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
 
-  const [loadingDetalle, setLoadingDetalle] = useState(false)
+  const [loadingDetalle] = useState(false)
 
   const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
 
-  const [loadingPlantillas, setLoadingPlantillas] = useState(false)
+  const [loadingPlantillas] = useState(false)
 
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
@@ -71,7 +72,7 @@ export default function PlantillaIndex({
   } = usePlantillaBuilder(services)
 
   const {
-    variables: availableVariables, setVariables,
+    variables: availableVariables,
   } = useFormulaBuilder(services)
 
   const {
