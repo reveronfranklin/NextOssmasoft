@@ -39,6 +39,7 @@ const UseParametroVariable = () => {
     try {
       const response = await ossmmasofApiGateway.get(`${UrlParametroVariable.FINDALLBYVARIABLEIDPARAMETROVARIABLE}/${variableId}`)
       const responseHandleApi = handleApiResponse<any>(response.data, undefined, undefined, setError)
+
       return responseHandleApi as IApiResponse<any>
 
     } catch (e: any) {
