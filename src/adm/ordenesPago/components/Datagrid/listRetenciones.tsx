@@ -65,6 +65,7 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
         row.conceptoPago?.toLowerCase().includes(searchText.trim().toLowerCase())
       );
     }
+
     return rows;
   }, [allRows, tipoRetencion, searchText])
 
