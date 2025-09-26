@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, ChangeEvent, useMemo, useEffect } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import { Box, styled, Typography } from '@mui/material'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
@@ -10,6 +10,7 @@ import { Retencion } from '../../interfaces/responseRetenciones.interfaces'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGridRetenciones'
 import Spinner from 'src/@core/components/spinner'
 
+import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import { IRetencionData } from '../../interfaces/retencionesOp/createRetencionOp'
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -29,6 +30,9 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
   const [pageSize, setPageSize] = useState<number>(5)
   const [selectedRow, setSelectedRow] = useState<Retencion | null>(null)
 
+  const [searchText, setSearchText] = useState<string>('')
+  const [buffer, setBuffer] = useState<string>('')
+
   const qc: QueryClient = useQueryClient()
   const dispatch = useDispatch()
   const { getRetenciones } = useServicesRetenciones()
@@ -44,13 +48,26 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
 
   const allRows = query?.data?.data || []
 
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    setBuffer(value);
+  };
+
+  // Cambia el filteredRows para que también filtre por concepto:
   const filteredRows = useMemo(() => {
+    let rows = allRows;
     if (tipoRetencion !== 0) {
-      return allRows.filter((row: IRetencionData) => row.tipoRetencionId === tipoRetencion)
-    } else {
-      return allRows
+      rows = rows.filter((row: IRetencionData) => row.tipoRetencionId === tipoRetencion);
     }
-  }, [allRows, tipoRetencion])
+
+    if (searchText.trim() !== '') {
+      rows = rows.filter((row: IRetencionData) =>
+        row.conceptoPago?.toLowerCase().includes(searchText.trim().toLowerCase())
+      );
+    }
+
+    return rows;
+  }, [allRows, tipoRetencion, searchText])
 
   const rowCount = filteredRows.length
 
@@ -112,6 +129,19 @@ const DataGridComponent = ({ onRowDoubleClick }: { onRowDoubleClick?: () => void
               onPageChange={handlePageChange}
               onRowClick={handleRowClick}
               onRowDoubleClick={handleRowDoubleClick}
+              components={{ Toolbar: ServerSideToolbar }}
+              componentsProps={{
+                baseButton: {
+                  variant: 'outlined'
+                },
+                toolbar: {
+                  printOptions: { disableToolbarButton: true },
+                  value: buffer,
+                  clearSearch: () => handleSearch(''),
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
+                  sx: { paddingLeft: 0, paddingRight: 0 }
+                }
+              }}
               selectionModel={selectedRow ? [selectedRow.codigoRetencion] : []}
               sx={{
                 '& .MuiDataGrid-row': {
