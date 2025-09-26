@@ -18,13 +18,9 @@ import {
   setRetencionSeleccionado,
   setIsOpenDialogListRetenciones,
   setTipoRetencion,
-
-  // setBaseTotalDocumentos,
-  // setTotalCompromiso
 } from "src/store/apps/ordenPago"
 
 import CustomButtonDialog from 'src/adm/ordenesPago/components/BottonsActions'
-
 import { ICreateRetencionOp } from '../../interfaces/retencionesOp/createRetencionOp'
 import { IUpdateRetencionOp } from '../../interfaces/retencionesOp/updateRetencionOp'
 import { IDeleteRetencionOp } from '../../interfaces/retencionesOp/deleteRetencionOp'
@@ -178,22 +174,21 @@ const FormCreateRetencionesOp = () => {
   }
 
   const clearForm = async (): Promise<void> => {
-    setValue('tipoRetencion', '')
+    setValue('tipoRetencion', '')           // Limpia el campo del formulario
+    setTipoRetencionId(0)                   // Limpia el estado local
+    dispatch(setTipoRetencion(0))           // Limpia el valor en Redux
+
     setValue('conceptoPago', '')
     setValue('montoRetencion', 0)
     setValue('montoRetenido', '')
     setValue('descripcionTipoRetencion', '')
     setValue('numeroComprobante', '')
+    setValue('codigoRetencion', 0)
 
     setPorRetencion(0)
-    setTipoRetencionId(0)
-    dispatch(setTipoRetencion(0))
     dispatch(setRetencionOpSeleccionado(null))
     dispatch(setRetencionSeleccionado(null))
     setIsDisabledRetencion(false)
-
-    // dispatch(setBaseTotalDocumentos(0))
-    // dispatch(setTotalCompromiso(0))
   }
 
   const viewDialogListRetenciones = () => {
@@ -282,7 +277,7 @@ const FormCreateRetencionesOp = () => {
                     p: 0.5,
                     color: 'common.white'
                   }}>
-                    % Retención: { FormatNumber(porRetencion) }
+                    % Retención: {FormatNumber(porRetencion)}
                   </Box>
                 }
                 componentsProps={{
