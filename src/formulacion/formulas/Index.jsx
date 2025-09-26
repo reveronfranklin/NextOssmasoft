@@ -200,7 +200,7 @@ export default function FormulaBuilder({
             )}
           </Grid>
           <Grid item xs={12} sm={12}>
-            <FormulaProvider >
+            <FormulaProvider>
               <ListFormulas
                 formulas={availableFormulas}
                 onFunctionSelect={insertTextIntoFormulaInput}

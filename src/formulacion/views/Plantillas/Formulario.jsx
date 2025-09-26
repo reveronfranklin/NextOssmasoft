@@ -1,7 +1,8 @@
 import React from 'react';
-import { TextField, Box} from '@mui/material';
+import { TextField, Box, Autocomplete} from '@mui/material';
 import VariableSelector from '../../shared/components/VariableSelector';
 import FormulaProvider from '../../context/FormulaProvider';
+import { useFormulaContext } from 'src/formulacion/context/FormulaContext';
 
 const FormularioPlantilla = ({
     initialValues = {},
@@ -9,10 +10,27 @@ const FormularioPlantilla = ({
     availableVariables
   }) => {
   const [values, setValues] = React.useState(initialValues);
+  const [formulas, setFormulas] = React.useState([]);
+  const [formulaSeleccionada, setFormulaSeleccionada] = React.useState(null);
+
+  const { formulaService } = useFormulaContext();
+  const { getListFormulas } = formulaService;
 
   React.useEffect(() => {
     setValues(initialValues);
   }, [initialValues]);
+
+  React.useEffect(() => {
+    async function fetchFormulas() {
+      const response = await getListFormulas({
+        page: 1,
+        limit: 1000,
+        searchText: ''
+      });
+      setFormulas(response.data || []);
+    }
+    fetchFormulas();
+  }, [getListFormulas]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,17 +39,29 @@ const FormularioPlantilla = ({
     onChange && onChange(newValues);
   };
 
+  const handleFormulaSelect = (event, formula) => {
+    const newValues = {
+      ...values,
+      formulaId: formula ? formula.id : null,
+      // formulaValue: formula ? formula.formula : '',
+    };
+
+    setFormulaSeleccionada(formula);
+    setValues(newValues);
+    onChange && onChange(newValues);
+  };
+
   const handleVariableSelect = (variable) => {
     setValues(prev => ({
       ...prev,
       variableId: variable ? variable.id : null,
-      variableSeleccionada: variable
+      // variableSeleccionada: variable
     }));
 
     onChange && onChange({
       ...values,
       variableId: variable ? variable.id : null,
-      variableSeleccionada: variable,
+      // variableSeleccionada: variable,
     });
   };
 
@@ -56,41 +86,36 @@ const FormularioPlantilla = ({
         </Box>
       )}
 
+      <Autocomplete
+        options={formulas}
+        getOptionLabel={(option) => option.descripcion || option.nombre || ''}
+        value={formulaSeleccionada || null}
+        onChange={handleFormulaSelect}
+        renderInput={(params) => (
+          <TextField {...params} label="Selecciona una fórmula" variant="outlined" margin="dense" required />
+        )}
+        sx={{ mt: 2, mb: 2 }}
+      />
+
       {/* <TextField
-        name="code"
-        label="Código"
-        value={values.code || ''}
+        name="descripcion"
+        label="Descripción"
+        value={values.descripcion || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"
         required
       /> */}
-      <TextField
-        name="descripcion"
-        label="Descripción"
-        value={values.descripcionFormula || ''}
-        onChange={handleChange}
-        fullWidth
-        margin="dense"
-        required
-      />
+
       <TextField
         name="formula"
         label="Fórmula"
-        value={values.formulaValue || ''}
+        value={formulaSeleccionada?.formula || values?.formulaValue || ''}
         onChange={handleChange}
         fullWidth
         margin="dense"
         required
-      />
-      <TextField
-        name="Estado"
-        label="Estado"
-        value={values.estado || ''}
-        onChange={handleChange}
-        fullWidth
-        margin="dense"
-        required
+        InputProps={{ readOnly: true }}
       />
     </>
   );

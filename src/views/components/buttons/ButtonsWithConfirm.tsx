@@ -27,7 +27,7 @@ export const ButtonWithConfirm = forwardRef<HTMLButtonElement, ButtonWithConfirm
   disableBackdropClick = false,
   showLoading = false,
   ...buttonProps
-}) => {
+}, ref) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,7 +65,11 @@ export const ButtonWithConfirm = forwardRef<HTMLButtonElement, ButtonWithConfirm
 
   return (
     <>
-      <Button {...buttonProps} onClick={handleClick}>
+      <Button
+        {...buttonProps}
+        onClick={handleClick}
+        ref={ref}
+      >
         {children}
       </Button>
 
