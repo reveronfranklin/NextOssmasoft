@@ -19,6 +19,7 @@ const CrudModal = ({
   isEdit = false,
   children,
   formValues = {},
+  maxWidth = "sm",
 }) => {
   const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {
@@ -29,7 +30,7 @@ const CrudModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth>
       <DialogTitle>
         {title}
         <IconButton

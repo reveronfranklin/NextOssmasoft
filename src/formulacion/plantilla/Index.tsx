@@ -349,6 +349,7 @@ export default function PlantillaIndex({
         </Paper>
 
         <CrudModal
+          maxWidth={plantillaSeleccionada ? "sm" : "sm"}
           open={modalOpen}
           title={modoEdicion ? "Editar Plantilla" : "Nueva Plantilla"}
           initialValues={{ ...defaultPlantilla, ...plantillaSeleccionada }}

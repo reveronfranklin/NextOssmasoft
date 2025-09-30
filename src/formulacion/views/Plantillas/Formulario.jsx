@@ -32,6 +32,13 @@ const FormularioPlantilla = ({
     fetchFormulas();
   }, [getListFormulas]);
 
+  React.useEffect(() => {
+    if (initialValues.formulaId && formulas.length > 0) {
+      const formulaActual = formulas.find(f => f.id === initialValues.formulaId);
+      setFormulaSeleccionada(formulaActual || null);
+    }
+  }, [initialValues.formulaId, formulas]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const newValues = { ...values, [name]: value };
@@ -43,7 +50,6 @@ const FormularioPlantilla = ({
     const newValues = {
       ...values,
       formulaId: formula ? formula.id : null,
-      // formulaValue: formula ? formula.formula : '',
     };
 
     setFormulaSeleccionada(formula);
@@ -55,13 +61,11 @@ const FormularioPlantilla = ({
     setValues(prev => ({
       ...prev,
       variableId: variable ? variable.id : null,
-      // variableSeleccionada: variable
     }));
 
     onChange && onChange({
       ...values,
       variableId: variable ? variable.id : null,
-      // variableSeleccionada: variable,
     });
   };
 
@@ -72,7 +76,7 @@ const FormularioPlantilla = ({
 
   return (
     <>
-      <pre>{JSON.stringify(values, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
 
       {memoizedVariables && memoizedVariables.length > 0 && (
         <Box sx={{ mt: 2 }}>
@@ -109,7 +113,7 @@ const FormularioPlantilla = ({
 
       <TextField
         name="formula"
-        label="Fórmula"
+        label="Fórmula Seleccionada"
         value={formulaSeleccionada?.formula || values?.formulaValue || ''}
         onChange={handleChange}
         fullWidth
