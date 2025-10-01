@@ -1,8 +1,15 @@
 import React from 'react';
-import { TextField, Box, Autocomplete} from '@mui/material';
+import {
+  TextField,
+  Box,
+  Autocomplete,
+  FormControlLabel,
+  Checkbox
+} from '@mui/material';
 import VariableSelector from '../../shared/components/VariableSelector';
 import FormulaProvider from '../../context/FormulaProvider';
 import { useFormulaContext } from 'src/formulacion/context/FormulaContext';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const FormularioPlantilla = ({
     initialValues = {},
@@ -12,6 +19,10 @@ const FormularioPlantilla = ({
   const [values, setValues] = React.useState(initialValues);
   const [formulas, setFormulas] = React.useState([]);
   const [formulaSeleccionada, setFormulaSeleccionada] = React.useState(null);
+  const [redondeo, setRedondeo] = React.useState(initialValues.redondeo ? initialValues.redondeo : 0);
+  const [acumular, setAcumular] = React.useState(
+    typeof initialValues.acumular === 'boolean' ? initialValues.acumular : false
+  );
 
   const { formulaService } = useFormulaContext();
   const { getListFormulas } = formulaService;
@@ -38,6 +49,21 @@ const FormularioPlantilla = ({
       setFormulaSeleccionada(formulaActual || null);
     }
   }, [initialValues.formulaId, formulas]);
+
+  const handleRedondeoChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Solo números
+    setRedondeo(value === '' ? '' : parseInt(value, 10));
+    const newValues = { ...values, redondeo: value === '' ? '' : parseInt(value, 10) };
+    setValues(newValues);
+    onChange && onChange(newValues);
+  };
+
+  const handleAcumularChange = (e) => {
+    setAcumular(e.target.checked);
+    const newValues = { ...values, acumular: e.target.checked };
+    setValues(newValues);
+    onChange && onChange(newValues);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,6 +104,7 @@ const FormularioPlantilla = ({
     <>
       {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
 
+      {/* selector de variables */}
       {memoizedVariables && memoizedVariables.length > 0 && (
         <Box sx={{ mt: 2 }}>
           <FormulaProvider>
@@ -90,6 +117,7 @@ const FormularioPlantilla = ({
         </Box>
       )}
 
+      {/* listado de formulas */}
       <Autocomplete
         options={formulas}
         getOptionLabel={(option) => option.descripcion || option.nombre || ''}
@@ -101,16 +129,7 @@ const FormularioPlantilla = ({
         sx={{ mt: 2, mb: 2 }}
       />
 
-      {/* <TextField
-        name="descripcion"
-        label="Descripción"
-        value={values.descripcion || ''}
-        onChange={handleChange}
-        fullWidth
-        margin="dense"
-        required
-      /> */}
-
+      {/* formula seleccionada solo visualizar */}
       <TextField
         name="formula"
         label="Fórmula Seleccionada"
@@ -121,6 +140,58 @@ const FormularioPlantilla = ({
         required
         InputProps={{ readOnly: true }}
       />
+
+      {/* campo de redondeo */}
+      <TextField
+        name="redondeo"
+        label="Redondeo"
+        value={redondeo}
+        onChange={handleRedondeoChange}
+        fullWidth
+        margin="dense"
+        required
+        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+        InputProps={{
+          endAdornment: <InputAdornment position="end">entero</InputAdornment>,
+        }}
+        helperText="Solo números enteros"
+      />
+
+      {/* campo para cambiar el orden manualmente */}
+      <TextField
+        name="ordenCalculo"
+        label="Orden de cálculo"
+        value={values.ordenCalculo ?? ''}
+        onChange={e => {
+          const value = e.target.value.replace(/[^0-9]/g, ''); // Solo números
+          const newValues = { ...values, ordenCalculo: value === '' ? '' : parseInt(value, 10) };
+          setValues(newValues);
+          onChange && onChange(newValues);
+        }}
+        fullWidth
+        margin="dense"
+        required
+        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+        InputProps={{
+          endAdornment: <InputAdornment position="end">número</InputAdornment>,
+        }}
+        helperText="Solo números enteros"
+      />
+
+      {/* campo booleano acumular */}
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={acumular}
+            onChange={handleAcumularChange}
+            name="acumular"
+            color="primary"
+          />
+        }
+        label="Acumular"
+        sx={{ mt: 1, mb: 1 }}
+      />
+
     </>
   );
 };

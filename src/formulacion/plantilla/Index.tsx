@@ -60,6 +60,7 @@ export default function PlantillaIndex({
     value: 0,
     usuarioInsert: 1,
     codigoEmpresa: 13,
+    acumular: false
   };
 
   //servicios
