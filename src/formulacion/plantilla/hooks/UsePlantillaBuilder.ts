@@ -20,6 +20,7 @@ const usePlantillaBuilder = (services: FormulaBuilderServices) => {
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla
@@ -34,6 +35,7 @@ const usePlantillaBuilder = (services: FormulaBuilderServices) => {
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,

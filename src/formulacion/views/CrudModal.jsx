@@ -17,9 +17,9 @@ const CrudModal = ({
   onSubmit,
   onDelete,
   isEdit = false,
-  children,
   formValues = {},
   maxWidth = "sm",
+  children,
 }) => {
   const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {

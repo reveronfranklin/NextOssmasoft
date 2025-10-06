@@ -1,7 +1,16 @@
 import React from 'react';
 import { List, ListItemButton, ListItemText, Paper, Box, Typography, Stack } from '@mui/material';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import {
+  DroppableProvided,
+  DroppableStateSnapshot,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult
+} from 'react-beautiful-dnd';
 
 interface PlantillasDetalleProcesoProps {
   plantillas: any[];
@@ -26,10 +35,12 @@ const PlantillasDetalleProceso = ({
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
+
     const reordered = Array.from(items);
     const [removed] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, removed);
     setItems(reordered);
+
     if (onReorder) onReorder(reordered);
   };
 
@@ -37,7 +48,6 @@ const PlantillasDetalleProceso = ({
 
   return (
     <Paper variant="outlined" sx={{ borderRadius: 2 }}>
-      {/* Leyenda de orden */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ px: 2, pt: 2, pb: 1 }}>
         <FormatListNumberedIcon color="primary" fontSize="small" />
         <Typography variant="caption" color="text.secondary">
@@ -46,7 +56,7 @@ const PlantillasDetalleProceso = ({
       </Stack>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="plantillas-droppable">
-          {(provided: any) => (
+          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
             <List
               dense
               disablePadding
@@ -55,7 +65,7 @@ const PlantillasDetalleProceso = ({
             >
               {items.map((pl: any, index: number) => (
                 <Draggable key={pl.id} draggableId={pl.id.toString()} index={index}>
-                  {(provided, snapshot) => (
+                  {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                     <ListItemButton
                       ref={provided.innerRef}
                       {...provided.draggableProps}

@@ -42,13 +42,10 @@ export default function PlantillaIndex({
 
   const [procesos, setProcesos] = useState<IProcesoFindAllResponse[]>([]);
   const [loadingProcesos, setLoadingProcesos] = useState(false);
-  const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
+  const [detalles, setDetalles] = useState<any[]>([])
   const [loadingDetalle] = useState(false)
-
   const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
-
   const [loadingPlantillas] = useState(false)
-
   const [modoEdicion, setModoEdicion] = useState(false);
 
   const defaultPlantilla = {
@@ -63,7 +60,6 @@ export default function PlantillaIndex({
     acumular: false
   };
 
-  //servicios
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
   const plantillaServiceFromHook = usePlantillaService();
@@ -82,6 +78,7 @@ export default function PlantillaIndex({
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,
@@ -110,7 +107,8 @@ export default function PlantillaIndex({
       console.log('lista de procesos', response.data)
 
       if (response && response.isValid && Array.isArray(response.data)) {
-        const procesosFindAll: IProcesoFindAllResponse[] = response.data
+        const {data} = response
+        const procesosFindAll = data.flat();
         setProcesos(procesosFindAll);
       } else {
         setProcesos([]);
@@ -133,10 +131,12 @@ export default function PlantillaIndex({
         }
 
         const response = await getPlantillasByDetalleProceso(payload);
-        console.log('Detalle por proceso', response)
 
         if (response && response.isValid && Array.isArray(response.data)) {
-          setPlantillas(response.data);
+          const { data } = response
+          const datosAplanados = data.flat();
+
+          setPlantillas(datosAplanados);
         } else {
           setPlantillas([]);
         }
@@ -145,7 +145,6 @@ export default function PlantillaIndex({
     }
   }, [detalleSeleccionado, getPlantillasByDetalleProceso]);
 
-  //SELECCIONAR PROCESO
   const handleProcesoChange = async (e: SelectChangeEvent) => {
     const value = e.target.value
     setProcesoId(value === '' ? '' : Number(value))
@@ -183,9 +182,7 @@ export default function PlantillaIndex({
 
   const handleDelete = async (form: any, action: any) => {
     try {
-      const dtoDelete: DeletePlantillaDTO = (({ id }) => ({
-          id: Number(id)
-        }))(form);
+      const dtoDelete: DeletePlantillaDTO = (({ id }) => ({ id: Number(id) }))(form);
 
       const deleteResponse = await deletePlantilla(dtoDelete);
       console.log('Deleted plantilla:', deleteResponse);
@@ -210,13 +207,19 @@ export default function PlantillaIndex({
         }))(form);
 
         const updateResponse = await updatePlantilla(dtoUpdate);
-        console.log('Editing plantilla:', updateResponse);
       } else if (action === 'create') {
         const createResponse = await createPlantilla(form);
-        console.log('Created plantilla:', createResponse)
       }
     } catch (error) {
       console.error('Error submitting plantilla:', error);
+    }
+  };
+
+  const handleReorderPlantillas = async (nuevoOrden: any[]) => {
+    try {
+      await reorderPlantilla(nuevoOrden);
+    } catch (error) {
+      console.error('Error updating order:', error);
     }
   };
 
@@ -344,22 +347,21 @@ export default function PlantillaIndex({
                 detalleId={detalleSeleccionado}
                 loading={loadingPlantillas}
                 onSelectPlantilla={handleOpenModalPlantilla}
+                onReorder={handleReorderPlantillas}
               />
             </Grid>
           </Grid>
         </Paper>
 
         <CrudModal
-          maxWidth={plantillaSeleccionada ? "sm" : "sm"}
           open={modalOpen}
           title={modoEdicion ? "Editar Plantilla" : "Nueva Plantilla"}
-          initialValues={{ ...defaultPlantilla, ...plantillaSeleccionada }}
-          fields={null}
           onClose={handleCloseModal}
           onSubmit={handleSubmit}
           onDelete={handleDelete}
           isEdit={modoEdicion}
           formValues={plantillaSeleccionada || {}}
+          maxWidth={plantillaSeleccionada ? "sm" : "sm"}
         >
           <FormulaProvider>
             <FormularioPlantilla

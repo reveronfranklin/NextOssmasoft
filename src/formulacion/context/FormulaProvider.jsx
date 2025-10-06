@@ -5,29 +5,16 @@ import usePlantillaService from 'src/formulacion/services/plantilla/UsePlantilla
 
 import { FormulaContext } from './FormulaContext';
 
-export default function FormulaProvider({
-  children,
-  formulaService: formulaServiceProp,
-  variableService: variableServiceProp,
-  plantillaService: plantillaServiceProp
-}) {
-  const formulaServiceFromHook = useFormulaService();
-  const variableServiceFromHook = useVariableService();
-  const plantillaServiceFromHook = usePlantillaService();
-
-  const formulaService = formulaServiceProp || formulaServiceFromHook;
-  const variableService = variableServiceProp || variableServiceFromHook;
-  const plantillaService = plantillaServiceProp || plantillaServiceFromHook;
+export default function FormulaProvider({ children }) {
+  const formulaService   = useFormulaService();
+  const variableService  = useVariableService();
+  const plantillaService = usePlantillaService();
 
   const value = useMemo(() => ({
     formulaService,
     variableService,
     plantillaService
-  }), [
-    formulaService,
-    variableService,
-    plantillaService
-  ]);
+  }), [formulaService, variableService, plantillaService]);
 
   return (
     <FormulaContext.Provider value={value}>
