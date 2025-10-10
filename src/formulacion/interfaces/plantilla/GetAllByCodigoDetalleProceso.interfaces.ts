@@ -6,19 +6,20 @@ export interface DTOGetAllByCodigoDetalleProceso {
 }
 
 export interface IGetAllByCodigoDetalleProcesoResponse {
-  id: number;
-  procesoDetalleId: number;
-  variableId: number;
   code: string;
-  formulaId: number;
+  codigoEmpresa: number;
   descripcionFormula: string;
-  formulaValue: string;
-  value: number;
-  ordenCalculo: number;
   estado: string;
   fechaIns: Date;
-  usuarioInsert: number;
   fechaUpd: Date;
+  formulaId: number;
+  formulaValue: string;
+  id: number;
+  ordenCalculo: number;
+  procesoDetalleId: number;
+  redondeo: number;
+  usuarioInsert: number;
   usuarioUpdate: any;
-  codigoEmpresa: number;
+  value: number;
+  variableId: number;
 }

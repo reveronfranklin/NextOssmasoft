@@ -17,8 +17,9 @@ const CrudModal = ({
   onSubmit,
   onDelete,
   isEdit = false,
-  children,
   formValues = {},
+  maxWidth = "sm",
+  children,
 }) => {
   const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {
@@ -29,7 +30,7 @@ const CrudModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth>
       <DialogTitle>
         {title}
         <IconButton
@@ -55,7 +56,7 @@ const CrudModal = ({
           {isEdit && onDelete && (
             <ButtonWithConfirm
               color="error"
-              dialogTitle="¿Eliminar variable?"
+              confirmTitle = "¿Eliminar variable?"
               confirmText="¿Estás seguro de que deseas eliminar esta variable?"
               onAction={() => handleSubmit('delete')}
             >
@@ -65,7 +66,7 @@ const CrudModal = ({
           <ButtonWithConfirm
             variant="contained"
             color="primary"
-            dialogTitle={isEdit ? '¿Actualizar variable?' : '¿Crear variable?'}
+            confirmTitle={isEdit ? '¿Actualizar variable?' : '¿Crear variable?'}
             confirmText={
               isEdit
                 ? 'Si'

@@ -5,6 +5,7 @@ import { UrlPlantillaServices } from 'src/formulacion/enums/UrlPlantillaServices
 import { DTOProcesoDetalleFindAll, IProcesoDetalleFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
 import { DTOProcesoFindAll, IProcesoFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoFindAll.interfaces'
 import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse } from 'src/formulacion/interfaces/plantilla/GetAllByCodigoDetalleProceso.interfaces'
+import { DTOReorderPlantilla, IPlantillaReorderResponse } from 'src/formulacion/interfaces/plantilla/Reorder.interfaces'
 
 import { CreatePlantillaDTO, IPlantillaCreateResponse } from 'src/formulacion/interfaces/plantilla/Create.interfaces'
 import { UpdatePlantillaDTO, IPlantillaUpdateResponse } from 'src/formulacion/interfaces/plantilla/Update.interfaces'
@@ -71,6 +72,22 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
+  //reordenar plantilla
+  const reorderPlantilla = useCallback(async (filters: DTOReorderPlantilla): Promise<any> => {
+    try {
+      console.log('servicio para actualizar el reordenamiento de la plantilla', filters)
+      setLoading(true)
+      const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaReorderResponse>>(UrlPlantillaServices.REORDERPLANTILLA, filters)
+      const responseHandleApi = handleApiResponse<IPlantillaReorderResponse>(responseFetch.data, 'Plantilla reordenada con éxito', setMessage, setError)
+
+      return responseHandleApi
+    } catch (e: any) {
+      return handleApiError(e, setMessage, setError)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   const createPlantilla = useCallback(async (filters: CreatePlantillaDTO): Promise<IApiResponse<IPlantillaCreateResponse>> => {
     try {
       setLoading(true)
@@ -120,6 +137,7 @@ const usePlantillaService = (): IPlantillaService => {
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,
