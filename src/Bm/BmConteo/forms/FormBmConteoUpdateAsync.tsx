@@ -26,8 +26,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
-
-
 // ** Third Party Imports
 //import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
@@ -36,27 +34,26 @@ import { RootState } from 'src/store'
 
 // ** Types
 
-
 import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
-
-
-
-
+import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 
 // ** Third Party Imports
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 
-
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { IBmConteoUpdateDto } from 'src/interfaces/Bm/BmConteo/BmConteoUpdateDto'
-import { setBmConteoSeleccionado, setListBmConteoDetalleResponseDto, setListBmConteoResponseDto, setVerBmConteoActive } from 'src/store/apps/bmConteo'
+import {
+  setBmConteoSeleccionado,
+  setListBmConteoDetalleResponseDto,
+  setListBmConteoResponseDto,
+  setVerBmConteoActive
+} from 'src/store/apps/bmConteo'
 import { ISelectListDescriptiva } from 'src/interfaces/rh/ISelectListDescriptiva'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
@@ -64,72 +61,63 @@ import { IBmConteoDeleteDto } from 'src/interfaces/Bm/BmConteo/BmConteoDeleteDto
 import { IBmConteoCerrarDto } from 'src/interfaces/Bm/BmConteo/BmConteoCerrarDto'
 import { setListIcp } from 'src/store/apps/ICP'
 
-
-
 interface FormInputs {
-	  codigoBmConteo :number;
-		titulo :string;
-    comentario :string;
-		codigoPersonaResponsable:number;
-		conteoId:number;
-		fecha :Date | null;
-		fechaString :string;
-		fechaObj:IFechaDto | null;
-    totalCantidad:number;
+  codigoBmConteo: number
+  titulo: string
+  comentario: string
+  codigoPersonaResponsable: number
+  conteoId: number
+  fecha: Date | null
+  fechaString: string
+  fechaObj: IFechaDto | null
+  totalCantidad: number
 }
-
-
-
 
 const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** States
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
+  const { bmConteoSeleccionado, listConteoDescriptiva } = useSelector((state: RootState) => state.bmConteo)
+  const { personasDto } = useSelector((state: RootState) => state.nomina)
 
-  const {bmConteoSeleccionado,listConteoDescriptiva} = useSelector((state: RootState) => state.bmConteo)
-  const {personasDto} = useSelector((state: RootState) => state.nomina)
+  const getConteo = (id: number) => {
+    const result = listConteoDescriptiva?.filter((elemento: any) => {
+      return elemento.id == id
+    })
 
-  const  getConteo=(id:number)=>{
-
-    const result = listConteoDescriptiva?.filter((elemento:any)=>{
-
-      return elemento.id==id;
-    });
-
-    return result[0];
+    return result[0]
   }
 
-  const  getPersona=(id:number)=>{
+  const getPersona = (id: number) => {
+    const result = personasDto?.filter((elemento: any) => {
+      return elemento.codigoPersona == id
+    })
 
-    const result = personasDto?.filter((elemento:any)=>{
-
-      return elemento.codigoPersona==id;
-    });
-
-    return result[0];
+    return result[0]
   }
 
   // ** States
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [open, setOpen] = useState(false);
-  const [openCerrarButton, setOpenCerrarButton] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [openCerrarButton, setOpenCerrarButton] = useState(false)
 
-  const [personas, setPersonas] = useState<IPersonaDto[]>([]);
-  const [persona, setPersona] = useState<IPersonaDto>(getPersona(bmConteoSeleccionado.codigoPersonaResponsable));
-  const [conteos, setConteos] = useState<ISelectListDescriptiva[]>([]);
-  const [conteo,setConteo] = useState<any>(getConteo(bmConteoSeleccionado.conteoId));
+  const [personas, setPersonas] = useState<IPersonaDto[]>([])
+  const [persona, setPersona] = useState<IPersonaDto>(getPersona(bmConteoSeleccionado.codigoPersonaResponsable))
+  const [conteos, setConteos] = useState<ISelectListDescriptiva[]>([])
+  const [conteo, setConteo] = useState<any>(getConteo(bmConteoSeleccionado.conteoId))
   const defaultValues = {
-    codigoBmConteo :bmConteoSeleccionado.codigoBmConteo,
-		titulo :bmConteoSeleccionado.titulo,
-    comentario:bmConteoSeleccionado.comentario,
-		codigoPersonaResponsable:bmConteoSeleccionado.codigoPersonaResponsable,
-		conteoId:bmConteoSeleccionado.conteoId,
-		fecha :bmConteoSeleccionado.fecha,
-		fechaString :bmConteoSeleccionado.fechaString,
-		fechaObj:bmConteoSeleccionado.fechaObj,
-    totalCantidad:bmConteoSeleccionado.totalCantidad
+    codigoBmConteo: bmConteoSeleccionado.codigoBmConteo,
+    titulo: bmConteoSeleccionado.titulo,
+    comentario: bmConteoSeleccionado.comentario,
+    codigoPersonaResponsable: bmConteoSeleccionado.codigoPersonaResponsable,
+    conteoId: bmConteoSeleccionado.conteoId,
+    fecha: bmConteoSeleccionado.fecha,
+    fechaString: bmConteoSeleccionado.fechaString,
+    fechaObj: bmConteoSeleccionado.fechaObj,
+    totalCantidad: bmConteoSeleccionado.totalCantidad,
+    replicarComentario: false
   }
 
   // ** Hook
@@ -141,186 +129,138 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-
-
-
-  const handlerConteo=async (e: any,value:any)=>{
-
-    if(value!=null){
-      setValue('conteoId',value.id);
-      setConteo(value);
-
-    }else{
-      setValue('conteoId',0);
-
+  const handlerConteo = async (e: any, value: any) => {
+    if (value != null) {
+      setValue('conteoId', value.id)
+      setConteo(value)
+    } else {
+      setValue('conteoId', 0)
     }
   }
 
-
-
-  const handlerFechaDesde=(desde:Date)=>{
-    const fechaObj:IFechaDto =fechaToFechaObj(desde);
-    const conteoTmp= {...bmConteoSeleccionado,fechaString:desde.toISOString(),fechaObj:fechaObj,fecha:desde};
+  const handlerFechaDesde = (desde: Date) => {
+    const fechaObj: IFechaDto = fechaToFechaObj(desde)
+    const conteoTmp = { ...bmConteoSeleccionado, fechaString: desde.toISOString(), fechaObj: fechaObj, fecha: desde }
     dispatch(setBmConteoSeleccionado(conteoTmp))
-    setValue('fechaString',desde.toISOString());
-    setValue('fecha',desde);
-    setValue('fechaObj',fechaObj);
+    setValue('fechaString', desde.toISOString())
+    setValue('fecha', desde)
+    setValue('fechaObj', fechaObj)
   }
 
-
-
-
-  const handlerPersona= async (e: any,value:any)=>{
-
-
-
-
-    if(value && value.codigoPersona>0){
-      setValue('codigoPersonaResponsable',value.codigoPersona)
+  const handlerPersona = async (e: any, value: any) => {
+    if (value && value.codigoPersona > 0) {
+      setValue('codigoPersonaResponsable', value.codigoPersona)
       setPersona(value)
 
       /*const filter={codigoPersona:value.codigoPersona}
       const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
       dispatch(setPersonaSeleccionado(responseAll.data));
       dispatch(setPersonasDtoSeleccionado(responseAll.data));*/
-    }else{
-
-      setValue('codigoPersonaResponsable',0)
-
+    } else {
+      setValue('codigoPersonaResponsable', 0)
+    }
   }
-
-
-  }
-
 
   const handleClickOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const handleClose = () => {
-    setOpen(false);
-
-  };
+    setOpen(false)
+  }
 
   const handleClickOpenCerrarButton = () => {
-    setOpenCerrarButton(true);
-  };
+    setOpenCerrarButton(true)
+  }
 
   const handleCloseCerrarButton = () => {
-    setOpenCerrarButton(false);
+    setOpenCerrarButton(false)
+  }
 
-  };
-
-
-
-
-  const handleDelete = async  () => {
-    setOpen(false);
+  const handleDelete = async () => {
+    setOpen(false)
     setLoading(true)
     setErrorMessage('')
 
-    const deleteConteo : IBmConteoDeleteDto={
-      codigoBmConteo:bmConteoSeleccionado.codigoBmConteo
+    const deleteConteo: IBmConteoDeleteDto = {
+      codigoBmConteo: bmConteoSeleccionado.codigoBmConteo
     }
-    const responseAll= await ossmmasofApi.post<any>('/BmConteo/Delete',deleteConteo);
+    const responseAll = await ossmmasofApi.post<any>('/BmConteo/Delete', deleteConteo)
     setErrorMessage(responseAll.data.message)
-    if(responseAll.data.isValid){
-
+    if (responseAll.data.isValid) {
       dispatch(setVerBmConteoActive(false))
       dispatch(setBmConteoSeleccionado({}))
     }
     setErrorMessage(responseAll.data.message)
     setLoading(false)
+  }
 
-
-  };
-
-
-  const handleCerrar = async  () => {
-    setOpenCerrarButton(false);
+  const handleCerrar = async () => {
+    setOpenCerrarButton(false)
     setLoading(true)
     setErrorMessage('')
 
-    const deleteConteo : IBmConteoCerrarDto={
-      codigoBmConteo:bmConteoSeleccionado.codigoBmConteo,
-      comentario:getValues('comentario')
+    const deleteConteo: IBmConteoCerrarDto = {
+      codigoBmConteo: bmConteoSeleccionado.codigoBmConteo,
+      comentario: getValues('comentario')
     }
-    const responseAll= await ossmmasofApi.post<any>('/BmConteo/CerrarConteo',deleteConteo);
+    const responseAll = await ossmmasofApi.post<any>('/BmConteo/CerrarConteo', deleteConteo)
     setErrorMessage(responseAll.data.message)
-    if(responseAll.data.isValid){
-
+    if (responseAll.data.isValid) {
       dispatch(setVerBmConteoActive(false))
       dispatch(setBmConteoSeleccionado({}))
       dispatch(setListBmConteoDetalleResponseDto([]))
     }
     setErrorMessage(responseAll.data.message)
     setLoading(false)
+  }
 
-
-  };
-
-
-
-
-  const onSubmit = async (data:FormInputs) => {
-
-
+  const onSubmit = async (data: FormInputs) => {
     setLoading(true)
     setErrorMessage('')
-    const updateDto:IBmConteoUpdateDto= {
-      codigoBmConteo :data.codigoBmConteo,
-      titulo :data.titulo,
-      comentario:data.comentario,
-      codigoPersonaResponsable:data.codigoPersonaResponsable,
-      conteoId:data.conteoId,
-      fecha :data.fecha,
-      fechaString :data.fechaString,
-      fechaObj:data.fechaObj,
-      listIcpSeleccionado:[]
+    const updateDto: IBmConteoUpdateDto = {
+      codigoBmConteo: data.codigoBmConteo,
+      titulo: data.titulo,
+      comentario: data.comentario,
+      codigoPersonaResponsable: data.codigoPersonaResponsable,
+      conteoId: data.conteoId,
+      fecha: data.fecha,
+      fechaString: data.fechaString,
+      fechaObj: data.fechaObj,
+      listIcpSeleccionado: []
+    }
 
-    };
+    console.log('updateDto', updateDto)
 
-    console.log('updateDto',updateDto)
+    const responseAll = await ossmmasofApi.post<any>('/BmConteo/Update', updateDto)
 
-    const responseAll= await ossmmasofApi.post<any>('/BmConteo/Update',updateDto);
-
-    if(responseAll.data.isValid){
+    if (responseAll.data.isValid) {
       dispatch(setListBmConteoResponseDto(responseAll.data.data))
 
       dispatch(setVerBmConteoActive(false))
     }
     setErrorMessage(responseAll.data.message)
     setLoading(false)
-
-
   }
   useEffect(() => {
-
     const getData = async () => {
-      setLoading(true);
-      console.log(popperPlacement);
-
+      setLoading(true)
+      console.log(popperPlacement)
 
       setConteos(listConteoDescriptiva)
 
-
       setPersonas(personasDto)
-      const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
-      console.log('responseIcps.data',responseIcps.data.data)
+      console.log('responseIcps.data', responseIcps.data.data)
 
+      setLoading(false)
+    }
 
-      setLoading(false);
-    };
+    getData()
 
-
-
-
-    getData();
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card>
@@ -328,9 +268,8 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
-
             {/* descripcionId */}
-            <Grid item sm={2} xs={12} >
+            <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='codigoBmConteo'
@@ -355,8 +294,8 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
                 )}
               </FormControl>
             </Grid>
-              {/* Titulo */}
-              <Grid item sm={6} xs={12}>
+            {/* Titulo */}
+            <Grid item sm={6} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='titulo'
@@ -370,7 +309,6 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
                       placeholder='Titulo'
                       error={Boolean(errors.titulo)}
                       aria-describedby='validation-async-titulo'
-
                     />
                   )}
                 />
@@ -382,63 +320,51 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
               </FormControl>
             </Grid>
 
-
-            <Grid item  sm={4} xs={12}>
-                <DatePicker
-
-                  selected={ getDateByObject(bmConteoSeleccionado.fechaObj!)}
-                  id='date-time-picker-desde'
-                  dateFormat='dd/MM/yyyy'
-                  popperPlacement={popperPlacement}
-                  onChange={(date: Date) => handlerFechaDesde(date)}
-                  placeholderText='Click to select a date'
-                  customInput={<CustomInput label='Fecha' />}
-                />
+            <Grid item sm={4} xs={12}>
+              <DatePicker
+                selected={getDateByObject(bmConteoSeleccionado.fechaObj!)}
+                id='date-time-picker-desde'
+                dateFormat='dd/MM/yyyy'
+                popperPlacement={popperPlacement}
+                onChange={(date: Date) => handlerFechaDesde(date)}
+                placeholderText='Click to select a date'
+                customInput={<CustomInput label='Fecha' />}
+              />
             </Grid>
 
-              {/* status */}
-           <Grid item sm={10} xs={12}>
-
+            {/* status */}
+            <Grid item sm={10} xs={12}>
               <Autocomplete
-                  options={personas}
-                  value={persona}
-                  id='autocomplete-persona'
-                  isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
-                  getOptionLabel={option => option.cedula + ' ' + option.nombreCompleto}
-                  onChange={handlerPersona}
-                  renderInput={params => <TextField {...params} label='Responsable' />}
-                />
-
-
+                options={personas}
+                value={persona}
+                id='autocomplete-persona'
+                isOptionEqualToValue={(option, value) => option.codigoPersona === value.codigoPersona}
+                getOptionLabel={option => option.cedula + ' ' + option.nombreCompleto}
+                onChange={handlerPersona}
+                renderInput={params => <TextField {...params} label='Responsable' />}
+              />
             </Grid>
-
-
-
-
 
             {/* Conteos */}
-           <Grid item sm={2} xs={12}>
-
-            <Autocomplete
-
-                  options={conteos}
-                  value={conteo}
-                  id='autocomplete-conteo'
-                  isOptionEqualToValue={(option, value) => option.id=== value.id}
-                  getOptionLabel={option => option.descripcion }
-                  onChange={handlerConteo}
-                  renderInput={params => <TextField {...params} label='Conteos' />}
-                />
-
+            <Grid item sm={2} xs={12}>
+              <Autocomplete
+                options={conteos}
+                value={conteo}
+                id='autocomplete-conteo'
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={option => option.descripcion}
+                onChange={handlerConteo}
+                renderInput={params => <TextField {...params} label='Conteos' />}
+              />
             </Grid>
 
-         {/* Titulo */}
-         <Grid item sm={12} xs={12}>
+            {/* Titulo */}
+            <Grid item sm={12} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='comentario'
                   control={control}
-                  rules={{ maxLength:4000}}
+                  rules={{ maxLength: 4000 }}
                   render={({ field: { value, onChange } }) => (
                     <TextField
                       value={value || ''}
@@ -459,39 +385,34 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
               </FormControl>
             </Grid>
 
-             {/* descripcionId */}
-             <Grid item sm={4} xs={12} >
-             <TextField
-                      value={bmConteoSeleccionado.totalCantidad}
-                      label='Total Cantidad'
-                      placeholder='0'
-
-                      aria-describedby='validation-async-cantidad'
-                      disabled
-                    />
+            {/* descripcionId */}
+            <Grid item sm={4} xs={12}>
+              <TextField
+                value={bmConteoSeleccionado.totalCantidad}
+                label='Total Cantidad'
+                placeholder='0'
+                aria-describedby='validation-async-cantidad'
+                disabled
+              />
             </Grid>
-            <Grid item sm={4} xs={12} >
-             <TextField
-                      value={bmConteoSeleccionado.totalCantidadContado}
-                      label='Total Contado'
-                      placeholder='0'
-
-                      aria-describedby='validation-async-cantidad'
-                      disabled
-                    />
+            <Grid item sm={4} xs={12}>
+              <TextField
+                value={bmConteoSeleccionado.totalCantidadContado}
+                label='Total Contado'
+                placeholder='0'
+                aria-describedby='validation-async-cantidad'
+                disabled
+              />
             </Grid>
-            <Grid item sm={4} xs={12} >
-             <TextField
-                      value={bmConteoSeleccionado.totalDiferencia}
-                      label='Total Diferencia'
-                      placeholder='0'
-
-                      aria-describedby='validation-async-cantidad'
-                      disabled
-                    />
+            <Grid item sm={4} xs={12}>
+              <TextField
+                value={bmConteoSeleccionado.totalDiferencia}
+                label='Total Diferencia'
+                placeholder='0'
+                aria-describedby='validation-async-cantidad'
+                disabled
+              />
             </Grid>
-
-
 
             <Grid item xs={12}>
               <Button size='large' type='submit' variant='contained'>
@@ -508,8 +429,8 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
                 Guardar
               </Button>
 
-              <Button variant="outlined"  size='large' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
-              {loading ? (
+              <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
+                {loading ? (
                   <CircularProgress
                     sx={{
                       color: 'common.white',
@@ -524,16 +445,12 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
               <Dialog
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
-                <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos Del Conteo?"}
-                </DialogTitle>
+                <DialogTitle id='alert-dialog-title'>{'Esta Seguro de Eliminar estos Datos Del Conteo?'}</DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Se eliminaran los datos de Conteo
-                  </DialogContentText>
+                  <DialogContentText id='alert-dialog-description'>Se eliminaran los datos de Conteo</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose}>No</Button>
@@ -542,8 +459,13 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
                   </Button>
                 </DialogActions>
               </Dialog>
-              <Button variant="outlined"  size='large' onClick={handleClickOpenCerrarButton}  sx={{ color: 'secundary' ,ml:2}}   >
-              {loading ? (
+              <Button
+                variant='outlined'
+                size='large'
+                onClick={handleClickOpenCerrarButton}
+                sx={{ color: 'secundary', ml: 2 }}
+              >
+                {loading ? (
                   <CircularProgress
                     sx={{
                       color: 'common.white',
@@ -558,14 +480,12 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
               <Dialog
                 open={openCerrarButton}
                 onClose={handleCloseCerrarButton}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
-                <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de CERRAR Conteo?"}
-                </DialogTitle>
+                <DialogTitle id='alert-dialog-title'>{'Esta Seguro de CERRAR Conteo?'}</DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                  <DialogContentText id='alert-dialog-description'>
                     Se eliminaran los datos de Conteo y enviaran a el historico
                   </DialogContentText>
                 </DialogContent>
@@ -577,18 +497,16 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
                 </DialogActions>
               </Dialog>
             </Grid>
-
           </Grid>
           <Box>
-              {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            {errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>{errorMessage}</FormHelperText>
+            )}
           </Box>
         </form>
-
       </CardContent>
     </Card>
   )
-
-
 }
 
 export default FormBmConteoUpdateAsync
