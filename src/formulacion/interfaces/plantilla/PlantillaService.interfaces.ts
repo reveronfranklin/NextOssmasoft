@@ -10,7 +10,6 @@ import { UpdatePlantillaDTO, IPlantillaUpdateResponse } from 'src/formulacion/in
 import { DeletePlantillaDTO, IPlantillaDeleteResponse} from 'src/formulacion/interfaces/plantilla/Delete.interfaces';
 import { DTOReorderPlantilla, IPlantillaReorderResponse } from 'src/formulacion/interfaces/plantilla/Reorder.interfaces'
 
-
 export interface IPlantillaService {
   error: string;
   message: IAlertMessageDto;
@@ -18,9 +17,7 @@ export interface IPlantillaService {
   getListProcesos: (filters: DTOProcesoFindAll) => Promise<IApiResponse<IProcesoFindAllResponse[]>>;
   getListDetalleProcesos: (filters: DTOProcesoDetalleFindAll) => Promise<IApiResponse<IProcesoDetalleFindAllResponse[]>>;
   getPlantillasByDetalleProceso: (filters: DTOGetAllByCodigoDetalleProceso) => Promise<IApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>>;
-  reorderPlantilla: (nuevoOrden: DTOReorderPlantilla) => Promise<IApiResponse<IPlantillaReorderResponse>>;
-
-  // getListPlantillas: (filters: DTOGetAllPlantillas) => Promise<IApiResponse<IPlantillaGetAllResponse[]>>;
+  reorderPlantilla: (filters: DTOReorderPlantilla) => Promise<IApiResponse<IPlantillaReorderResponse>>;
   createPlantilla: (data: CreatePlantillaDTO) => Promise<IApiResponse<IPlantillaCreateResponse>>;
   updatePlantilla: (data: UpdatePlantillaDTO) => Promise<IApiResponse<IPlantillaUpdateResponse>>;
   deletePlantilla: (data: DeletePlantillaDTO) => Promise<IApiResponse<IPlantillaDeleteResponse>>;

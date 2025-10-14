@@ -4,8 +4,6 @@ import { Paper, List, ListItem, ListItemText } from '@mui/material';
 
 const PlantillasDetalleProceso = ({
   plantillas,
-  detalleId,
-  loading,
   onSelectPlantilla,
   onReorder // Nueva prop para notificar el nuevo orden
 }) => {

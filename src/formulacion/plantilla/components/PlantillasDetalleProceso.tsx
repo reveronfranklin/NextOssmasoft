@@ -3,7 +3,6 @@ import { List, ListItemButton, ListItemText, Paper, Box, Typography, Stack } fro
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import {
   DroppableProvided,
-  DroppableStateSnapshot,
   DraggableProvided,
   DraggableStateSnapshot,
   DragDropContext,
@@ -56,7 +55,7 @@ const PlantillasDetalleProceso = ({
       </Stack>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="plantillas-droppable">
-          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+          {(provided: DroppableProvided) => (
             <List
               dense
               disablePadding

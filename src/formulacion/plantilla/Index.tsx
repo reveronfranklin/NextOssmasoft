@@ -14,8 +14,10 @@ import useVariableService from '../services/variable/UseVariableService';
 import usePlantillaService from '../services/plantilla/UsePlantillaService';
 
 import { DTOProcesoFindAll, IProcesoFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoFindAll.interfaces'
-import { DTOProcesoDetalleFindAll, IProcesoDetalleFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
+import { DTOProcesoDetalleFindAll } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
 import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse } from 'src/formulacion/interfaces/plantilla/GetAllByCodigoDetalleProceso.interfaces'
+
+// import { IPlantillaReorderResponse } from 'src/formulacion/interfaces/plantilla/Reorder.interfaces'
 
 import CrudModal from '../views/CrudModal';
 import useCrudModal from '../shared/hooks/useCrudModal';
@@ -94,6 +96,7 @@ export default function PlantillaIndex({
 
   useEffect(() => {
     const fetchProcesos = async () => {
+      console.log(loadingProcesos);
       setLoadingProcesos(true);
 
       const payload: DTOProcesoFindAll = {
@@ -107,7 +110,7 @@ export default function PlantillaIndex({
       console.log('lista de procesos', response.data)
 
       if (response && response.isValid && Array.isArray(response.data)) {
-        const {data} = response
+        const { data } = response
         const procesosFindAll = data.flat();
         setProcesos(procesosFindAll);
       } else {
@@ -180,7 +183,7 @@ export default function PlantillaIndex({
     handleOpenModal();
   };
 
-  const handleDelete = async (form: any, action: any) => {
+  const handleDelete = async (form: any) => {
     try {
       const dtoDelete: DeletePlantillaDTO = (({ id }) => ({ id: Number(id) }))(form);
 
@@ -194,7 +197,19 @@ export default function PlantillaIndex({
   const handleSubmit = async (form: any, action: any) => {
     try {
       if (action === 'edit' && form) {
-        const dtoUpdate: UpdatePlantillaDTO = (({ id, procesoDetalleId, variableId, formulaId, ordenCalculo, value, usuarioUpdate, codigoEmpresa }) => ({
+        const usuarioActual = 1;
+
+        const dtoUpdate: UpdatePlantillaDTO = (({
+          id,
+          procesoDetalleId,
+          variableId,
+          formulaId,
+          ordenCalculo,
+          value,
+          usuarioUpdate,
+          codigoEmpresa,
+          acumular
+        }) => ({
           id: Number(id),
           procesoDetalleId: Number(procesoDetalleId),
           variableId: Number(variableId),
@@ -202,13 +217,16 @@ export default function PlantillaIndex({
           ordenCalculo: Number(ordenCalculo),
           value: Number(value),
           redondeo: 0,
-          usuarioUpdate: Number(usuarioUpdate),
-          codigoEmpresa: Number(codigoEmpresa)
+          usuarioUpdate: usuarioUpdate ? Number(usuarioUpdate) : usuarioActual,
+          codigoEmpresa: Number(codigoEmpresa),
+          acumular: Boolean(acumular)
         }))(form);
 
         const updateResponse = await updatePlantilla(dtoUpdate);
-      } else if (action === 'create') {
+        console.log('updateResponse', updateResponse)
+      } else if (action === 'create' && form) {
         const createResponse = await createPlantilla(form);
+        console.log('createResponse', createResponse);
       }
     } catch (error) {
       console.error('Error submitting plantilla:', error);
@@ -217,7 +235,14 @@ export default function PlantillaIndex({
 
   const handleReorderPlantillas = async (nuevoOrden: any[]) => {
     try {
-      await reorderPlantilla(nuevoOrden);
+      const response = await reorderPlantilla(nuevoOrden);
+
+      if (response.isValid && response.data && Array.isArray(response.data)) {
+        const { data } = response
+        setPlantillas(data);
+      } else {
+        setPlantillas(nuevoOrden);
+      }
     } catch (error) {
       console.error('Error updating order:', error);
     }
@@ -261,8 +286,10 @@ export default function PlantillaIndex({
           </Box>
 
           {procesoId !== '' && <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-            <Grid item xs={12} md={6}>
-              <ListaVariablePorProceso procesoId={procesoId} />
+            <Grid item xs={12} md={12} sx={{ p: 3, borderBottom: theme => `1px solid ${theme.palette.divider}` }}>
+              <FormulaProvider>
+                <ListaVariablePorProceso procesoId={procesoId} />
+              </FormulaProvider>
             </Grid>
           </Grid>}
 
@@ -319,13 +346,13 @@ export default function PlantillaIndex({
                 <Box sx={{ flex: 1 }} />
                 <AddIcon
                   sx={{
-                    cursor: 'pointer',
-                    color: 'primary.main',
+                    cursor: detalleSeleccionado == null ? 'not-allowed' : 'pointer',
+                    color: detalleSeleccionado == null ? 'grey.400' : 'primary.main',
                     fontSize: 28,
                     mr: 1
                   }}
                   titleAccess="Nueva Plantilla"
-                  onClick={handleNuevaPlantilla}
+                  onClick={detalleSeleccionado == null ? undefined : handleNuevaPlantilla}
                 />
               </Box>
 

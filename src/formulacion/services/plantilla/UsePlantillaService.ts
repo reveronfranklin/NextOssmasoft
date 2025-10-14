@@ -27,7 +27,6 @@ const usePlantillaService = (): IPlantillaService => {
   })
   const [loading, setLoading] = useState<boolean>(false)
 
-  // Obtener lista de procesos
   const getListProcesos = useCallback(async (filters: DTOProcesoFindAll): Promise<IApiResponse<IProcesoFindAllResponse[]>> => {
     try {
       setLoading(true)
@@ -42,7 +41,6 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
-  // Obtener lista de detalles de proceso
   const getListDetalleProcesos = useCallback(async (filters: DTOProcesoDetalleFindAll): Promise<IApiResponse<IProcesoDetalleFindAllResponse[]>> => {
     try {
       setLoading(true)
@@ -57,7 +55,6 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
-  // Obtener plantillas por código de detalle de proceso
   const getPlantillasByDetalleProceso = useCallback(async (filters: DTOGetAllByCodigoDetalleProceso): Promise<IApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>> => {
     try {
       setLoading(true)
@@ -72,12 +69,12 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
-  //reordenar plantilla
   const reorderPlantilla = useCallback(async (filters: DTOReorderPlantilla): Promise<any> => {
     try {
-      console.log('servicio para actualizar el reordenamiento de la plantilla', filters)
+      const { nuevoOrden } = filters;
       setLoading(true)
-      const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaReorderResponse>>(UrlPlantillaServices.REORDERPLANTILLA, filters)
+
+      const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaReorderResponse>>(UrlPlantillaServices.REORDERPLANTILLA, nuevoOrden)
       const responseHandleApi = handleApiResponse<IPlantillaReorderResponse>(responseFetch.data, 'Plantilla reordenada con éxito', setMessage, setError)
 
       return responseHandleApi
