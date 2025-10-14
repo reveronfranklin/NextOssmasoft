@@ -173,6 +173,7 @@ const FormularioPlantilla = ({
         required
         inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
         InputProps={{
+          readOnly: true,
           endAdornment: <InputAdornment position="end">número</InputAdornment>,
         }}
         helperText="Solo números enteros"

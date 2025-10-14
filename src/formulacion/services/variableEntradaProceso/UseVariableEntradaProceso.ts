@@ -25,6 +25,7 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.GETALLVARIABLESENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, undefined, setMessage, setError);
     } catch (e: any) {
       return handleApiError(e, setMessage, setError);
@@ -37,6 +38,7 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.FINDONEVARIABLESENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, undefined, setMessage, setError);
     } catch (e: any) {
       return handleApiError(e, setMessage, setError);
@@ -49,6 +51,7 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.CREATEVARIABLEENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, 'Variable creada con éxito', setMessage, setError);
     } catch (e: any) {
       return handleApiError(e, setMessage, setError);
@@ -61,8 +64,10 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.UPDATEVARIABLEENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, 'Variable actualizada con éxito', setMessage, setError);
     } catch (e: any) {
+
       return handleApiError(e, setMessage, setError);
     } finally {
       setLoading(false);
@@ -73,6 +78,7 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.DELETEVARIABLEENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, 'Variable eliminada con éxito', setMessage, setError);
     } catch (e: any) {
       return handleApiError(e, setMessage, setError);
