@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material';
 import Icon from 'src/@core/components/icon';
-/* import DataGridLotesComponent from '../components/dataGrid/Lotes'; */
+import DataGridLotesComponent from '../components/dataGrid/PreOrdenPago';
 import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
 
 const LayoutPreOrdenPago = () => {
@@ -28,7 +28,7 @@ const LayoutPreOrdenPago = () => {
             </CardContent>
             <CardContent>
                 <Grid item sm={12} xs={12} sx={{ padding: '5px' }}>
-                    {/* <DataGridLotesComponent /> */}
+                    <DataGridLotesComponent />
                 </Grid>
             </CardContent>
         </Card>
