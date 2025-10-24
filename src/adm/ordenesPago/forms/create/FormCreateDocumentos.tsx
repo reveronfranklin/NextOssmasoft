@@ -261,7 +261,7 @@ const FormCreateDocumentosOp = () => {
         invalidateReset({
           tables: ['documentosTable'],
           resetForm: () => clearForm(),
-          delay: 5000,
+          delay: 0,
           closeActions: [
             () => dispatch(setIsOpenDialogDocumentosEdit(false)),
           ]
