@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { Card, CardContent, Grid, Tooltip, IconButton, CardHeader} from '@mui/material';
 import Icon from 'src/@core/components/icon';
 import DataGridLotesComponent from '../components/dataGrid/PreOrdenPago';
-import { setIsOpenDialogLote, setTypeOperation } from 'src/store/apps/pagos/lotes';
+import { setIsOpenDialogPreOrdenPago, setTypeOperation } from 'src/store/apps/preOrdenPago';
 
 const LayoutPreOrdenPago = () => {
     const dispatch = useDispatch()
@@ -10,7 +10,7 @@ const LayoutPreOrdenPago = () => {
     const handleCreate = async () => {
         dispatch(setTypeOperation('create'))
         setTimeout(() => {
-            dispatch(setIsOpenDialogLote(true))
+            dispatch(setIsOpenDialogPreOrdenPago(true))
         }, 1500)
     }
 

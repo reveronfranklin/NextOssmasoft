@@ -7,35 +7,24 @@ import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
 import moment from 'moment';
 import FormatNumber from '../../../../../utilities/format-numbers';
-import validateAmount from '../../../helpers/validateAmount';
-
-/* import {
-    setIsOpenDialogLote,
-    setLoteShow,
-    setTypeOperation,
-    setCodigoLote
-} from 'src/store/apps/pagos/lotes';
+import validateAmount from '../../../../../utilities/validateAmount';
+import { PreOrdenPagoDto } from '../../../interfaces';
 
 import {
-    setCodigoLote as setCodigoLotePagos,
-    setCodigoPago,
-    setIsOpenViewerPdf
-} from 'src/store/apps/pagos/lote-pagos'; */
+    setIsOpenDialogPreOrdenPago,
+    setPreOrdenPagoShow,
+    setTypeOperation,
+    setIdPreOrdenPAgo
+} from 'src/store/apps/preOrdenPago';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (lote: any) => {
-        /* dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogLote(true))
-        dispatch(setLoteShow(lote))
-        dispatch(setCodigoLote(lote.codigoLotePago)) */
-    }
-
-    const handleDialogViewerPdf = (codigoLotePago: number) => {
-     /*    dispatch(setIsOpenViewerPdf(true))
-        dispatch(setCodigoPago(0))
-        dispatch(setCodigoLotePagos(codigoLotePago)) */
+    const handleEdit = (preOrdenPago: PreOrdenPagoDto) => {
+        dispatch(setTypeOperation('update'))
+        dispatch(setIsOpenDialogPreOrdenPago(true))
+        dispatch(setPreOrdenPagoShow(preOrdenPago))
+        dispatch(setIdPreOrdenPAgo(preOrdenPago.id))
     }
 
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -58,14 +47,6 @@ const useColumnsDataGrid = (): GridColDef[] => {
                     <Tooltip title='Editar'>
                         <StyledIconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </StyledIconButton>
-                    </Tooltip>
-                    <Tooltip title="Ver PDF">
-                        <StyledIconButton
-                            size='small'
-                            onClick={() => handleDialogViewerPdf(row)}
-                        >
-                            <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
                 </Box>
