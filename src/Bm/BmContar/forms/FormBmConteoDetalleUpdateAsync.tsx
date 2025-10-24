@@ -72,7 +72,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [listUnidadTrabajo, setListUnidadTrabajo] = useState<ICPGetDto[]>([])
+  const [listUnidadTrabajo] = useState<ICPGetDto[]>([])
   const defaultValues = {
     codigoBmConteoDetalle: bmConteoDetalleSeleccionado.codigoBmConteoDetalle,
     cantidad: bmConteoDetalleSeleccionado.cantidad,

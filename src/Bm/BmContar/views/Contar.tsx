@@ -36,8 +36,6 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { GridSearchIcon } from '@mui/x-data-grid'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
 import { setListIcp } from 'src/store/apps/ICP'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
 
 // URL base de la API (simulada)
 // En un entorno real, esta sería la URL de tu backend
@@ -139,8 +137,6 @@ function Contar() {
   const [loading, setLoading] = useState<boolean>(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [listUnidadTrabajo, setListUnidadTrabajo] = useState<ICPGetDto[]>([])
-
-  const { listIcp, listIcpSeleccionado } = useSelector((state: RootState) => state.bmConteo)
 
   // Filtrar items basado en `numeroDePlaca`
   const filteredItems = items
