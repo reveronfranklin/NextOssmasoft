@@ -35,6 +35,7 @@ const FormCreate = () => {
     const rules            = getRules()
 
     const {
+        store,
         message,
         loading
     } = useServices()
@@ -86,7 +87,8 @@ const FormCreate = () => {
                 dataForm.documentoAdjunto.forEach((file, index) => {
                     formData.append(`documento_${index + 1}`, file)
                 })
-                // await store(formData)
+
+                await store(formData as any)
             }
         } catch (e: any) {
             console.error(e)

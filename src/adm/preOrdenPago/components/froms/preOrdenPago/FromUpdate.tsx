@@ -91,7 +91,9 @@ const FormUpdate = () => {
 
     const handleOnChangeAmount = (amount: string, field: FacturaField) => {
         const formattedTotal = parseFloat(amount) || 0
+
         /* setMonto(formattedTotal) */
+
         setValue(field, formattedTotal)
     }
 
@@ -118,7 +120,11 @@ const FormUpdate = () => {
     }
 
     const handleUpdatePreOrdenPago = async (data: PreOrdenPagoDto) => {
+        console.log('Data to update PreOrdenPago:', data);
+
         setDialogOpen(false);
+        setIsFormEnabled(true);
+
         // Lógica de actualización (ejemplo comentado)
         /* await updatePreOrdenPago(data);
         qc.invalidateQueries(['preOrdenPagoTable']); */
@@ -126,9 +132,10 @@ const FormUpdate = () => {
 
     const handleDelete = async () => {
         setDialogDeleteOpen(false);
+        dispatch(setIsOpenDialogPreOrdenPago(false))
+
         // Lógica de eliminación (ejemplo comentado)
         /* await deletePreOrdenPago(preOrdenPago.id);
-        dispatch(setIsOpenDialogPreOrdenPago(false));
         qc.invalidateQueries(['preOrdenPagoTable']); */
     }
 

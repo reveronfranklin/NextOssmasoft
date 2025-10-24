@@ -36,6 +36,8 @@ const useServices = () => {
     }, [ presupuestoSeleccionado.codigoPresupuesto ])
 
     const store = useCallback(async (payload: PreOrdenPagoDto): Promise<any> => {
+        console.log('Payload en store PreOrdenPago:', payload);
+
         /* try {
             setLoading(true)
             const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CREATE_LOTE, payload)
