@@ -29,6 +29,11 @@ export const PlantillaCRUD = ({ plantillaService }: IPlantillaCRUD) => {
     return await plantillaService.getPlantillasByDetalleProceso(filters);
   }, [plantillaService.getPlantillasByDetalleProceso])
 
+  const reorderPlantilla = useCallback(async (nuevoOrden: any[]) => {
+
+    return await plantillaService.reorderPlantilla({ nuevoOrden });
+  }, [plantillaService.reorderPlantilla])
+
   const createPlantilla = useCallback(async (payload: CreatePlantillaDTO) => {
 
     return await plantillaService.createPlantilla(payload);
@@ -50,6 +55,7 @@ export const PlantillaCRUD = ({ plantillaService }: IPlantillaCRUD) => {
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,

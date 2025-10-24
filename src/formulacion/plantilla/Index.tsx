@@ -14,12 +14,18 @@ import useVariableService from '../services/variable/UseVariableService';
 import usePlantillaService from '../services/plantilla/UsePlantillaService';
 
 import { DTOProcesoFindAll, IProcesoFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoFindAll.interfaces'
-import { DTOProcesoDetalleFindAll, IProcesoDetalleFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
+import { DTOProcesoDetalleFindAll } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
 import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse } from 'src/formulacion/interfaces/plantilla/GetAllByCodigoDetalleProceso.interfaces'
+
+// import { IPlantillaReorderResponse } from 'src/formulacion/interfaces/plantilla/Reorder.interfaces'
 
 import CrudModal from '../views/CrudModal';
 import useCrudModal from '../shared/hooks/useCrudModal';
 import FormularioPlantilla from '../views/Plantillas/Formulario';
+
+import FormulaProvider from '../context/FormulaProvider';
+import { UpdatePlantillaDTO } from 'src/formulacion/interfaces/plantilla/Update.interfaces'
+import { DeletePlantillaDTO } from 'src/formulacion/interfaces/plantilla/Delete.interfaces'
 
 interface PlantillaIndexProps {
   formulaService?: ReturnType<typeof useFormulaService> | null;
@@ -37,16 +43,24 @@ export default function PlantillaIndex({
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState<IGetAllByCodigoDetalleProcesoResponse | null>(null);
 
   const [procesos, setProcesos] = useState<IProcesoFindAllResponse[]>([]);
-
-  // const [loadingProcesos, setLoadingProcesos] = useState(false);
-
-  const [detalles, setDetalles] = useState<IProcesoDetalleFindAllResponse[]>([])
-
+  const [loadingProcesos, setLoadingProcesos] = useState(false);
+  const [detalles, setDetalles] = useState<any[]>([])
   const [loadingDetalle] = useState(false)
-
   const [plantillas, setPlantillas] = useState<IGetAllByCodigoDetalleProcesoResponse[]>([])
-
   const [loadingPlantillas] = useState(false)
+  const [modoEdicion, setModoEdicion] = useState(false);
+
+  const defaultPlantilla = {
+    procesoDetalleId: detalleSeleccionado,
+    variableId: null,
+    formulaId: null,
+    ordenCalculo: 0,
+    redondeo: 0,
+    value: 0,
+    usuarioInsert: 1,
+    codigoEmpresa: 13,
+    acumular: false
+  };
 
   const formulaServiceFromHook = useFormulaService();
   const variableServiceFromHook = useVariableService();
@@ -66,14 +80,13 @@ export default function PlantillaIndex({
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,
   } = usePlantillaBuilder(services)
 
-  const {
-    variables: availableVariables,
-  } = useFormulaBuilder(services)
+  const { variables: availableVariables } = useFormulaBuilder(services)
 
   const {
     modalOpen,
@@ -83,7 +96,8 @@ export default function PlantillaIndex({
 
   useEffect(() => {
     const fetchProcesos = async () => {
-      // setLoadingProcesos(true);
+      console.log(loadingProcesos);
+      setLoadingProcesos(true);
 
       const payload: DTOProcesoFindAll = {
         page: 1,
@@ -93,14 +107,17 @@ export default function PlantillaIndex({
 
       const response = await getListProcesos(payload);
 
+      console.log('lista de procesos', response.data)
+
       if (response && response.isValid && Array.isArray(response.data)) {
-        const procesosFindAll: IProcesoFindAllResponse[] = response.data
+        const { data } = response
+        const procesosFindAll = data.flat();
         setProcesos(procesosFindAll);
       } else {
         setProcesos([]);
       }
 
-      // setLoadingProcesos(false);
+      setLoadingProcesos(false);
     };
     fetchProcesos();
   }, [getListProcesos]);
@@ -119,7 +136,10 @@ export default function PlantillaIndex({
         const response = await getPlantillasByDetalleProceso(payload);
 
         if (response && response.isValid && Array.isArray(response.data)) {
-          setPlantillas(response.data);
+          const { data } = response
+          const datosAplanados = data.flat();
+
+          setPlantillas(datosAplanados);
         } else {
           setPlantillas([]);
         }
@@ -128,7 +148,6 @@ export default function PlantillaIndex({
     }
   }, [detalleSeleccionado, getPlantillasByDetalleProceso]);
 
-  //SELECCIONAR PROCESO
   const handleProcesoChange = async (e: SelectChangeEvent) => {
     const value = e.target.value
     setProcesoId(value === '' ? '' : Number(value))
@@ -152,17 +171,24 @@ export default function PlantillaIndex({
     }
   }
 
-  const handleOpenModalPlantilla = (plantilla: IGetAllByCodigoDetalleProcesoResponse) => {
-    setPlantillaSeleccionada(plantilla);
+  const handleNuevaPlantilla = () => {
+    setPlantillaSeleccionada(null);
+    setModoEdicion(false);
     handleOpenModal();
   };
 
-  const handleDelete = async (form: any, action: any) => {
-    try {
-      console.log('deleted', form)
-      console.log('action', action)
+  const handleOpenModalPlantilla = (plantilla: IGetAllByCodigoDetalleProcesoResponse) => {
+    setPlantillaSeleccionada(plantilla);
+    setModoEdicion(true);
+    handleOpenModal();
+  };
 
-      await deletePlantilla(form);
+  const handleDelete = async (form: any) => {
+    try {
+      const dtoDelete: DeletePlantillaDTO = (({ id }) => ({ id: Number(id) }))(form);
+
+      const deleteResponse = await deletePlantilla(dtoDelete);
+      console.log('Deleted plantilla:', deleteResponse);
     } catch (error) {
       console.error('Error deleting plantilla:', error);
     }
@@ -171,16 +197,54 @@ export default function PlantillaIndex({
   const handleSubmit = async (form: any, action: any) => {
     try {
       if (action === 'edit' && form) {
-        console.log('Editing form:', form);
-        const updateResponse = await updatePlantilla(form);
+        const usuarioActual = 1;
 
+        const dtoUpdate: UpdatePlantillaDTO = (({
+          id,
+          procesoDetalleId,
+          variableId,
+          formulaId,
+          ordenCalculo,
+          value,
+          usuarioUpdate,
+          codigoEmpresa,
+          acumular
+        }) => ({
+          id: Number(id),
+          procesoDetalleId: Number(procesoDetalleId),
+          variableId: Number(variableId),
+          formulaId: Number(formulaId),
+          ordenCalculo: Number(ordenCalculo),
+          value: Number(value),
+          redondeo: 0,
+          usuarioUpdate: usuarioUpdate ? Number(usuarioUpdate) : usuarioActual,
+          codigoEmpresa: Number(codigoEmpresa),
+          acumular: Boolean(acumular)
+        }))(form);
+
+        const updateResponse = await updatePlantilla(dtoUpdate);
         console.log('updateResponse', updateResponse)
-      } else if (action === 'create') {
-        console.log('Created form', form)
-        await createPlantilla(form);
+      } else if (action === 'create' && form) {
+        const createResponse = await createPlantilla(form);
+        console.log('createResponse', createResponse);
       }
     } catch (error) {
       console.error('Error submitting plantilla:', error);
+    }
+  };
+
+  const handleReorderPlantillas = async (nuevoOrden: any[]) => {
+    try {
+      const response = await reorderPlantilla(nuevoOrden);
+
+      if (response.isValid && response.data && Array.isArray(response.data)) {
+        const { data } = response
+        setPlantillas(data);
+      } else {
+        setPlantillas(nuevoOrden);
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
     }
   };
 
@@ -222,16 +286,15 @@ export default function PlantillaIndex({
           </Box>
 
           {procesoId !== '' && <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-            <Grid item xs={12} md={6}>
-              <ListaVariablePorProceso procesoId={procesoId} />
+            <Grid item xs={12} md={12} sx={{ p: 3, borderBottom: theme => `1px solid ${theme.palette.divider}` }}>
+              <FormulaProvider>
+                <ListaVariablePorProceso procesoId={procesoId} />
+              </FormulaProvider>
             </Grid>
           </Grid>}
 
           <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-            <Grid
-              item
-              xs={12}
-              md={6}
+            <Grid item xs={12} md={6}
               sx={{
                 height: '100%',
                 overflowY: 'auto',
@@ -269,10 +332,7 @@ export default function PlantillaIndex({
               />
             </Grid>
 
-            <Grid
-              item
-              xs={12}
-              md={6}
+            <Grid item xs={12} md={6}
               sx={{
                 height: '100%',
                 overflowY: 'auto',
@@ -286,16 +346,13 @@ export default function PlantillaIndex({
                 <Box sx={{ flex: 1 }} />
                 <AddIcon
                   sx={{
-                    cursor: 'pointer',
-                    color: 'primary.main',
+                    cursor: detalleSeleccionado == null ? 'not-allowed' : 'pointer',
+                    color: detalleSeleccionado == null ? 'grey.400' : 'primary.main',
                     fontSize: 28,
                     mr: 1
                   }}
                   titleAccess="Nueva Plantilla"
-                  onClick={() => {
-                    setPlantillaSeleccionada(null);
-                    handleOpenModal();
-                  }}
+                  onClick={detalleSeleccionado == null ? undefined : handleNuevaPlantilla}
                 />
               </Box>
 
@@ -317,6 +374,7 @@ export default function PlantillaIndex({
                 detalleId={detalleSeleccionado}
                 loading={loadingPlantillas}
                 onSelectPlantilla={handleOpenModalPlantilla}
+                onReorder={handleReorderPlantillas}
               />
             </Grid>
           </Grid>
@@ -324,20 +382,21 @@ export default function PlantillaIndex({
 
         <CrudModal
           open={modalOpen}
-          title={plantillaSeleccionada ? "Editar Plantilla" : "Nueva Plantilla"}
-          initialValues={plantillaSeleccionada || { code: '', descripcion: '', tipo: '' }}
-          fields={null}
+          title={modoEdicion ? "Editar Plantilla" : "Nueva Plantilla"}
           onClose={handleCloseModal}
           onSubmit={handleSubmit}
           onDelete={handleDelete}
-          isEdit={!!plantillaSeleccionada}
+          isEdit={modoEdicion}
           formValues={plantillaSeleccionada || {}}
+          maxWidth={plantillaSeleccionada ? "sm" : "sm"}
         >
-          <FormularioPlantilla
-            initialValues={plantillaSeleccionada || { code: '', descripcion: '', tipo: '' }}
-            onChange={setPlantillaSeleccionada}
-            availableVariables={availableVariables}
-          />
+          <FormulaProvider>
+            <FormularioPlantilla
+              initialValues={{ ...defaultPlantilla, ...plantillaSeleccionada }}
+              onChange={setPlantillaSeleccionada}
+              availableVariables={availableVariables}
+            />
+          </FormulaProvider>
         </CrudModal>
       </Container>
     </Box>
