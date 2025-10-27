@@ -13,7 +13,7 @@ import useInvalidateReset from 'src/hooks/useInvalidateReset';
 import useColumnsDataGrid from './headers/ColumnsDataGridPagos';
 import { useServices, useServicesPagos } from '../../services';
 import { PagoFilterDto, PagoAmountDto, PagoResponseDto } from '../../interfaces';
-import validateAmount from '../../helpers/validateAmount';
+import validateAmount from '../../../../../utilities/validateAmount';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 'auto',
