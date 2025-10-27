@@ -41,6 +41,7 @@ const DataGridComponent = () => {
 
   const rowCount = query.isSuccess ? query.data.cantidadRegistros : 0;
   const total1 = query.data?.total1 ?? 0
+  const total2 = query.data?.total2 ?? 0
   const total3 = query.data?.total3 ?? 0
   const total4 = query.data?.total4 ?? 0
 
@@ -73,6 +74,10 @@ const DataGridComponent = () => {
               <div>
                 <label style={{ marginRight: '5px' }}><b>% Retenido:</b></label>
                 {FormatNumber(total4)}
+              </div>
+              <div>
+                <label style={{ marginRight: '5px' }}><b>Monto total documento:</b></label>
+                {FormatNumber(total1 + total2 + total3)}
               </div>
             </div>
           </small>
