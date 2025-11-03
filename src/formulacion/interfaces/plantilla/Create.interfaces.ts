@@ -1,18 +1,28 @@
 export interface CreatePlantillaDTO {
-  nombre: string;
-  descripcion: string;
-  tipo: string;
-  contenido: string;
+  procesoDetalleId: number;
+  variableId: number;
+  formulaId: number;
+  ordenCalculo: number;
+  value: number;
+  usuarioInsert: number;
+  codigoEmpresa: number;
 }
 
 export interface IPlantillaCreateResponse {
   id: number;
-  nombre: string;
-  descripcion: string;
-  tipo: string;
-  contenido: string;
+  procesoDetalleId: number;
+  variableId: number;
+  code: string;
+  formulaId: number;
+  descripcionFormula: string;
+  formulaValue: string;
+  value: number;
+  ordenCalculo: number;
+  redondeo: number;
+  estado: string;
   fechaIns: Date;
   usuarioInsert: number;
   fechaUpd: Date;
   usuarioUpdate: any;
+  codigoEmpresa: number;
 }

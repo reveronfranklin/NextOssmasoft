@@ -7,7 +7,7 @@ import { IconButton, Tooltip, Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
 import FormatNumber from '../../../../../../utilities/format-numbers';
 import { PagoDto } from '../../../interfaces';
-import validateAmount from '../../../helpers/validateAmount';
+import validateAmount from '../../../../../../utilities/validateAmount';
 
 import {
     setTypeOperation,

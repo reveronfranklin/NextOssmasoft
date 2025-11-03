@@ -5,6 +5,7 @@ import { UrlPlantillaServices } from 'src/formulacion/enums/UrlPlantillaServices
 import { DTOProcesoDetalleFindAll, IProcesoDetalleFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoDetalleFindAll.interfaces'
 import { DTOProcesoFindAll, IProcesoFindAllResponse } from 'src/formulacion/interfaces/plantilla/ProcesoFindAll.interfaces'
 import { DTOGetAllByCodigoDetalleProceso, IGetAllByCodigoDetalleProcesoResponse } from 'src/formulacion/interfaces/plantilla/GetAllByCodigoDetalleProceso.interfaces'
+import { DTOReorderPlantilla, IPlantillaReorderResponse } from 'src/formulacion/interfaces/plantilla/Reorder.interfaces'
 
 import { CreatePlantillaDTO, IPlantillaCreateResponse } from 'src/formulacion/interfaces/plantilla/Create.interfaces'
 import { UpdatePlantillaDTO, IPlantillaUpdateResponse } from 'src/formulacion/interfaces/plantilla/Update.interfaces'
@@ -26,7 +27,6 @@ const usePlantillaService = (): IPlantillaService => {
   })
   const [loading, setLoading] = useState<boolean>(false)
 
-  // Obtener lista de procesos
   const getListProcesos = useCallback(async (filters: DTOProcesoFindAll): Promise<IApiResponse<IProcesoFindAllResponse[]>> => {
     try {
       setLoading(true)
@@ -41,7 +41,6 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
-  // Obtener lista de detalles de proceso
   const getListDetalleProcesos = useCallback(async (filters: DTOProcesoDetalleFindAll): Promise<IApiResponse<IProcesoDetalleFindAllResponse[]>> => {
     try {
       setLoading(true)
@@ -56,12 +55,27 @@ const usePlantillaService = (): IPlantillaService => {
     }
   }, [])
 
-  // Obtener plantillas por código de detalle de proceso
   const getPlantillasByDetalleProceso = useCallback(async (filters: DTOGetAllByCodigoDetalleProceso): Promise<IApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>> => {
     try {
       setLoading(true)
       const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IGetAllByCodigoDetalleProcesoResponse[]>>(UrlPlantillaServices.GETALLPLANTILLASBYCODIGODETALLE, filters)
       const responseHandleApi = handleApiResponse<IGetAllByCodigoDetalleProcesoResponse[]>(responseFetch.data, undefined, setMessage, setError)
+
+      return responseHandleApi
+    } catch (e: any) {
+      return handleApiError(e, setMessage, setError)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const reorderPlantilla = useCallback(async (filters: DTOReorderPlantilla): Promise<any> => {
+    try {
+      const { nuevoOrden } = filters;
+      setLoading(true)
+
+      const responseFetch = await ossmmasofApiGateway.post<IResponseBase<IPlantillaReorderResponse>>(UrlPlantillaServices.REORDERPLANTILLA, nuevoOrden)
+      const responseHandleApi = handleApiResponse<IPlantillaReorderResponse>(responseFetch.data, 'Plantilla reordenada con éxito', setMessage, setError)
 
       return responseHandleApi
     } catch (e: any) {
@@ -120,6 +134,7 @@ const usePlantillaService = (): IPlantillaService => {
     getListProcesos,
     getListDetalleProcesos,
     getPlantillasByDetalleProceso,
+    reorderPlantilla,
     createPlantilla,
     updatePlantilla,
     deletePlantilla,

@@ -57,21 +57,16 @@ const FilterDesdeHastaTipoNomina = ({
   }
 
   const dataTipoNomina = async () => {
-    /*     const filterTipoNomina:IPersonaFilterDto = {
-      codigoPersona:0,
-      desde:fechaDesde,
-      hasta:fechaHasta
-    } */
-
-    //const responseAllTipoNomina= await ossmmasofApi.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
     const responseAllTipoNomina = await ossmmasofApi.get<any>('/RhTipoNomina/GetAll')
-    console.log('responseAll tipo nomona', responseAllTipoNomina)
+
     const { data } = responseAllTipoNomina
 
     if (data) {
       console.log('responseAll tipo nomina por persona', dataTipoNomina)
       dispatch(setTiposNomina(data))
-      dispatch(setTipoNominaSeleccionado(data[0]))
+      if (!tipoNominaSeleccionado.codigoTipoNomina) {
+        dispatch(setTipoNominaSeleccionado(data[0]))
+      }
     }
   }
 

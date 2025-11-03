@@ -158,10 +158,6 @@ export default function FormulaBuilder({
               setFormula={setFormula}
             />
 
-            {/* <pre>{JSON.stringify(selectedFormula, null, 2)}</pre> */}
-
-            {/* <pre>{JSON.stringify(selectedVariable, null, 2)}</pre> */}
-
             <ActionButtonGroup
               onEvaluate={handleEvaluate}
               onDeleteFormula={handleDelete}
@@ -200,7 +196,7 @@ export default function FormulaBuilder({
             )}
           </Grid>
           <Grid item xs={12} sm={12}>
-            <FormulaProvider >
+            <FormulaProvider>
               <ListFormulas
                 formulas={availableFormulas}
                 onFunctionSelect={insertTextIntoFormulaInput}
