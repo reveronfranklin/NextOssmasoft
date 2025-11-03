@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiN8N } from 'src/MyApis/ossmmasofApiN8N';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/urlServices.enum';
@@ -36,19 +37,17 @@ const useServices = () => {
     }, [ presupuestoSeleccionado.codigoPresupuesto ])
 
     const store = useCallback(async (payload: PreOrdenPagoDto): Promise<any> => {
-        console.log('Payload en store PreOrdenPago:', payload);
-
-        /* try {
+        try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<ResponseDto<LoteResponseDto>>(UrlServices.CREATE_LOTE, payload)
-            const message   = 'Lote de pago creado exitosamente'
+            const response  = await ossmmasofApiN8N.post<ResponseDto<PreOrdenPagoDto>>(UrlServices.CREATE_PRE_ORDEN_PAGO, payload)
+            const message   = 'Facturas procesadas exitosamente'
 
-            return handleApiResponse<LoteResponseDto>(response.data, message, setMessage, setError)
+            return handleApiResponse<PreOrdenPagoDto>(response.data, message, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
-        } */
+        }
     }, [])
 
     return {

@@ -10,7 +10,8 @@ import {
     InputLabel,
     Chip,
     Typography,
-    Stack
+    Stack,
+    CircularProgress
 } from '@mui/material';
 
 import { useServices } from '../../../services';
@@ -79,24 +80,27 @@ const FormCreate = () => {
     const handleUploadFile = async (dataForm: FileFormDto) => {
         setIsFormEnabled(false)
 
-        console.log('Archivos a subir:', dataForm.documentoAdjunto)
-
         try {
             if (dataForm.documentoAdjunto.length > 0) {
                 const formData = new FormData()
                 dataForm.documentoAdjunto.forEach((file, index) => {
-                    formData.append(`documento_${index + 1}`, file)
+                    formData.append(`files${index}`, file)
                 })
 
-                await store(formData as any)
+                const response = await store(formData as any)
+
+               /*  if (response?.isValid) { */
+                    console.log('Archivos subidos con éxito:', response)
+                    handleClearForm()
+                    handleCloseDialog()
+                /* } */
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('handleUploadFile', e)
         } finally {
-            handleCloseDialog()
             setIsFormEnabled(true)
             qc.invalidateQueries({
-                queryKey: ['archivosAdjuntosTable']
+                queryKey: ['preOrdenPagoTable']
             })
         }
     }
@@ -113,6 +117,29 @@ const FormCreate = () => {
                     sx={{ overflow: 'auto', padding: '0 1rem' }}
                 >
                     <Box>
+                        {loading && (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    zIndex: 10,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: 1,
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
+                                    Analizando archivos, espere por favor...
+                                </Typography>
+                                <CircularProgress />
+                            </Box>
+                        )}
+
                         {!!isFormEnabled ?
                             <form>
                                 <Grid container spacing={0} paddingTop={0} paddingBottom={0} justifyContent="flex">
