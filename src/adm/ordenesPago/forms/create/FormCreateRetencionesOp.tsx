@@ -11,6 +11,7 @@ import { useServicesRetencionesOp } from '../../services/index'
 import SearchIcon from '@mui/icons-material/Search'
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import { useWatch } from "react-hook-form";
 
 import {
   setIsOpenDialogConfirmButtons,
@@ -186,6 +187,7 @@ const FormCreateRetencionesOp = () => {
     setValue('codigoRetencion', 0)
 
     setPorRetencion(0)
+    setValue('porRetencion', 0)
     dispatch(setRetencionOpSeleccionado(null))
     dispatch(setRetencionSeleccionado(null))
     setIsDisabledRetencion(false)
@@ -221,16 +223,33 @@ const FormCreateRetencionesOp = () => {
       setValue('codigoRetencion', codigoRetencion || 0)
       setPorRetencion(porRetencion || 0)
 
+      setIsDisabledRetencion(!!descripcionTipoRetencion);
+
       const respuestaMontoRetencion = baseTotalDocumentos === 0 ?
         calcularMontoRetencion(totalCompromiso, porRetencion)
         : calcularMontoRetencion(baseTotalDocumentos, porRetencion)
 
       if (respuestaMontoRetencion) {
-        setIsDisabledRetencion(true)
         setValue('montoRetencion', respuestaMontoRetencion)
+        setValue('montoRetenido', respuestaMontoRetencion) // <-- Aquí también
       }
+    } else {
+      setIsDisabledRetencion(false);
     }
   }, [retencionSeleccionado, setValue])
+
+  // Agrega este useEffect después de los otros efectos
+  useEffect(() => {
+    // Solo recalcula si el campo está habilitado (es manual)
+    if (!getValues('conceptoPago')) {
+      const porcentaje = porRetencion || 0;
+      const base = baseTotalDocumentos === 0 ? totalCompromiso : baseTotalDocumentos;
+      const respuestaMontoRetencion = calcularMontoRetencion(base, porcentaje);
+      setValue('montoRetencion', respuestaMontoRetencion);
+      setValue('montoRetenido', respuestaMontoRetencion); // <-- Asegura que montoRetenido siempre sea igual
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [porRetencion, baseTotalDocumentos, totalCompromiso]);
 
   const handleTipoRetencion = (tipoRetencionId: any) => {
     setValue('tipoRetencion', tipoRetencionId)
@@ -242,6 +261,16 @@ const FormCreateRetencionesOp = () => {
       dispatch(setRetencionOpSeleccionado(null));
     };
   }, [])
+
+  const montoRetencionValue = useWatch({
+    control,
+    name: 'montoRetencion'
+  });
+
+  useEffect(() => {
+    setValue('montoRetenido', montoRetencionValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [montoRetencionValue]);
 
   return (
     <Box>
@@ -387,7 +416,7 @@ const FormCreateRetencionesOp = () => {
           </Grid>
           <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
             <Controller
-              name='montoRetencion'
+              name='montoRetenido'
               control={control}
               render={({ field: { value, onChange, ref } }) => (
                 <NumericFormat
@@ -403,8 +432,8 @@ const FormCreateRetencionesOp = () => {
                   label='Monto Retenido'
                   variant='outlined'
                   size='small'
-                  disabled
                   inputRef={ref}
+                  InputProps={{ readOnly: true }}
                 />
               )}
             />
@@ -426,41 +455,44 @@ const FormCreateRetencionesOp = () => {
               )}
             />
           </Grid>
-          <Grid container item sm={6} xs={12} sx={{ padding: 2 }}>
-          </Grid>
+
+          {/* Campo auxiliar % Retención alineado con los botones */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+            {/* Botones de acción alineados a la izquierda */}
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <CustomButtonDialog
+                saveButtonConfig={{
+                  label: 'Crear',
+                  onClick: handleCreateOrden,
+                  show: true,
+                  confirm: true
+                }}
+                updateButtonConfig={{
+                  label: 'Modificar',
+                  onClick: handleUpdateOrden,
+                  show: !!retencionOpSeleccionado?.codigoRetencionOp,
+                  confirm: true
+                }}
+                deleteButtonConfig={{
+                  label: 'Eliminar',
+                  onClick: handleDeleteOrden,
+                  show: !!retencionOpSeleccionado?.codigoRetencionOp,
+                  confirm: true
+                }}
+                clearButtonConfig={{
+                  label: 'Limpiar',
+                  onClick: clearForm,
+                  show: true
+                }}
+                loading={loading}
+                isOpenDialog={isOpenDialogConfirmButtons}
+                setIsOpenDialog={setIsOpenDialogConfirmButtons}
+                isFormValid={isValid}
+              />
+            </Box>
+          </Box>
         </Grid>
       </form>
-      <Box sx={{ paddingTop: 4 }}>
-        <CustomButtonDialog
-          saveButtonConfig={{
-            label: 'Crear',
-            onClick: handleCreateOrden,
-            show: true,
-            confirm: true
-          }}
-          updateButtonConfig={{
-            label: 'Modificar',
-            onClick: handleUpdateOrden,
-            show: !!retencionOpSeleccionado?.codigoRetencionOp,
-            confirm: true
-          }}
-          deleteButtonConfig={{
-            label: 'Eliminar',
-            onClick: handleDeleteOrden,
-            show: !!retencionOpSeleccionado?.codigoRetencionOp,
-            confirm: true
-          }}
-          clearButtonConfig={{
-            label: 'Limpiar',
-            onClick: clearForm,
-            show: true
-          }}
-          loading={loading}
-          isOpenDialog={isOpenDialogConfirmButtons}
-          setIsOpenDialog={setIsOpenDialogConfirmButtons}
-          isFormValid={isValid}
-        />
-      </Box>
       <AlertMessage
         message={message?.text ?? ''}
         severity={message?.isValid ? 'success' : 'error'}
