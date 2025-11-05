@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import CrudModal from 'src/formulacion/views/CrudModal';
 import useCrudModal from 'src/formulacion/shared/hooks/useCrudModal';
-
 import FormularioVariableEntradaProceso from '../../views/VariableEntradaProceso/Formulario';
 import Box from '@mui/material/Box';
 
@@ -18,7 +17,7 @@ import useFormulaService from '../../services/formula/UseFormulaService';
 import useVariableService from '../../services/variable/UseVariableService';
 import usePlantillaService from '../../services/plantilla/UsePlantillaService';
 
-const ListaVariablePorProceso = ({ procesoId }) => {
+const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
   const { variableEntradaProcesoService } = useContext(FormulaContext);
 
   const [variableSeleccionada, setVariableSeleccionada] = useState(null);
@@ -126,9 +125,9 @@ const ListaVariablePorProceso = ({ procesoId }) => {
   const handleNuevaVariable = () => {
     setVariableSeleccionada({
       procesoId,
+      descripcionProceso: descripcionProceso || '',
       code: 0,
       descripcionVariable: '',
-      descripcionProceso: '',
       variableId: 0
     });
     setModoEdicion(false);
@@ -172,7 +171,7 @@ const ListaVariablePorProceso = ({ procesoId }) => {
           </Box>
           <CrudModal
             open={modalOpen}
-            title={modoEdicion ? "Editar Plantilla" : "Nueva Plantilla"}
+            title={modoEdicion ? "Editar Variable" : "Nueva Variable"}
             onClose={handleCloseModal}
             onSubmit={handleSubmit}
             onDelete={handleDelete}
@@ -180,14 +179,12 @@ const ListaVariablePorProceso = ({ procesoId }) => {
             formValues={variableSeleccionada || {}}
             maxWidth={variableSeleccionada ? "sm" : "sm"}
             disableSubmit={!formValid}
-            PaperProps = {
-              {
-                sx: {
-                  minHeight: '75vh', // Más alto
-                  minWidth: '600px' // Más ancho
-                }
-              }
-            }
+            PaperProps = {{ sx: { minHeight: '70vh', minWidth: '750px' } }}
+            actionsEnabled = {{
+              update: false,
+              delete: true,
+              create: true,
+            }}
           >
             <FormulaProvider>
               <FormularioVariableEntradaProceso

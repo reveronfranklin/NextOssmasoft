@@ -99,73 +99,62 @@ const FormularioVariableEntradaProceso = ({
 
   return (
     <>
-    <form style={{ minWidth: 350, maxWidth: 500 }}>
-      <TextField
-        name="procesoId"
-        label="Proceso ID"
-        value={values && values.procesoId}
-        onChange={handleChange}
-        fullWidth
-        margin="dense"
-        required
-        type="number"
-        InputProps={{ readOnly: true }}
-      />
-      <TextField
-        name="descripcionProceso"
-        label="DescripcionProceso"
-        value={values && values.descripcionProceso}
-        onChange={handleChange}
-        fullWidth
-        margin="dense"
-      />
-      {memoizedVariables && memoizedVariables.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <FormulaProvider>
-            <VariableSelector
-              variables={memoizedVariables}
-              selectedVariableId={values.variableId || null}
-              onVariableSelect={handleVariableSelect}
-              showAddButton={false}
-            />
-          </FormulaProvider>
+      <form style={{ minWidth: 700, maxWidth: 700 }}>
+        <TextField
+          name="procesoId"
+          label="Proceso ID"
+          value={values && values.procesoId}
+          onChange={handleChange}
+          fullWidth
+          margin="dense"
+          required
+          type="number"
+          InputProps={{ readOnly: true }}
+        />
+        <TextField
+          name="descripcionProceso"
+          label="DescripcionProceso"
+          value={values && values.descripcionProceso}
+          onChange={handleChange}
+          fullWidth
+          margin="dense"
+        />
+        {memoizedVariables && memoizedVariables.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <FormulaProvider>
+              <VariableSelector
+                variables={memoizedVariables}
+                selectedVariableId={values.variableId || null}
+                onVariableSelect={handleVariableSelect}
+                showAddButton={false}
+              />
+            </FormulaProvider>
+          </Box>
+        )}
+        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <TextField
+            name="variableId"
+            label="Variable ID"
+            value={values && values.variableId}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            InputProps={{ readOnly: true }}
+            sx={{ flex: 1 }}
+          />
+          <TextField
+            name="code"
+            label="Código"
+            value={values && values.code}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            required
+            InputProps={{ readOnly: true }}
+            sx={{ flex: 2 }}
+          />
         </Box>
-      )}
-      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-        <TextField
-          name="code"
-          label="Código"
-          value={values && values.code}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          required
-          InputProps={{ readOnly: true }}
-          sx={{ flex: 1 }}
-        />
-        <TextField
-          name="descripcionVariable"
-          label="Descripción de la Variable"
-          value={values && values.descripcionVariable}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          required
-          InputProps={{ readOnly: true }}
-          sx={{ flex: 2 }}
-        />
-        <TextField
-          name="variableId"
-          label="Variable ID"
-          value={values && values.variableId}
-          onChange={handleChange}
-          fullWidth
-          margin="dense"
-          InputProps={{ readOnly: true }}
-          sx={{ flex: 1 }}
-        />
-      </Box>
-    </form>
+      </form>
     </>
   );
 };
