@@ -241,12 +241,58 @@ const TableServerSideBeneficiarios = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tiposNominaSeleccionado])
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(allRowsExcel)
+  const exportToExcel = (): void => {
+    // Definir el orden deseado de las columnas
+    const columnOrder: (keyof IRhVTitularBeneficiariosExcelResponseDto)[] = [
+      'id',
+      'cedulaTitular',
+      'cedulaBeneficiario',
+      'apellidosTituBene',
+      'nombreTituBene',
+      'sexo',
+      'fechaNacimientoFamiliarString',
+      'edad',
+      'estadoCivil',
+      'fechaIngresoString',
+      'tiempoServicio',
+      'parentesco',
+      'vinculo',
+      'sueldoBasico',
+      'tipoNomina',
+      'unidadDescripcion',
+      'cargoNominal',
+      'cdLocalidad',
+      'cdGrupo',
+      'cdBanco',
+      'nuCuenta',
+      'tpCuenta',
+      'deEmail',
+      'nroArea',
+      'nroTelefono',
+      'fechaEgreso',
+      'codigoIcp',
+      'antiguedad',
+      'anosAntiguedadVaca',
+      'diasAntiguedadVaca',
+      'anosAntiguedadVaca',
+      'periodosVaca',
+      'periodosVacappDisfru'
+    ]
+
+    // Reordenar los datos con tipo más flexible
+    const reorderedData = allRowsExcel.map((row: IRhVTitularBeneficiariosExcelResponseDto) => {
+      const newRow: Record<string, any> = {}
+      columnOrder.forEach(key => {
+        newRow[key as string] = row[key]
+      })
+
+      return newRow
+    })
+
+    const worksheet = XLSX.utils.json_to_sheet(reorderedData)
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
 
-    // Buffer to store the generated Excel file
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
     const blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'

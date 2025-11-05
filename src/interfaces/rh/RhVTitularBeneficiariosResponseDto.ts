@@ -7,6 +7,7 @@ export interface IRhVTitularBeneficiariosResponseDto {
   nombreTituBene: string
   apellidosTituBene: string
   fechaNacimientoFamiliar: Date
+  edad: string
   fechaNacimientoFamiliarString: string
   fechaNacimientoFamiliarObj: IFechaDto
   sexo: string
@@ -21,7 +22,7 @@ export interface IRhVTitularBeneficiariosResponseDto {
   nroTelefono: string
   fechaEgreso: Date
   codigoIcp: number
-  edad: string
+
   tiempoServicio: string
   parentesco: string
   tipoNomina: string
@@ -42,6 +43,7 @@ export interface IRhVTitularBeneficiariosExcelResponseDto {
   nombreTituBene: string
   apellidosTituBene: string
   fechaNacimientoFamiliarString: string
+  edad: string
   sexo: string
   estadoCivil: string
   cdLocalidad: string
@@ -54,7 +56,7 @@ export interface IRhVTitularBeneficiariosExcelResponseDto {
   nroTelefono: string
   fechaEgreso: Date
   codigoIcp: number
-  edad: string
+
   tiempoServicio: string
   parentesco: string
   tipoNomina: string
@@ -63,4 +65,11 @@ export interface IRhVTitularBeneficiariosExcelResponseDto {
   cargoNominal: string
   antiguedadCmc: string
   antiguedadOtros: string
+  vinculo: string
+  sueldoBasico: number
+  antiguedad: string
+  anosAntiguedadVaca: number
+  diasAntiguedadVaca: number
+  periodosVaca: string
+  periodosVacappDisfru: string
 }

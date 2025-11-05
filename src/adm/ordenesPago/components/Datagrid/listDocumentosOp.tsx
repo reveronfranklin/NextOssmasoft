@@ -42,9 +42,11 @@ const DataGridComponent = () => {
   const rowCount = query.isSuccess ? query.data.cantidadRegistros : 0;
   const total1 = query.data?.total1 ?? 0
   const total2 = query.data?.total2 ?? 0
+  const total3 = query.data?.total3 ?? 0
+  const total4 = query.data?.total4 ?? 0
 
   dispatch(setDocumentCount(rowCount))
-  dispatch(setBaseTotalDocumentos(total1))
+  dispatch(setBaseTotalDocumentos(total1 + total3))
 
   const handlePageChange = useCallback((newPage: number) => {
     setPage(newPage)
@@ -58,11 +60,25 @@ const DataGridComponent = () => {
   return (
     <>
       <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
-        <Grid item xs={2} sm={6}>
+        <Grid item xs={12} sm={12}>
           <small style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-            <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
-              <label style={{ marginRight: '5px' }}><b>Monto total documento:</b></label>
-              {FormatNumber(total1 + total2)}
+            <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <div>
+                <label style={{ marginRight: '5px' }}><b>Base:</b></label>
+                {FormatNumber(total1)}
+              </div>
+              <div>
+                <label style={{ marginRight: '5px' }}><b>Monto exento:</b></label>
+                {FormatNumber(total3)}
+              </div>
+              <div>
+                <label style={{ marginRight: '5px' }}><b>% Retenido:</b></label>
+                {FormatNumber(total4)}
+              </div>
+              <div>
+                <label style={{ marginRight: '5px' }}><b>Monto total documento:</b></label>
+                {FormatNumber(total1 + total2 + total3)}
+              </div>
             </div>
           </small>
         </Grid>
@@ -73,7 +89,7 @@ const DataGridComponent = () => {
             <DataGrid
               autoHeight
               pagination
-              getRowId={(row) => row.codigoDocumentoOp }
+              getRowId={(row) => row.codigoDocumentoOp}
               rows={rows}
               rowCount={rowCount}
               columns={columnsDataGridListCompromiso}

@@ -37,14 +37,20 @@ import { useDispatch } from 'react-redux'
 
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Box, Checkbox, FormControlLabel } from '@mui/material'
+import { Autocomplete, Box } from '@mui/material'
 
 // ** Third Party Imports
 
 // ** Custom Component Imports
 
-import { setListBmConteoDetalleResponseDto, setVerBmConteoDetalleActive } from 'src/store/apps/bmConteo'
+import {
+  setListBmConteoDetalleResponseDto,
+  setListIcpSeleccionado,
+  setVerBmConteoDetalleActive
+} from 'src/store/apps/bmConteo'
 import { IBmConteoDetalleUpdateDto } from 'src/interfaces/Bm/BmConteoDetalle/BmConteoDetalleUpdateDto'
+import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
+import { setListIcp } from 'src/store/apps/ICP'
 
 interface FormInputs {
   codigoBmConteoDetalle: number
@@ -54,7 +60,6 @@ interface FormInputs {
   comentario: string
   codigoPlaca: string
   articulo: string
-  replicarComentario: boolean
 }
 
 const FormBmConteoDetalleUpdateAsync = () => {
@@ -67,6 +72,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
   //const [date, setDate] = useState<DateType>(new Date())
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [listUnidadTrabajo] = useState<ICPGetDto[]>([])
   const defaultValues = {
     codigoBmConteoDetalle: bmConteoDetalleSeleccionado.codigoBmConteoDetalle,
     cantidad: bmConteoDetalleSeleccionado.cantidad,
@@ -74,8 +80,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
     diferencia: bmConteoDetalleSeleccionado.diferencia,
     comentario: bmConteoDetalleSeleccionado.comentario,
     codigoPlaca: bmConteoDetalleSeleccionado.codigoPlaca,
-    articulo: bmConteoDetalleSeleccionado.articulo,
-    replicarComentario: bmConteoDetalleSeleccionado.replicarComentario
+    articulo: bmConteoDetalleSeleccionado.articulo
   }
 
   // ** Hook
@@ -84,6 +89,20 @@ const FormBmConteoDetalleUpdateAsync = () => {
     handleSubmit,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
+  const handleIcp = (e: any, value: any) => {
+    console.log('handler Icp', value)
+    if (value != null) {
+      dispatch(setListIcpSeleccionado(value))
+    } else {
+      const icp: ICPGetDto[] = [
+        {
+          codigoIcp: 0,
+          unidadTrabajo: ''
+        }
+      ]
+      dispatch(setListIcpSeleccionado(icp))
+    }
+  }
 
   const onSubmit = async (data: FormInputs) => {
     setLoading(true)
@@ -91,8 +110,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
     const updateDto: IBmConteoDetalleUpdateDto = {
       codigoBmConteoDetalle: data.codigoBmConteoDetalle,
       cantidadContada: data.cantidadContada,
-      comentario: data.comentario,
-      replicarComentario: data.replicarComentario
+      comentario: data.comentario
     }
 
     console.log('updateDto', updateDto)
@@ -110,7 +128,8 @@ const FormBmConteoDetalleUpdateAsync = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
-
+      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      dispatch(setListIcp(responseIcps.data.data))
       setLoading(false)
     }
 
@@ -125,6 +144,23 @@ const FormBmConteoDetalleUpdateAsync = () => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
+            <Grid item sm={12} xs={12}>
+              <div>
+                {listUnidadTrabajo && listUnidadTrabajo.length > 0 ? (
+                  <Autocomplete
+                    multiple={true}
+                    options={listUnidadTrabajo}
+                    id='autocomplete-list-icp'
+                    isOptionEqualToValue={(option, value) => option.codigoIcp === value.codigoIcp}
+                    getOptionLabel={option => option.codigoIcp + '-' + option.unidadTrabajo}
+                    onChange={handleIcp}
+                    renderInput={params => <TextField {...params} label='ICP' />}
+                  />
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            </Grid>
             {/* Id */}
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth>
@@ -205,7 +241,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
             </Grid>
 
             {/* Comentario */}
-            <Grid item sm={8} xs={12}>
+            <Grid item sm={12} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='comentario'
@@ -228,22 +264,6 @@ const FormBmConteoDetalleUpdateAsync = () => {
                     This field is required
                   </FormHelperText>
                 )}
-              </FormControl>
-            </Grid>
-
-            {/* Campo Booleano - Replicar Comentario */}
-            <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='replicarComentario'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <FormControlLabel
-                      control={<Checkbox checked={value || false} onChange={onChange} color='primary' />}
-                      label='Replicar Comentario a todas las placas con diferencias'
-                    />
-                  )}
-                />
               </FormControl>
             </Grid>
 
