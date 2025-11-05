@@ -38,19 +38,21 @@ const DataGridComponent = () => {
         pageSize,
         pageNumber,
         searchText,
-        codigoPresupuesto: presupuestoSeleccionado.codigoPresupuesto
     } as PreOrdenPagoFilterDto
 
     const query = useQuery({
-        queryKey: ['preOrdenPagoTable', pageSize, pageNumber, searchText, filter.codigoPresupuesto],
+        queryKey: ['preOrdenPagoTable', pageSize, pageNumber, searchText],
         queryFn: () => getList(filter),
         initialData: () => {
-            return qc.getQueryData(['preOrdenPagoTable', pageSize, pageNumber, searchText, filter.codigoPresupuesto])
+            return qc.getQueryData(['preOrdenPagoTable', pageSize, pageNumber, searchText])
         },
         staleTime: staleTime,
-        retry: 3,
-        enabled: isPresupuestoSeleccionado
+        retry: 3
     }, qc)
+
+    /* dejar mientras tanto */
+
+    console.log('presupuestoSeleccionado en data grid quitar ', isPresupuestoSeleccionado)
 
     useEffect(() => {
         if (presupuestoSeleccionado.codigoPresupuesto > 0) {
@@ -59,6 +61,8 @@ const DataGridComponent = () => {
             setIsPresupuestoSeleccionado(false)
         }
     }, [ presupuestoSeleccionado.codigoPresupuesto ])
+
+    /* dejar mientras tanto */
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
