@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices, UploadFile, Description, Delete } from '@mui/icons-material';
@@ -15,6 +16,7 @@ import {
 } from '@mui/material';
 
 import { useServices } from '../../../services';
+import { setIsOpenDialogPreOrdenPago } from 'src/store/apps/preOrdenPago';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
@@ -28,6 +30,8 @@ const defaultValues: FileFormDto = {
 }
 
 const FormCreate = () => {
+    const dispatch = useDispatch()
+
     const [isFormEnabled, setIsFormEnabled]     = useState<boolean>(true)
     const [dialogOpen, setDialogOpen]           = useState(false)
     const fileInputRef                          = useRef<HTMLInputElement>(null);
@@ -79,6 +83,7 @@ const FormCreate = () => {
 
     const handleUploadFile = async (dataForm: FileFormDto) => {
         setIsFormEnabled(false)
+        handleCloseDialog()
 
         try {
             if (dataForm.documentoAdjunto.length > 0) {
@@ -89,13 +94,11 @@ const FormCreate = () => {
 
                 const response = await store(formData as any)
 
-               /*  if (response?.isValid) { */
-
-                    console.log('Archivos subidos con éxito:', response)
+                if (response?.isValid) {
                     handleClearForm()
                     handleCloseDialog()
-
-                /* } */
+                    dispatch(setIsOpenDialogPreOrdenPago(false))
+                }
             }
         } catch (e: any) {
             console.error('handleUploadFile', e)
