@@ -20,6 +20,8 @@ const CrudModal = ({
   formValues = {},
   maxWidth = "sm",
   children,
+  disableSubmit = false,
+  PaperProps = {},
 }) => {
   const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {
@@ -30,7 +32,7 @@ const CrudModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth PaperProps={PaperProps}>
       <DialogTitle>
         {title}
         <IconButton
@@ -73,6 +75,7 @@ const CrudModal = ({
                 : 'SI'
             }
             onAction={() => handleSubmit(isEdit ? 'edit' : 'create')}
+            disabled={disableSubmit}
           >
             {isEdit ? 'Actualizar' : 'Crear'}
           </ButtonWithConfirm>

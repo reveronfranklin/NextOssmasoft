@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import { FormulaContext } from 'src/formulacion/context/FormulaContext';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -11,6 +11,13 @@ import useCrudModal from 'src/formulacion/shared/hooks/useCrudModal';
 import FormularioVariableEntradaProceso from '../../views/VariableEntradaProceso/Formulario';
 import Box from '@mui/material/Box';
 
+import FormulaProvider from '../../context/FormulaProvider';
+import useFormulaBuilder from './../../formulas/hooks/useFormulaBuilder';
+
+import useFormulaService from '../../services/formula/UseFormulaService';
+import useVariableService from '../../services/variable/UseVariableService';
+import usePlantillaService from '../../services/plantilla/UsePlantillaService';
+
 const ListaVariablePorProceso = ({ procesoId }) => {
   const { variableEntradaProcesoService } = useContext(FormulaContext);
 
@@ -18,6 +25,23 @@ const ListaVariablePorProceso = ({ procesoId }) => {
   const [variables, setVariables] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [formValid, setFormValid] = useState(false);
+
+  const formulaServiceFromHook = useFormulaService();
+  const variableServiceFromHook = useVariableService();
+  const plantillaServiceFromHook = usePlantillaService();
+
+  const formulaService   = formulaServiceFromHook;
+  const variableService  = variableServiceFromHook;
+  const plantillaService = plantillaServiceFromHook;
+
+  const services = React.useMemo(() => ({
+    formulaService,
+    variableService,
+    plantillaService
+  }), [formulaService, variableService, plantillaService]);
+
+  const { variables: availableVariables } = useFormulaBuilder(services)
 
   const {
     modalOpen,
@@ -27,14 +51,26 @@ const ListaVariablePorProceso = ({ procesoId }) => {
 
   const handleSubmit = async (form, action) => {
     try {
+      let response;
       if (action === 'edit' && form) {
-        console.log('Editar elemento:', form);
-        const response = await variableEntradaProcesoService.update(form);
-        console.log('Respuesta de la actualización:', response);
+        const dto = {
+          id: form.id,
+          procesoId: form.procesoId,
+          variableId: form.variableId,
+          usuarioConectado: 1
+        };
+        response = await variableEntradaProcesoService.update(dto);
       } else if (action === 'create' && form) {
-        console.log('Crear elemento:', form);
-        const response = await variableEntradaProcesoService.create(form);
-        console.log('Respuesta de la creación:', response);
+        const dto = {
+          procesoId: variableSeleccionada.procesoId,
+          variableId: variableSeleccionada.variableId,
+          usuarioConectado: 1
+        };
+        response = await variableEntradaProcesoService.create(dto);
+      }
+      if (response?.isValid) {
+        handleCloseModal(); // Cierra el modal si la operación fue exitosa
+        await actualizarListaVariables();
       }
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -43,14 +79,31 @@ const ListaVariablePorProceso = ({ procesoId }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await variableEntradaProcesoService.delete(variableSeleccionada.id);
+      const dto = {
+        id: variableSeleccionada.id,
+        usuarioConectado: 1
+      };
+      const response = await variableEntradaProcesoService.remove(dto);
       if (response.isValid) {
+        handleCloseModal();
+        await actualizarListaVariables();
         console.log('Elemento eliminado:', variableSeleccionada);
       }
     } catch (error) {
       console.error('Error al eliminar el elemento:', error);
     }
   }
+
+  const actualizarListaVariables = async () => {
+    setLoading(true);
+    const response = await variableEntradaProcesoService.getAll({ procesoId });
+    if (response.isValid && response.data) {
+      setVariables(response.data);
+    } else {
+      setVariables([]);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     const fetchVariables = async () => {
@@ -70,7 +123,6 @@ const ListaVariablePorProceso = ({ procesoId }) => {
     }
   }, [procesoId]);
 
-  // Maneja el click en el botón +
   const handleNuevaVariable = () => {
     setVariableSeleccionada({
       procesoId,
@@ -83,7 +135,7 @@ const ListaVariablePorProceso = ({ procesoId }) => {
     handleOpenModal();
   };
 
-  // Cuando seleccionas una variable, activa modo edición
+  // Manejar la selección de una variable existente desde el autoselect del padre
   const handleSelectVariable = (event, value) => {
     setVariableSeleccionada(value);
     setModoEdicion(true);
@@ -92,7 +144,6 @@ const ListaVariablePorProceso = ({ procesoId }) => {
 
   return (
     <div>
-      {/* <h3>Variables asociadas al proceso {procesoId}</h3> */}
       {
         variables.length === 0 ? `No hay variables disponibles para el proceso Id: ${procesoId}` : (
         <>
@@ -128,11 +179,24 @@ const ListaVariablePorProceso = ({ procesoId }) => {
             isEdit={modoEdicion}
             formValues={variableSeleccionada || {}}
             maxWidth={variableSeleccionada ? "sm" : "sm"}
+            disableSubmit={!formValid}
+            PaperProps = {
+              {
+                sx: {
+                  minHeight: '75vh', // Más alto
+                  minWidth: '600px' // Más ancho
+                }
+              }
+            }
           >
-            <FormularioVariableEntradaProceso
-              initialValues={variableSeleccionada}
-              onChange={setVariableSeleccionada}
-            />
+            <FormulaProvider>
+              <FormularioVariableEntradaProceso
+                initialValues={variableSeleccionada}
+                onChange={setVariableSeleccionada}
+                availableVariables={availableVariables}
+                onValidationChange={setFormValid}
+              />
+            </FormulaProvider>
           </CrudModal>
         </>
       )}
