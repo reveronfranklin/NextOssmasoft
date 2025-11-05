@@ -90,9 +90,11 @@ const FormCreate = () => {
                 const response = await store(formData as any)
 
                /*  if (response?.isValid) { */
+
                     console.log('Archivos subidos con éxito:', response)
                     handleClearForm()
                     handleCloseDialog()
+
                 /* } */
             }
         } catch (e: any) {

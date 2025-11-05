@@ -1,8 +1,9 @@
 import axios from 'axios'
 import authConfig from 'src/configs/auth'
 
-const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_N8N_PRODUCTION
-const urlDevelopment = process.env.NEXT_PUBLIC_BASE_URL_API_N8N
+const urlProduction     = process.env.NEXT_PUBLIC_BASE_URL_API_N8N_PRODUCTION
+const urlDevelopment    = process.env.NEXT_PUBLIC_BASE_URL_API_N8N
+const tokenApiN8N       = process.env.NEXT_PUBLIC_TOKEN_API_N8N
 
 export const ossmmasofApiN8N = axios.create({
   baseURL: !authConfig.isProduction ? urlDevelopment : urlProduction
@@ -10,10 +11,8 @@ export const ossmmasofApiN8N = axios.create({
 
 ossmmasofApiN8N.interceptors.request.use(
   config => {
-    const token = localStorage.getItem(authConfig.storageTokenKeyName)
-
-    if (token) {
-      config.headers!['Authorization'] = 'Bearer ' + token
+    if (tokenApiN8N) {
+      config.headers!['Authorization'] = 'Bearer ' + tokenApiN8N
     }
 
     return config
