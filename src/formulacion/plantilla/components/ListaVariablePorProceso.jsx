@@ -17,17 +17,21 @@ import useFormulaService from '../../services/formula/UseFormulaService';
 import useVariableService from '../../services/variable/UseVariableService';
 import usePlantillaService from '../../services/plantilla/UsePlantillaService';
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+
 const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
   const { variableEntradaProcesoService } = useContext(FormulaContext);
 
+  const [loading, setLoading]                           = useState(false);
+  const [variables, setVariables]                       = useState([]);
+  const [formValid, setFormValid]                       = useState(false);
+  const [modoEdicion, setModoEdicion]                   = useState(false);
   const [variableSeleccionada, setVariableSeleccionada] = useState(null);
-  const [variables, setVariables] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [formValid, setFormValid] = useState(false);
+  const [alert, setAlert]                               = useState({ text: '', isValid: true });
+  const [pendingCloseModal, setPendingCloseModal]       = useState(false); // Estado para controlar cierre pendiente del modal
 
-  const formulaServiceFromHook = useFormulaService();
-  const variableServiceFromHook = useVariableService();
+  const formulaServiceFromHook   = useFormulaService();
+  const variableServiceFromHook  = useVariableService();
   const plantillaServiceFromHook = usePlantillaService();
 
   const formulaService   = formulaServiceFromHook;
@@ -51,6 +55,7 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
   const handleSubmit = async (form, action) => {
     try {
       let response;
+
       if (action === 'edit' && form) {
         const dto = {
           id: form.id,
@@ -58,20 +63,31 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
           variableId: form.variableId,
           usuarioConectado: 1
         };
+
         response = await variableEntradaProcesoService.update(dto);
       } else if (action === 'create' && form) {
         const dto = {
           procesoId: variableSeleccionada.procesoId,
           variableId: variableSeleccionada.variableId,
           usuarioConectado: 1
-        };
+        }
+
         response = await variableEntradaProcesoService.create(dto);
       }
+
+      console.log('Response del submit:', response);
       if (response?.isValid) {
-        handleCloseModal(); // Cierra el modal si la operación fue exitosa
+        setAlert({
+          text: response?.message || 'Operación exitosa',
+          isValid: true
+        })
+        setPendingCloseModal(true); // Marca que debe cerrar el modal después del alert
         await actualizarListaVariables();
+      } else {
+        setAlert({ text: response?.message || 'Error en la operación', isValid: false });
       }
     } catch (error) {
+      setAlert({ text: 'Error en la operación', isValid: false });
       console.error('Error al enviar el formulario:', error);
     }
   }
@@ -82,13 +98,19 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
         id: variableSeleccionada.id,
         usuarioConectado: 1
       };
+
       const response = await variableEntradaProcesoService.remove(dto);
+
       if (response.isValid) {
-        handleCloseModal();
-        await actualizarListaVariables();
-        console.log('Elemento eliminado:', variableSeleccionada);
+        setAlert({
+          text: response?.message || 'Operación exitosa',
+          isValid: true
+        });
+        setPendingCloseModal(true)
+        await actualizarListaVariables()
       }
     } catch (error) {
+      setAlert({ text: 'Error en la operación', isValid: false });
       console.error('Error al eliminar el elemento:', error);
     }
   }
@@ -122,6 +144,20 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
     }
   }, [procesoId]);
 
+  useEffect(() => {
+    if (alert.text) {
+      const timer = setTimeout(() => {
+        setAlert({ text: '', isValid: alert.isValid });
+        if (pendingCloseModal) {
+          handleCloseModal();
+          setPendingCloseModal(false);
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [alert.text, pendingCloseModal]);
+
   const handleNuevaVariable = () => {
     setVariableSeleccionada({
       procesoId,
@@ -134,7 +170,6 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
     handleOpenModal();
   };
 
-  // Manejar la selección de una variable existente desde el autoselect del padre
   const handleSelectVariable = (event, value) => {
     setVariableSeleccionada(value);
     setModoEdicion(true);
@@ -171,7 +206,7 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
           </Box>
           <CrudModal
             open={modalOpen}
-            title={modoEdicion ? "Editar Variable" : "Nueva Variable"}
+            title={modoEdicion ? "Eliminar Variable" : "Nueva Variable"}
             onClose={handleCloseModal}
             onSubmit={handleSubmit}
             onDelete={handleDelete}
@@ -195,6 +230,12 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
               />
             </FormulaProvider>
           </CrudModal>
+          <AlertMessage
+            message={alert.text}
+            severity={alert.isValid ? 'success' : 'error'}
+            duration={2000}
+            show={!!alert.text}
+          />
         </>
       )}
     </div>
