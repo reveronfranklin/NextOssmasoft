@@ -25,7 +25,6 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.GETALLVARIABLESENTRADAPROCESO, filters);
-
       return handleApiResponse(responseFetch.data, undefined, setMessage, setError);
     } catch (e: any) {
       return handleApiError(e, setMessage, setError);
@@ -54,6 +53,7 @@ const useVariableEntradaProceso = () => {
 
       return handleApiResponse(responseFetch.data, 'Variable creada con éxito', setMessage, setError);
     } catch (e: any) {
+
       return handleApiError(e, setMessage, setError);
     } finally {
       setLoading(false);
@@ -81,6 +81,7 @@ const useVariableEntradaProceso = () => {
 
       return handleApiResponse(responseFetch.data, 'Variable eliminada con éxito', setMessage, setError);
     } catch (e: any) {
+
       return handleApiError(e, setMessage, setError);
     } finally {
       setLoading(false);
