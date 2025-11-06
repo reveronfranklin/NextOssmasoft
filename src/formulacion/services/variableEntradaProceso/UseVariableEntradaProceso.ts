@@ -25,8 +25,10 @@ const useVariableEntradaProceso = () => {
     try {
       setLoading(true);
       const responseFetch = await ossmmasofApiGateway.post(UrlVariableEntradaProcesoServices.GETALLVARIABLESENTRADAPROCESO, filters);
+
       return handleApiResponse(responseFetch.data, undefined, setMessage, setError);
     } catch (e: any) {
+
       return handleApiError(e, setMessage, setError);
     } finally {
       setLoading(false);
