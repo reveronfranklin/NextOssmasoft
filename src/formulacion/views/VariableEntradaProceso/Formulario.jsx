@@ -34,11 +34,11 @@ const FormularioVariableEntradaProceso = ({
   }, [initialValues, availableVariables]);
 
   useEffect(() => {
-    const valid = !!values.procesoId &&
-      !!values.code &&
-      !!values.descripcionVariable &&
-      !!values.descripcionProceso &&
-      !!values.variableId;
+    const valid = !!values?.procesoId &&
+      !!values?.code &&
+      !!values?.descripcionVariable &&
+      !!values?.descripcionProceso &&
+      !!values?.variableId;
 
     if (onValidationChange) {
       onValidationChange(valid);
@@ -99,11 +99,11 @@ const FormularioVariableEntradaProceso = ({
 
   return (
     <>
-      <form style={{ minWidth: 700, maxWidth: 700 }}>
+      <form style={{ minWidth: 500, maxWidth: 700 }}>
         <TextField
           name="procesoId"
           label="Proceso ID"
-          value={values && values.procesoId}
+          value={values && values?.procesoId}
           onChange={handleChange}
           fullWidth
           margin="dense"
@@ -114,7 +114,7 @@ const FormularioVariableEntradaProceso = ({
         <TextField
           name="descripcionProceso"
           label="DescripcionProceso"
-          value={values && values.descripcionProceso}
+          value={values && values?.descripcionProceso}
           onChange={handleChange}
           fullWidth
           margin="dense"
@@ -124,7 +124,9 @@ const FormularioVariableEntradaProceso = ({
             <FormulaProvider>
               <VariableSelector
                 variables={memoizedVariables}
-                selectedVariableId={values.variableId || null}
+                selectedVariableId={
+                  values && values?.variableId
+                }
                 onVariableSelect={handleVariableSelect}
                 showAddButton={false}
               />
@@ -135,7 +137,7 @@ const FormularioVariableEntradaProceso = ({
           <TextField
             name="variableId"
             label="Variable ID"
-            value={values && values.variableId}
+            value={values && values?.variableId}
             onChange={handleChange}
             fullWidth
             margin="dense"
@@ -145,7 +147,7 @@ const FormularioVariableEntradaProceso = ({
           <TextField
             name="code"
             label="Código"
-            value={values && values.code}
+            value={values && values?.code}
             onChange={handleChange}
             fullWidth
             margin="dense"
