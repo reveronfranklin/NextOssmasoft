@@ -18,7 +18,6 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
   const { variableEntradaProcesoService } = useContext(FormulaContext);
 
-  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading]                           = useState(false);
   const [variables, setVariables]                       = useState([]);
   const [formValid, setFormValid]                       = useState(false);
@@ -47,6 +46,7 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
 
   const cargarVariables = async () => {
     setLoading(true);
+    console.log(loading)
     try {
       const response = await variableEntradaProcesoService.getAll({ procesoId });
       setVariables(response.isValid && response.data ? response.data : []);
@@ -69,6 +69,7 @@ const ListaVariablePorProceso = ({ procesoId, descripcionProceso }) => {
           setPendingCloseModal(false);
         }
       }, 2000);
+
       return () => clearTimeout(timer);
     }
   }, [alert.text, pendingCloseModal, handleCloseModal]);
