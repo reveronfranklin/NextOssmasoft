@@ -9,7 +9,7 @@ const OrdenesPago = () => {
             <CardContent title='Pre Orden de Pago'>
                 <Grid container spacing={6}>
                     <Grid item xs={6}>
-                        <FilterOnlyPresupuesto />
+                        {/* <FilterOnlyPresupuesto /> */}
                     </Grid>
                 </Grid>
                 <Layout />

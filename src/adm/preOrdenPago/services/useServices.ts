@@ -22,7 +22,6 @@ const useServices = () => {
     })
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
-    console.log('presupuestoSeleccionado aun no se debe agregar', presupuestoSeleccionado)
 
     const getList = useCallback(async (payload: PreOrdenPagoFilterDto): Promise<any> => {
         try {
