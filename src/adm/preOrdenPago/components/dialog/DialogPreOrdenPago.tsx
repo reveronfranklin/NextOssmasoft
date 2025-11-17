@@ -49,7 +49,7 @@ const DialogPreOrdenPago = () => {
                 sx={{
                     '& .MuiDialog-paper': {
                         width: '100%',
-                        height: '70vh',
+                        height: '55vh',
                         margin: 0,
                         borderRadius: 0,
                         padding: 0

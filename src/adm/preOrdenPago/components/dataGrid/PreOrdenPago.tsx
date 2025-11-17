@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useRef, useEffect } from 'react';
+import { ChangeEvent, useState, useRef } from 'react';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
@@ -20,13 +20,13 @@ const DataGridComponent = () => {
     const [pageSize, setPageSize]                                   = useState<number>(5)
     const [searchText, setSearchText]                               = useState<string>('')
     const [buffer, setBuffer]                                       = useState<string>('')
-    const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false)
+
+    /* const [isPresupuestoSeleccionado, setIsPresupuestoSeleccionado] = useState<boolean>(false) */
 
     const debounceTimeoutRef    = useRef<any>(null)
     const qc: QueryClient       = useQueryClient()
 
     const {
-        presupuestoSeleccionado,
         getList,
         message
     }  = useServices()
@@ -50,9 +50,8 @@ const DataGridComponent = () => {
         retry: 3
     }, qc)
 
-    /* dejar mientras tanto */
 
-    console.log('presupuestoSeleccionado en data grid quitar ', isPresupuestoSeleccionado)
+   /*  console.log('presupuestoSeleccionado en data grid quitar ', isPresupuestoSeleccionado)
 
     useEffect(() => {
         if (presupuestoSeleccionado.codigoPresupuesto > 0) {
@@ -60,9 +59,8 @@ const DataGridComponent = () => {
         } else if (presupuestoSeleccionado.codigoPresupuesto === 0) {
             setIsPresupuestoSeleccionado(false)
         }
-    }, [ presupuestoSeleccionado.codigoPresupuesto ])
+    }, [ presupuestoSeleccionado.codigoPresupuesto ]) */
 
-    /* dejar mientras tanto */
 
     const rows      = query?.data?.data || []
     const rowCount  = query?.data?.cantidadRegistros || 0
