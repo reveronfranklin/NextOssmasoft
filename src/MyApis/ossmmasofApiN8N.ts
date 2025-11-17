@@ -42,13 +42,10 @@ ossmmasofApiN8N.interceptors.request.use(
     const useGateway = true;
 
     if (useGateway && isFormulacion) {
-      const originalUrl = (config.baseURL ?? '') + (config.url ?? '')
       const originalMethod = config.method?.toUpperCase() || 'POST'
 
       const formData = new FormData();
       formData.append('method', originalMethod);
-      formData.append('url', originalUrl);
-      formData.append('timeoutSeconds', '30');
 
       if (config.data instanceof FormData) {
         for (const [key, value] of config.data.entries()) {
@@ -58,7 +55,7 @@ ossmmasofApiN8N.interceptors.request.use(
         formData.append('body', JSON.stringify(config.data));
       }
 
-      config.baseURL = 'https://ossmmasoft.com.ve:5001/api/gateway/form-data'
+      config.baseURL = 'https://ossmmasoft.com.ve:5001/api/InvoiceProxy/upload'
       config.url = ''
       config.method = 'post'
       config.data = formData
@@ -80,10 +77,14 @@ ossmmasofApiN8N.interceptors.request.use(
 
 ossmmasofApiN8N.interceptors.response.use(
   res => {
-    const isGateway = res.config.baseURL === 'https://ossmmasoft.com.ve:5001/api/gateway/execute';
+    const isGateway = res.config.baseURL === 'https://ossmmasoft.com.ve:5001/api/InvoiceProxy/upload';
 
-    if (isGateway && res.data && res.data.content !== undefined) {
-      const response = res.data.content;
+    if (isGateway && res.data && res.data.webhookResponse !== undefined) {
+      const webhookResponseFormatted = (res.data.webhookResponse ? JSON.parse(res.data.webhookResponse) : []);
+
+      res.data.webhookResponse = webhookResponseFormatted
+
+      const response = res.data.webhookResponse
 
       return {...res, data: response };
     }
