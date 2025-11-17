@@ -58,7 +58,7 @@ ossmmasofApiN8N.interceptors.request.use(
         formData.append('body', JSON.stringify(config.data));
       }
 
-      config.baseURL = 'https://ossmmasoft.com.ve:5001/api/gateway/execute'
+      config.baseURL = 'https://ossmmasoft.com.ve:5001/api/gateway/form-data'
       config.url = ''
       config.method = 'post'
       config.data = formData
