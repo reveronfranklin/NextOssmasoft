@@ -1,6 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { ossmmasofApiN8N } from 'src/MyApis/ossmmasofApiN8N';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
@@ -20,8 +18,6 @@ const useServices = () => {
         timestamp: Date.now(),
         isValid: true
     })
-
-    const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
     const getList = useCallback(async (payload: PreOrdenPagoFilterDto): Promise<any> => {
         try {
@@ -54,7 +50,6 @@ const useServices = () => {
         error,
         message,
         loading,
-        presupuestoSeleccionado,
         setMessage,
         getList,
         store
