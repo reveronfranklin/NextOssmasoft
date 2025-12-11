@@ -29,6 +29,7 @@ import { InvoiceType } from 'src/types/apps/invoiceTypes'
 import UserViewSecurity from './UserViewSecurity'
 import UserViewNotification from './UserViewNotification'
 import PersonaViewDirecciones from './PersonaViewDirecciones'
+import PersonaViewExperienciaLaboral from './PersonaViewExperienciaLaboral'
 
 interface Props {
   tab: string
@@ -151,6 +152,15 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
             </Box>
           }
         />
+        <Tab
+          value='experiencia_laboral'
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+              <Icon fontSize={20} icon='mdi:briefcase-outline' />
+              Exp.Laboral
+            </Box>
+          }
+        />
       </TabList>
       <Box sx={{ mt: 4 }}>
         {isLoading ? (
@@ -177,6 +187,9 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='direcciones'>
               <PersonaViewDirecciones />
+            </TabPanel>
+            <TabPanel sx={{ p: 0 }} value='experiencia_laboral'>
+              <PersonaViewExperienciaLaboral />
             </TabPanel>
           </>
         )}
