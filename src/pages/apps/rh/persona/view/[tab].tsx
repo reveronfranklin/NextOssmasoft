@@ -22,7 +22,8 @@ export const getStaticPaths: GetStaticPaths = () => {
       { params: { tab: 'billing-plan' } },
       { params: { tab: 'notification' } },
       { params: { tab: 'connection' } },
-      { params: { tab: 'direcciones' } }
+      { params: { tab: 'direcciones' } },
+      { params: { tab: 'experiencia_laboral' } }
     ],
     fallback: false
   }
