@@ -41,7 +41,6 @@ const ParroquiaList: React.FC<ParroquiaListProps> = ({
   }, qc);
 
   const selectedParroquia = parroquias.find(p => p.id === selectedParroquiaId) || null;
-
   if (!enabled) return null;
 
   return (

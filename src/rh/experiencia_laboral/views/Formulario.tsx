@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextField, Grid, Box } from "@mui/material";
+import { TextField, Grid, Box, Autocomplete } from "@mui/material";
 import { ExperienciaLaboralDTO } from "../interfaces/experiencia-laboral.dto";
 import FormatNumber from 'src/utilities/format-numbers';
-
+import { TipoEmpresaEnum } from "../enums/tipoEmpresa.enum";
 interface Props {
   initialValues?: Partial<ExperienciaLaboralDTO>;
   onChange?: (data: { values: any; isValid: boolean }) => void;
-  open?: boolean; // <-- nuevo prop opcional
+  open?: boolean;
 }
 
 export const defaultValues: Partial<ExperienciaLaboralDTO> = {
@@ -22,6 +22,11 @@ export const defaultValues: Partial<ExperienciaLaboralDTO> = {
   telefono: "",
   descripcion: "",
 };
+
+const tipoEmpresaOptions = Object.entries(TipoEmpresaEnum).map(([key, value]) => ({
+  label: value,
+  value: key,
+}));
 
 const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => {
   const {
@@ -54,7 +59,7 @@ const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => 
   return (
     <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
           <Controller
             name="nombreEmpresa"
             control={control}
@@ -70,23 +75,32 @@ const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => 
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={6}>
           <Controller
             name="tipoEmpresa"
             control={control}
             rules={{ required: "Tipo de empresa requerido" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Tipo de empresa"
-                fullWidth
-                error={!!errors.tipoEmpresa}
-                helperText={errors.tipoEmpresa?.message}
+              <Autocomplete
+                options={tipoEmpresaOptions}
+                getOptionLabel={option => option.label}
+                value={tipoEmpresaOptions.find(opt => opt.value === field.value) || null}
+                onChange={(_, newValue) => field.onChange(newValue ? newValue.value : "")}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label="Tipo de empresa"
+                    fullWidth
+                    error={!!errors.tipoEmpresa}
+                    helperText={errors.tipoEmpresa?.message}
+                  />
+                )}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
               />
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={2}>
           <Controller
             name="ultimoSueldo"
             control={control}
@@ -117,7 +131,7 @@ const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => 
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <Controller
             name="cargo"
             control={control}
@@ -133,7 +147,7 @@ const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => 
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={6}>
           <Controller
             name="fechaDesde"
             control={control}
@@ -160,7 +174,7 @@ const Formulario: React.FC<Props> = ({ initialValues = {}, onChange, open }) => 
             )}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={6}>
           <Controller
             name="fechaHasta"
             control={control}

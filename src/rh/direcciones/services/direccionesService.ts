@@ -9,6 +9,8 @@ export const useDireccionesService = (): {
   getMunicipios: (params: { CodigoPais: number; CodigoEstado: number }) => Promise<IGenericoDescripcion[]>;
   getCiudades: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number }) => Promise<IGenericoDescripcion[]>;
   getParroquias: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number }) => Promise<IGenericoDescripcion[]>;
+  getSectores: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }) => Promise<IGenericoDescripcion[]>;
+  getUrbanizaciones: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number; CodigoSector: number }) => Promise<IGenericoDescripcion[]>;
   getDirecciones: (filters: { pais?: string; estado?: string; municipio?: string }) => Promise<any>;
   getTituloDescriptiva: (tituloId: number) => Promise<any>;
   getDireccionesByPersona: (codigoPersona: number) => Promise<any>;
@@ -46,6 +48,19 @@ export const useDireccionesService = (): {
     return response.data as IGenericoDescripcion[];
   }, []);
 
+  const getSectores = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }): Promise<IGenericoDescripcion[]> => {
+    const response = await ossmmasofApi.post(DireccionesUrls.GET_SECTORES, params);
+    console.log('Fetched sectores:', response.data);
+
+    return response.data as IGenericoDescripcion[];
+  }, []);
+
+  const getUrbanizaciones = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number,  CodigoSector: number }): Promise<IGenericoDescripcion[]> => {
+    const response = await ossmmasofApi.post(DireccionesUrls.GET_URBANIZACIONES, params);
+
+    return response.data as IGenericoDescripcion[];
+  }, []);
+
   const getDirecciones = useCallback(async (filters: { pais?: string; estado?: string; municipio?: string }) => {
     const response = await ossmmasofApi.post(DireccionesUrls.GET_DIRECCIONES, filters);
 
@@ -77,7 +92,7 @@ export const useDireccionesService = (): {
   }, []);
 
   const deleteDireccion = useCallback(async (id: number) => {
-    const response = await ossmmasofApi.post(`${DireccionesUrls.DELETE_DIRECCION}/${id}`);
+    const response = await ossmmasofApi.post(`${DireccionesUrls.DELETE_DIRECCION}`, { codigoDireccion: id });
 
     return response.data;
   }, []);
@@ -88,6 +103,8 @@ export const useDireccionesService = (): {
     getMunicipios,
     getCiudades,
     getParroquias,
+    getSectores,
+    getUrbanizaciones,
     getDirecciones,
     getTituloDescriptiva,
     getDireccionesByPersona,

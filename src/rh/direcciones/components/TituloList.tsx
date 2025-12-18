@@ -37,7 +37,7 @@ const TituloList: React.FC<TituloListProps> = ({ onTituloSelect, selectedTituloI
       getOptionLabel={option => option.descripcion || 'Sin nombre'}
       value={selectedTitulo}
       onChange={(_, value) => onTituloSelect(value)}
-      renderInput={params => <TextField {...params} label='Título' />}
+      renderInput={params => <TextField {...params} label='Tipo de Dirección' />}
       clearOnEscape
     />
   );
