@@ -1,0 +1,268 @@
+// ** React Imports
+import { useEffect, useState } from 'react'
+
+// ** MUI Imports
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import Select from '@mui/material/Select'
+import Switch from '@mui/material/Switch'
+import Divider from '@mui/material/Divider'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import InputLabel from '@mui/material/InputLabel'
+import CardContent from '@mui/material/CardContent'
+import CardActions from '@mui/material/CardActions'
+import DialogTitle from '@mui/material/DialogTitle'
+import FormControl from '@mui/material/FormControl'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import InputAdornment from '@mui/material/InputAdornment'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import DialogContentText from '@mui/material/DialogContentText'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { ReactDatePickerProps } from 'react-datepicker'
+
+// ** Types
+import { ThemeColor } from 'src/@core/layouts/types'
+import { UsersType } from 'src/types/apps/userTypes'
+import { useTheme } from '@mui/material/styles'
+
+// ** Utils Import
+import { getInitials } from 'src/@core/utils/get-initials'
+import { RootState } from 'src/store'
+import { useSelector, useDispatch } from 'react-redux'
+
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
+
+// ** Custom Components
+import CustomChip from 'src/@core/components/mui/chip'
+import CustomAvatar from 'src/@core/components/mui/avatar'
+import UserSuspendDialog from 'src/views/apps/user/view/UserSuspendDialog'
+import UserSubscriptionDialog from 'src/views/apps/user/view/UserSubscriptionDialog'
+
+// ** Proveedor Store (se crea luego)
+import {
+  setOperacionCrudProveedor,
+  setProveedorSeleccionado,
+  setProveedoresDtoSeleccionado,
+  setVerProveedorActive
+} from 'src/store/apps/adm-proveedor'
+
+// ** Services
+import { useServices } from '../services'
+import { Autocomplete } from '@mui/material'
+
+// ** Interfaces
+import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
+import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import DialogProveedorInfo from '../view/DialogInfo'
+
+import toast from 'react-hot-toast'
+import Spinner from 'src/@core/components/spinner'
+
+interface ColorsType {
+  [key: string]: ThemeColor
+}
+
+const data: UsersType = {
+  id: 1,
+  role: 'admin',
+  status: 'active',
+  username: 'gslixby0',
+  avatarColor: 'primary',
+  country: 'El Salvador',
+  company: 'Yotz PVT LTD',
+  contact: '(479) 232-9151',
+  currentPlan: 'enterprise',
+  fullName: 'Proveedor',
+  email: 'proveedor@empresa.com',
+  avatar: '/images/avatars/4.png'
+}
+
+const roleColors: ColorsType = {
+  Activo: 'success',
+  Inactivo: 'warning',
+  Suspendido: 'secondary'
+}
+
+const ViewLeft = () => {
+  const theme = useTheme()
+  const { direction } = theme
+  const popperPlacement: ReactDatePickerProps['popperPlacement'] =
+    direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
+  const dispatch = useDispatch()
+
+  const { proveedorSeleccionado, proveedoresDtoSeleccionado } = useSelector(
+    (state: RootState) => state.proveedor
+  )
+
+  const [openEdit, setOpenEdit] = useState<boolean>(false)
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const [proveedores, setProveedores] = useState<IProveedor[]>([])
+  const [avatar, setAvatar] = useState<string | undefined>(undefined)
+  const [avatarKey, setAvatarKey] = useState<number>(0)
+
+  const { getList } = useServices()
+
+  const handleEditClickOpen = () => {
+    dispatch(setVerProveedorActive(true))
+    dispatch(setOperacionCrudProveedor(2))
+  }
+
+  const handleEditClickOpenCreate = () => {
+    const defaultValues: IProveedor = {
+      codigoProveedor: 0,
+      nombreProveedor: '',
+      tipoProveedorId: 0,
+      nacionalidad: null,
+      cedula: 0,
+      rif: '',
+      fechaRif: new Date(),
+      nit: null,
+      fechaNit: null,
+      numeroRegistroContraloria: null,
+      fechaRegistroContraloria: null,
+      fechaRegistroContraloriaString: '',
+      fechaRegistroContraloriaObj: null,
+      capitalPagado: 0,
+      capitalSuscrito: 0,
+      status: '',
+      estatusFisicoId: 0,
+      numeroCuenta: ''
+    }
+
+    dispatch(setProveedoresDtoSeleccionado(defaultValues))
+    dispatch(setProveedorSeleccionado(defaultValues))
+    dispatch(setVerProveedorActive(true))
+    dispatch(setOperacionCrudProveedor(1))
+  }
+
+  const handlerProveedor = async (e: any, value: IProveedor | null) => {
+    const filter = { codigoProveedor: value?.codigoProveedor ?? 0 }
+
+    /* mientras franklin habilita el endpoint para traer un proveedor */
+     /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)
+    console.log('response proveedor:', response?.data)
+    response.data */
+
+    dispatch(setProveedorSeleccionado(value))
+    dispatch(setProveedoresDtoSeleccionado(value))
+  }
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true)
+
+      const filter = { PageSize: 10, PageNumber: 1, SearchText: '' }
+      const data = await getList(filter)
+
+      if (data?.isValid === false) {
+        toast.error(data?.message)
+      } else {
+        setProveedores(data?.data)
+      }
+
+      setLoading(false)
+    }
+
+    getData()
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!proveedoresDtoSeleccionado?.numeroCuenta) {
+      setAvatar(undefined)
+    } else {
+      setAvatar(data.avatar)
+      setAvatarKey(prev => prev + 1)
+    }
+  }, [proveedoresDtoSeleccionado])
+
+  if (!data) return null
+
+  return (
+    <Grid container spacing={6}>
+      <Grid item xs={12}>
+        {loading ? (
+          <Spinner sx={{ height: '100%' }} />
+        ) : (
+          <Card>
+            <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+              <Autocomplete
+                sx={{ width: 380 }}
+                options={proveedores}
+                isOptionEqualToValue={(o, v) => o.codigoProveedor === v.codigoProveedor}
+                getOptionLabel={o => `${o.cedula} ${o.nombreProveedor}`}
+                onChange={handlerProveedor}
+                renderInput={params => <TextField {...params} label='Proveedores' />}
+              />
+            </CardContent>
+
+            <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+              <CustomAvatar
+                key={avatarKey}
+                variant='rounded'
+                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
+              >
+                {getInitials(proveedorSeleccionado?.nombreProveedor ?? '')}
+              </CustomAvatar>
+
+              <Typography variant='h6' sx={{ mb: 4 }}>
+                {proveedorSeleccionado?.nombreProveedor}
+              </Typography>
+
+              <CustomChip
+                skin='light'
+                size='small'
+                label={proveedorSeleccionado?.status}
+                color={roleColors[proveedorSeleccionado?.status || 'Activo']}
+              />
+            </CardContent>
+
+            <CardContent sx={{ my: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ mr: 8 }}>
+                  <Typography variant='h6'>{proveedorSeleccionado?.capitalPagado}</Typography>
+                  <Typography variant='body2'>Capital Pagado</Typography>
+                </Box>
+                <Box>
+                  <Typography variant='h6'>{proveedorSeleccionado?.capitalSuscrito}</Typography>
+                  <Typography variant='body2'>Capital Suscrito</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+
+            <CardActions sx={{ justifyContent: 'center' }}>
+              {proveedorSeleccionado?.codigoProveedor > 0 && (
+                <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
+                  Editar
+                </Button>
+              )}
+
+              <Button color='success' variant='contained' onClick={handleEditClickOpenCreate}>
+                Crear
+              </Button>
+            </CardActions>
+
+            <DatePickerWrapper>
+              <DialogProveedorInfo popperPlacement={popperPlacement} />
+            </DatePickerWrapper>
+
+            <UserSuspendDialog open={suspendDialogOpen} setOpen={setSuspendDialogOpen} />
+            <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} />
+          </Card>
+        )}
+      </Grid>
+    </Grid>
+  )
+}
+
+export default ViewLeft
