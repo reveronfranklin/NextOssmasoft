@@ -1,0 +1,32 @@
+export interface Direccion {
+  codigoDireccion: number;
+  codigoPersona: number;
+  direccionId: number;
+  direccion: string;
+  paisId: number;
+  pais: string;
+  estadoId: number;
+  estado: string;
+  municipioId: number;
+  municipio: string;
+  ciudadId: number;
+  ciudad: string;
+  parroquiaId: number;
+  parroquia: string;
+  sectorId: number;
+  sector: string;
+  urbanizacionId: number;
+  urbanizacion: string;
+  tipoViviendaId: number;
+  tipoVivienda: string;
+  vivienda: string;
+  tipoNivelId: number;
+  tipoNivel: string;
+  nivel: string;
+  nroVivienda: string;
+  complementoDir: string;
+  tenenciaId: number;
+  tenencia: string;
+  codigoPostal: number;
+  principal: boolean;
+}
