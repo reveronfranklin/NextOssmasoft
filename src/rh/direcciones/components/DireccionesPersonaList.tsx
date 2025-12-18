@@ -48,10 +48,7 @@ interface DireccionesPersonaListProps {
   onAdd?: () => void;
 }
 
-const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
-  codigoPersona,
-  onDelete
-}) => {
+const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({ codigoPersona }) => {
   const [direcciones, setDirecciones] = useState<DireccionPersona[]>([]);
   const { getDireccionesByPersona, createDireccion, updateDireccion, deleteDireccion } = useDireccionesService();
 

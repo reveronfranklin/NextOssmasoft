@@ -4,6 +4,7 @@ import { TextField, Grid, Box, Autocomplete } from "@mui/material";
 import { ExperienciaLaboralDTO } from "../interfaces/experiencia-laboral.dto";
 import FormatNumber from 'src/utilities/format-numbers';
 import { TipoEmpresaEnum } from "../enums/tipoEmpresa.enum";
+
 interface Props {
   initialValues?: Partial<ExperienciaLaboralDTO>;
   onChange?: (data: { values: any; isValid: boolean }) => void;
