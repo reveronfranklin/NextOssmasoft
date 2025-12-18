@@ -48,10 +48,7 @@ interface DireccionesPersonaListProps {
   onAdd?: () => void;
 }
 
-const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
-  codigoPersona,
-  onDelete
-}) => {
+const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({ codigoPersona }) => {
   const [direcciones, setDirecciones] = useState<DireccionPersona[]>([]);
   const { getDireccionesByPersona, createDireccion, updateDireccion, deleteDireccion } = useDireccionesService();
 
@@ -83,7 +80,7 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal: any = () => {
     setOpenModal(false);
     setDireccionEdit(null);
     setFormData({});
@@ -96,7 +93,11 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
 
   const handleSubmit = async () => {
     if (modalMode === 'create') {
-      await createDireccion(formData);
+      await createDireccion({
+        ...formData,
+        codigoDireccion: 0,
+        codigoPersona: codigoPersona
+      });
     } else {
       await updateDireccion(formData);
     }
@@ -140,7 +141,12 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
                       <EditIcon />
                     </IconButton>
                     <ButtonWithConfirm
-                      onAction={() => onDelete && onDelete(dir.codigoDireccion)}
+                      onAction={async () => {
+                        await deleteDireccion(dir.codigoDireccion);
+                        if (codigoPersona) {
+                          getDireccionesByPersona(codigoPersona).then(setDirecciones);
+                        }
+                      }}
                       confirmMessage="¿Seguro que deseas eliminar esta dirección?"
                       showLoading={true}
                       disableBackdropClick={true}
@@ -167,6 +173,10 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
                       </Typography>
                       <br />
                       <Typography variant="caption" color="text.secondary">
+                        Sector: {dir.sector} | Urbanizacion: {dir.urbanizacion}
+                      </Typography>
+                      <br />
+                      <Typography variant="caption" color="text.secondary">
                         Nivel: {dir.tipoNivel} {dir.nivel} | Nro Vivienda: {dir.nroVivienda} | Tenencia: {dir.tenencia} | Vivienda: {dir.vivienda}
                       </Typography>
                       <br />
@@ -190,6 +200,10 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({
         onDelete={modalMode === 'edit' ? async () => {
           if (direccionEdit) {
             await deleteDireccion(direccionEdit.codigoDireccion);
+            handleCloseModal();
+            if (codigoPersona) {
+              getDireccionesByPersona(codigoPersona).then(setDirecciones);
+            }
           }
         } : undefined}
         isEdit={modalMode === 'edit'}

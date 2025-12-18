@@ -32,7 +32,8 @@ export type CreateExperienciaLaboralRequest = Omit<ExperienciaLaboralDTO, 'codig
 export type UpdateExperienciaLaboralRequest = ExperienciaLaboralDTO;
 
 export interface DeleteExperienciaLaboralRequest {
-  id: number;
+  codigoExpLaboral: number;
+  codigoPersona?: number;
 }
 
 export interface ExperienciaLaboralApiResponse<T = any> {

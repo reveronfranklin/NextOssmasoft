@@ -68,7 +68,7 @@ const ExperienciaPersonaList: React.FC<ExperienciaPersonaListProps> = ({ codigoP
 
   const handleDelete = async (exp: ExperienciaLaboralDTO) => {
     if (!exp.codigoExpLaboral || !codigoPersona) return;
-    await deleteMutation.mutateAsync({ id: exp.codigoExpLaboral });
+    await deleteMutation.mutateAsync({ codigoExpLaboral: exp.codigoExpLaboral, codigoPersona });
   };
 
   return (
@@ -161,7 +161,7 @@ const ExperienciaPersonaList: React.FC<ExperienciaPersonaListProps> = ({ codigoP
         } : undefined}
         isEdit={modalMode === 'edit'}
         formValues={formData}
-        PaperProps={{ sx: { minHeight: '60vh', minWidth: '700px' } }}
+        PaperProps={{ sx: { minHeight: '70vh', minWidth: '1000px' } }}
         confirmTitles={{
           create: "¿Crear experiencia?",
           edit: "¿Actualizar experiencia?",

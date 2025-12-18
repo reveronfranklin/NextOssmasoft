@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Card } from '@mui/material';
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
@@ -19,11 +19,11 @@ const PersonaViewDirecciones = () => {
   }
 
   return (
-    <>
+    <Card>
       <Box sx={{ p: 2 }}>
         <DireccionesPersonaList codigoPersona={personaSeleccionado?.codigoPersona} />
       </Box>
-    </>
+    </Card>
   );
 };
 
