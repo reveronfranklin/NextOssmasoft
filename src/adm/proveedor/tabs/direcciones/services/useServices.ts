@@ -60,6 +60,7 @@ export const useServices = (): {
 
   const getDireccionesByProveedor = useCallback(async (codigoProveedor: number) => {
     const response = await ossmmasofApi.post(UrlServices.GET_DIRECCIONES, { CodigoProveedor: codigoProveedor });
+
     return response?.data?.data || [];
   }, []);
 
