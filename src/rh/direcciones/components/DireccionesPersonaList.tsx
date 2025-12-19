@@ -169,11 +169,11 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({ codigoP
                         {dir.complementoDir}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        País: {dir.pais} | Estado: {dir.estado} | Municipio: {dir.municipio} | Ciudad: {dir.ciudad} | Parroquia: {dir.parroquia}
+                        País: {dir.pais} | Estado: {dir.estado} | Municipio: {dir.municipio} | Ciudad: {dir.ciudad}
                       </Typography>
                       <br />
                       <Typography variant="caption" color="text.secondary">
-                        Sector: {dir.sector} | Urbanizacion: {dir.urbanizacion}
+                        Parroquia: {dir.parroquia} | Sector: {dir.sector} | Urbanizacion: {dir.urbanizacion}
                       </Typography>
                       <br />
                       <Typography variant="caption" color="text.secondary">
@@ -181,7 +181,7 @@ const DireccionesPersonaList: React.FC<DireccionesPersonaListProps> = ({ codigoP
                       </Typography>
                       <br />
                       <Typography variant="caption" color="text.secondary">
-                        Código Postal: {dir.codigoPostal} {dir.principal ? ' | Principal' : ''} | sector: {dir.sector} | urbanización: {dir.urbanizacion}
+                        Código Postal: {dir.codigoPostal} {dir.principal ? ' | Principal' : ''}
                       </Typography>
                     </>
                   }
