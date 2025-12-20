@@ -133,20 +133,28 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
     <form>
       <Box mb={3}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
+            <TituloAutoComplete
+              tituloId={3}
+              selectedTituloId={tituloId}
+              onTituloSelect={(value) => setValue('direccionId', value?.id ?? null)}
+              label="Tipo de Dirección"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <PaisList
               onPaisSelect={handlePaisSelect}
               selectedPaisId={paisId}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <EstadoList
               paisId={paisId}
               onEstadoSelect={handleEstadoSelect}
               selectedEstadoId={estadoId}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <MunicipioList
               codigoPais={paisId}
               codigoEstado={estadoId}
@@ -201,16 +209,6 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
       <Box>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Box mt={2} mb={1}>
-              <TituloAutoComplete
-                tituloId={3}
-                selectedTituloId={tituloId}
-                onTituloSelect={(value) => setValue('direccionId', value?.id ?? null)}
-                label="Tipo de Dirección"
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
             <Controller
               name="nroVivienda"
               control={control}
@@ -224,7 +222,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
             <Controller
               name="complementoDir"
               control={control}
@@ -238,7 +236,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
                 tituloId={15}
@@ -248,21 +246,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="vivienda"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Vivienda"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
                 tituloId={28}
@@ -272,21 +256,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="nivel"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Nivel"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
                 tituloId={14}
@@ -296,7 +266,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={12}>
             <Controller
               name="codigoPostal"
               control={control}
@@ -311,7 +281,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="principal"
               control={control}
