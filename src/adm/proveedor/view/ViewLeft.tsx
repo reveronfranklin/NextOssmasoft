@@ -1,51 +1,25 @@
-// ** React Imports
 import { useEffect, useState } from 'react'
-
-// ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import Select from '@mui/material/Select'
-import Switch from '@mui/material/Switch'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import InputLabel from '@mui/material/InputLabel'
 import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import DialogContentText from '@mui/material/DialogContentText'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { ReactDatePickerProps } from 'react-datepicker'
-
-// ** Types
 import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
 import { useTheme } from '@mui/material/styles'
-
-// ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { RootState } from 'src/store'
 import { useSelector, useDispatch } from 'react-redux'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import UserSuspendDialog from 'src/views/apps/user/view/UserSuspendDialog'
 import UserSubscriptionDialog from 'src/views/apps/user/view/UserSubscriptionDialog'
 
-// ** Proveedor Store (se crea luego)
 import {
   setOperacionCrudProveedor,
   setProveedorSeleccionado,
@@ -53,14 +27,13 @@ import {
   setVerProveedorActive
 } from 'src/store/apps/adm-proveedor'
 
-// ** Services
 import { useServices } from '../services'
 import { Autocomplete } from '@mui/material'
 
-// ** Interfaces
 import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import DialogProveedorInfo from '../view/DialogInfo'
+
+/* import { ossmmasofApi } from 'src/MyApis/ossmmasofApi' */
 
 import toast from 'react-hot-toast'
 import Spinner from 'src/@core/components/spinner'
@@ -102,7 +75,8 @@ const ViewLeft = () => {
     (state: RootState) => state.proveedor
   )
 
-  const [openEdit, setOpenEdit] = useState<boolean>(false)
+/*   const [openEdit, setOpenEdit] = useState<boolean>(false) */
+
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
@@ -110,6 +84,8 @@ const ViewLeft = () => {
   const [proveedores, setProveedores] = useState<IProveedor[]>([])
   const [avatar, setAvatar] = useState<string | undefined>(undefined)
   const [avatarKey, setAvatarKey] = useState<number>(0)
+
+  console.log('avatar', avatar)
 
   const { getList } = useServices()
 
@@ -148,6 +124,8 @@ const ViewLeft = () => {
 
   const handlerProveedor = async (e: any, value: IProveedor | null) => {
     const filter = { codigoProveedor: value?.codigoProveedor ?? 0 }
+
+    console.log('valor proveedor seleccionado:', filter)
 
     /* mientras franklin habilita el endpoint para traer un proveedor */
      /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)

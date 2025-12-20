@@ -23,6 +23,7 @@ const useServices = () => {
         try {
             setLoading(true)
             const response = await ossmmasofApi.post<IResponse<IProveedor>>(UrlServices.GET_PROVEEDORES , filters)
+
             return handleApiResponse<IProveedor>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)

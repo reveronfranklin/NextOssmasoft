@@ -1,4 +1,3 @@
-// ** MUI Imports
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
@@ -7,30 +6,20 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-
-// ** Third Party Imports
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
-
-// ** Redux Imports
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { setProveedorSeleccionado, setProveedoresDtoSeleccionado } from 'src/store/apps/adm-proveedor'
-
-// ** API
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-
-// ** Interfaces
 import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
-
-// ** Types
 import { ReactDatePickerProps } from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 
-interface FormInputs extends IProveedor {}
+type FormInputs = IProveedor
 
 const FormProveedorCreateAsync = ({
   popperPlacement
