@@ -6,6 +6,7 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import Divider from '@mui/material/Divider'
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
@@ -89,62 +90,70 @@ const FormProveedorCreateAsync = ({
 
   return (
     <Card>
-      <CardHeader title='Crear Proveedor' />
+      <CardHeader title='Crear Proveedor' subheader='Información general del proveedor' />
+
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={5}>
-            {/* Codigo Proveedor */}
-            <Grid item sm={3} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoProveedor'
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} label='Codigo Proveedor' disabled />
-                  )}
-                />
-              </FormControl>
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Divider>Datos Básicos</Divider>
             </Grid>
 
-            {/* Nombre Proveedor */}
+            <Grid item sm={3} xs={12}>
+              <Controller
+                name='codigoProveedor'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Código' fullWidth disabled />
+                )}
+              />
+            </Grid>
+
             <Grid item sm={9} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='nombreProveedor'
                   control={control}
                   rules={{ required: true }}
-                  render={({ field }) => <TextField {...field} label='Nombre Proveedor' />}
+                  render={({ field }) => (
+                    <TextField {...field} label='Nombre del Proveedor' fullWidth />
+                  )}
                 />
                 {errors.nombreProveedor && (
-                  <FormHelperText sx={{ color: 'error.main' }}>Este campo es requerido</FormHelperText>
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    Este campo es requerido
+                  </FormHelperText>
                 )}
               </FormControl>
             </Grid>
 
-            {/* RIF */}
-            <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='rif'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='RIF' />}
-                />
-              </FormControl>
+            <Grid item xs={12}>
+              <Divider>Información Fiscal</Divider>
             </Grid>
 
-            {/* Fecha RIF */}
-            <Grid item sm={6} xs={12}>
+            {/* RIF desplazado 2 columnas */}
+            <Grid item sm={8} xs={12}>
+              <Controller
+                name='rif'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='RIF' fullWidth />
+                )}
+              />
+            </Grid>
+
+            <Grid item sm={4} xs={12}>
               <Controller
                 name='fechaRif'
                 control={control}
                 render={({ field }) => (
-                  <DatePickerWrapper>
+                  <DatePickerWrapper sx={{ width: '100%' }}>
                     <DatePicker
                       selected={field.value}
                       onChange={handleFechaRif}
                       dateFormat='dd/MM/yyyy'
                       popperPlacement={popperPlacement}
-                      placeholderText='Fecha RIF'
+                      wrapperClassName='date-picker-full-width'
                       customInput={<CustomInput label='Fecha RIF' />}
                     />
                   </DatePickerWrapper>
@@ -152,7 +161,10 @@ const FormProveedorCreateAsync = ({
               />
             </Grid>
 
-            {/* Capital Pagado */}
+            <Grid item xs={12}>
+              <Divider>Capital</Divider>
+            </Grid>
+
             <Grid item sm={6} xs={12}>
               <Controller
                 name='capitalPagado'
@@ -161,8 +173,9 @@ const FormProveedorCreateAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
@@ -173,7 +186,6 @@ const FormProveedorCreateAsync = ({
               />
             </Grid>
 
-            {/* Capital Suscrito */}
             <Grid item sm={6} xs={12}>
               <Controller
                 name='capitalSuscrito'
@@ -182,8 +194,9 @@ const FormProveedorCreateAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
@@ -194,30 +207,28 @@ const FormProveedorCreateAsync = ({
               />
             </Grid>
 
-            {/* Status */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='status'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Status' />}
-                />
-              </FormControl>
+              <Controller
+                name='status'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Status' fullWidth />
+                )}
+              />
             </Grid>
 
-            {/* Numero Cuenta */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='numeroCuenta'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Numero Cuenta' />}
-                />
-              </FormControl>
+              <Controller
+                name='numeroCuenta'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Número de Cuenta' fullWidth />
+                )}
+              />
             </Grid>
 
-            <Grid item xs={12}>
-              <Button type='submit' variant='contained' size='large'>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button type='submit' variant='contained'>
                 Guardar
               </Button>
             </Grid>

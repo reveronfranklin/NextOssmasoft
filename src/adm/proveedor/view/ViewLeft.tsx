@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
+import Divider from '@mui/material/Divider'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { ReactDatePickerProps } from 'react-datepicker'
 import { ThemeColor } from 'src/@core/layouts/types'
@@ -205,18 +206,71 @@ const ViewLeft = () => {
               />
             </CardContent>
 
-            <CardContent sx={{ my: 1 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Box sx={{ mr: 8 }}>
-                  <Typography variant='h6'>{proveedorSeleccionado?.capitalPagado}</Typography>
-                  <Typography variant='body2'>Capital Pagado</Typography>
-                </Box>
-                <Box>
-                  <Typography variant='h6'>{proveedorSeleccionado?.capitalSuscrito}</Typography>
-                  <Typography variant='body2'>Capital Suscrito</Typography>
-                </Box>
-              </Box>
-            </CardContent>
+            {proveedorSeleccionado && (
+              <>
+                {/* Resumen de Capitales */}
+                <CardContent sx={{ my: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Box sx={{ mr: 8, textAlign: 'center' }}>
+                      <Typography variant='h6'>
+                        {new Intl.NumberFormat('es-VE').format(proveedorSeleccionado.capitalPagado)}
+                      </Typography>
+                      <Typography variant='body2'>Capital Pagado</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant='h6'>
+                        {new Intl.NumberFormat('es-VE').format(proveedorSeleccionado.capitalSuscrito)}
+                      </Typography>
+                      <Typography variant='body2'>Capital Suscrito</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+
+                {/* Detalle Detallado (Como el ejemplo de Persona solicitado) */}
+                <CardContent>
+                  <Typography variant='h6'>Detalle del Proveedor</Typography>
+                  <Divider sx={{ my: theme => `${theme.spacing(4)} !important` }} />
+                  <Box sx={{ pb: 1 }}>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Código:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.codigoProveedor}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>RIF:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.rif || 'N/A'}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cédula:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.cedula || 'N/A'}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Nacionalidad:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.nacionalidad || 'N/A'}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cuenta Bancaria:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.numeroCuenta || 'No registrada'}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Reg. Contraloría:</Typography>
+                      <Typography variant='body2'>
+                        {proveedorSeleccionado.numeroRegistroContraloria || 'N/A'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>F. Registro Cont.:</Typography>
+                      <Typography variant='body2'>
+                        {proveedorSeleccionado.fechaRegistroContraloriaString || 'N/A'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', mb: 2 }}>
+                      <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>NIT:</Typography>
+                      <Typography variant='body2'>{proveedorSeleccionado.nit || 'N/A'}</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </>
+            )}
 
             <CardActions sx={{ justifyContent: 'center' }}>
               {proveedorSeleccionado?.codigoProveedor > 0 && (

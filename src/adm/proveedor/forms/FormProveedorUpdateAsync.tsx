@@ -6,6 +6,7 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import Divider from '@mui/material/Divider'
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
@@ -31,6 +32,10 @@ const FormProveedorEditAsync = ({
 
   const fechaActual = new Date()
   const defaultDateString = fechaActual.toISOString()
+
+  if (!proveedoresDtoSeleccionado) {
+    return <div>No hay proveedor seleccionado</div>
+  }
 
   const defaultValues: FormInputs = {
     codigoProveedor: proveedoresDtoSeleccionado.codigoProveedor,
@@ -60,24 +65,12 @@ const FormProveedorEditAsync = ({
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  const handleFechaRif = (date: Date) => {
-    setValue('fechaRif', date)
-  }
-
-  const handlerCapitalPagado = (value: string) => {
-    const val = value === '' ? 0 : parseFloat(value)
-    setValue('capitalPagado', val)
-  }
-
-  const handlerCapitalSuscrito = (value: string) => {
-    const val = value === '' ? 0 : parseFloat(value)
-    setValue('capitalSuscrito', val)
-  }
+  const handleFechaRif = (date: Date) => setValue('fechaRif', date)
+  const handlerCapitalPagado = (value: string) => setValue('capitalPagado', value === '' ? 0 : parseFloat(value))
+  const handlerCapitalSuscrito = (value: string) => setValue('capitalSuscrito', value === '' ? 0 : parseFloat(value))
 
   const onSubmit = async (data: FormInputs) => {
-    const payload: IProveedor = { ...data }
-    const response = await ossmmasofApi.put(`/Proveedor/Update/${payload.codigoProveedor}`, payload)
-
+    const response = await ossmmasofApi.put(`/Proveedor/Update/${data.codigoProveedor}`, data)
     if (response.data.isValid) {
       dispatch(setProveedoresDtoSeleccionado(response.data.data))
       dispatch(setProveedorSeleccionado(response.data.data))
@@ -87,37 +80,33 @@ const FormProveedorEditAsync = ({
     }
   }
 
-  if (!proveedoresDtoSeleccionado) {
-    return <div>No hay proveedor seleccionado</div>
-  }
-
   return (
     <Card>
       <CardHeader title={`Editar Proveedor: ${proveedoresDtoSeleccionado.nombreProveedor}`} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={5}>
-            {/* Codigo Proveedor */}
-            <Grid item sm={3} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoProveedor'
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} label='Codigo Proveedor' disabled />
-                  )}
-                />
-              </FormControl>
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Divider>Datos Básicos</Divider>
             </Grid>
 
-            {/* Nombre Proveedor */}
+            {/* Código */}
+            <Grid item sm={3} xs={12}>
+              <Controller
+                name='codigoProveedor'
+                control={control}
+                render={({ field }) => <TextField {...field} label='Código' fullWidth disabled />}
+              />
+            </Grid>
+
+            {/* Nombre */}
             <Grid item sm={9} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='nombreProveedor'
                   control={control}
                   rules={{ required: true }}
-                  render={({ field }) => <TextField {...field} label='Nombre Proveedor' />}
+                  render={({ field }) => <TextField {...field} label='Nombre Proveedor' fullWidth />}
                 />
                 {errors.nombreProveedor && (
                   <FormHelperText sx={{ color: 'error.main' }}>Este campo es requerido</FormHelperText>
@@ -125,35 +114,41 @@ const FormProveedorEditAsync = ({
               </FormControl>
             </Grid>
 
-            {/* RIF */}
-            <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='rif'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='RIF' />}
-                />
-              </FormControl>
+            <Grid item xs={12}>
+              <Divider>Información Fiscal</Divider>
+            </Grid>
+
+            {/* RIF desplazado 2 columnas */}
+            <Grid item sm={8} xs={12}>
+              <Controller
+                name='rif'
+                control={control}
+                render={({ field }) => <TextField {...field} label='RIF' fullWidth />}
+              />
             </Grid>
 
             {/* Fecha RIF */}
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={4} xs={12}>
               <Controller
                 name='fechaRif'
                 control={control}
                 render={({ field }) => (
-                  <DatePickerWrapper>
+                  <DatePickerWrapper sx={{ width: '100%' }}>
                     <DatePicker
                       selected={field.value}
                       onChange={handleFechaRif}
                       dateFormat='dd/MM/yyyy'
                       popperPlacement={popperPlacement}
-                      placeholderText='Fecha RIF'
+                      wrapperClassName='date-picker-full-width'
                       customInput={<CustomInput label='Fecha RIF' />}
                     />
                   </DatePickerWrapper>
                 )}
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Divider>Capital</Divider>
             </Grid>
 
             {/* Capital Pagado */}
@@ -165,8 +160,9 @@ const FormProveedorEditAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
@@ -186,8 +182,9 @@ const FormProveedorEditAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
@@ -200,27 +197,24 @@ const FormProveedorEditAsync = ({
 
             {/* Status */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='status'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Status' />}
-                />
-              </FormControl>
+              <Controller
+                name='status'
+                control={control}
+                render={({ field }) => <TextField {...field} label='Status' fullWidth />}
+              />
             </Grid>
 
-            {/* Numero Cuenta */}
+            {/* Número de Cuenta */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='numeroCuenta'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Numero Cuenta' />}
-                />
-              </FormControl>
+              <Controller
+                name='numeroCuenta'
+                control={control}
+                render={({ field }) => <TextField {...field} label='Número de Cuenta' fullWidth />}
+              />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* Botón */}
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button type='submit' variant='contained' size='large'>
                 Guardar Cambios
               </Button>
