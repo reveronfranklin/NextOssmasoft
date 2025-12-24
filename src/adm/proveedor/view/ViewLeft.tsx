@@ -226,7 +226,7 @@ const ViewLeft = () => {
                   </Box>
                 </CardContent>
 
-                {/* Detalle Detallado (Como el ejemplo de Persona solicitado) */}
+                {/* Detalle */}
                 <CardContent>
                   <Typography variant='h6'>Detalle del Proveedor</Typography>
                   <Divider sx={{ my: theme => `${theme.spacing(4)} !important` }} />
