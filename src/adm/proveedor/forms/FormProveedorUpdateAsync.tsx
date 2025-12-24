@@ -33,10 +33,6 @@ const FormProveedorEditAsync = ({
   const fechaActual = new Date()
   const defaultDateString = fechaActual.toISOString()
 
-  if (!proveedoresDtoSeleccionado) {
-    return <div>No hay proveedor seleccionado</div>
-  }
-
   const defaultValues: FormInputs = {
     codigoProveedor: proveedoresDtoSeleccionado.codigoProveedor,
     nombreProveedor: proveedoresDtoSeleccionado.nombreProveedor,
@@ -78,6 +74,10 @@ const FormProveedorEditAsync = ({
     } else {
       toast.error(response.data.message || 'Error al actualizar proveedor')
     }
+  }
+
+  if (!proveedoresDtoSeleccionado) {
+    return <div>No hay proveedor seleccionado</div>
   }
 
   return (

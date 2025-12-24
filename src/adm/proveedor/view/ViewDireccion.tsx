@@ -5,7 +5,7 @@ import { RootState } from 'src/store';
 
 import DireccionProveedorList from 'src/adm/proveedor/tabs/direcciones/components/DireccionProveedorList';
 
-const ViewDireccionProveedor = () => {
+const ViewDireccion = () => {
   const { proveedorSeleccionado } = useSelector((state: RootState) => state.proveedor);
 
   if (!proveedorSeleccionado?.codigoProveedor) {
@@ -25,4 +25,4 @@ const ViewDireccionProveedor = () => {
   );
 };
 
-export default ViewDireccionProveedor;
+export default ViewDireccion;

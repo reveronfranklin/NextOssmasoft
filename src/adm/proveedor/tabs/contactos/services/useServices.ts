@@ -1,91 +1,59 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
-import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
-import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/UrlServices.enum';
-import {
-    IResponse,
-    SisBancoResponseDto,
-    SisBancoFilterDto,
-    SisBancoCreateDto,
-    SisBancoUpdateDto,
-    SisBancoDeleteDto
-} from '../interfaces';
+import { Contacto } from '../interfaces';
 
-const useServices = () => {
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError]     = useState<string>('')
-    const [message, setMessage] = useState<IAlertMessageDto>({
-        text: '',
-        timestamp: Date.now(),
-        isValid: true
-    })
+export const useContactoProveedorServices = (): {
+  getContactosByProveedor: (codigoProveedor: number) => Promise<Contacto[]>;
+  createContacto: (data: Contacto) => Promise<any>;
+  updateContacto: (data: Contacto) => Promise<any>;
+  deleteContacto: (codigoContactoProveedor: number) => Promise<any>;
+} => {
 
-    const getList = useCallback(async (filters: SisBancoFilterDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.GET_CONTACTOS, filters)
+  const getContactosByProveedor = useCallback(
+    async (codigoProveedor: number): Promise<Contacto[]> => {
+      const response = await ossmmasofApi.post(
+        UrlServices.GET_CONTACTOS,
+        { CodigoProveedor: codigoProveedor }
+      );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+      return response?.data?.data || [];
+    },
+    []
+  );
 
-    const store = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATE_CONTACTOS, payload)
-            const message   = 'Contacto creado exitosamente'
+  const createContacto = useCallback(async (data: Contacto) => {
+    const response = await ossmmasofApi.post(
+      UrlServices.CREATE_CONTACTOS,
+      data
+    );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    const update = useCallback(async (payload: SisBancoUpdateDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATE_CONTACTOS, payload)
-            const message   = 'Contacto actualizado exitosamente'
+  const updateContacto = useCallback(async (data: Contacto) => {
+    const response = await ossmmasofApi.post(
+      UrlServices.UPDATE_CONTACTOS,
+      data
+    );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    const remove = useCallback(async (payload: SisBancoDeleteDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETE_CONTACTOS, payload)
-            const message   = 'Contacto eliminado exitosamente'
+  const deleteContacto = useCallback(async (codigoContactoProveedor: number) => {
+    const response = await ossmmasofApi.post(
+      `${UrlServices.DELETE_CONTACTOS}/${codigoContactoProveedor}`
+    );
 
-            return handleApiResponse<SisBancoDeleteDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    return {
-        error,
-        message,
-        loading,
-        setMessage,
-        getList,
-        store,
-        update,
-        remove
-    }
-}
+  return {
+    getContactosByProveedor,
+    createContacto,
+    updateContacto,
+    deleteContacto
+  };
+};
 
-export default useServices
+export default useContactoProveedorServices;
