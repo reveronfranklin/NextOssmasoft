@@ -141,7 +141,7 @@ const ViewLeft = () => {
     const getData = async () => {
       setLoading(true)
 
-      const filter = { PageSize: 10, PageNumber: 1, SearchText: '' }
+      const filter = { PageSize: 0, PageNumber: 1, SearchText: '' }
       const data = await getList(filter)
 
       if (data?.isValid === false) {

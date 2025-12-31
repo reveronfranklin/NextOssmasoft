@@ -6,10 +6,16 @@ import {
   Typography,
   Box,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 
 import { Contacto } from '../interfaces';
+import TipoContactoList from '../components/ContactoList';
+import TipoIdentificacionList from '../components/TipoIdentificacionList';
 
 export interface FormularioContactoChangeData {
   values: Contacto;
@@ -24,6 +30,7 @@ interface FormularioContactoProps {
 const requiredFields: (keyof Contacto)[] = [
   'nombre',
   'apellido',
+  'identificacionId',
   'identificacion',
   'sexo',
   'tipoContactoId'
@@ -41,7 +48,6 @@ const FormularioContacto: React.FC<FormularioContactoProps> = ({
   const isFilled = (value: unknown): boolean => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim() !== '';
-
     return true;
   };
 
@@ -54,13 +60,18 @@ const FormularioContacto: React.FC<FormularioContactoProps> = ({
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
 
+  const identificacionId = watch('identificacionId');
+  const tipoContactoId = watch('tipoContactoId');
+
   return (
     <form>
       <Box mb={3}>
         <Typography variant="subtitle1" gutterBottom>
           Datos del Contacto
         </Typography>
+
         <Grid container spacing={2}>
+          {/* Nombre */}
           <Grid item xs={12} md={6}>
             <Controller
               name="nombre"
@@ -70,6 +81,8 @@ const FormularioContacto: React.FC<FormularioContactoProps> = ({
               )}
             />
           </Grid>
+
+          {/* Apellido */}
           <Grid item xs={12} md={6}>
             <Controller
               name="apellido"
@@ -79,39 +92,61 @@ const FormularioContacto: React.FC<FormularioContactoProps> = ({
               )}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+
+          {/* Tipo Identificación (pequeño) */}
+          <Grid item xs={12} md={2}>
+            <TipoIdentificacionList
+              selectedTipoIdentificacionId={identificacionId}
+              onSelect={(item) => {
+                (control as any)._formValues.identificacionId = item?.id ?? null;
+              }}
+            />
+          </Grid>
+
+          {/* Identificación (texto) */}
+          <Grid item xs={12} md={4}>
             <Controller
               name="identificacion"
               control={control}
               render={({ field }) => (
-                <TextField {...field} label="Identificación" fullWidth margin="dense" />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="sexo"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} label="Sexo" fullWidth margin="dense" />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="tipoContactoId"
-              control={control}
-              render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Tipo de Contacto"
-                  type="number"
+                  label="Identificación"
                   fullWidth
                   margin="dense"
                 />
               )}
             />
           </Grid>
+
+          {/* Sexo */}
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="sexo-label">Sexo</InputLabel>
+              <Controller
+                name="sexo"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} labelId="sexo-label" label="Sexo">
+                    <MenuItem value="M">Masculino</MenuItem>
+                    <MenuItem value="F">Femenino</MenuItem>
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </Grid>
+
+          {/* Tipo Contacto */}
+          <Grid item xs={12} md={6}>
+            <TipoContactoList
+              selectedTipoContactoId={tipoContactoId}
+              onSelect={(item: any) => {
+                (control as any)._formValues.tipoContactoId = item?.id ?? null;
+              }}
+            />
+          </Grid>
+
+          {/* Principal */}
           <Grid item xs={12} md={6}>
             <Controller
               name="principal"

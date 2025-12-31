@@ -165,6 +165,7 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
         title={modalMode === 'create' ? 'Añadir actividad' : 'Editar actividad'}
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
+        maxWidth="md"
         onDelete={
           modalMode === 'edit'
             ? async () => {

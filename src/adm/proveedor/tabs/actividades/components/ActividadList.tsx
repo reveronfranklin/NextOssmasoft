@@ -21,7 +21,7 @@ const ActividadList: React.FC<ActividadListProps> = ({
   const [selected, setSelected] = useState<ActividadItem | null>(null);
 
   const getActividadesCatalogo = useCallback(async (): Promise<ActividadItem[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_ACTIVIDADES_CATALOGO);
+    const response = await ossmmasofApi.post(UrlServices.GET_ACTIVIDADES_CATALOGO, { tituloId: 13 });
 
     return response.data || [];
   }, []);

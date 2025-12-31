@@ -8,37 +8,37 @@ export interface DescriptivaItem {
   descripcion: string;
 }
 
-interface TipoContactoListProps {
-  selectedTipoContactoId?: number | null;
+interface TipoIdentificacionListProps {
+  selectedTipoIdentificacionId?: number | null;
   onSelect?: (item: DescriptivaItem | null) => void;
 }
 
-const TipoContactoList: React.FC<TipoContactoListProps> = ({
-  selectedTipoContactoId,
+const TipoIdentificacionList: React.FC<TipoIdentificacionListProps> = ({
+  selectedTipoIdentificacionId,
   onSelect
 }) => {
   const [items, setItems] = useState<DescriptivaItem[]>([]);
   const [selected, setSelected] = useState<DescriptivaItem | null>(null);
 
-  const getTiposContacto = useCallback(async (): Promise<DescriptivaItem[]> => {
+  const getTiposIdentificacion = useCallback(async (): Promise<DescriptivaItem[]> => {
     const response = await ossmmasofApi.post(
-      UrlServices.GET_TIPO_CONTACTO,
-      { tituloId: 10 }
+      UrlServices.GET_TIPO_IDENTIFICACION,
+      { tituloId: 9 }
     );
 
     return response.data || [];
   }, []);
 
   useEffect(() => {
-    getTiposContacto().then(setItems);
-  }, [getTiposContacto]);
+    getTiposIdentificacion().then(setItems);
+  }, [getTiposIdentificacion]);
 
   useEffect(() => {
-    if (selectedTipoContactoId && items.length > 0) {
-      const found = items.find(i => i.id === selectedTipoContactoId) || null;
+    if (selectedTipoIdentificacionId && items.length > 0) {
+      const found = items.find(i => i.id === selectedTipoIdentificacionId) || null;
       setSelected(found);
     }
-  }, [selectedTipoContactoId, items]);
+  }, [selectedTipoIdentificacionId, items]);
 
   return (
     <Autocomplete
@@ -53,7 +53,7 @@ const TipoContactoList: React.FC<TipoContactoListProps> = ({
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Tipo de Contacto"
+          label="Tipo de Identificación"
           fullWidth
           margin="dense"
         />
@@ -62,4 +62,4 @@ const TipoContactoList: React.FC<TipoContactoListProps> = ({
   );
 };
 
-export default TipoContactoList;
+export default TipoIdentificacionList;
