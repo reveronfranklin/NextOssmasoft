@@ -71,9 +71,12 @@ const FormProveedorCreateAsync = ({
 
   const parseSpanishNumber = (value: any) => {
     if (value === null || value === undefined || value === '') return 0
+
     if (typeof value === 'number') return value
+
     const cleanValue = value.toString().trim().replace(/\./g, '').replace(',', '.')
     const result = parseFloat(cleanValue)
+
     return isNaN(result) ? 0 : result
   }
 

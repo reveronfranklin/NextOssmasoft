@@ -81,6 +81,7 @@ const FormProveedorEditAsync = ({
       .replace(',', '.')
 
     const result = parseFloat(cleanValue)
+
     return isNaN(result) ? 0 : result
   }
 
