@@ -1,91 +1,59 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
-import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
-import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/UrlServices.enum';
-import {
-    IResponse,
-    SisBancoResponseDto,
-    SisBancoFilterDto,
-    SisBancoCreateDto,
-    SisBancoUpdateDto,
-    SisBancoDeleteDto
-} from '../interfaces';
+import { Actividad } from '../interfaces';
 
-const useServices = () => {
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError]     = useState<string>('')
-    const [message, setMessage] = useState<IAlertMessageDto>({
-        text: '',
-        timestamp: Date.now(),
-        isValid: true
-    })
+export const useActividadProveedorServices = (): {
+  getActividadesByProveedor: (codigoProveedor: number) => Promise<Actividad[]>;
+  createActividad: (data: Actividad) => Promise<any>;
+  updateActividad: (data: Actividad) => Promise<any>;
+  deleteActividad: (codigoActProveedor: number) => Promise<any>;
+} => {
 
-    const getList = useCallback(async (filters: SisBancoFilterDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.GET_ACTIVIDADES , filters)
+  const getActividadesByProveedor = useCallback(
+    async (codigoProveedor: number): Promise<Actividad[]> => {
+      const response = await ossmmasofApi.post(
+        UrlServices.GET_ACTIVIDADES,
+        { CodigoProveedor: codigoProveedor }
+      );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+      return response?.data?.data || [];
+    },
+    []
+  );
 
-    const store = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATE_ACTIVIDADES, payload)
-            const message   = 'Actividad creada exitosamente'
+  const createActividad = useCallback(async (data: Actividad) => {
+    const response = await ossmmasofApi.post(
+      UrlServices.CREATE_ACTIVIDADES,
+      data
+    );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    const update = useCallback(async (payload: SisBancoUpdateDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATE_ACTIVIDADES, payload)
-            const message   = 'Actividad actualizada exitosamente'
+  const updateActividad = useCallback(async (data: Actividad) => {
+    const response = await ossmmasofApi.post(
+      UrlServices.UPDATE_ACTIVIDADES,
+      data
+    );
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    const remove = useCallback(async (payload: SisBancoDeleteDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETE_ACTIVIDADES, payload)
-            const message   = 'Actividad eliminada exitosamente'
+  const deleteActividad = useCallback(async (codigoActProveedor: number) => {
+    const response = await ossmmasofApi.post(
+      `${UrlServices.DELETE_ACTIVIDADES}/${codigoActProveedor}`
+    );
 
-            return handleApiResponse<SisBancoDeleteDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
+    return response.data;
+  }, []);
 
-    return {
-        error,
-        message,
-        loading,
-        setMessage,
-        getList,
-        store,
-        update,
-        remove
-    }
-}
+  return {
+    getActividadesByProveedor,
+    createActividad,
+    updateActividad,
+    deleteActividad
+  };
+};
 
-export default useServices
+export default useActividadProveedorServices;

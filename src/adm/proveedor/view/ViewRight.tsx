@@ -12,17 +12,9 @@ import Icon from 'src/@core/components/icon'
 
 import { InvoiceType } from 'src/types/apps/invoiceTypes'
 import ViewDireccion from 'src/adm/proveedor/view/ViewDireccion'
-
-
-/* import UserViewBilling from './UserViewBilling'
-import PersonaViewOverview from './PersonaViewOverview'
-
-import UserViewConnection from './UserViewConnection'
- */
-
-/* import UserViewSecurity from './UserViewSecurity'
-import UserViewNotification from './UserViewNotification'
-import PersonaViewDirecciones from './PersonaViewDirecciones' */
+import ViewComunicacion from 'src/adm/proveedor/view/ViewComunicacion'
+import ViewActividad from 'src/adm/proveedor/view/ViewActividad'
+import ViewContacto from 'src/adm/proveedor/view/ViewContacto'
 
 interface Props {
   tab: string
@@ -146,13 +138,13 @@ const ViewRight = ({ tab, invoiceData }: Props) => {
               <ViewDireccion />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='contacto'>
-              {/* <UserViewBilling /> */}
+              <ViewContacto />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='comunicacion'>
-              {/* <UserViewNotification  /> */}
+              <ViewComunicacion />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='actividad'>
-              {/* <UserViewConnection /> */}
+              <ViewActividad />
             </TabPanel>
           </>
         )}

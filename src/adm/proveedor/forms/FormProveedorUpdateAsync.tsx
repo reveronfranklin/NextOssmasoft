@@ -2,10 +2,12 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import Divider from '@mui/material/Divider'
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
@@ -44,11 +46,13 @@ const FormProveedorEditAsync = ({
     fechaNit: proveedoresDtoSeleccionado.fechaNit ?? null,
     numeroRegistroContraloria: proveedoresDtoSeleccionado.numeroRegistroContraloria ?? null,
     fechaRegistroContraloria: proveedoresDtoSeleccionado.fechaRegistroContraloria ?? null,
-    fechaRegistroContraloriaString: proveedoresDtoSeleccionado.fechaRegistroContraloriaString ?? defaultDateString,
-    fechaRegistroContraloriaObj: proveedoresDtoSeleccionado.fechaRegistroContraloriaObj ?? null,
+    fechaRegistroContraloriaString:
+      proveedoresDtoSeleccionado.fechaRegistroContraloriaString ?? defaultDateString,
+    fechaRegistroContraloriaObj:
+      proveedoresDtoSeleccionado.fechaRegistroContraloriaObj ?? null,
     capitalPagado: proveedoresDtoSeleccionado.capitalPagado ?? 0,
     capitalSuscrito: proveedoresDtoSeleccionado.capitalSuscrito ?? 0,
-    status: proveedoresDtoSeleccionado.status ?? '',
+    status: proveedoresDtoSeleccionado.status ?? 'A',
     estatusFisicoId: proveedoresDtoSeleccionado.estatusFisicoId ?? 0,
     numeroCuenta: proveedoresDtoSeleccionado.numeroCuenta ?? ''
   }
@@ -60,30 +64,54 @@ const FormProveedorEditAsync = ({
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  const handleFechaRif = (date: Date) => {
-    setValue('fechaRif', date)
-  }
+  const handleFechaRif = (date: Date) => setValue('fechaRif', date)
+  const handlerCapitalPagado = (value: string) =>
+    setValue('capitalPagado', value === '' ? 0 : parseFloat(value))
+  const handlerCapitalSuscrito = (value: string) =>
+    setValue('capitalSuscrito', value === '' ? 0 : parseFloat(value))
 
-  const handlerCapitalPagado = (value: string) => {
-    const val = value === '' ? 0 : parseFloat(value)
-    setValue('capitalPagado', val)
-  }
+  const parseSpanishNumber = (value: any) => {
+    if (value === null || value === undefined || value === '') return 0
+    if (typeof value === 'number') return value
 
-  const handlerCapitalSuscrito = (value: string) => {
-    const val = value === '' ? 0 : parseFloat(value)
-    setValue('capitalSuscrito', val)
+    const cleanValue = value
+      .toString()
+      .trim()
+      .replace(/\./g, '')
+      .replace(',', '.')
+
+    const result = parseFloat(cleanValue)
+
+    return isNaN(result) ? 0 : result
   }
 
   const onSubmit = async (data: FormInputs) => {
-    const payload: IProveedor = { ...data }
-    const response = await ossmmasofApi.put(`/Proveedor/Update/${payload.codigoProveedor}`, payload)
+    const payload = {
+      ...data,
+      capitalPagado: parseSpanishNumber(data.capitalPagado),
+      capitalSuscrito: parseSpanishNumber(data.capitalSuscrito),
+      cedula: Number(data.cedula || 0),
+      codigoProveedor: Number(data.codigoProveedor || 0),
+      tipoProveedorId: Number(data.tipoProveedorId || 0),
+      estatusFisicoId: Number(data.estatusFisicoId || 0)
+    }
 
-    if (response.data.isValid) {
-      dispatch(setProveedoresDtoSeleccionado(response.data.data))
-      dispatch(setProveedorSeleccionado(response.data.data))
-      toast.success('Proveedor actualizado correctamente')
-    } else {
-      toast.error(response.data.message || 'Error al actualizar proveedor')
+    try {
+      const response = await ossmmasofApi.put(
+        `/Proveedor/Update/${payload.codigoProveedor}`,
+        payload
+      )
+
+      if (response.data.isValid) {
+        dispatch(setProveedoresDtoSeleccionado(response.data.data))
+        dispatch(setProveedorSeleccionado(response.data.data))
+        toast.success('Proveedor actualizado correctamente')
+      } else {
+        toast.error(response.data.message || 'Error al actualizar proveedor')
+      }
+    } catch (error: any) {
+      console.error('Error en Update:', error.response?.data)
+      toast.error('Ocurrió un error al procesar la solicitud')
     }
   }
 
@@ -93,67 +121,94 @@ const FormProveedorEditAsync = ({
 
   return (
     <Card>
-      <CardHeader title={`Editar Proveedor: ${proveedoresDtoSeleccionado.nombreProveedor}`} />
+      <CardHeader
+        title={`Editar Proveedor: ${proveedoresDtoSeleccionado.nombreProveedor}`}
+      />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={5}>
-            {/* Codigo Proveedor */}
-            <Grid item sm={3} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='codigoProveedor'
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} label='Codigo Proveedor' disabled />
-                  )}
-                />
-              </FormControl>
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Divider>Datos Básicos</Divider>
             </Grid>
 
-            {/* Nombre Proveedor */}
-            <Grid item sm={9} xs={12}>
+            {/* Código */}
+            <Grid item sm={3} xs={12}>
+              <Controller
+                name='codigoProveedor'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Código' fullWidth disabled />
+                )}
+              />
+            </Grid>
+
+            {/* Nombre */}
+            <Grid item sm={5} xs={12}>
               <FormControl fullWidth>
                 <Controller
                   name='nombreProveedor'
                   control={control}
                   rules={{ required: true }}
-                  render={({ field }) => <TextField {...field} label='Nombre Proveedor' />}
+                  render={({ field }) => (
+                    <TextField {...field} label='Nombre Proveedor' fullWidth />
+                  )}
                 />
                 {errors.nombreProveedor && (
-                  <FormHelperText sx={{ color: 'error.main' }}>Este campo es requerido</FormHelperText>
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    Este campo es requerido
+                  </FormHelperText>
                 )}
               </FormControl>
             </Grid>
 
+            {/* Cédula */}
+            <Grid item sm={4} xs={12}>
+              <Controller
+                name='cedula'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Cédula' type='number' fullWidth />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Divider>Información Fiscal</Divider>
+            </Grid>
+
             {/* RIF */}
-            <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='rif'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='RIF' />}
-                />
-              </FormControl>
+            <Grid item sm={8} xs={12}>
+              <Controller
+                name='rif'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='RIF' fullWidth />
+                )}
+              />
             </Grid>
 
             {/* Fecha RIF */}
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={4} xs={12}>
               <Controller
                 name='fechaRif'
                 control={control}
                 render={({ field }) => (
-                  <DatePickerWrapper>
+                  <DatePickerWrapper sx={{ width: '100%' }}>
                     <DatePicker
                       selected={field.value}
                       onChange={handleFechaRif}
                       dateFormat='dd/MM/yyyy'
                       popperPlacement={popperPlacement}
-                      placeholderText='Fecha RIF'
+                      wrapperClassName='date-picker-full-width'
                       customInput={<CustomInput label='Fecha RIF' />}
                     />
                   </DatePickerWrapper>
                 )}
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Divider>Capital</Divider>
             </Grid>
 
             {/* Capital Pagado */}
@@ -165,13 +220,16 @@ const FormProveedorEditAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
                     label='Capital Pagado'
-                    onValueChange={(values: any) => handlerCapitalPagado(values.value)}
+                    onValueChange={(v: any) =>
+                      handlerCapitalPagado(v.value)
+                    }
                   />
                 )}
               />
@@ -186,41 +244,52 @@ const FormProveedorEditAsync = ({
                   <NumericFormat
                     {...field}
                     customInput={TextField}
-                    thousandSeparator="."
-                    decimalSeparator=","
+                    fullWidth
+                    thousandSeparator='.'
+                    decimalSeparator=','
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
                     label='Capital Suscrito'
-                    onValueChange={(values: any) => handlerCapitalSuscrito(values.value)}
+                    onValueChange={(v: any) =>
+                      handlerCapitalSuscrito(v.value)
+                    }
                   />
                 )}
               />
             </Grid>
 
-            {/* Status */}
+            {/* STATUS SELECT */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='status'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Status' />}
-                />
-              </FormControl>
+              <Controller
+                name='status'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} select label='Status' fullWidth>
+                    <MenuItem value='A'>Activo</MenuItem>
+                    <MenuItem value='I'>Inactivo</MenuItem>
+                  </TextField>
+                )}
+              />
             </Grid>
 
-            {/* Numero Cuenta */}
+            {/* Número de Cuenta */}
             <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                <Controller
-                  name='numeroCuenta'
-                  control={control}
-                  render={({ field }) => <TextField {...field} label='Numero Cuenta' />}
-                />
-              </FormControl>
+              <Controller
+                name='numeroCuenta'
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label='Número de Cuenta' fullWidth />
+                )}
+              />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* Botón */}
+            <Grid
+              item
+              xs={12}
+              sx={{ display: 'flex', justifyContent: 'flex-end' }}
+            >
               <Button type='submit' variant='contained' size='large'>
                 Guardar Cambios
               </Button>

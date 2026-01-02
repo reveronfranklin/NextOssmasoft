@@ -14,7 +14,7 @@ export const useServices = (): {
   getDireccionesByProveedor: (codigoProveedor: number) => Promise<any>;
   createDireccion: (data: any) => Promise<any>;
   updateDireccion: (data: any) => Promise<any>;
-  deleteDireccion: (id: number) => Promise<any>;
+  deleteDireccion: (codigoDirProveedor: number) => Promise<any>;
 } => {
   const getPaises = useCallback(async (): Promise<IGenericoDescripcion[]> => {
     const response = await ossmmasofApi.post(UrlServices.GET_PAISES);
@@ -76,8 +76,8 @@ export const useServices = (): {
     return response.data;
   }, []);
 
-  const deleteDireccion = useCallback(async (id: number) => {
-    const response = await ossmmasofApi.post(`${UrlServices.DELETE_DIRECCION}/${id}`);
+  const deleteDireccion = useCallback(async (codigoDirProveedor: number) => {
+    const response = await ossmmasofApi.post(`${UrlServices.DELETE_DIRECCION}`, { CodigoDirProveedor: codigoDirProveedor });
 
     return response.data;
   }, []);

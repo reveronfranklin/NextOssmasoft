@@ -26,7 +26,7 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [direccionEdit, setDireccionEdit] = useState<Direccion | null>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<Direccion | {}>({});
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
@@ -52,8 +52,8 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
     setDireccionEdit(direccion);
     setFormData({
       ...direccion,
-      codigoDirProveedor: (direccion as any).codigoDirProveedor ?? 0,
-      codigoProveedor: (direccion as any).codigoProveedor ?? codigoProveedor ?? 0,
+      codigoDirProveedor: direccion.codigoDirProveedor ?? 0,
+      codigoProveedor: direccion.codigoProveedor ?? codigoProveedor ?? 0,
     });
     setOpenModal(true);
   };
@@ -101,7 +101,7 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
       ) : (
         <List>
           {direcciones.map(dir => (
-            <React.Fragment key={dir.codigoDireccion}>
+            <React.Fragment key={dir.codigoDirProveedor}>
               <ListItem
                 alignItems="flex-start"
                 secondaryAction={
@@ -115,7 +115,7 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
                       <EditIcon />
                     </IconButton>
                     <ButtonWithConfirm
-                      onAction={() => onDelete && onDelete(dir.codigoDireccion)}
+                      onAction={() => onDelete && onDelete(dir.codigoDirProveedor)}
                       confirmMessage="¿Seguro que deseas eliminar esta dirección?"
                       showLoading={true}
                       disableBackdropClick={true}
@@ -131,22 +131,36 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
                 }
               >
                 <ListItemText
-                  primary={`${dir.direccion ?? 'No disponible' } (${dir.tipoVivienda ?? 'No disponible'})`}
+                  primary={`Vivienda: ${dir.vivienda || 'No disponible'}`}
                   secondary={
                     <>
                       <Typography variant="body2">
                         {dir.complementoDir}
                       </Typography>
+
                       <Typography variant="caption" color="text.secondary">
-                        País: {dir.pais} | Estado: {dir.estado} | Municipio: {dir.municipio} | Ciudad: {dir.ciudad} | Parroquia: {dir.parroquia}
+                        País ID: {dir.paisId} | Estado ID: {dir.estadoId} | Municipio ID: {dir.municipioId}
                       </Typography>
                       <br />
+
                       <Typography variant="caption" color="text.secondary">
-                        Nivel: {dir.tipoNivel} {dir.nivel} | Nro Vivienda: {dir.nroVivienda} | Tenencia: {dir.tenencia} | Vivienda: {dir.vivienda}
+                        Ciudad ID: {dir.ciudadId} | Parroquia ID: {dir.parroquiaId}
                       </Typography>
                       <br />
+
                       <Typography variant="caption" color="text.secondary">
-                        Código Postal: {dir.codigoPostal} {dir.principal ? ' | Principal' : ''} | sector: {dir.sector} | urbanización: {dir.urbanizacion}
+                        Tipo Vivienda ID: {dir.tipoViviendaId} | Nivel ID: {dir.tipoNivelId} {dir.nivel}
+                      </Typography>
+                      <br />
+
+                      <Typography variant="caption" color="text.secondary">
+                        Tenencia ID: {dir.tenenciaId} | Código Postal: {dir.codigoPostal}
+                        {dir.principal ? ' | Principal' : ''}
+                      </Typography>
+                      <br />
+
+                      <Typography variant="caption" color="text.secondary">
+                        Sector ID: {dir.sectorId} | Urbanización ID: {dir.urbanizacionId}
                       </Typography>
                     </>
                   }
@@ -164,7 +178,7 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
         onSubmit={handleSubmit}
         onDelete={modalMode === 'edit' ? async () => {
           if (direccionEdit) {
-            await deleteDireccion(direccionEdit.codigoDireccion);
+            await deleteDireccion(direccionEdit.codigoDirProveedor);
           }
         } : undefined}
         isEdit={modalMode === 'edit'}
