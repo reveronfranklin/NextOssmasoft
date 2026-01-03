@@ -13,7 +13,7 @@ import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import { setProveedorSeleccionado, setProveedoresDtoSeleccionado } from 'src/store/apps/adm-proveedor'
+import { setProveedorSeleccionado, setProveedoresDtoSeleccionado, setVerProveedorActive } from 'src/store/apps/adm-proveedor'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
 import { ReactDatePickerProps } from 'react-datepicker'
@@ -56,6 +56,10 @@ const FormProveedorCreateAsync = ({
     numeroCuenta: proveedoresDtoSeleccionado?.numeroCuenta ?? ''
   }
 
+  const handleCreateClickClose = () => {
+    dispatch(setVerProveedorActive(false))
+  }
+
   const {
     control,
     handleSubmit,
@@ -92,11 +96,12 @@ const FormProveedorCreateAsync = ({
     }
 
     try {
-      const response = await ossmmasofApi.post('/Proveedor/Create', payload)
+      const response = await ossmmasofApi.post('/AdmProveedores/Create', payload)
 
       if (response.data.isValid) {
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
+        handleCreateClickClose()
         toast.success('Proveedor creado correctamente')
       } else {
         toast.error(response.data.message || 'Error al crear proveedor')

@@ -76,17 +76,12 @@ const ViewLeft = () => {
     (state: RootState) => state.proveedor
   )
 
-/*   const [openEdit, setOpenEdit] = useState<boolean>(false) */
-
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
   const [proveedores, setProveedores] = useState<IProveedor[]>([])
-  const [avatar, setAvatar] = useState<string | undefined>(undefined)
   const [avatarKey, setAvatarKey] = useState<number>(0)
-
-  console.log('avatar', avatar)
 
   const { getList } = useServices()
 
@@ -126,12 +121,12 @@ const ViewLeft = () => {
   const handlerProveedor = async (e: any, value: IProveedor | null) => {
     const filter = { codigoProveedor: value?.codigoProveedor ?? 0 }
 
-    console.log('valor proveedor seleccionado:', filter)
-
     /* mientras franklin habilita el endpoint para traer un proveedor */
-     /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)
+    /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)
     console.log('response proveedor:', response?.data)
     response.data */
+
+    console.log('proveedor seleccionado:', filter)
 
     dispatch(setProveedorSeleccionado(value))
     dispatch(setProveedoresDtoSeleccionado(value))
@@ -157,10 +152,7 @@ const ViewLeft = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (!proveedoresDtoSeleccionado?.numeroCuenta) {
-      setAvatar(undefined)
-    } else {
-      setAvatar(data.avatar)
+    if (proveedoresDtoSeleccionado?.numeroCuenta) {
       setAvatarKey(prev => prev + 1)
     }
   }, [proveedoresDtoSeleccionado])
