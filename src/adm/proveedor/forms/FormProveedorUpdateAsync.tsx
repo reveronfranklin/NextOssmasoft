@@ -13,15 +13,27 @@ import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'src/store'
-import { setProveedorSeleccionado, setProveedoresDtoSeleccionado } from 'src/store/apps/adm-proveedor'
+import {
+  setProveedorSeleccionado,
+  setProveedoresDtoSeleccionado,
+  setVerProveedorActive
+} from 'src/store/apps/adm-proveedor'
+
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
-import { ReactDatePickerProps } from 'react-datepicker'
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
+import { ReactDatePickerProps } from 'react-datepicker'
 
 type FormInputs = IProveedor
+
+const toDateOrNull = (value: any): Date | null => {
+  if (!value) return null
+  const date = new Date(value)
+
+  return isNaN(date.getTime()) ? null : date
+}
 
 const FormProveedorEditAsync = ({
   popperPlacement
@@ -29,10 +41,14 @@ const FormProveedorEditAsync = ({
   popperPlacement: ReactDatePickerProps['popperPlacement']
 }) => {
   const dispatch = useDispatch()
-  const { proveedoresDtoSeleccionado } = useSelector((state: RootState) => state.proveedor)
 
-  const fechaActual = new Date()
-  const defaultDateString = fechaActual.toISOString()
+  const handleEditClickClose = () => {
+    dispatch(setVerProveedorActive(false))
+  }
+
+  const { proveedoresDtoSeleccionado } = useSelector(
+    (state: RootState) => state.proveedor
+  )
 
   const defaultValues: FormInputs = {
     codigoProveedor: proveedoresDtoSeleccionado.codigoProveedor,
@@ -41,15 +57,14 @@ const FormProveedorEditAsync = ({
     nacionalidad: proveedoresDtoSeleccionado.nacionalidad ?? null,
     cedula: proveedoresDtoSeleccionado.cedula ?? 0,
     rif: proveedoresDtoSeleccionado.rif ?? '',
-    fechaRif: proveedoresDtoSeleccionado.fechaRif ?? fechaActual,
+    fechaRif: toDateOrNull(proveedoresDtoSeleccionado.fechaRif),
     nit: proveedoresDtoSeleccionado.nit ?? null,
-    fechaNit: proveedoresDtoSeleccionado.fechaNit ?? null,
-    numeroRegistroContraloria: proveedoresDtoSeleccionado.numeroRegistroContraloria ?? null,
-    fechaRegistroContraloria: proveedoresDtoSeleccionado.fechaRegistroContraloria ?? null,
-    fechaRegistroContraloriaString:
-      proveedoresDtoSeleccionado.fechaRegistroContraloriaString ?? defaultDateString,
-    fechaRegistroContraloriaObj:
-      proveedoresDtoSeleccionado.fechaRegistroContraloriaObj ?? null,
+    fechaNit: toDateOrNull(proveedoresDtoSeleccionado.fechaNit),
+    numeroRegistroContraloria:
+      proveedoresDtoSeleccionado.numeroRegistroContraloria ?? null,
+    fechaRegistroContraloria: toDateOrNull(
+      proveedoresDtoSeleccionado.fechaRegistroContraloria
+    ),
     capitalPagado: proveedoresDtoSeleccionado.capitalPagado ?? 0,
     capitalSuscrito: proveedoresDtoSeleccionado.capitalSuscrito ?? 0,
     status: proveedoresDtoSeleccionado.status ?? 'A',
@@ -60,15 +75,12 @@ const FormProveedorEditAsync = ({
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  const handleFechaRif = (date: Date) => setValue('fechaRif', date)
-  const handlerCapitalPagado = (value: string) =>
-    setValue('capitalPagado', value === '' ? 0 : parseFloat(value))
-  const handlerCapitalSuscrito = (value: string) =>
-    setValue('capitalSuscrito', value === '' ? 0 : parseFloat(value))
+  if (!proveedoresDtoSeleccionado) {
+    return <div>No hay proveedor seleccionado</div>
+  }
 
   const parseSpanishNumber = (value: any) => {
     if (value === null || value === undefined || value === '') return 0
@@ -76,7 +88,6 @@ const FormProveedorEditAsync = ({
 
     const cleanValue = value
       .toString()
-      .trim()
       .replace(/\./g, '')
       .replace(',', '.')
 
@@ -97,14 +108,15 @@ const FormProveedorEditAsync = ({
     }
 
     try {
-      const response = await ossmmasofApi.put(
-        `/Proveedor/Update/${payload.codigoProveedor}`,
+      const response = await ossmmasofApi.post(
+        '/AdmProveedores/Update',
         payload
       )
 
       if (response.data.isValid) {
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
+        handleEditClickClose()
         toast.success('Proveedor actualizado correctamente')
       } else {
         toast.error(response.data.message || 'Error al actualizar proveedor')
@@ -113,10 +125,6 @@ const FormProveedorEditAsync = ({
       console.error('Error en Update:', error.response?.data)
       toast.error('Ocurrió un error al procesar la solicitud')
     }
-  }
-
-  if (!proveedoresDtoSeleccionado) {
-    return <div>No hay proveedor seleccionado</div>
   }
 
   return (
@@ -134,10 +142,10 @@ const FormProveedorEditAsync = ({
             {/* Código */}
             <Grid item sm={3} xs={12}>
               <Controller
-                name='codigoProveedor'
+                name="codigoProveedor"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label='Código' fullWidth disabled />
+                  <TextField {...field} label="Código" fullWidth disabled />
                 )}
               />
             </Grid>
@@ -146,11 +154,11 @@ const FormProveedorEditAsync = ({
             <Grid item sm={5} xs={12}>
               <FormControl fullWidth>
                 <Controller
-                  name='nombreProveedor'
+                  name="nombreProveedor"
                   control={control}
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <TextField {...field} label='Nombre Proveedor' fullWidth />
+                    <TextField {...field} label="Nombre Proveedor" fullWidth />
                   )}
                 />
                 {errors.nombreProveedor && (
@@ -164,10 +172,10 @@ const FormProveedorEditAsync = ({
             {/* Cédula */}
             <Grid item sm={4} xs={12}>
               <Controller
-                name='cedula'
+                name="cedula"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label='Cédula' type='number' fullWidth />
+                  <TextField {...field} label="Cédula" type="number" fullWidth />
                 )}
               />
             </Grid>
@@ -179,10 +187,10 @@ const FormProveedorEditAsync = ({
             {/* RIF */}
             <Grid item sm={8} xs={12}>
               <Controller
-                name='rif'
+                name="rif"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label='RIF' fullWidth />
+                  <TextField {...field} label="RIF" fullWidth />
                 )}
               />
             </Grid>
@@ -190,17 +198,17 @@ const FormProveedorEditAsync = ({
             {/* Fecha RIF */}
             <Grid item sm={4} xs={12}>
               <Controller
-                name='fechaRif'
+                name="fechaRif"
                 control={control}
                 render={({ field }) => (
                   <DatePickerWrapper sx={{ width: '100%' }}>
                     <DatePicker
-                      selected={field.value}
-                      onChange={handleFechaRif}
-                      dateFormat='dd/MM/yyyy'
+                      selected={field.value ?? null}
+                      onChange={(date) => field.onChange(date)}
+                      dateFormat="dd/MM/yyyy"
                       popperPlacement={popperPlacement}
-                      wrapperClassName='date-picker-full-width'
-                      customInput={<CustomInput label='Fecha RIF' />}
+                      wrapperClassName="date-picker-full-width"
+                      customInput={<CustomInput label="Fecha RIF" />}
                     />
                   </DatePickerWrapper>
                 )}
@@ -214,21 +222,21 @@ const FormProveedorEditAsync = ({
             {/* Capital Pagado */}
             <Grid item sm={6} xs={12}>
               <Controller
-                name='capitalPagado'
+                name="capitalPagado"
                 control={control}
                 render={({ field }) => (
                   <NumericFormat
                     {...field}
                     customInput={TextField}
                     fullWidth
-                    thousandSeparator='.'
-                    decimalSeparator=','
+                    thousandSeparator="."
+                    decimalSeparator=","
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
-                    label='Capital Pagado'
-                    onValueChange={(v: any) =>
-                      handlerCapitalPagado(v.value)
+                    label="Capital Pagado"
+                    onValueChange={(v) =>
+                      field.onChange(v.value)
                     }
                   />
                 )}
@@ -238,59 +246,54 @@ const FormProveedorEditAsync = ({
             {/* Capital Suscrito */}
             <Grid item sm={6} xs={12}>
               <Controller
-                name='capitalSuscrito'
+                name="capitalSuscrito"
                 control={control}
                 render={({ field }) => (
                   <NumericFormat
                     {...field}
                     customInput={TextField}
                     fullWidth
-                    thousandSeparator='.'
-                    decimalSeparator=','
+                    thousandSeparator="."
+                    decimalSeparator=","
                     decimalScale={2}
                     fixedDecimalScale
                     allowNegative={false}
-                    label='Capital Suscrito'
-                    onValueChange={(v: any) =>
-                      handlerCapitalSuscrito(v.value)
+                    label="Capital Suscrito"
+                    onValueChange={(v) =>
+                      field.onChange(v.value)
                     }
                   />
                 )}
               />
             </Grid>
 
-            {/* STATUS SELECT */}
+            {/* Status */}
             <Grid item sm={6} xs={12}>
               <Controller
-                name='status'
+                name="status"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} select label='Status' fullWidth>
-                    <MenuItem value='A'>Activo</MenuItem>
-                    <MenuItem value='I'>Inactivo</MenuItem>
+                  <TextField {...field} select label="Status" fullWidth>
+                    <MenuItem value="A">Activo</MenuItem>
+                    <MenuItem value="I">Inactivo</MenuItem>
                   </TextField>
                 )}
               />
             </Grid>
 
-            {/* Número de Cuenta */}
+            {/* Cuenta */}
             <Grid item sm={6} xs={12}>
               <Controller
-                name='numeroCuenta'
+                name="numeroCuenta"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label='Número de Cuenta' fullWidth />
+                  <TextField {...field} label="Número de Cuenta" fullWidth />
                 )}
               />
             </Grid>
 
-            {/* Botón */}
-            <Grid
-              item
-              xs={12}
-              sx={{ display: 'flex', justifyContent: 'flex-end' }}
-            >
-              <Button type='submit' variant='contained' size='large'>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button type="submit" variant="contained" size="large">
                 Guardar Cambios
               </Button>
             </Grid>
