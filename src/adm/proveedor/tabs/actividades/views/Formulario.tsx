@@ -2,7 +2,6 @@ import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Grid, Typography, Box } from '@mui/material'
 import DatePicker from 'react-datepicker'
-
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInput'
 import ActividadList from '../components/ActividadList'
@@ -30,13 +29,25 @@ const requiredFields: (keyof ActividadFormValues)[] = [
   'fechaFin'
 ]
 
+const safeDate = (value: any): Date | null => {
+  if (!value) return null
+  const d = value instanceof Date ? value : new Date(value)
+
+  return isNaN(d.getTime()) ? null : d
+}
+
 const FormularioActividad: React.FC<FormularioActividadProps> = ({
   initialValues = {},
   onChange,
   popperPlacement = 'auto'
 }) => {
+
   const { control, watch, setValue } = useForm<ActividadFormValues>({
-    defaultValues: initialValues,
+    defaultValues: {
+      ...initialValues,
+      fechaIni: safeDate(initialValues.fechaIni),
+      fechaFin: safeDate(initialValues.fechaFin)
+    },
     mode: 'onChange'
   })
 
@@ -66,8 +77,11 @@ const FormularioActividad: React.FC<FormularioActividadProps> = ({
 
   const actividadId = watch('actividadId')
 
-  const handleFechaIni = (date: Date | null) => setValue('fechaIni', date)
-  const handleFechaFin = (date: Date | null) => setValue('fechaFin', date)
+  const handleFechaIni = (date: Date | null) =>
+    setValue('fechaIni', safeDate(date))
+
+  const handleFechaFin = (date: Date | null) =>
+    setValue('fechaFin', safeDate(date))
 
   return (
     <form>
@@ -77,6 +91,7 @@ const FormularioActividad: React.FC<FormularioActividadProps> = ({
         </Typography>
 
         <Grid container spacing={2} alignItems="center">
+
           {/* Actividad */}
           <Grid item xs={12} md={6}>
             <ActividadList
@@ -95,7 +110,7 @@ const FormularioActividad: React.FC<FormularioActividadProps> = ({
               render={({ field }) => (
                 <DatePickerWrapper sx={{ width: '100%' }}>
                   <DatePicker
-                    selected={field.value}
+                    selected={safeDate(field.value)}
                     onChange={handleFechaIni}
                     dateFormat="dd/MM/yyyy"
                     popperPlacement={popperPlacement}
@@ -115,9 +130,9 @@ const FormularioActividad: React.FC<FormularioActividadProps> = ({
               render={({ field }) => (
                 <DatePickerWrapper sx={{ width: '100%' }}>
                   <DatePicker
-                    selected={field.value}
+                    selected={safeDate(field.value)}
                     onChange={handleFechaFin}
-                    minDate={watch('fechaIni') ?? undefined}
+                    minDate={safeDate(watch('fechaIni')) ?? undefined}
                     dateFormat="dd/MM/yyyy"
                     popperPlacement={popperPlacement}
                     wrapperClassName="date-picker-full-width"
@@ -127,6 +142,7 @@ const FormularioActividad: React.FC<FormularioActividadProps> = ({
               )}
             />
           </Grid>
+
         </Grid>
       </Box>
     </form>

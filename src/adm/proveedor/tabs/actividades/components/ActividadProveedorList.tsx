@@ -129,7 +129,14 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
                     </IconButton>
 
                     <ButtonWithConfirm
-                      onAction={() => deleteActividad(act.codigoActProveedor)}
+                      onAction={async () => {
+                        await deleteActividad(act.codigoActProveedor);
+                        setActividades(prev =>
+                          prev.filter(
+                            a => a.codigoActProveedor !== act.codigoActProveedor
+                          )
+                        );
+                      }}
                       confirmMessage="¿Seguro que deseas eliminar esta actividad?"
                       showLoading
                       disableBackdropClick
@@ -171,6 +178,14 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
             ? async () => {
                 if (actividadEdit) {
                   await deleteActividad(actividadEdit.codigoActProveedor);
+                  setActividades(prev =>
+                    prev.filter(
+                      a =>
+                        a.codigoActProveedor !==
+                        actividadEdit.codigoActProveedor
+                    )
+                  );
+                  handleCloseModal();
                 }
               }
             : undefined

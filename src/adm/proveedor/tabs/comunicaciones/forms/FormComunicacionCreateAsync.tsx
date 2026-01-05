@@ -184,7 +184,7 @@ const FormComunicacionCreateAsync = () => {
                       value={value || ''}
                       label='Area'
                       onChange={onChange}
-                      placeholder='noCuenta'
+                      placeholder='codigo area'
                       error={Boolean(errors.codigoArea)}
                       aria-describedby='validation-async-codigoArea'
                     />

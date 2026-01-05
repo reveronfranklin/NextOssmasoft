@@ -23,7 +23,7 @@ const ActividadList: React.FC<ActividadListProps> = ({
   const getActividadesCatalogo = useCallback(async (): Promise<ActividadItem[]> => {
     const response = await ossmmasofApi.post(UrlServices.GET_ACTIVIDADES_CATALOGO, { tituloId: 13 });
 
-    return response.data || [];
+    return response.data?.data || [];
   }, []);
 
   useEffect(() => {

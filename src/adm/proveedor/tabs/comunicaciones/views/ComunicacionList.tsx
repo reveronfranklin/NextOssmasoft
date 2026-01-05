@@ -8,7 +8,6 @@ import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
-import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 import { ComunicacionResponse } from 'src/adm/proveedor/interfaces'
 import { setListTipoProveedor, setOperacionCrudProveedor, setProveedorSeleccionado, setVerProveedorActive } from 'src/store/apps/proveedor-comunicacion';
 import { UrlServices } from '../enums/UrlServices.enum'
@@ -85,13 +84,21 @@ const ComunicacionList = () => {
       setLoading(true);
 
       if(proveedorSeleccionado.codigoProveedor>0){
-        const filterBanco={descripcionId:0,tituloId:27}
-        const responseTipoComunicacion= await ossmmasofApi.post<ISelectListDescriptiva[]>('/RhDescriptivas/GetByTitulo',filterBanco);
+        const filterBanco = {
+            descripcionId: 0,
+            tituloId: 5
+        }
 
-        dispatch(setListTipoProveedor(responseTipoComunicacion.data))
+        const responseTipoComunicacion = await ossmmasofApi.post<any>(`${UrlServices.DESCRIPTIVA_TIPO_COMUNICACION}`, filterBanco);
 
-        const filter={codigoProveedor:proveedorSeleccionado.codigoProveedor}
+        dispatch(setListTipoProveedor(responseTipoComunicacion.data?.data ?? []))
+
+        const filter = {
+            codigoProveedor: proveedorSeleccionado.codigoProveedor
+        }
+
         const responseAll= await ossmmasofApi.post<any>(`${UrlServices.GET_COMUNICACIONES}`, filter);
+
         setData(responseAll.data?.data);
       }
 
