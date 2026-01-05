@@ -26,7 +26,7 @@ const TipoContactoList: React.FC<TipoContactoListProps> = ({
       { tituloId: 10 }
     );
 
-    return response.data || [];
+    return response.data?.data || [];
   }, []);
 
   useEffect(() => {

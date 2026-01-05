@@ -42,7 +42,8 @@ export const useActividadProveedorServices = (): {
 
   const deleteActividad = useCallback(async (codigoActProveedor: number) => {
     const response = await ossmmasofApi.post(
-      `${UrlServices.DELETE_ACTIVIDADES}/${codigoActProveedor}`
+      `${UrlServices.DELETE_ACTIVIDADES}`,
+        { codigoActProveedor }
     );
 
     return response.data;

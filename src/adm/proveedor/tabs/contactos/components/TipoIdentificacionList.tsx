@@ -26,7 +26,7 @@ const TipoIdentificacionList: React.FC<TipoIdentificacionListProps> = ({
       { tituloId: 9 }
     );
 
-    return response.data || [];
+    return response.data?.data || [];
   }, []);
 
   useEffect(() => {

@@ -129,9 +129,16 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
                     </IconButton>
 
                     <ButtonWithConfirm
-                      onAction={() => {
+                      onAction={async () => {
                         if (cont.codigoContactoProveedor !== undefined) {
-                          deleteContacto(cont.codigoContactoProveedor);
+                          await deleteContacto(cont.codigoContactoProveedor);
+                          setContactos(prev =>
+                            prev.filter(
+                              c =>
+                                c.codigoContactoProveedor !==
+                                cont.codigoContactoProveedor
+                            )
+                          );
                         }
                       }}
                       confirmMessage="¿Seguro que deseas eliminar este contacto?"
@@ -174,6 +181,14 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
             ? async () => {
                 if (contactoEdit?.codigoContactoProveedor !== undefined) {
                   await deleteContacto(contactoEdit.codigoContactoProveedor);
+                  setContactos(prev =>
+                    prev.filter(
+                      c =>
+                        c.codigoContactoProveedor !==
+                        contactoEdit.codigoContactoProveedor
+                    )
+                  );
+                  handleCloseModal();
                 }
               }
             : undefined

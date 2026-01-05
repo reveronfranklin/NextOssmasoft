@@ -42,7 +42,8 @@ export const useContactoProveedorServices = (): {
 
   const deleteContacto = useCallback(async (codigoContactoProveedor: number) => {
     const response = await ossmmasofApi.post(
-      `${UrlServices.DELETE_CONTACTOS}/${codigoContactoProveedor}`
+      `${UrlServices.DELETE_CONTACTOS}`,
+      { codigoContactoProveedor }
     );
 
     return response.data;
