@@ -9,6 +9,9 @@ export enum UrlServices {
   GET_MUNICIPIOS        = '/SisUbicacion/GetMunicipiosPorPaisEstado',
   GET_CIUDADES          = '/SisUbicacion/GetCiudadesPorPaisEstadoMunicipio',
   GET_PARROQUIAS        = '/SisUbicacion/GetParroquiasPorPaisEstadoMunicipioCiudad',
+  GET_SECTORES          = '/SisUbicacion/GetSectoresPorPaisEstadoMunicipioCiudadParroquias',
+  GET_URBANIZACIONES    = '/SisUbicacion/GetUrbanizacionesPorPaisEstadoMunicipioCiudadParroquiasSector',
+
   GET_DIRECCIONES_TITLE = '/RhDescriptivas/GetByTitulo',
   GET_TITULO            = '/RhDescriptivas/GetByTitulo',
 }

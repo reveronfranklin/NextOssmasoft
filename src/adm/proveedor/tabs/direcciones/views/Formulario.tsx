@@ -1,12 +1,15 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Grid, TextField, Checkbox, FormControlLabel, Typography, Box } from '@mui/material';
+import { Grid, TextField, Checkbox, FormControlLabel, Box } from '@mui/material';
+
 import PaisList from '../components/PaisList';
 import EstadoList from '../components/EstadoList';
 import MunicipioList from '../components/MunicipioList';
 import CiudadList from '../components/CiudadList';
 import ParroquiaList from '../components/ParroquiaList';
-import TituloList from '../components/TituloList';
+import SectorList from '../components/SectorList';
+import UrbanizacionList from '../components/UrbanizacionList';
+import TituloAutoComplete from '../components/autocomplete/TituloAutoComplete';
 
 export interface DireccionFormValues {
   paisId?: number | null;
@@ -31,7 +34,12 @@ export interface DireccionFormValues {
   tenencia?: string;
   codigoPostal?: string | number;
   principal?: boolean;
-  direccionId?: number;
+  tipoDireccionId?: number | null;
+  tipoViviendaId?: number | null;
+  tipoNivelId?: number | null;
+  tenenciaId?: number | null;
+  sectorId?: number | null;
+  urbanizacionId?: number | null;
 }
 
 export interface FormularioChangeData {
@@ -100,34 +108,53 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
     setValue('parroquiaId', parroquia?.id ?? null);
   };
 
-  const paisId = watch('paisId');
-  const estadoId = watch('estadoId');
-  const municipioId = watch('municipioId');
-  const ciudadId = watch('ciudadId');
-  const parroquiaId = watch('parroquiaId');
-  const tituloId = watch('direccionId');
+  const handleSectorSelect = (sector: any) => {
+    setValue('sectorId', sector?.id ?? null);
+  };
+
+  const handleUrbanizacionSelect = (urbanizacion: any) => {
+    setValue('urbanizacionId', urbanizacion?.id ?? null);
+  };
+
+  const paisId           = watch('paisId');
+  const estadoId         = watch('estadoId');
+  const municipioId      = watch('municipioId');
+  const ciudadId         = watch('ciudadId');
+  const parroquiaId      = watch('parroquiaId');
+  const tipoDireccionId  = watch('tipoDireccionId');
+  const tipoViviendaId   = watch('tipoViviendaId');
+  const tipoNivelId      = watch('tipoNivelId');
+  const tenenciaId       = watch('tenenciaId');
+  const sectorId         = watch('sectorId');
+  const urbanizacionId   = watch('urbanizacionId');
 
   return (
     <form>
+      {/* Selección de ubicación y tipo de dirección */}
       <Box mb={3}>
-        <Typography variant="subtitle1" gutterBottom>
-          Selección de Direcciones
-        </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
+            <TituloAutoComplete
+              tituloId={3}
+              selectedTituloId={tipoDireccionId}
+              onTituloSelect={(value) => setValue('tipoDireccionId', value?.id ?? null)}
+              label="Tipo de Dirección"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
             <PaisList
               onPaisSelect={handlePaisSelect}
               selectedPaisId={paisId}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <EstadoList
               paisId={paisId}
               onEstadoSelect={handleEstadoSelect}
               selectedEstadoId={estadoId}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <MunicipioList
               codigoPais={paisId}
               codigoEstado={estadoId}
@@ -154,70 +181,49 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               selectedParroquiaId={parroquiaId}
             />
           </Grid>
+          <Grid item xs={12} md={6}>
+            <SectorList
+              codigoPais={paisId}
+              codigoEstado={estadoId}
+              codigoMunicipio={municipioId}
+              codigoCiudad={ciudadId}
+              codigoParroquia={parroquiaId}
+              onSectorSelect={handleSectorSelect}
+              selectedSectorId={sectorId}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <UrbanizacionList
+              codigoPais={paisId}
+              codigoEstado={estadoId}
+              codigoMunicipio={municipioId}
+              codigoCiudad={ciudadId}
+              codigoParroquia={parroquiaId}
+              codigoSector={sectorId}
+              onUrbanizacionSelect={handleUrbanizacionSelect}
+              selectedUrbanizacionId={urbanizacionId}
+            />
+          </Grid>
         </Grid>
       </Box>
+
+      {/* Campos específicos de la dirección */}
       <Box>
-        <Typography variant="subtitle1" gutterBottom>
-          Datos de la Dirección
-        </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
-            <Controller
-              name="complementoDir"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Complemento"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
+          {/* Tipo de Vivienda */}
+          <Grid item xs={12} md={4}>
+            <Box mt={2} mb={1}>
+              <TituloAutoComplete
+                tituloId={15}
+                selectedTituloId={tipoViviendaId}
+                onTituloSelect={(value) => setValue('tipoViviendaId', value?.id ?? null)}
+                label="Tipo de Vivienda"
+              />
+            </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="sector"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Sector"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="urbanizacion"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Urbanización"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="tipoVivienda"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Tipo de Vivienda"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
+
+          {/* Vivienda */}
+          <Grid item xs={12} md={4}>
             <Controller
               name="vivienda"
               control={control}
@@ -231,35 +237,9 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="tipoNivel"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Tipo de Nivel"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              name="nivel"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Nivel"
-                  fullWidth
-                  margin="dense"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
+
+          {/* Nro Vivienda */}
+          <Grid item xs={12} md={4}>
             <Controller
               name="nroVivienda"
               control={control}
@@ -273,20 +253,48 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
+
+          {/* Complemento */}
           <Grid item xs={12} md={6}>
             <Controller
-              name="tenencia"
+              name="complementoDir"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Tenencia"
+                  label="Complemento"
                   fullWidth
                   margin="dense"
                 />
               )}
             />
           </Grid>
+
+          {/* Tipo de Nivel */}
+          <Grid item xs={12} md={3}>
+            <Box mt={2} mb={1}>
+              <TituloAutoComplete
+                tituloId={28}
+                selectedTituloId={tipoNivelId}
+                onTituloSelect={(value) => setValue('tipoNivelId', value?.id ?? null)}
+                label="Tipo de Nivel"
+              />
+            </Box>
+          </Grid>
+
+          {/* Tenencia */}
+          <Grid item xs={12} md={3}>
+            <Box mt={2} mb={1}>
+              <TituloAutoComplete
+                tituloId={14}
+                selectedTituloId={tenenciaId}
+                onTituloSelect={(value) => setValue('tenenciaId', value?.id ?? null)}
+                label="Tenencia"
+              />
+            </Box>
+          </Grid>
+
+          {/* Código Postal */}
           <Grid item xs={12} md={6}>
             <Controller
               name="codigoPostal"
@@ -302,16 +310,8 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Box mt={2} mb={1}>
-              <TituloList
-                onTituloSelect={(value) => {
-                  setValue('direccionId', value?.id ?? null);
-                }}
-                selectedTituloId={tituloId}
-              />
-            </Box>
-          </Grid>
+
+          {/* Principal */}
           <Grid item xs={12} md={6}>
             <Controller
               name="principal"

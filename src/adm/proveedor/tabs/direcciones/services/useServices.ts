@@ -10,6 +10,8 @@ export const useServices = (): {
   getCiudades: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number }) => Promise<IGenericoDescripcion[]>;
   getParroquias: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number }) => Promise<IGenericoDescripcion[]>;
   getDirecciones: (filters: { pais?: string; estado?: string; municipio?: string }) => Promise<any>;
+  getSectores: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }) => Promise<IGenericoDescripcion[]>;
+  getUrbanizaciones: (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number; CodigoSector: number }) => Promise<IGenericoDescripcion[]>;
   getTituloDescriptiva: (tituloId: number) => Promise<any>;
   getDireccionesByProveedor: (codigoProveedor: number) => Promise<any>;
   createDireccion: (data: any) => Promise<any>;
@@ -52,6 +54,18 @@ export const useServices = (): {
     return response.data;
   }, []);
 
+  const getUrbanizaciones = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number,  CodigoSector: number }): Promise<IGenericoDescripcion[]> => {
+    const response = await ossmmasofApi.post(UrlServices.GET_URBANIZACIONES, params);
+
+    return response.data as IGenericoDescripcion[];
+  }, []);
+
+  const getSectores = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }): Promise<IGenericoDescripcion[]> => {
+    const response = await ossmmasofApi.post(UrlServices.GET_SECTORES, params);
+
+    return response.data as IGenericoDescripcion[];
+  }, []);
+
   const getTituloDescriptiva = useCallback(async (tituloId: number) => {
     const response = await ossmmasofApi.post(UrlServices.GET_TITULO, { tituloId });
 
@@ -89,6 +103,8 @@ export const useServices = (): {
     getCiudades,
     getParroquias,
     getDirecciones,
+    getUrbanizaciones,
+    getSectores,
     getTituloDescriptiva,
     getDireccionesByProveedor,
     createDireccion,
