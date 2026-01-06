@@ -117,16 +117,16 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
     setValue('urbanizacionId', urbanizacion?.id ?? null);
   }
 
-  const paisId         = watch('paisId');
-  const estadoId       = watch('estadoId');
-  const municipioId    = watch('municipioId');
-  const ciudadId       = watch('ciudadId');
-  const parroquiaId    = watch('parroquiaId');
-  const tituloId       = watch('direccionId');
+  const paisId = watch('paisId');
+  const estadoId = watch('estadoId');
+  const municipioId = watch('municipioId');
+  const ciudadId = watch('ciudadId');
+  const parroquiaId = watch('parroquiaId');
+  const tituloId = watch('direccionId');
   const tipoViviendaId = watch('tipoViviendaId');
-  const tipoNivelId    = watch('tipoNivelId');
-  const tenenciaId     = watch('tenenciaId');
-  const sectorId       = watch('sectorId');
+  const tipoNivelId = watch('tipoNivelId');
+  const tenenciaId = watch('tenenciaId');
+  const sectorId = watch('sectorId');
   const urbanizacionId = watch('urbanizacionId');
 
   return (
@@ -222,7 +222,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
               )}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={12}>
             <Controller
               name="complementoDir"
               control={control}
@@ -232,6 +232,10 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
                   label="Complemento"
                   fullWidth
                   margin="dense"
+                  multiline
+                  maxRows={4}
+                  inputProps={{ maxLength: 200 }}
+                  helperText={`${(field.value || '').length}/200 caracteres`}
                 />
               )}
             />
