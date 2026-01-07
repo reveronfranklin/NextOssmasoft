@@ -17,8 +17,7 @@ interface DireccionProveedorListProps {
 }
 
 const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
-  codigoProveedor,
-  onDelete
+  codigoProveedor
 }) => {
   const [direcciones, setDirecciones] = useState<Direccion[]>([]);
   const { getDireccionesByProveedor, createDireccion, updateDireccion, deleteDireccion } = useServices();
@@ -115,7 +114,17 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
                       <EditIcon />
                     </IconButton>
                     <ButtonWithConfirm
-                      onAction={() => onDelete && onDelete(dir.codigoDirProveedor)}
+                      onAction={async () =>{
+                        await deleteDireccion(dir.codigoDirProveedor);
+
+                        setDirecciones(prev =>
+                          prev.filter(
+                            a =>
+                            a.codigoDirProveedor !==
+                            dir.codigoDirProveedor
+                          )
+                        )
+                      }}
                       confirmMessage="¿Seguro que deseas eliminar esta dirección?"
                       showLoading={true}
                       disableBackdropClick={true}
@@ -179,6 +188,16 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
         onDelete={modalMode === 'edit' ? async () => {
           if (direccionEdit) {
             await deleteDireccion(direccionEdit.codigoDirProveedor);
+
+            setDirecciones(prev =>
+              prev.filter(
+                  a =>
+                  a.codigoDirProveedor !==
+                  direccionEdit.codigoDirProveedor
+              )
+            )
+
+            handleCloseModal();
           }
         } : undefined}
         isEdit={modalMode === 'edit'}

@@ -135,7 +135,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <TituloAutoComplete
-              tituloId={3}
+              tituloId={4}
               selectedTituloId={tipoDireccionId}
               onTituloSelect={(value) => setValue('tipoDireccionId', value?.id ?? null)}
               label="Tipo de Dirección"
@@ -214,7 +214,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
           <Grid item xs={12} md={4}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
-                tituloId={15}
+                tituloId={6}
                 selectedTituloId={tipoViviendaId}
                 onTituloSelect={(value) => setValue('tipoViviendaId', value?.id ?? null)}
                 label="Tipo de Vivienda"
@@ -255,7 +255,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
           </Grid>
 
           {/* Complemento */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={12}>
             <Controller
               name="complementoDir"
               control={control}
@@ -265,6 +265,10 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
                   label="Complemento"
                   fullWidth
                   margin="dense"
+                  multiline
+                  maxRows={4}
+                  inputProps={{ maxLength: 200 }}
+                  helperText={`${(field.value || '').length}/200 caracteres`}
                 />
               )}
             />
