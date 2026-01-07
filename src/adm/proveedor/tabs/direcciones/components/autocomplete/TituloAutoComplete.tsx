@@ -26,9 +26,9 @@ const TituloAutocomplete: React.FC<TituloAutocompleteProps> = ({
   const qc = useQueryClient();
 
   const { data: titulos = [] } = useQuery({
-    queryKey: ['titulos-proveedor', tituloId],
+    queryKey: ['titulos-proveedores', tituloId],
     queryFn: () => getTituloDescriptiva(tituloId),
-    initialData: () => qc.getQueryData(['titulos-proveedor', tituloId]),
+    initialData: () => qc.getQueryData(['titulos-proveedores', tituloId]),
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });
