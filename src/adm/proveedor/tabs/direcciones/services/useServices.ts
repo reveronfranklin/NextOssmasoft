@@ -23,9 +23,11 @@ export const useServices = (): {
   const getPaises = useCallback(async (): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_PAISES);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener países');
+
       throw error;
     }
   }, []);
@@ -33,9 +35,11 @@ export const useServices = (): {
   const getEstados = useCallback(async (paisId: string): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_ESTADOS, { paisId });
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener estados');
+
       throw error;
     }
   }, []);
@@ -43,9 +47,11 @@ export const useServices = (): {
   const getMunicipios = useCallback(async (params: { CodigoPais: number; CodigoEstado: number }): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_MUNICIPIOS, params);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener municipios');
+
       throw error;
     }
   }, []);
@@ -53,9 +59,11 @@ export const useServices = (): {
   const getCiudades = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number }): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_CIUDADES, params);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener ciudades');
+
       throw error;
     }
   }, []);
@@ -63,9 +71,11 @@ export const useServices = (): {
   const getParroquias = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number }): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_PARROQUIAS, params);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener parroquias');
+
       throw error;
     }
   }, []);
@@ -76,6 +86,7 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error al obtener direcciones');
+
         throw response.data;
       }
 
@@ -89,9 +100,11 @@ export const useServices = (): {
   const getUrbanizaciones = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number; CodigoSector: number }): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_URBANIZACIONES, params);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener urbanizaciones');
+
       throw error;
     }
   }, []);
@@ -99,9 +112,11 @@ export const useServices = (): {
   const getSectores = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }): Promise<IGenericoDescripcion[]> => {
     try {
       const response = await ossmmasofApi.post(UrlServices.GET_SECTORES, params);
+
       return response.data as IGenericoDescripcion[];
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Error al obtener sectores');
+
       throw error;
     }
   }, []);
@@ -112,12 +127,14 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error al obtener título');
+
         throw response.data;
       }
 
       return response.data;
     } catch (error: any) {
       toast.error(error?.response?.data?.message || error?.message || 'Error al obtener título');
+
       throw error;
     }
   }, []);
@@ -128,6 +145,7 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error al obtener direcciones del proveedor');
+
         throw response.data;
       }
 
@@ -144,10 +162,12 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Dirección creada correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -175,10 +195,12 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Dirección actualizada correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -209,10 +231,12 @@ export const useServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Dirección eliminada correctamente');
+
       return response.data;
     } catch (error: any) {
       toast.error(
@@ -220,6 +244,7 @@ export const useServices = (): {
         error?.message ||
         'Error al eliminar la dirección'
       );
+
       throw error;
     }
   }, []);

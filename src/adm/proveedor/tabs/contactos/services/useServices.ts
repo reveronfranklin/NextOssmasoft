@@ -18,9 +18,11 @@ export const useContactoProveedorServices = (): {
           UrlServices.GET_CONTACTOS,
           { CodigoProveedor: codigoProveedor }
         );
+
         return response?.data?.data || [];
       } catch (error: any) {
         toast.error(error?.response?.data?.message || 'Error al obtener contactos');
+
         throw error;
       }
     },
@@ -36,10 +38,12 @@ export const useContactoProveedorServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Contacto creado correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -70,10 +74,12 @@ export const useContactoProveedorServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Contacto actualizado correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -108,6 +114,7 @@ export const useContactoProveedorServices = (): {
       }
 
       toast.success('Contacto eliminado correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -116,6 +123,7 @@ export const useContactoProveedorServices = (): {
         error?.message ||
         'Error al eliminar el contacto'
       );
+
       throw error;
     }
   }, []);

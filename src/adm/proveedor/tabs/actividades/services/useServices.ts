@@ -18,10 +18,12 @@ export const useActividadProveedorServices = (): {
           UrlServices.GET_ACTIVIDADES,
           { CodigoProveedor: codigoProveedor }
         );
+
         return response?.data?.data || [];
       } catch (error: any) {
         toast.error(error?.response?.data?.message || 'Error al obtener actividades');
         console.error('Error getActividadesByProveedor:', error);
+
         throw error;
       }
     },
@@ -37,10 +39,12 @@ export const useActividadProveedorServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Actividad creada correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -59,6 +63,7 @@ export const useActividadProveedorServices = (): {
       }
 
       console.error('Error createActividad:', error);
+
       throw error;
     }
   }, []);
@@ -72,10 +77,12 @@ export const useActividadProveedorServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Actividad actualizada correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -94,6 +101,7 @@ export const useActividadProveedorServices = (): {
       }
 
       console.error('Error updateActividad:', error);
+
       throw error;
     }
   }, []);
@@ -107,10 +115,12 @@ export const useActividadProveedorServices = (): {
 
       if (response.data?.isValid === false) {
         toast.error(response.data.message || 'Error de validación');
+
         throw response.data;
       }
 
       toast.success('Actividad eliminada correctamente');
+
       return response.data;
 
     } catch (error: any) {
@@ -120,6 +130,7 @@ export const useActividadProveedorServices = (): {
         'Error al eliminar la actividad'
       );
       console.error('Error deleteActividad:', error);
+
       throw error;
     }
   }, []);
