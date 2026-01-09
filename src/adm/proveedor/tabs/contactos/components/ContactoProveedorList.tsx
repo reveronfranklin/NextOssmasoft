@@ -83,14 +83,20 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
   };
 
   const handleSubmit = async () => {
-    if (modalMode === 'create') {
-      await createContacto(formData);
-    } else {
-      await updateContacto(formData);
-    }
-    handleCloseModal();
-    if (codigoProveedor) {
-      getContactosByProveedor(codigoProveedor).then(setContactos);
+    try {
+      if (modalMode === 'create') {
+        await createContacto(formData);
+      } else {
+        await updateContacto(formData);
+      }
+
+      if (codigoProveedor) {
+        getContactosByProveedor(codigoProveedor).then(setContactos);
+      }
+    } catch (error) {
+      console.error('Error opening direccion modal:', error);
+    } finally {
+      handleCloseModal();
     }
   };
 

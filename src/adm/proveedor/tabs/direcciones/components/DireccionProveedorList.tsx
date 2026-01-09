@@ -69,14 +69,20 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (modalMode === 'create') {
-      await createDireccion(formData);
-    } else {
-      await updateDireccion(formData);
-    }
-    handleCloseModal();
-    if (codigoProveedor) {
-      getDireccionesByProveedor(codigoProveedor).then(setDirecciones);
+    try {
+      if (modalMode === 'create') {
+        await createDireccion(formData);
+      } else {
+        await updateDireccion(formData);
+      }
+
+      if (codigoProveedor) {
+        getDireccionesByProveedor(codigoProveedor).then(setDirecciones);
+      }
+    } catch (error) {
+      console.error('Error opening direccion modal:', error);
+    } finally {
+      handleCloseModal();
     }
   };
 

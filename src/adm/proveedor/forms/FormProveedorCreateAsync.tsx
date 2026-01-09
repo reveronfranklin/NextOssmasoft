@@ -101,13 +101,14 @@ const FormProveedorCreateAsync = ({
       if (response.data.isValid) {
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
-        handleCreateClickClose()
         toast.success('Proveedor creado correctamente')
       } else {
         toast.error(response.data.message || 'Error al crear proveedor')
       }
     } catch {
       toast.error('Error al conectar con el servidor')
+    } finally {
+      handleCreateClickClose()
     }
   }
 

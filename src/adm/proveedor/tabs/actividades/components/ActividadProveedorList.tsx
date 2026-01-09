@@ -82,15 +82,22 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (modalMode === 'create') {
-      await createActividad(formData);
-    } else {
-      await updateActividad(formData);
-    }
-    handleCloseModal();
+    try {
+      if (modalMode === 'create') {
+        await createActividad(formData);
+      } else {
+        await updateActividad(formData);
+      }
 
-    if (codigoProveedor) {
-      getActividadesByProveedor(codigoProveedor).then(setActividades);
+      handleCloseModal();
+
+      if (codigoProveedor) {
+        getActividadesByProveedor(codigoProveedor).then(setActividades);
+      }
+    } catch (error) {
+      console.error('Error opening direccion modal:', error);
+    } finally {
+      handleCloseModal();
     }
   };
 
