@@ -11,7 +11,6 @@ import Divider from '@mui/material/Divider'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { ReactDatePickerProps } from 'react-datepicker'
 import { ThemeColor } from 'src/@core/layouts/types'
-import { UsersType } from 'src/types/apps/userTypes'
 import { useTheme } from '@mui/material/styles'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { RootState } from 'src/store'
@@ -34,28 +33,11 @@ import { Autocomplete } from '@mui/material'
 import { IProveedor } from '../interfaces/proveedor/proveedor.interfaces'
 import DialogProveedorInfo from '../view/DialogInfo'
 
-/* import { ossmmasofApi } from 'src/MyApis/ossmmasofApi' */
-
 import toast from 'react-hot-toast'
 import Spinner from 'src/@core/components/spinner'
 
 interface ColorsType {
   [key: string]: ThemeColor
-}
-
-const data: UsersType = {
-  id: 1,
-  role: 'admin',
-  status: 'active',
-  username: 'gslixby0',
-  avatarColor: 'primary',
-  country: 'El Salvador',
-  company: 'Yotz PVT LTD',
-  contact: '(479) 232-9151',
-  currentPlan: 'enterprise',
-  fullName: 'Proveedor',
-  email: 'proveedor@empresa.com',
-  avatar: '/images/avatars/4.png'
 }
 
 const roleColors: ColorsType = {
@@ -71,7 +53,6 @@ const ViewLeft = () => {
     direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   const dispatch = useDispatch()
-
   const { proveedorSeleccionado, proveedoresDtoSeleccionado } = useSelector(
     (state: RootState) => state.proveedor
   )
@@ -79,11 +60,12 @@ const ViewLeft = () => {
   const [suspendDialogOpen, setSuspendDialogOpen] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-
   const [proveedores, setProveedores] = useState<IProveedor[]>([])
   const [avatarKey, setAvatarKey] = useState<number>(0)
 
   const { getList } = useServices()
+
+  const formatNumber = (value: number | null | undefined) => new Intl.NumberFormat('es-VE').format(value ?? 0)
 
   const handleEditClickOpen = () => {
     dispatch(setVerProveedorActive(true))
@@ -121,12 +103,12 @@ const ViewLeft = () => {
   const handlerProveedor = async (e: any, value: IProveedor | null) => {
     const filter = { codigoProveedor: value?.codigoProveedor ?? 0 }
 
+    console.log('proveedor seleccionado:', filter)
+
     /* mientras franklin habilita el endpoint para traer un proveedor */
     /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)
     console.log('response proveedor:', response?.data)
     response.data */
-
-    console.log('proveedor seleccionado:', filter)
 
     dispatch(setProveedorSeleccionado(value))
     dispatch(setProveedoresDtoSeleccionado(value))
@@ -135,7 +117,6 @@ const ViewLeft = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
-
       const filter = { PageSize: 0, PageNumber: 1, SearchText: '' }
       const data = await getList(filter)
 
@@ -157,8 +138,6 @@ const ViewLeft = () => {
     }
   }, [proveedoresDtoSeleccionado])
 
-  if (!data) return null
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -171,31 +150,39 @@ const ViewLeft = () => {
                 sx={{ width: 380 }}
                 options={proveedores}
                 isOptionEqualToValue={(o, v) => o.codigoProveedor === v.codigoProveedor}
-                getOptionLabel={o => `${o.cedula} ${o.nombreProveedor}`}
+                getOptionLabel={o => `${o.cedula ?? ''} ${o.nombreProveedor}`}
                 onChange={handlerProveedor}
                 renderInput={params => <TextField {...params} label='Proveedores' />}
               />
             </CardContent>
 
             <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-              <CustomAvatar
-                key={avatarKey}
-                variant='rounded'
-                sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-              >
-                {getInitials(proveedorSeleccionado?.nombreProveedor ?? '')}
-              </CustomAvatar>
+              {proveedorSeleccionado ? (
+                <CustomAvatar
+                  key={avatarKey}
+                  variant='rounded'
+                  sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
+                >
+                  {getInitials(proveedorSeleccionado?.nombreProveedor ?? '')}
+                </CustomAvatar>
+              ) : (
+                <Typography variant='h6' sx={{ mb: 4 }}>
+                  Seleccionar proveedor
+                </Typography>
+              )}
 
               <Typography variant='h6' sx={{ mb: 4 }}>
-                {proveedorSeleccionado?.nombreProveedor}
+                {proveedorSeleccionado?.nombreProveedor ?? '---'}
               </Typography>
 
-              <CustomChip
-                skin='light'
-                size='small'
-                label={proveedorSeleccionado?.status}
-                color={roleColors[proveedorSeleccionado?.status || 'Activo']}
-              />
+              {proveedorSeleccionado && (
+                <CustomChip
+                  skin='light'
+                  size='small'
+                  label={proveedorSeleccionado?.status || 'Activo'}
+                  color={roleColors[proveedorSeleccionado?.status || 'Activo']}
+                />
+              )}
             </CardContent>
 
             {proveedorSeleccionado && (
@@ -205,13 +192,13 @@ const ViewLeft = () => {
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Box sx={{ mr: 8, textAlign: 'center' }}>
                       <Typography variant='h6'>
-                        {new Intl.NumberFormat('es-VE').format(proveedorSeleccionado.capitalPagado)}
+                        {formatNumber(proveedorSeleccionado.capitalPagado)}
                       </Typography>
                       <Typography variant='body2'>Capital Pagado</Typography>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                       <Typography variant='h6'>
-                        {new Intl.NumberFormat('es-VE').format(proveedorSeleccionado.capitalSuscrito)}
+                        {formatNumber(proveedorSeleccionado.capitalSuscrito)}
                       </Typography>
                       <Typography variant='body2'>Capital Suscrito</Typography>
                     </Box>
@@ -225,7 +212,7 @@ const ViewLeft = () => {
                   <Box sx={{ pb: 1 }}>
                     <Box sx={{ display: 'flex', mb: 2 }}>
                       <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Código:</Typography>
-                      <Typography variant='body2'>{proveedorSeleccionado.codigoProveedor}</Typography>
+                      <Typography variant='body2'>{formatNumber(proveedorSeleccionado.codigoProveedor)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', mb: 2 }}>
                       <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>RIF:</Typography>
@@ -233,7 +220,7 @@ const ViewLeft = () => {
                     </Box>
                     <Box sx={{ display: 'flex', mb: 2 }}>
                       <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Cédula:</Typography>
-                      <Typography variant='body2'>{proveedorSeleccionado.cedula || 'N/A'}</Typography>
+                      <Typography variant='body2'>{formatNumber(proveedorSeleccionado.cedula)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', mb: 2 }}>
                       <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Nacionalidad:</Typography>

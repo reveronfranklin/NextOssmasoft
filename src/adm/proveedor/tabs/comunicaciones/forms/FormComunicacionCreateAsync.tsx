@@ -83,31 +83,34 @@ const FormComunicacionCreateAsync = () => {
   };
 
   const onSubmit = async (data:FormInputs) => {
-    console.log('data',data)
-    setLoading(true)
+    try {
+      setLoading(true)
 
-    const createComunicacion:ComunicacionResponse= {
-      codigoComProveedor :data.codigoComProveedor,
-      codigoProveedor :proveedorSeleccionado.codigoProveedor,
-      tipoComunicacionId :data.tipoComunicacionId,
-      codigoArea :data.codigoArea,
-      lineaComunicacion :data.lineaComunicacion,
-      extension :0,
-      principal:data.principal
-    };
+      const createComunicacion:ComunicacionResponse= {
+        codigoComProveedor :data.codigoComProveedor,
+        codigoProveedor :proveedorSeleccionado.codigoProveedor,
+        tipoComunicacionId :data.tipoComunicacionId,
+        codigoArea :data.codigoArea,
+        lineaComunicacion :data.lineaComunicacion,
+        extension :0,
+        principal:data.principal
+      };
 
-    const responseAll= await ossmmasofApi.post<any>(`${UrlServices.CREATE_COMUNICACIONES}`,createComunicacion);
+      const responseAll= await ossmmasofApi.post<any>(`${UrlServices.CREATE_COMUNICACIONES}`,createComunicacion);
 
-    console.log('responseAll update comunicaciones',responseAll)
+      if(responseAll.data.isValid){
+        dispatch(setProveedorSeleccionado(responseAll.data.data))
+        dispatch(setVerProveedorActive(false))
+        toast.success('Comunicacion creada correctamente');
+      } else {
+        toast.error(responseAll.data.message || 'Error de validación');
+      }
 
-    if(responseAll.data.isValid){
-      dispatch(setProveedorSeleccionado(responseAll.data.data))
-      dispatch(setVerProveedorActive(false))
+      setErrorMessage(responseAll.data.message)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error opening direccion modal:', error);
     }
-
-    setErrorMessage(responseAll.data.message)
-    setLoading(false)
-    toast.success('Form Submitted')
   }
   useEffect(() => {
     setPrincipal(proveedorSeleccionado.principal)

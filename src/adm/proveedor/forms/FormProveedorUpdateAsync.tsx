@@ -116,7 +116,6 @@ const FormProveedorEditAsync = ({
       if (response.data.isValid) {
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
-        handleEditClickClose()
         toast.success('Proveedor actualizado correctamente')
       } else {
         toast.error(response.data.message || 'Error al actualizar proveedor')
@@ -124,6 +123,8 @@ const FormProveedorEditAsync = ({
     } catch (error: any) {
       console.error('Error en Update:', error.response?.data)
       toast.error('Ocurrió un error al procesar la solicitud')
+    } finally {
+      handleEditClickClose()
     }
   }
 

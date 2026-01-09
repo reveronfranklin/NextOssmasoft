@@ -96,17 +96,26 @@ const FormComunicacionUpdateAsync = () => {
   };
 
   const handleDelete = async  () => {
-    setOpen(false);
+    try {
+      setOpen(false);
 
-    const deleteComunicacion = {
-      codigoComProveedor:proveedorSeleccionado.codigoComProveedor
-    }
-    const responseAll= await ossmmasofApi.post<any>(`${UrlServices.DELETE_COMUNICACIONES}`,deleteComunicacion);
-    setErrorMessage(responseAll.data.message)
-    if(responseAll.data.isValid){
+      const deleteComunicacion = {
+        codigoComProveedor:proveedorSeleccionado.codigoComProveedor
+      }
 
-      dispatch(setVerProveedorActive(false))
-      dispatch(setProveedorSeleccionado({}))
+      const responseAll= await ossmmasofApi.post<any>(`${UrlServices.DELETE_COMUNICACIONES}`,deleteComunicacion);
+
+      setErrorMessage(responseAll.data.message)
+
+      if (responseAll.data.isValid) {
+        dispatch(setVerProveedorActive(false))
+        dispatch(setProveedorSeleccionado({}))
+        toast.success('Comunicacion eliminada correctamente');
+      } else {
+        toast.error(responseAll.data.message || 'Error de validación');
+      }
+    } catch (error) {
+      console.error('Error opening direccion modal:', error);
     }
   };
 
@@ -119,35 +128,42 @@ const FormComunicacionUpdateAsync = () => {
   }
 
   const onSubmit = async (data:FormInputs) => {
-    const isEmail = tipoComunicacion.descripcion.includes('CORREO');
+    try {
+      const isEmail = tipoComunicacion.descripcion.includes('CORREO');
 
-    if(isEmail==true && !validarEmail(data.lineaComunicacion)){
-      setErrorMessage('Formato de Email Invalido');
+      if(isEmail==true && !validarEmail(data.lineaComunicacion)){
+        setErrorMessage('Formato de Email Invalido');
 
-      return;
+        return;
+      }
+
+      setLoading(true)
+
+      const updateComunicacion: ComunicacionResponse = {
+        codigoComProveedor :data.codigoComProveedor,
+        codigoProveedor :proveedorSeleccionado.codigoProveedor,
+        tipoComunicacionId :data.tipoComunicacionId,
+        codigoArea :data.codigoArea,
+        lineaComunicacion :data.lineaComunicacion,
+        extension :0,
+        principal:data.principal
+      };
+
+      const responseAll= await ossmmasofApi.post<any>(`${UrlServices.UPDATE_COMUNICACIONES}`,updateComunicacion);
+
+      if (responseAll.data.isValid) {
+        dispatch(setProveedorSeleccionado(responseAll.data.data))
+        dispatch(setVerProveedorActive(false))
+        toast.success('Comunicacion actualizada correctamente');
+      } else {
+        toast.error(responseAll.data.message || 'Error de validación');
+      }
+
+      setErrorMessage(responseAll.data.message)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error on submit comunicacion update:', error);
     }
-    setLoading(true)
-
-    const updateComunicacion: ComunicacionResponse = {
-      codigoComProveedor :data.codigoComProveedor,
-      codigoProveedor :proveedorSeleccionado.codigoProveedor,
-      tipoComunicacionId :data.tipoComunicacionId,
-      codigoArea :data.codigoArea,
-      lineaComunicacion :data.lineaComunicacion,
-      extension :0,
-      principal:data.principal
-    };
-
-    const responseAll= await ossmmasofApi.post<any>(`${UrlServices.UPDATE_COMUNICACIONES}`,updateComunicacion);
-
-    if(responseAll.data.isValid){
-      dispatch(setProveedorSeleccionado(responseAll.data.data))
-      dispatch(setVerProveedorActive(false))
-    }
-
-    setErrorMessage(responseAll.data.message)
-    setLoading(false)
-    toast.success('Form Submitted')
   }
   useEffect(() => {
     setPrincipal(proveedorSeleccionado.principal)

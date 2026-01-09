@@ -46,8 +46,6 @@ const SectorList: React.FC<SectorListProps> = ({
 
   const selectedSector = sectores.find((s: any) => s.id === selectedSectorId) || null;
 
-  console.log('SectorList - enabled:', sectores);
-
   if (!enabled) return null;
 
   return (

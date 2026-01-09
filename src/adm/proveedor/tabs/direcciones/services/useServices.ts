@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { UrlServices } from '../enums/UrlServices.enum';
 import { IGenericoDescripcion } from '../interfaces';
+import toast from 'react-hot-toast';
 
 export const useServices = (): {
   getPaises: () => Promise<IGenericoDescripcion[]>;
@@ -18,82 +19,209 @@ export const useServices = (): {
   updateDireccion: (data: any) => Promise<any>;
   deleteDireccion: (codigoDirProveedor: number) => Promise<any>;
 } => {
-  const getPaises = useCallback(async (): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_PAISES);
 
-    return response.data as IGenericoDescripcion[];
+  const getPaises = useCallback(async (): Promise<IGenericoDescripcion[]> => {
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_PAISES);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener países');
+      throw error;
+    }
   }, []);
 
   const getEstados = useCallback(async (paisId: string): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_ESTADOS, { paisId });
-
-    return response.data as IGenericoDescripcion[];
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_ESTADOS, { paisId });
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener estados');
+      throw error;
+    }
   }, []);
 
   const getMunicipios = useCallback(async (params: { CodigoPais: number; CodigoEstado: number }): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_MUNICIPIOS, params);
-
-    return response.data as IGenericoDescripcion[];
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_MUNICIPIOS, params);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener municipios');
+      throw error;
+    }
   }, []);
 
   const getCiudades = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number }): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_CIUDADES, params);
-
-    return response.data as IGenericoDescripcion[];
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_CIUDADES, params);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener ciudades');
+      throw error;
+    }
   }, []);
 
   const getParroquias = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number }): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_PARROQUIAS, params);
-
-    return response.data as IGenericoDescripcion[];
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_PARROQUIAS, params);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener parroquias');
+      throw error;
+    }
   }, []);
 
   const getDirecciones = useCallback(async (filters: { pais?: string; estado?: string; municipio?: string }) => {
-    const response = await ossmmasofApi.post(UrlServices.GET_DIRECCIONES, filters);
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_DIRECCIONES, filters);
 
-    return response.data;
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error al obtener direcciones');
+        throw response.data;
+      }
+
+      return response.data;
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message || 'Error al obtener direcciones');
+      throw error;
+    }
   }, []);
 
-  const getUrbanizaciones = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number,  CodigoSector: number }): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_URBANIZACIONES, params);
-
-    return response.data as IGenericoDescripcion[];
+  const getUrbanizaciones = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number; CodigoSector: number }): Promise<IGenericoDescripcion[]> => {
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_URBANIZACIONES, params);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener urbanizaciones');
+      throw error;
+    }
   }, []);
 
   const getSectores = useCallback(async (params: { CodigoPais: number; CodigoEstado: number; CodigoMunicipio: number; CodigoCiudad: number; CodigoParroquia: number }): Promise<IGenericoDescripcion[]> => {
-    const response = await ossmmasofApi.post(UrlServices.GET_SECTORES, params);
-
-    return response.data as IGenericoDescripcion[];
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_SECTORES, params);
+      return response.data as IGenericoDescripcion[];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Error al obtener sectores');
+      throw error;
+    }
   }, []);
 
   const getTituloDescriptiva = useCallback(async (tituloId: number) => {
-    const response = await ossmmasofApi.post(UrlServices.GET_TITULO, { tituloId });
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_TITULO, { tituloId });
 
-    return response.data;
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error al obtener título');
+        throw response.data;
+      }
+
+      return response.data;
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message || 'Error al obtener título');
+      throw error;
+    }
   }, []);
 
   const getDireccionesByProveedor = useCallback(async (codigoProveedor: number) => {
-    const response = await ossmmasofApi.post(UrlServices.GET_DIRECCIONES, { CodigoProveedor: codigoProveedor });
+    try {
+      const response = await ossmmasofApi.post(UrlServices.GET_DIRECCIONES, { CodigoProveedor: codigoProveedor });
 
-    return response?.data?.data || [];
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error al obtener direcciones del proveedor');
+        throw response.data;
+      }
+
+      return response?.data?.data || [];
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message || 'Error al obtener direcciones del proveedor');
+      throw error;
+    }
   }, []);
 
   const createDireccion = useCallback(async (data: any) => {
-    const response = await ossmmasofApi.post(UrlServices.CREATE_DIRECCION, data);
+    try {
+      const response = await ossmmasofApi.post(UrlServices.CREATE_DIRECCION, data);
 
-    return response.data;
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error de validación');
+        throw response.data;
+      }
+
+      toast.success('Dirección creada correctamente');
+      return response.data;
+
+    } catch (error: any) {
+      const errorData = error?.response?.data;
+
+      if (error?.response?.status === 400 && typeof errorData === 'object') {
+        const firstKey = Object.keys(errorData)[0];
+        const message = errorData[firstKey]?.[0];
+        toast.error(message || 'Error de validación');
+      } else {
+        toast.error(
+          errorData?.message ||
+          error?.message ||
+          'Error al crear la dirección'
+        );
+      }
+
+      throw error;
+    }
   }, []);
 
   const updateDireccion = useCallback(async (data: any) => {
-    const response = await ossmmasofApi.post(`${UrlServices.UPDATE_DIRECCION}`, data);
+    try {
+      const response = await ossmmasofApi.post(`${UrlServices.UPDATE_DIRECCION}`, data);
 
-    return response.data;
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error de validación');
+        throw response.data;
+      }
+
+      toast.success('Dirección actualizada correctamente');
+      return response.data;
+
+    } catch (error: any) {
+      const errorData = error?.response?.data;
+
+      if (error?.response?.status === 400 && typeof errorData === 'object') {
+        const firstKey = Object.keys(errorData)[0];
+        const message = errorData[firstKey]?.[0];
+        toast.error(message || 'Error de validación');
+      } else {
+        toast.error(
+          errorData?.message ||
+          error?.message ||
+          'Error al actualizar la dirección'
+        );
+      }
+
+      throw error;
+    }
   }, []);
 
   const deleteDireccion = useCallback(async (codigoDirProveedor: number) => {
-    const response = await ossmmasofApi.post(`${UrlServices.DELETE_DIRECCION}`, { CodigoDirProveedor: codigoDirProveedor });
+    try {
+      const response = await ossmmasofApi.post(
+        `${UrlServices.DELETE_DIRECCION}`,
+        { CodigoDirProveedor: codigoDirProveedor }
+      );
 
-    return response.data;
+      if (response.data?.isValid === false) {
+        toast.error(response.data.message || 'Error de validación');
+        throw response.data;
+      }
+
+      toast.success('Dirección eliminada correctamente');
+      return response.data;
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+        error?.message ||
+        'Error al eliminar la dirección'
+      );
+      throw error;
+    }
   }, []);
 
   return {
@@ -113,4 +241,4 @@ export const useServices = (): {
   };
 };
 
-export default useServices
+export default useServices;
