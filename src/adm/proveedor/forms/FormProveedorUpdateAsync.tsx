@@ -1,6 +1,7 @@
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import CardHeader from '@mui/material/CardHeader'
@@ -10,6 +11,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Divider from '@mui/material/Divider'
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'src/store'
@@ -40,6 +42,7 @@ const FormProveedorEditAsync = ({
 }: {
   popperPlacement: ReactDatePickerProps['popperPlacement']
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const dispatch = useDispatch()
 
   const handleEditClickClose = () => {
@@ -117,14 +120,15 @@ const FormProveedorEditAsync = ({
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
         toast.success('Proveedor actualizado correctamente')
+        handleEditClickClose()
       } else {
         toast.error(response.data.message || 'Error al actualizar proveedor')
       }
+
+      setErrorMessage(response.data.message)
     } catch (error: any) {
       console.error('Error en Update:', error.response?.data)
       toast.error('Ocurrió un error al procesar la solicitud')
-    } finally {
-      handleEditClickClose()
     }
   }
 
@@ -299,6 +303,9 @@ const FormProveedorEditAsync = ({
               </Button>
             </Grid>
           </Grid>
+          <Box>
+            {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+          </Box>
         </form>
       </CardContent>
     </Card>
