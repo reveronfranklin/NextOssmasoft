@@ -8,6 +8,7 @@ import { ButtonWithConfirm } from "src/views/components/buttons/ButtonsWithConfi
 import { Direccion } from '../interfaces';
 import CrudModal from "src/views/components/modal/CrudModal";
 import Formulario from '../views/Formulario';
+import FormHelperText from '@mui/material/FormHelperText'
 
 interface DireccionProveedorListProps {
   codigoProveedor?: number;
@@ -22,6 +23,7 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
   const [direcciones, setDirecciones] = useState<Direccion[]>([]);
   const { getDireccionesByProveedor, createDireccion, updateDireccion, deleteDireccion } = useServices();
 
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [direccionEdit, setDireccionEdit] = useState<Direccion | null>(null);
@@ -71,18 +73,22 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
   const handleSubmit = async () => {
     try {
       if (modalMode === 'create') {
-        await createDireccion(formData);
+        const responseAll = await createDireccion(formData);
+        setErrorMessage(responseAll.data.message)
       } else {
-        await updateDireccion(formData);
+        const responseAll = await updateDireccion(formData);
+        setErrorMessage(responseAll.data.message)
       }
+
+      handleCloseModal();
 
       if (codigoProveedor) {
         getDireccionesByProveedor(codigoProveedor).then(setDirecciones);
       }
     } catch (error) {
       console.error('Error opening direccion modal:', error);
-    } finally {
-      handleCloseModal();
+      const errorMsg = (error as any)?.message;
+      setErrorMessage(errorMsg || 'Ocurrió un error al procesar la solicitud');
     }
   };
 
@@ -222,6 +228,9 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
         }}
       >
         <Formulario initialValues={direccionEdit || formData} onChange={handleFormChange} />
+        <Box>
+          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+        </Box>
       </CrudModal>
     </Box>
   );

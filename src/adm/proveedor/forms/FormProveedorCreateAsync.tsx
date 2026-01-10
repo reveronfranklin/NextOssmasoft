@@ -1,5 +1,6 @@
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
@@ -12,6 +13,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
 import { RootState } from 'src/store'
 import { setProveedorSeleccionado, setProveedoresDtoSeleccionado, setVerProveedorActive } from 'src/store/apps/adm-proveedor'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
@@ -28,6 +30,7 @@ const FormProveedorCreateAsync = ({
 }: {
   popperPlacement: ReactDatePickerProps['popperPlacement']
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const dispatch = useDispatch()
   const { proveedoresDtoSeleccionado } = useSelector((state: RootState) => state.proveedor)
 
@@ -102,13 +105,14 @@ const FormProveedorCreateAsync = ({
         dispatch(setProveedoresDtoSeleccionado(response.data.data))
         dispatch(setProveedorSeleccionado(response.data.data))
         toast.success('Proveedor creado correctamente')
+        handleCreateClickClose()
       } else {
         toast.error(response.data.message || 'Error al crear proveedor')
       }
+
+      setErrorMessage(response.data.message)
     } catch {
       toast.error('Error al conectar con el servidor')
-    } finally {
-      handleCreateClickClose()
     }
   }
 
@@ -259,6 +263,9 @@ const FormProveedorCreateAsync = ({
               <Button type='submit' variant='contained'>Guardar</Button>
             </Grid>
           </Grid>
+          <Box>
+            {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+          </Box>
         </form>
       </CardContent>
     </Card>

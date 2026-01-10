@@ -19,6 +19,7 @@ import { ButtonWithConfirm } from 'src/views/components/buttons/ButtonsWithConfi
 import { Actividad } from '../interfaces';
 import CrudModal from 'src/views/components/modal/CrudModal';
 import Formulario from '../views/Formulario';
+import FormHelperText from '@mui/material/FormHelperText'
 
 interface ActividadProveedorListProps {
   codigoProveedor?: number;
@@ -36,6 +37,7 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
     deleteActividad
   } = useServices();
 
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [actividadEdit, setActividadEdit] = useState<Actividad | null>(null);
@@ -84,9 +86,11 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
   const handleSubmit = async () => {
     try {
       if (modalMode === 'create') {
-        await createActividad(formData);
+        const responseAll = await createActividad(formData);
+        setErrorMessage(responseAll.data.message)
       } else {
-        await updateActividad(formData);
+        const responseAll = await updateActividad(formData);
+        setErrorMessage(responseAll.data.message)
       }
 
       handleCloseModal();
@@ -96,8 +100,8 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
       }
     } catch (error) {
       console.error('Error opening direccion modal:', error);
-    } finally {
-      handleCloseModal();
+      const errorMsg = (error as any)?.message;
+      setErrorMessage(errorMsg || 'Ocurrió un error al procesar la solicitud');
     }
   };
 
@@ -215,6 +219,9 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
           initialValues={actividadEdit || formData}
           onChange={handleFormChange}
         />
+        <Box>
+          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+        </Box>
       </CrudModal>
     </Box>
   );

@@ -18,6 +18,7 @@ import { ButtonWithConfirm } from 'src/views/components/buttons/ButtonsWithConfi
 import { Contacto } from '../interfaces';
 import CrudModal from 'src/views/components/modal/CrudModal';
 import Formulario from '../views/Formulario';
+import FormHelperText from '@mui/material/FormHelperText'
 
 interface ContactoProveedorListProps {
   codigoProveedor?: number;
@@ -33,6 +34,7 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
     deleteContacto
   } = useServices();
 
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [contactoEdit, setContactoEdit] = useState<Contacto | null>(null);
@@ -85,18 +87,22 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
   const handleSubmit = async () => {
     try {
       if (modalMode === 'create') {
-        await createContacto(formData);
+        const responseAll = await createContacto(formData);
+        setErrorMessage(responseAll.data.message)
       } else {
-        await updateContacto(formData);
+        const responseAll = await updateContacto(formData);
+        setErrorMessage(responseAll.data.message)
       }
+
+      handleCloseModal();
 
       if (codigoProveedor) {
         getContactosByProveedor(codigoProveedor).then(setContactos);
       }
     } catch (error) {
       console.error('Error opening direccion modal:', error);
-    } finally {
-      handleCloseModal();
+      const errorMsg = (error as any)?.message;
+      setErrorMessage(errorMsg || 'Ocurrió un error al procesar la solicitud');
     }
   };
 
@@ -217,6 +223,9 @@ const ContactoProveedorList: React.FC<ContactoProveedorListProps> = ({ codigoPro
           initialValues={contactoEdit || formData}
           onChange={handleFormChange}
         />
+        <Box>
+          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+        </Box>
       </CrudModal>
     </Box>
   );
