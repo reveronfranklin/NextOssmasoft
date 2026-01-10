@@ -220,7 +220,7 @@ const ActividadProveedorList: React.FC<ActividadProveedorListProps> = ({
           onChange={handleFormChange}
         />
         <Box>
-          {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+          {errorMessage && errorMessage.length > 0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{ errorMessage }</FormHelperText>}
         </Box>
       </CrudModal>
     </Box>
