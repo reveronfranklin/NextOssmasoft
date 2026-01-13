@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Card, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
@@ -19,9 +19,11 @@ const ViewDireccion = () => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <DireccionProveedorList codigoProveedor={proveedorSeleccionado.codigoProveedor} />
-    </Box>
+    <Card>
+      <Box sx={{ p: 2 }}>
+        <DireccionProveedorList codigoProveedor={proveedorSeleccionado.codigoProveedor} />
+      </Box>
+    </Card>
   );
 };
 

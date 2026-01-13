@@ -152,36 +152,26 @@ const DireccionProveedorList: React.FC<DireccionProveedorListProps> = ({
                 }
               >
                 <ListItemText
-                  primary={`Vivienda: ${dir.vivienda || 'No disponible'}`}
+                  primary={`${dir.tipoDireccion} (${dir.tipoVivienda})`}
                   secondary={
                     <>
                       <Typography variant="body2">
                         {dir.complementoDir}
                       </Typography>
-
                       <Typography variant="caption" color="text.secondary">
-                        País ID: {dir.paisId} | Estado ID: {dir.estadoId} | Municipio ID: {dir.municipioId}
+                        País: {dir.pais} | Estado: {dir.estado} | Municipio: {dir.municipio} | Ciudad: {dir.ciudad}
                       </Typography>
                       <br />
-
                       <Typography variant="caption" color="text.secondary">
-                        Ciudad ID: {dir.ciudadId} | Parroquia ID: {dir.parroquiaId}
+                        Parroquia: {dir.parroquia} | Sector: {dir.sector} | Urbanizacion: {dir.urbanizacion}
                       </Typography>
                       <br />
-
                       <Typography variant="caption" color="text.secondary">
-                        Tipo Vivienda ID: {dir.tipoViviendaId} | Nivel ID: {dir.tipoNivelId} {dir.nivel}
+                        Nivel: {dir.tipoNivel} {dir.nivel} | Nro Vivienda: {dir.nroUnidad} | Tenencia: {dir.tenencia} | Vivienda: {dir.vivienda}
                       </Typography>
                       <br />
-
                       <Typography variant="caption" color="text.secondary">
-                        Tenencia ID: {dir.tenenciaId} | Código Postal: {dir.codigoPostal}
-                        {dir.principal ? ' | Principal' : ''}
-                      </Typography>
-                      <br />
-
-                      <Typography variant="caption" color="text.secondary">
-                        Sector ID: {dir.sectorId} | Urbanización ID: {dir.urbanizacionId}
+                        Código Postal: {dir.codigoPostal} {dir.principal ? ' | Principal' : ''}
                       </Typography>
                     </>
                   }
