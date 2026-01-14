@@ -9,6 +9,9 @@ import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import Divider from '@mui/material/Divider'
+import Switch from '@mui/material/Switch'
+import FormControlLabel from '@mui/material/FormControlLabel'
+
 import { useForm, Controller } from 'react-hook-form'
 import { NumericFormat } from 'react-number-format'
 import { useState } from 'react'
@@ -33,7 +36,6 @@ type FormInputs = IProveedor
 const toDateOrNull = (value: any): Date | null => {
   if (!value) return null
   const date = new Date(value)
-
   return isNaN(date.getTime()) ? null : date
 }
 
@@ -72,7 +74,8 @@ const FormProveedorEditAsync = ({
     capitalSuscrito: proveedoresDtoSeleccionado.capitalSuscrito ?? 0,
     status: proveedoresDtoSeleccionado.status ?? 'A',
     estatusFisicoId: proveedoresDtoSeleccionado.estatusFisicoId ?? 0,
-    numeroCuenta: proveedoresDtoSeleccionado.numeroCuenta ?? ''
+    numeroCuenta: proveedoresDtoSeleccionado.numeroCuenta ?? '',
+    activo: proveedoresDtoSeleccionado.activo ?? true
   }
 
   const {
@@ -93,11 +96,35 @@ const FormProveedorEditAsync = ({
       .toString()
       .replace(/\./g, '')
       .replace(',', '.')
-
     const result = parseFloat(cleanValue)
 
     return isNaN(result) ? 0 : result
   }
+
+  const getErrorMessage = (error: any) => {
+    if (!error?.response?.data) {
+      return 'Error inesperado. Intente nuevamente.';
+    }
+
+    const data = error.response.data;
+
+    if (data.message) {
+      return data.message;
+    }
+
+    if (data.errors && typeof data.errors === 'object') {
+      return Object.values(data.errors)
+        .flat()
+        .join(' ');
+    }
+
+    if (data.title) {
+      return data.title;
+    }
+
+    return 'Error al procesar la solicitud.';
+  };
+
 
   const onSubmit = async (data: FormInputs) => {
     const payload = {
@@ -125,8 +152,9 @@ const FormProveedorEditAsync = ({
         toast.error(response.data.message || 'Error al actualizar proveedor')
       }
 
-      setErrorMessage(response.data.message)
+      setErrorMessage(getErrorMessage(response.data.message))
     } catch (error: any) {
+      setErrorMessage(getErrorMessage(error))
       console.error('Error en Update:', error.response?.data)
       toast.error('Ocurrió un error al procesar la solicitud')
     }
@@ -140,6 +168,35 @@ const FormProveedorEditAsync = ({
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
+
+            {/* SWITCH EN ESQUINA SUPERIOR DERECHA */}
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Controller
+                  name="activo"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      label={
+                        field.value === true
+                          ? 'Proveedor Activo'
+                          : 'Proveedor Inactivo'
+                      }
+                      control={
+                        <Switch
+                          checked={field.value === true}
+                          onChange={(e) =>
+                            field.onChange(e.target.checked ? true : false)
+                          }
+                          color="primary"
+                        />
+                      }
+                    />
+                  )}
+                />
+              </Box>
+            </Grid>
+
             <Grid item xs={12}>
               <Divider>Datos Básicos</Divider>
             </Grid>
@@ -240,9 +297,7 @@ const FormProveedorEditAsync = ({
                     fixedDecimalScale
                     allowNegative={false}
                     label="Capital Pagado"
-                    onValueChange={(v) =>
-                      field.onChange(v.value)
-                    }
+                    onValueChange={(v) => field.onChange(v.value)}
                   />
                 )}
               />
@@ -264,9 +319,7 @@ const FormProveedorEditAsync = ({
                     fixedDecimalScale
                     allowNegative={false}
                     label="Capital Suscrito"
-                    onValueChange={(v) =>
-                      field.onChange(v.value)
-                    }
+                    onValueChange={(v) => field.onChange(v.value)}
                   />
                 )}
               />
@@ -303,8 +356,15 @@ const FormProveedorEditAsync = ({
               </Button>
             </Grid>
           </Grid>
+
           <Box>
-            { errorMessage && errorMessage.length > 0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{ errorMessage }</FormHelperText>}
+            {errorMessage && errorMessage.length > 0 && (
+              <FormHelperText
+                sx={{ color: 'error.main', fontSize: 20, mt: 4 }}
+              >
+                {errorMessage}
+              </FormHelperText>
+            )}
           </Box>
         </form>
       </CardContent>

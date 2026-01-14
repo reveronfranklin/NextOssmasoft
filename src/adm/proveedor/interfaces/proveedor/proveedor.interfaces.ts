@@ -17,4 +17,5 @@ export interface IProveedor {
   status: string
   estatusFisicoId: number
   numeroCuenta: string | null
+  activo: boolean
 }

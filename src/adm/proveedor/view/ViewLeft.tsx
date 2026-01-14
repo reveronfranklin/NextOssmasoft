@@ -91,7 +91,8 @@ const ViewLeft = () => {
       capitalSuscrito: 0,
       status: '',
       estatusFisicoId: 0,
-      numeroCuenta: ''
+      numeroCuenta: '',
+      activo: true
     }
 
     dispatch(setProveedoresDtoSeleccionado(defaultValues))
@@ -101,15 +102,6 @@ const ViewLeft = () => {
   }
 
   const handlerProveedor = async (e: any, value: IProveedor | null) => {
-    const filter = { codigoProveedor: value?.codigoProveedor ?? 0 }
-
-    console.log('proveedor seleccionado:', filter)
-
-    /* mientras franklin habilita el endpoint para traer un proveedor */
-    /* const response = await ossmmasofApi.post<IProveedor>('/AdmProveedores/GetAll', filter)
-    console.log('response proveedor:', response?.data)
-    response.data */
-
     dispatch(setProveedorSeleccionado(value))
     dispatch(setProveedoresDtoSeleccionado(value))
   }
