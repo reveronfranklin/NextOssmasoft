@@ -12,6 +12,5 @@ export enum UrlServices {
   GET_SECTORES          = '/SisUbicacion/GetSectoresPorPaisEstadoMunicipioCiudadParroquias',
   GET_URBANIZACIONES    = '/SisUbicacion/GetUrbanizacionesPorPaisEstadoMunicipioCiudadParroquiasSector',
 
-  GET_DIRECCIONES_TITLE = '/AdmDescriptivas/GetByTitulo',
   GET_TITULO            = '/AdmDescriptivas/GetByTitulo',
 }
