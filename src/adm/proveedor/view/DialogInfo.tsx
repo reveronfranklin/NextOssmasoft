@@ -69,7 +69,8 @@ const DialogInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps
         capitalSuscrito: 0,
         status: '',
         estatusFisicoId: 0,
-        numeroCuenta: ''
+        numeroCuenta: '',
+        activo: true
       }
 
       dispatch(setProveedoresDtoSeleccionado(defaultValues))
