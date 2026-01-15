@@ -326,22 +326,8 @@ const FormProveedorEditAsync = ({
               />
             </Grid>
 
-            {/* Status */}
-            <Grid item sm={6} xs={12}>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} select label="Status" fullWidth>
-                    <MenuItem value="A">Activo</MenuItem>
-                    <MenuItem value="I">Inactivo</MenuItem>
-                  </TextField>
-                )}
-              />
-            </Grid>
-
             {/* Cuenta */}
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={12} xs={12}>
               <Controller
                 name="numeroCuenta"
                 control={control}
