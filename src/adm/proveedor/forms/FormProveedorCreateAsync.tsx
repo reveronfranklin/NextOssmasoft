@@ -56,7 +56,8 @@ const FormProveedorCreateAsync = ({
     capitalSuscrito: proveedoresDtoSeleccionado?.capitalSuscrito ?? 0,
     status: proveedoresDtoSeleccionado?.status ?? 'A',
     estatusFisicoId: proveedoresDtoSeleccionado?.estatusFisicoId ?? 0,
-    numeroCuenta: proveedoresDtoSeleccionado?.numeroCuenta ?? ''
+    numeroCuenta: proveedoresDtoSeleccionado?.numeroCuenta ?? '',
+    activo: proveedoresDtoSeleccionado.activo ?? true
   }
 
   const handleCreateClickClose = () => {
@@ -235,21 +236,7 @@ const FormProveedorCreateAsync = ({
               />
             </Grid>
 
-            {/* STATUS SELECT */}
-            <Grid item sm={6} xs={12}>
-              <Controller
-                name='status'
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} select label='Status' fullWidth>
-                    <MenuItem value='A'>Activo</MenuItem>
-                    <MenuItem value='I'>Inactivo</MenuItem>
-                  </TextField>
-                )}
-              />
-            </Grid>
-
-            <Grid item sm={6} xs={12}>
+            <Grid item sm={12} xs={12}>
               <Controller
                 name='numeroCuenta'
                 control={control}
