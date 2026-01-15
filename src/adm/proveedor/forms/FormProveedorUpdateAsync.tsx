@@ -36,6 +36,7 @@ type FormInputs = IProveedor
 const toDateOrNull = (value: any): Date | null => {
   if (!value) return null
   const date = new Date(value)
+
   return isNaN(date.getTime()) ? null : date
 }
 

@@ -278,7 +278,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
           <Grid item xs={12} md={3}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
-                tituloId={28}
+                tituloId={8}
                 selectedTituloId={tipoNivelId}
                 onTituloSelect={(value) => setValue('tipoNivelId', value?.id ?? null)}
                 label="Tipo de Nivel"
@@ -290,7 +290,7 @@ const Formulario: React.FC<FormularioProps> = ({ initialValues = {}, onChange })
           <Grid item xs={12} md={3}>
             <Box mt={2} mb={1}>
               <TituloAutoComplete
-                tituloId={14}
+                tituloId={8}
                 selectedTituloId={tenenciaId}
                 onTituloSelect={(value) => setValue('tenenciaId', value?.id ?? null)}
                 label="Tenencia"
