@@ -152,7 +152,9 @@ const FormProveedorEditAsync = ({
         toast.error(response.data.message || 'Error al actualizar proveedor')
       }
 
-      setErrorMessage(getErrorMessage(response.data.message))
+      if (response?.data?.isValid === false) {
+        setErrorMessage(getErrorMessage(response.data.message))
+      }
     } catch (error: any) {
       setErrorMessage(getErrorMessage(error))
       console.error('Error en Update:', error.response?.data)
