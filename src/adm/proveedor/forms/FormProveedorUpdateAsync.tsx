@@ -102,11 +102,15 @@ const FormProveedorEditAsync = ({
   }
 
   const getErrorMessage = (error: any) => {
+    if (error?.data?.message) {
+      return error.data.message;
+    }
+
     if (!error?.response?.data) {
       return 'Error inesperado. Intente nuevamente.';
     }
 
-    const data = error.response.data;
+    const data = error.response.data
 
     if (data.message) {
       return data.message;
@@ -153,7 +157,7 @@ const FormProveedorEditAsync = ({
       }
 
       if (response?.data?.isValid === false) {
-        setErrorMessage(getErrorMessage(response.data.message))
+        setErrorMessage(getErrorMessage(response))
       }
     } catch (error: any) {
       setErrorMessage(getErrorMessage(error))
