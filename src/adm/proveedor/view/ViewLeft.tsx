@@ -171,8 +171,8 @@ const ViewLeft = () => {
                 <CustomChip
                   skin='light'
                   size='small'
-                  label={proveedorSeleccionado?.status || 'Activo'}
-                  color={roleColors[proveedorSeleccionado?.status || 'Activo']}
+                  label={proveedorSeleccionado?.activo ? 'Activo' : 'Inactivo'}
+                  color={roleColors[proveedorSeleccionado?.activo ? 'Activo' : 'Inactivo']}
                 />
               )}
             </CardContent>

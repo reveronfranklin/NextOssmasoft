@@ -5,7 +5,6 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import Divider from '@mui/material/Divider'
 import Switch from '@mui/material/Switch'
@@ -35,6 +34,7 @@ type FormInputs = IProveedor
 const toDateOrNull = (value: any): Date | null => {
   if (!value) return null
   const date = new Date(value)
+
   return isNaN(date.getTime()) ? null : date
 }
 
@@ -45,10 +45,6 @@ const FormProveedorEditAsync = ({
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const dispatch = useDispatch()
-
-  const handleEditClickClose = () => {
-    dispatch(setVerProveedorActive(false))
-  }
 
   const { proveedoresDtoSeleccionado } = useSelector(
     (state: RootState) => state.proveedor
@@ -80,24 +76,22 @@ const FormProveedorEditAsync = ({
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  if (!proveedoresDtoSeleccionado) {
-    return <div>No hay proveedor seleccionado</div>
+  const activo = watch('activo')
+  const formDisabled = activo === false
+
+  const handleEditClickClose = () => {
+    dispatch(setVerProveedorActive(false))
   }
 
   const parseSpanishNumber = (value: any) => {
-    if (value === null || value === undefined || value === '') return 0
+    if (!value) return 0
     if (typeof value === 'number') return value
 
-    const cleanValue = value
-      .toString()
-      .replace(/\./g, '')
-      .replace(',', '.')
-    const result = parseFloat(cleanValue)
-
-    return isNaN(result) ? 0 : result
+    return Number(value.toString().replace(/\./g, '').replace(',', '.')) || 0
   }
 
   const getErrorMessage = (error: any) => {
@@ -157,10 +151,11 @@ const FormProveedorEditAsync = ({
       <CardHeader
         title={`Editar Proveedor: ${proveedoresDtoSeleccionado.nombreProveedor}`}
       />
+
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
-
+            {/* SWITCH (SIEMPRE HABILITADO) */}
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Controller
@@ -168,18 +163,11 @@ const FormProveedorEditAsync = ({
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      label={
-                        field.value === true
-                          ? 'Proveedor Activo'
-                          : 'Proveedor Inactivo'
-                      }
+                      label={field.value ? 'Proveedor Activo' : 'Proveedor Inactivo'}
                       control={
                         <Switch
-                          checked={field.value === true}
-                          onChange={(e) =>
-                            field.onChange(e.target.checked ? true : false)
-                          }
-                          color="primary"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
                         />
                       }
                     />
@@ -187,42 +175,35 @@ const FormProveedorEditAsync = ({
                 />
               </Box>
             </Grid>
+          </Grid>
 
-            <Grid item xs={12}>
-              <Divider>Datos Básicos</Divider>
-            </Grid>
+          <fieldset style={{ border: 'none', padding: 0 }}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <Divider>Datos Básicos</Divider>
+              </Grid>
 
-            <Grid item sm={3} xs={12}>
-              <Controller
-                name="codigoProveedor"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label="Código" fullWidth disabled />
-                )}
-              />
-            </Grid>
+              <Grid item sm={3} xs={12}>
+                <Controller
+                  name="codigoProveedor"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField {...field} label="Código" fullWidth disabled />
+                  )}
+                />
+              </Grid>
 
-            <Grid item sm={5} xs={12}>
-              <FormControl fullWidth>
+              <Grid item sm={5} xs={12}>
                 <Controller
                   name="nombreProveedor"
                   control={control}
-                  rules={{ required: true }}
                   render={({ field }) => (
-                    <TextField {...field} label="Nombre Proveedor" fullWidth />
+                    <TextField {...field} label="Nombre Proveedor" fullWidth disabled={formDisabled} />
                   )}
                 />
-                {errors.nombreProveedor && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    Este campo es requerido
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
+              </Grid>
 
-            {/* ÚNICO CAMBIO AQUÍ */}
-            <Grid item sm={4} xs={12}>
-              <FormControl fullWidth>
+              <Grid item sm={4} xs={12}>
                 <Controller
                   name="cedula"
                   control={control}
@@ -233,120 +214,121 @@ const FormProveedorEditAsync = ({
                     }
                   }}
                   render={({ field }) => (
-                    <TextField {...field} label="Cédula" type="number" fullWidth />
+                    <TextField
+                      {...field}
+                      label="Cédula"
+                      type="number"
+                      fullWidth
+                      disabled={formDisabled}
+                      error={!!errors.cedula}
+                      helperText={errors.cedula ? errors.cedula.message : ''}
+                    />
                   )}
                 />
-                {errors.cedula && (
-                  <FormHelperText sx={{ color: 'error.main' }}>
-                    {errors.cedula.message}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
+              </Grid>
 
-            <Grid item xs={12}>
-              <Divider>Información Fiscal</Divider>
-            </Grid>
+              <Grid item xs={12}>
+                <Divider>Información Fiscal</Divider>
+              </Grid>
 
-            <Grid item sm={8} xs={12}>
-              <Controller
-                name="rif"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label="RIF" fullWidth />
-                )}
-              />
-            </Grid>
+              <Grid item sm={8} xs={12}>
+                <Controller
+                  name="rif"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField {...field} label="RIF" fullWidth disabled={formDisabled}/>
+                  )}
+                />
+              </Grid>
 
-            <Grid item sm={4} xs={12}>
-              <Controller
-                name="fechaRif"
-                control={control}
-                render={({ field }) => (
-                  <DatePickerWrapper sx={{ width: '100%' }}>
-                    <DatePicker
-                      selected={field.value ?? null}
-                      onChange={(date) => field.onChange(date)}
-                      dateFormat="dd/MM/yyyy"
-                      popperPlacement={popperPlacement}
-                      wrapperClassName="date-picker-full-width"
-                      customInput={<CustomInput label="Fecha RIF" />}
+              <Grid item sm={4} xs={12}>
+                <Controller
+                  name="fechaRif"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePickerWrapper sx={{ width: '100%' }}>
+                      <DatePicker
+                        selected={field.value}
+                        onChange={field.onChange}
+                        dateFormat="dd/MM/yyyy"
+                        popperPlacement={popperPlacement}
+                        disabled={formDisabled}
+                        customInput={<CustomInput label="Fecha RIF" />}
+                      />
+                    </DatePickerWrapper>
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Divider>Capital</Divider>
+              </Grid>
+
+              <Grid item sm={6} xs={12}>
+                <Controller
+                  name="capitalPagado"
+                  control={control}
+                  render={({ field }) => (
+                    <NumericFormat
+                      {...field}
+                      customInput={TextField}
+                      fullWidth
+                      disabled={formDisabled}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      decimalScale={2}
+                      fixedDecimalScale
+                      label="Capital Pagado"
+                      onValueChange={(v) => field.onChange(v.value)}
                     />
-                  </DatePickerWrapper>
-                )}
-              />
-            </Grid>
+                  )}
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <Divider>Capital</Divider>
-            </Grid>
+              <Grid item sm={6} xs={12}>
+                <Controller
+                  name="capitalSuscrito"
+                  control={control}
+                  render={({ field }) => (
+                    <NumericFormat
+                      {...field}
+                      customInput={TextField}
+                      fullWidth
+                      disabled={formDisabled}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      decimalScale={2}
+                      fixedDecimalScale
+                      label="Capital Suscrito"
+                      onValueChange={(v) => field.onChange(v.value)}
+                    />
+                  )}
+                />
+              </Grid>
 
-            <Grid item sm={6} xs={12}>
-              <Controller
-                name="capitalPagado"
-                control={control}
-                render={({ field }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={TextField}
-                    fullWidth
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    decimalScale={2}
-                    fixedDecimalScale
-                    allowNegative={false}
-                    label="Capital Pagado"
-                    onValueChange={(v) => field.onChange(v.value)}
-                  />
-                )}
-              />
-            </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  name="numeroCuenta"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField {...field} label="Número de Cuenta" fullWidth disabled={formDisabled}/>
+                  )}
+                />
+              </Grid>
 
-            <Grid item sm={6} xs={12}>
-              <Controller
-                name="capitalSuscrito"
-                control={control}
-                render={({ field }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={TextField}
-                    fullWidth
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    decimalScale={2}
-                    fixedDecimalScale
-                    allowNegative={false}
-                    label="Capital Suscrito"
-                    onValueChange={(v) => field.onChange(v.value)}
-                  />
-                )}
-              />
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button type="submit" variant="contained" size="large">
+                  Guardar Cambios
+                </Button>
+              </Grid>
             </Grid>
+          </fieldset>
 
-            <Grid item sm={12} xs={12}>
-              <Controller
-                name="numeroCuenta"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label="Número de Cuenta" fullWidth />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button type="submit" variant="contained" size="large">
-                Guardar Cambios
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Box>
-            {errorMessage && errorMessage.length > 0 && (
-              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
-                {errorMessage}
-              </FormHelperText>
-            )}
-          </Box>
+          {errorMessage && (
+            <FormHelperText sx={{ color: 'error.main', mt: 4 }}>
+              {errorMessage}
+            </FormHelperText>
+          )}
         </form>
       </CardContent>
     </Card>
