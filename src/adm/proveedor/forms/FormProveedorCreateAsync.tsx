@@ -78,7 +78,6 @@ const FormProveedorCreateAsync = ({
 
   const parseSpanishNumber = (value: any) => {
     if (value === null || value === undefined || value === '') return 0
-
     if (typeof value === 'number') return value
 
     const cleanValue = value.toString().trim().replace(/\./g, '').replace(',', '.')
@@ -153,13 +152,26 @@ const FormProveedorCreateAsync = ({
             </Grid>
 
             <Grid item sm={4} xs={12}>
-              <Controller
-                name='cedula'
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label='Cédula' type='number' fullWidth />
+              <FormControl fullWidth>
+                <Controller
+                  name='cedula'
+                  control={control}
+                  rules={{
+                    maxLength: {
+                      value: 8,
+                      message: 'La cédula no puede tener más de 8 dígitos'
+                    }
+                  }}
+                  render={({ field }) => (
+                    <TextField {...field} label='Cédula' type='number' fullWidth />
+                  )}
+                />
+                {errors.cedula && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.cedula.message}
+                  </FormHelperText>
                 )}
-              />
+              </FormControl>
             </Grid>
 
             <Grid item xs={12}><Divider>Información Fiscal</Divider></Grid>
@@ -250,7 +262,11 @@ const FormProveedorCreateAsync = ({
             </Grid>
           </Grid>
           <Box>
-            {errorMessage && errorMessage.length > 0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{ errorMessage }</FormHelperText>}
+            {errorMessage && errorMessage.length > 0 && (
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
+                {errorMessage}
+              </FormHelperText>
+            )}
           </Box>
         </form>
       </CardContent>
