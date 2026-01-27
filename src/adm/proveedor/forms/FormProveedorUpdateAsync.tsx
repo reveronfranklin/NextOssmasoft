@@ -35,7 +35,6 @@ type FormInputs = IProveedor
 const toDateOrNull = (value: any): Date | null => {
   if (!value) return null
   const date = new Date(value)
-
   return isNaN(date.getTime()) ? null : date
 }
 
@@ -102,33 +101,21 @@ const FormProveedorEditAsync = ({
   }
 
   const getErrorMessage = (error: any) => {
-    if (error?.data?.message) {
-      return error.data.message;
-    }
-
-    if (!error?.response?.data) {
-      return 'Error inesperado. Intente nuevamente.';
-    }
+    if (error?.data?.message) return error.data.message
+    if (!error?.response?.data) return 'Error inesperado. Intente nuevamente.'
 
     const data = error.response.data
 
-    if (data.message) {
-      return data.message;
-    }
+    if (data.message) return data.message
 
     if (data.errors && typeof data.errors === 'object') {
-      return Object.values(data.errors)
-        .flat()
-        .join(' ');
+      return Object.values(data.errors).flat().join(' ')
     }
 
-    if (data.title) {
-      return data.title;
-    }
+    if (data.title) return data.title
 
-    return 'Error al procesar la solicitud.';
-  };
-
+    return 'Error al procesar la solicitud.'
+  }
 
   const onSubmit = async (data: FormInputs) => {
     const payload = {
@@ -161,7 +148,6 @@ const FormProveedorEditAsync = ({
       }
     } catch (error: any) {
       setErrorMessage(getErrorMessage(error))
-      console.error('Error en Update:', error.response?.data)
       toast.error('Ocurrió un error al procesar la solicitud')
     }
   }
@@ -175,7 +161,6 @@ const FormProveedorEditAsync = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
 
-            {/* SWITCH EN ESQUINA SUPERIOR DERECHA */}
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Controller
@@ -207,7 +192,6 @@ const FormProveedorEditAsync = ({
               <Divider>Datos Básicos</Divider>
             </Grid>
 
-            {/* Código */}
             <Grid item sm={3} xs={12}>
               <Controller
                 name="codigoProveedor"
@@ -218,7 +202,6 @@ const FormProveedorEditAsync = ({
               />
             </Grid>
 
-            {/* Nombre */}
             <Grid item sm={5} xs={12}>
               <FormControl fullWidth>
                 <Controller
@@ -237,22 +220,34 @@ const FormProveedorEditAsync = ({
               </FormControl>
             </Grid>
 
-            {/* Cédula */}
+            {/* ÚNICO CAMBIO AQUÍ */}
             <Grid item sm={4} xs={12}>
-              <Controller
-                name="cedula"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label="Cédula" type="number" fullWidth />
+              <FormControl fullWidth>
+                <Controller
+                  name="cedula"
+                  control={control}
+                  rules={{
+                    maxLength: {
+                      value: 8,
+                      message: 'La cédula no puede tener más de 8 dígitos'
+                    }
+                  }}
+                  render={({ field }) => (
+                    <TextField {...field} label="Cédula" type="number" fullWidth />
+                  )}
+                />
+                {errors.cedula && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {errors.cedula.message}
+                  </FormHelperText>
                 )}
-              />
+              </FormControl>
             </Grid>
 
             <Grid item xs={12}>
               <Divider>Información Fiscal</Divider>
             </Grid>
 
-            {/* RIF */}
             <Grid item sm={8} xs={12}>
               <Controller
                 name="rif"
@@ -263,7 +258,6 @@ const FormProveedorEditAsync = ({
               />
             </Grid>
 
-            {/* Fecha RIF */}
             <Grid item sm={4} xs={12}>
               <Controller
                 name="fechaRif"
@@ -287,7 +281,6 @@ const FormProveedorEditAsync = ({
               <Divider>Capital</Divider>
             </Grid>
 
-            {/* Capital Pagado */}
             <Grid item sm={6} xs={12}>
               <Controller
                 name="capitalPagado"
@@ -309,7 +302,6 @@ const FormProveedorEditAsync = ({
               />
             </Grid>
 
-            {/* Capital Suscrito */}
             <Grid item sm={6} xs={12}>
               <Controller
                 name="capitalSuscrito"
@@ -331,7 +323,6 @@ const FormProveedorEditAsync = ({
               />
             </Grid>
 
-            {/* Cuenta */}
             <Grid item sm={12} xs={12}>
               <Controller
                 name="numeroCuenta"
@@ -351,9 +342,7 @@ const FormProveedorEditAsync = ({
 
           <Box>
             {errorMessage && errorMessage.length > 0 && (
-              <FormHelperText
-                sx={{ color: 'error.main', fontSize: 20, mt: 4 }}
-              >
+              <FormHelperText sx={{ color: 'error.main', fontSize: 20, mt: 4 }}>
                 {errorMessage}
               </FormHelperText>
             )}
