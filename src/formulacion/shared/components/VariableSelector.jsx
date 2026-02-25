@@ -22,7 +22,8 @@ const VariableSelector = React.memo(({
   setSelectedVariable,
   setEditingItem,
   editingItem,
-  fetchVariables
+  fetchVariables,
+  showAddButton = true
 }) => {
   const [autoValue, setAutoValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -77,7 +78,6 @@ const VariableSelector = React.memo(({
   } = variableService;
 
   const handleSubmit = async(form, action) => {
-    console.log('Formulario enviado:', form, 'Acción:', action);
 
     if (!form) {
 
@@ -186,10 +186,10 @@ const VariableSelector = React.memo(({
     handleOpenModal();
   };
 
-  // Cuando se selecciona una variable en el Autocomplete (para insertar en fórmula)
+  // Cuando se selecciona una variable en el Autocomplete (llega al padre)
   const handleAutocompleteChange = (event, newValue) => {
     if (newValue) {
-      onVariableSelect(newValue); // Para insertar en la fórmula
+      onVariableSelect(newValue); //regresa el objecto al padre para ser usado
       setAutoValue(null);
       setInputValue('');
       setAutoKey(k => k + 1);
@@ -226,15 +226,17 @@ const VariableSelector = React.memo(({
     <div style={{ marginBottom: '10px' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
         <h4 style={{ flex: 1, margin: 0 }}>Lista de variables:</h4>
-        <ButtonCrud
-          icon={<AddIcon />}
-          onClick={() => {
-            setSelectedVariable(null);
-            setEditingItem(null);
-            handleOpenModal();
-          }}
-          color="primary"
-        />
+        {showAddButton && (
+          <ButtonCrud
+            icon={<AddIcon />}
+            onClick={() => {
+              setSelectedVariable(null);
+              setEditingItem(null);
+              handleOpenModal();
+            }}
+            color="primary"
+          />
+        )}
       </Box>
       { variables.length > 0 ? (
         <Autocomplete
@@ -254,7 +256,7 @@ const VariableSelector = React.memo(({
           }}
           disableCloseOnSelect
           isOptionEqualToValue={(option, value) => option.value === value?.value}
-          onChange={handleAutocompleteChange}
+          onChange={(event, value) => handleAutocompleteChange(event, value)}
           renderInput={(params) => (
             <TextField
               {...params}

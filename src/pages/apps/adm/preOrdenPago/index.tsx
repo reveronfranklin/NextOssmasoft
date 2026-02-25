@@ -1,7 +1,8 @@
 import Grid from '@mui/material/Grid'
 import { CardContent } from '@mui/material'
-import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterOnlyPresupuesto'
 import Layout from 'src/adm/preOrdenPago/views/Layout'
+
+/* import FilterOnlyPresupuesto from 'src/views/forms/form-elements/presupuesto/FilterOnlyPresupuesto' */
 
 const OrdenesPago = () => {
     return (
@@ -9,7 +10,7 @@ const OrdenesPago = () => {
             <CardContent title='Pre Orden de Pago'>
                 <Grid container spacing={6}>
                     <Grid item xs={6}>
-                        <FilterOnlyPresupuesto />
+                        {/* <FilterOnlyPresupuesto /> */}
                     </Grid>
                 </Grid>
                 <Layout />

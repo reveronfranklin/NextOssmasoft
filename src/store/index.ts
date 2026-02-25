@@ -49,6 +49,8 @@ import { admMaestroCuentaSlice } from './apps/pagos/cuentas'
 import { admLoteSlice } from './apps/pagos/lotes'
 import { admLotePagosSlice } from './apps/pagos/lote-pagos'
 import { admPreOrdenPagoSlice } from './apps/preOrdenPago'
+import { proveedorSlice } from './apps/adm-proveedor'
+import { admProveedorSlice } from './apps/proveedor-comunicacion'
 
 export const store = configureStore({
   reducer: {
@@ -98,7 +100,9 @@ export const store = configureStore({
     admMaestroCuenta: admMaestroCuentaSlice.reducer,
     admLote: admLoteSlice.reducer,
     admLotePagos: admLotePagosSlice.reducer,
-    admPreOrdenPago: admPreOrdenPagoSlice.reducer
+    admPreOrdenPago: admPreOrdenPagoSlice.reducer,
+    proveedor: proveedorSlice.reducer,
+    admProveedor: admProveedorSlice.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

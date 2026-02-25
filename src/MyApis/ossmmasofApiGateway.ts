@@ -8,6 +8,8 @@ export const ossmmasofApiGateway = axios.create({
   baseURL: !authConfig.isProduction ? urlDevelopment : urlProduction
 })
 
+
+
 ossmmasofApiGateway.interceptors.request.use(
   config => {
     const token = localStorage.getItem(authConfig.storageTokenKeyName)
@@ -22,6 +24,38 @@ ossmmasofApiGateway.interceptors.request.use(
       }
     }
 
+    const formulacionRoutes = [
+      '/formulas',
+      '/variables',
+      '/variables-entradas-por-proceso',
+      '/proceso-detalle',
+      '/proceso',
+      '/parametros-variables',
+      '/plantilla-calculo',
+    ]
+
+    const isFormulacion = formulacionRoutes.some(route => config.url?.includes(route))
+    const useGateway = true;
+
+    if (useGateway && isFormulacion) {
+      const originalUrl = (config.baseURL ?? '') + (config.url ?? '')
+      const originalMethod = config.method?.toUpperCase() || 'POST'
+
+      config.baseURL = 'https://ossmmasoft.com.ve:5001/api/gateway/execute'
+      config.url = ''
+      config.method = 'post'
+      config.data = {
+        method: originalMethod,
+        url: originalUrl,
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'X-Custom-Header': 'custom-value'
+        },
+        body: config.data,
+        timeoutSeconds: 30
+      }
+    }
+
     return config
   },
   error => {
@@ -31,7 +65,15 @@ ossmmasofApiGateway.interceptors.request.use(
 
 ossmmasofApiGateway.interceptors.response.use(
   res => {
-    return res
+    const isGateway = res.config.baseURL === 'https://ossmmasoft.com.ve:5001/api/gateway/execute';
+
+    if (isGateway && res.data && res.data.content !== undefined) {
+      const response = res.data.content;
+
+      return {...res, data: response };
+    }
+
+    return res;
   },
   async err => {
     const originalConfig = err.config

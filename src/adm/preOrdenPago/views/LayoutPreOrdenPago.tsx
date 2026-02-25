@@ -19,7 +19,7 @@ const LayoutPreOrdenPago = () => {
             <CardHeader title='Pre Orden de Pago'/>
             <CardContent>
                 <Grid item justifyContent='flex-end'>
-                    <Tooltip title='Agregar Lotes'>
+                    <Tooltip title='Agregar Pre Orden de Pago'>
                         <IconButton color='primary' size='small' onClick={ handleCreate }>
                             <Icon icon='ci:add-row' fontSize={20} />
                         </IconButton>

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices, UploadFile, Description, Delete } from '@mui/icons-material';
@@ -15,9 +16,12 @@ import {
 } from '@mui/material';
 
 import { useServices } from '../../../services';
+import { setIsOpenDialogPreOrdenPago } from 'src/store/apps/preOrdenPago';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
+
+const MAX_FILES_LIMIT = 5;
 
 interface FileFormDto {
     documentoAdjunto: File[]
@@ -28,9 +32,11 @@ const defaultValues: FileFormDto = {
 }
 
 const FormCreate = () => {
-    const [isFormEnabled, setIsFormEnabled]     = useState<boolean>(true)
-    const [dialogOpen, setDialogOpen]           = useState(false)
-    const fileInputRef                          = useRef<HTMLInputElement>(null);
+    const dispatch = useDispatch()
+
+    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
+    const [dialogOpen, setDialogOpen]       = useState(false)
+    const fileInputRef                      = useRef<HTMLInputElement>(null);
 
     const qc: QueryClient  = useQueryClient()
     const rules            = getRules()
@@ -79,21 +85,23 @@ const FormCreate = () => {
 
     const handleUploadFile = async (dataForm: FileFormDto) => {
         setIsFormEnabled(false)
+        handleCloseDialog()
 
         try {
             if (dataForm.documentoAdjunto.length > 0) {
                 const formData = new FormData()
+
                 dataForm.documentoAdjunto.forEach((file, index) => {
                     formData.append(`files${index}`, file)
                 })
 
                 const response = await store(formData as any)
 
-               /*  if (response?.isValid) { */
-                    console.log('Archivos subidos con éxito:', response)
+                if (response?.isValid) {
                     handleClearForm()
                     handleCloseDialog()
-                /* } */
+                    dispatch(setIsOpenDialogPreOrdenPago(false))
+                }
             }
         } catch (e: any) {
             console.error('handleUploadFile', e)
@@ -103,6 +111,34 @@ const FormCreate = () => {
                 queryKey: ['preOrdenPagoTable']
             })
         }
+    }
+
+    const onChangeFiles = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        currentFiles: File[],
+        callback: (files: File[]) => void
+    ) => {
+        const target        = event.target as HTMLInputElement
+        const newFiles      = Array.from(target.files || [])
+
+        const existingNames         = new Set(currentFiles.map((file: any) => file.name));
+        const uniqueNewFiles        = newFiles.filter(file => !existingNames.has(file.name));
+        const filesAvailableSpace   = MAX_FILES_LIMIT - currentFiles.length;
+
+        if (filesAvailableSpace <= 0) {
+            console.warn(`Límite de ${MAX_FILES_LIMIT} archivos alcanzado.`);
+        } else {
+            const filesToAddNew = uniqueNewFiles.slice(0, filesAvailableSpace);
+            const updatedFiles  = [...currentFiles, ...filesToAddNew]
+
+            callback(updatedFiles)
+
+            if (newFiles.length !== uniqueNewFiles.length || uniqueNewFiles.length > filesToAddNew.length) {
+                console.warn(`Archivos filtrados: Se removieron ${newFiles.length - filesToAddNew.length} archivos por duplicidad o por exceder el límite.`);
+            }
+        }
+
+        event.target.value = ''
     }
 
     const filesCount = selectedFiles?.length || 0
@@ -168,14 +204,7 @@ const FormCreate = () => {
                                                                 style={{ display: 'none' }}
                                                                 ref={fileInputRef}
                                                                 onBlur={onBlur}
-                                                                onChange={(e) => {
-                                                                    const target = e.target as HTMLInputElement
-                                                                    const newFiles = Array.from(target.files || [])
-                                                                    const currentFiles = value || [];
-                                                                    const updatedFiles = [...currentFiles, ...newFiles]
-                                                                    onChange(updatedFiles)
-                                                                    e.target.value = ''
-                                                                }}
+                                                                onChange={(e) => onChangeFiles(e, value, onChange) }
                                                             />
 
                                                             <label htmlFor="documentoAdjunto-input">
@@ -185,14 +214,23 @@ const FormCreate = () => {
                                                                     color="primary"
                                                                     startIcon={<UploadFile />}
                                                                     fullWidth
+                                                                    disabled={filesCount >= MAX_FILES_LIMIT}
                                                                 >
                                                                     Añadir Archivo(s)
+                                                                    {filesCount < MAX_FILES_LIMIT && ` (${filesCount}/${MAX_FILES_LIMIT})`}
+                                                                    {filesCount >= MAX_FILES_LIMIT && ` (Máx ${MAX_FILES_LIMIT})`}
                                                                 </Button>
                                                             </label>
 
                                                             {errors.documentoAdjunto && (
                                                                 <Typography color="error" variant="caption" display="block" sx={{ mt: 2, ml: 1.75 }}>
                                                                     {errors.documentoAdjunto.message}
+                                                                </Typography>
+                                                            )}
+
+                                                            {filesCount >= MAX_FILES_LIMIT && (
+                                                                <Typography color="error" variant="caption" display="block" sx={{ mt: 2, ml: 1.75 }}>
+                                                                    Se ha alcanzado el límite máximo de {MAX_FILES_LIMIT} documentos adjuntos.
                                                                 </Typography>
                                                             )}
 

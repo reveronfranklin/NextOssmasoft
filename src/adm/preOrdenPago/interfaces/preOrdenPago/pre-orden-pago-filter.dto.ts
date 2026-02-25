@@ -3,5 +3,5 @@ export interface PreOrdenPagoFilterDto {
     pageNumber:        number;
     searchText:        string;
     UsuarioConectado:  number;
-    codigoPresupuesto: number;
+    codigoPresupuesto?: number;
 }

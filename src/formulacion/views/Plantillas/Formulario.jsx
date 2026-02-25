@@ -102,9 +102,6 @@ const FormularioPlantilla = ({
 
   return (
     <>
-      {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
-
-      {/* selector de variables */}
       {memoizedVariables && memoizedVariables.length > 0 && (
         <Box sx={{ mt: 2 }}>
           <FormulaProvider>
@@ -117,7 +114,6 @@ const FormularioPlantilla = ({
         </Box>
       )}
 
-      {/* listado de formulas */}
       <Autocomplete
         options={formulas}
         getOptionLabel={(option) => option.descripcion || option.nombre || ''}
@@ -129,7 +125,6 @@ const FormularioPlantilla = ({
         sx={{ mt: 2, mb: 2 }}
       />
 
-      {/* formula seleccionada solo visualizar */}
       <TextField
         name="formula"
         label="Fórmula Seleccionada"
@@ -141,7 +136,6 @@ const FormularioPlantilla = ({
         InputProps={{ readOnly: true }}
       />
 
-      {/* campo de redondeo */}
       <TextField
         name="redondeo"
         label="Redondeo"
@@ -157,7 +151,6 @@ const FormularioPlantilla = ({
         helperText="Solo números enteros"
       />
 
-      {/* campo para cambiar el orden manualmente */}
       <TextField
         name="ordenCalculo"
         label="Orden de cálculo"
@@ -179,7 +172,6 @@ const FormularioPlantilla = ({
         helperText="Solo números enteros"
       />
 
-      {/* campo booleano acumular */}
       <FormControlLabel
         control={
           <Checkbox

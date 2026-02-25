@@ -288,7 +288,10 @@ export default function PlantillaIndex({
           {procesoId !== '' && <Grid container sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <Grid item xs={12} md={12} sx={{ p: 3, borderBottom: theme => `1px solid ${theme.palette.divider}` }}>
               <FormulaProvider>
-                <ListaVariablePorProceso procesoId={procesoId} />
+                <ListaVariablePorProceso
+                  procesoId={procesoId}
+                  descripcionProceso={procesos.find(d => d.id === procesoId)?.descripcion}
+                />
               </FormulaProvider>
             </Grid>
           </Grid>}

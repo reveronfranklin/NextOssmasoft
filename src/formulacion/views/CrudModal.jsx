@@ -20,6 +20,9 @@ const CrudModal = ({
   formValues = {},
   maxWidth = "sm",
   children,
+  disableSubmit = false,
+  PaperProps = {},
+  actionsEnabled = { update: true, delete: true, create: true }
 }) => {
   const handleSubmit = (action) => {
     if (action === 'delete' && onDelete) {
@@ -30,7 +33,7 @@ const CrudModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth={maxWidth} fullWidth PaperProps={PaperProps}>
       <DialogTitle>
         {title}
         <IconButton
@@ -53,29 +56,40 @@ const CrudModal = ({
           {children}
         </DialogContent>
         <DialogActions>
-          {isEdit && onDelete && (
+          {isEdit && onDelete && actionsEnabled.delete && (
             <ButtonWithConfirm
               color="error"
-              confirmTitle = "¿Eliminar variable?"
+              confirmTitle="¿Eliminar variable?"
               confirmText="¿Estás seguro de que deseas eliminar esta variable?"
               onAction={() => handleSubmit('delete')}
             >
               Eliminar
             </ButtonWithConfirm>
           )}
-          <ButtonWithConfirm
-            variant="contained"
-            color="primary"
-            confirmTitle={isEdit ? '¿Actualizar variable?' : '¿Crear variable?'}
-            confirmText={
-              isEdit
-                ? 'Si'
-                : 'SI'
-            }
-            onAction={() => handleSubmit(isEdit ? 'edit' : 'create')}
-          >
-            {isEdit ? 'Actualizar' : 'Crear'}
-          </ButtonWithConfirm>
+          {isEdit && actionsEnabled.update && (
+            <ButtonWithConfirm
+              variant="contained"
+              color="primary"
+              confirmTitle="¿Actualizar variable?"
+              confirmText="Si"
+              onAction={() => handleSubmit('edit')}
+              disabled={disableSubmit}
+            >
+              Actualizar
+            </ButtonWithConfirm>
+          )}
+          {!isEdit && actionsEnabled.create && (
+            <ButtonWithConfirm
+              variant="contained"
+              color="primary"
+              confirmTitle="¿Crear variable?"
+              confirmText="SI"
+              onAction={() => handleSubmit('create')}
+              disabled={disableSubmit}
+            >
+              Crear
+            </ButtonWithConfirm>
+          )}
         </DialogActions>
       </form>
     </Dialog>
