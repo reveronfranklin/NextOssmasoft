@@ -1,149 +1,60 @@
-// ** React Imports
-import { Ref, forwardRef, ReactElement} from 'react'
-
-// ** MUI Imports
-
-import Card from '@mui/material/Card'
-
-import Dialog from '@mui/material/Dialog'
-import Button from '@mui/material/Button'
-
-
+import CardContent from '@mui/material/CardContent'
 import IconButton from '@mui/material/IconButton'
-
-//import CardContent from '@mui/material/CardContent'
-import Fade, { FadeProps } from '@mui/material/Fade'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-
-// ** Icon Imports
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
-
-
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-
-
-
-// ** Third Party Imports
-//import { ReactDatePickerProps } from 'react-datepicker'
-
-
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
-// ** Third Party Imports
 import { ReactDatePickerProps } from 'react-datepicker'
-
-
 import FormRhVariacionCreateAsync from '../forms/FormRhVariacionCreateAsync'
 import FormRhVariacionUpdateAsync from '../forms/FormRhVariacionUpdateAsync'
 import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
-
-
-// ** Custom Component Imports
-
-const Transition = forwardRef(function Transition(
-  props: FadeProps & { children?: ReactElement<any, any> },
-  ref: Ref<unknown>
-) {
-  return <Fade ref={ref} {...props} />
-})
-
-
+import { Box } from '@mui/material'
 
 const DialogRhVariacionInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
-
-
-  // ** States
   const dispatch = useDispatch();
-
   const {operacionCrudRhPersonaMovCtr,verRhPersonaMovCtrActive} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
 
-
-/*   const fechaActual = new Date()
-
-  const currentYear  = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
-
-  const currentDay =new Date().getDate();
-  const currentDayString = '00' + currentDay.toString();
-  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
-
-  const defaultDateString = fechaActual.toISOString(); */
   const handleSetShow= (active:boolean)=>{
-
-    if(active==false){
-
-
+    if (active==false) {
       const defaultValues:IRhPersonasMovControlResponseDto = {
-
         codigoPersonaMovCtrl:0,
         codigoPersona :personaSeleccionado.codigoPersona,
         codigoConcepto :0,
         controlAplica :0,
         descripcionControlAplica:'',
         descripcionConcepto:''
-
-    }
-
+      }
 
       dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
-
-
-
     }
+
     dispatch(setVerRhPersonaMovCtrActive(active))
-
-
   }
 
+  return (
+    <Box sx={{ position: 'relative', width: '100%', maxWidth: 'md', mx: 'auto' }}>
+      <IconButton
+        size='small'
+        onClick={() => handleSetShow(false)}
+        sx={{ position: 'absolute', right: '1rem', top: '1rem', zIndex: 1 }}
+      >
+        <Icon icon='mdi:close' />
+      </IconButton>
 
-    return (
-      <Card>
-
-        <Dialog
-          fullWidth
-          open={verRhPersonaMovCtrActive}
-          maxWidth='md'
-          scroll='body'
-          onClose={() => handleSetShow(false)}
-          TransitionComponent={Transition}
-          onBackdropClick={() => handleSetShow(false)}
-        >
-          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
-            <IconButton
-              size='small'
-              onClick={() => handleSetShow(false)}
-              sx={{ position: 'absolute', right: '1rem', top: '1rem' }}
-            >
-              <Icon icon='mdi:close' />
-            </IconButton>
-
-            <DatePickerWrapper>
-              { operacionCrudRhPersonaMovCtr===1
-              ?  <FormRhVariacionCreateAsync popperPlacement={popperPlacement}/>
-                :<FormRhVariacionUpdateAsync popperPlacement={popperPlacement} />
-              }
-            </DatePickerWrapper>
-
-
-          </DialogContent>
-          <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'center' }}>
-
-            <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-              Cerrar
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-      </Card>
-    )
-
-
+      <CardContent sx={{ pb: 8, px: { xs: 4, sm: 8 }, pt: { xs: 8, sm: 10 } }}>
+        <DatePickerWrapper>
+          {operacionCrudRhPersonaMovCtr === 1 ? (
+            <FormRhVariacionCreateAsync popperPlacement={popperPlacement} />
+          ) : (
+            <FormRhVariacionUpdateAsync popperPlacement={popperPlacement} />
+          )}
+        </DatePickerWrapper>
+      </CardContent>
+    </Box>
+  )
 }
 
 export default DialogRhVariacionInfo

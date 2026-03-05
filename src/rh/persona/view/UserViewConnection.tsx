@@ -1,18 +1,9 @@
-// ** MUI Imports
-
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 
 import CardContent from '@mui/material/CardContent'
 import { CardHeader, Divider } from '@mui/material'
-import VariacionList from 'src/rh/variacion/views/VariacionList'
-
-// ** Icon Imports
-
-
-
-
-
+import VariacionManager from 'src/rh/variacion/views/VariacionManager'
 
 const UserViewConnection = () => {
   return (
@@ -25,14 +16,11 @@ const UserViewConnection = () => {
           <Divider sx={{ m: '0 !important' }} />
           <CardContent>
             <Grid item xs={12}>
-              <VariacionList></VariacionList>
+              <VariacionManager></VariacionManager>
             </Grid>
           </CardContent>
-
-
         </Card>
       </Grid>
-
     </Grid>
   )
 }
