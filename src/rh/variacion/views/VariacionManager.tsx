@@ -1,11 +1,8 @@
-import { Box, Card, CardActions, Grid, IconButton, Tooltip, Chip, Avatar, CardHeader } from '@mui/material'
+import { Box, Card, CardActions, Grid, IconButton, Tooltip, Chip, Avatar } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { ReactDatePickerProps } from 'react-datepicker'
 import Icon from 'src/@core/components/icon'
 import { DataGrid  } from '@mui/x-data-grid';
-import { useTheme } from '@mui/material/styles'
 import { useDispatch } from 'react-redux';
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
 import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
@@ -13,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
-import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
 import { setConceptos } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
 import validateAmount from 'src/utilities/validateAmount';
@@ -26,26 +23,23 @@ interface TotalesState {
 }
 
 const VariacionList = () => {
-  const theme           = useTheme()
-  const { direction }   = theme
   const columnsDataGrid = useColumnsDataGrid()
 
-  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
-
   const handleView=  (row : IRhPersonasMovControlResponseDto) => {
-   if (personaSeleccionado && personaSeleccionado.codigoPersona>0) {
+   if (personaSeleccionado && personaSeleccionado.codigoPersona > 0) {
+      dispatch(setIsExpandedAccordion(true))
       dispatch(setRhPersonaMovCtrSeleccionado(row))
       dispatch(setOperacionCrudRhPersonaMovCtr(2));
       dispatch(setVerRhPersonaMovCtrActive(true))
    }
   }
 
-  const handleDoubleClick=(row:any)=>{
+  const handleDoubleClick = (row: any) => {
     handleView(row.row)
   }
 
   const handleAdd = () => {
-    if (personaSeleccionado && personaSeleccionado.codigoPersona<=0) {
+    if (personaSeleccionado && personaSeleccionado.codigoPersona <= 0) {
 
       return;
     }
@@ -59,6 +53,7 @@ const VariacionList = () => {
       descripcionConcepto:''
     }
 
+    dispatch(setIsExpandedAccordion(true))
     dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
     dispatch(setOperacionCrudRhPersonaMovCtr(1));
     dispatch(setVerRhPersonaMovCtrActive(true))
@@ -66,7 +61,7 @@ const VariacionList = () => {
 
   const dispatch = useDispatch();
 
-  const {verRhPersonaMovCtrActive=false} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const {verRhPersonaMovCtrActive = false} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<IRhPersonasMovControlResponseDto[]>([])
   const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
@@ -92,7 +87,7 @@ const VariacionList = () => {
     const getData = async () => {
       setLoading(true)
 
-      if (personaSeleccionado.codigoPersona>0) {
+      if (personaSeleccionado.codigoPersona > 0) {
         const filter = {
           CodigoTipoNomina: 12,
           CodigoPersona: personaSeleccionado.codigoPersona,
@@ -122,15 +117,13 @@ const VariacionList = () => {
     }
 
     getData();
-
   }, [verRhPersonaMovCtrActive, personaSeleccionado]);
 
   return (
     <Grid item xs={12}>
       <Card sx={{ my: 2 }}>
-        <DialogRhVariacionInfo popperPlacement={popperPlacement} />
+        <DialogRhVariacionInfo />
       </Card>
-
       <Card>
         <CardActions>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-end', width: '100%' }}>
@@ -139,7 +132,6 @@ const VariacionList = () => {
                 <Icon icon='ci:add-row' fontSize={20} />
               </IconButton>
             </Tooltip>
-
             <Grid
               container
               spacing={2}
@@ -158,7 +150,6 @@ const VariacionList = () => {
                   />
                 </Tooltip>
               </Grid>
-
               <Grid item>
                 <Tooltip title='Asignaciones totales'>
                   <Chip
@@ -169,7 +160,6 @@ const VariacionList = () => {
                   />
                 </Tooltip>
               </Grid>
-
               <Grid item>
                 <Tooltip title='Deducciones totales'>
                   <Chip
@@ -197,11 +187,8 @@ const VariacionList = () => {
               />
             </Box>
         }
-      </Card>
 
-     {/*  <DatePickerWrapper>
-        <DialogRhVariacionInfo popperPlacement={popperPlacement} />
-      </DatePickerWrapper> */}
+      </Card>
     </Grid>
   )
 }

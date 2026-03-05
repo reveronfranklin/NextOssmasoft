@@ -1,4 +1,3 @@
-import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -15,11 +14,11 @@ import { useDispatch } from 'react-redux'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box} from '@mui/material'
-import  { ReactDatePickerProps } from 'react-datepicker'
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
 import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
 import { IRhPersonasMovControlUpdateDto } from 'src/interfaces/rh/RhPersonasMovControlUpdateDto'
 import { setConceptoSeleccionado } from 'src/store/apps/rh'
+
 interface FormInputs {
   codigoPersonaMovCtrl:number
   codigoPersona :number;
@@ -28,7 +27,7 @@ interface FormInputs {
 
 }
 
-const FormRhVariacionCreateAsync = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
+const FormRhVariacionCreateAsync = () => {
   const dispatch = useDispatch();
 
   const listControlAplica=[{id:1,descripcion:'SI'},{id:0,descripcion:'NO'}]
@@ -36,7 +35,7 @@ const FormRhVariacionCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
   const {conceptos} = useSelector((state: RootState) => state.nomina)
 
   const  getControlAplica=(id:number)=>{
-    console.log('control aplica',id,popperPlacement)
+    console.log('control aplica',id)
     const result = listControlAplica?.filter((elemento)=>{
 
       return elemento.id==id;
@@ -129,12 +128,7 @@ const FormRhVariacionCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
 
   return (
     <>
-      <Box sx={{ px: 0, py: 2 }}>
-        <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: 'text.primary' }}>
-          RH - Crear Variación
-        </Typography>
-      </Box>
-      <CardContent sx={{ p: 0 }}>
+      <Box sx={{ my: 4 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
 
@@ -213,7 +207,7 @@ const FormRhVariacionCreateAsync = ({ popperPlacement }: { popperPlacement: Reac
               {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
           </Box>
         </form>
-      </CardContent>
+      </Box>
     </>
   )
 }

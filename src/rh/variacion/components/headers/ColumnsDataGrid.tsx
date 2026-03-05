@@ -1,34 +1,18 @@
 import { useMemo } from 'react';
-import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
-import { IconButton, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
 import FormatNumber from '../../../../utilities/format-numbers';
 import validateAmount from '../../../../utilities/validateAmount';
-/* import { SisBancoUpdateDto } from '../../../interfaces'; */
-
-import {
-    setIsOpenDialogMaestroBancoDetalle,
-    setMaestroBancoSeleccionadoDetalle,
-    setTypeOperation
-} from 'src/store/apps/pagos/bancos';
 
 const useColumnsDataGrid = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (maestroBanco: any /* SisBancoUpdateDto */) => {
-        dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogMaestroBancoDetalle(true))
-        dispatch(setMaestroBancoSeleccionadoDetalle(maestroBanco))
+    const moventTypeOptions: { [key: string]: string } = {
+		'E': 'Especial',
+		'F': 'Fijo',
+		'V': 'Variable'
     }
-
-    const StyledIconButton = styled(IconButton)(({ theme }) => ({
-        '&:hover': {
-            color: theme.palette.primary.main,
-            transform: 'scale(1.5)',
-            transition: 'transform 0.2s ease-in-out',
-        },
-    }))
 
     const columns = useMemo<GridColDef[]>(() => [
         {
@@ -67,7 +51,7 @@ const useColumnsDataGrid = (): GridColDef[] => {
             field: 'tipo',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.tipo === '' ? 'NO DISPONIBLE' : params.row.tipo}
+                    {params.row?.tipo === '' ? 'NO DISPONIBLE' : moventTypeOptions[params.row.tipo]}
                 </Typography>
             )
         },

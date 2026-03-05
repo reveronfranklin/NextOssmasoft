@@ -1,11 +1,5 @@
-// ** Redux Imports
 import { createSlice } from '@reduxjs/toolkit'
-
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
-
-
-
-
 
 export const rhPersonaMovCtrlSlice = createSlice({
   name: 'rhPersonaMovCtrl',
@@ -14,12 +8,9 @@ export const rhPersonaMovCtrlSlice = createSlice({
     listRhPersonaMovCtr:[] as IRhPersonasMovControlResponseDto[],
     verRhPersonaMovCtrActive:false,
     operacionCrudRhPersonaMovCtr:0,
-
-
+    isExpandedAccordion: false
   },
   reducers: {
-
-
     setRhPersonaMovCtrSeleccionado:(state,action)=>{
 
       state.rhPersonaMovCtrSeleccionado=action.payload;
@@ -35,17 +26,16 @@ export const rhPersonaMovCtrlSlice = createSlice({
     setOperacionCrudRhPersonaMovCtr:(state,action)=>{
       state.operacionCrudRhPersonaMovCtr=action.payload;
     },
-
-
-
-  },
-
-});
+    setIsExpandedAccordion:(state,action)=>{
+      state.isExpandedAccordion = action.payload
+    }
+  }
+})
 
 export const {
-                setRhPersonaMovCtrSeleccionado,
-                setListRhPersonaMovCtr,
-                setVerRhPersonaMovCtrActive,
-                setOperacionCrudRhPersonaMovCtr
-
-              } = rhPersonaMovCtrlSlice.actions;
+    setRhPersonaMovCtrSeleccionado,
+    setListRhPersonaMovCtr,
+    setVerRhPersonaMovCtrActive,
+    setOperacionCrudRhPersonaMovCtr,
+    setIsExpandedAccordion
+} = rhPersonaMovCtrlSlice.actions;
