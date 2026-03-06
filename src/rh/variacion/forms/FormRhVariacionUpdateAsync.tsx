@@ -13,57 +13,40 @@ import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
 import { setRhExperienciaSeleccionado, setVerRhExperienciaActive } from 'src/store/apps/rh-experiencia'
-import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
-import { IRhPersonasMovControlDeleteDto } from '../../../interfaces/rh/RhPersonasMovControlDeleteDto';
 import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
-import { IRhPersonasMovControlUpdateDto } from 'src/interfaces/rh/RhPersonasMovControlUpdateDto'
 import { setConceptoSeleccionado } from 'src/store/apps/rh'
+import { UpdateRhMovNominaCommand, DeleteRhMovNominaCommand } from '../interfaces'
 
-interface FormInputs {
-  codigoPersonaMovCtrl:number
-  codigoPersona :number;
-  codigoConcepto :number;
-  controlAplica :number;
-}
+interface FormInputs extends UpdateRhMovNominaCommand {}
 
 const FormRhVariacionUpdateAsync = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const listControlAplica=[{id:1,descripcion:'SI'},{id:0,descripcion:'NO'}]
-  const {rhPersonaMovCtrSeleccionado} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const {conceptos} = useSelector((state: RootState) => state.nomina)
+  const { rhPersonaMovCtrSeleccionado } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { conceptos } = useSelector((state: RootState) => state.nomina)
 
-  const  getControlAplica=(id:number)=>{
-    const result = listControlAplica?.filter((elemento)=>{
+  const  getConcepto = (id:number) => {
+    const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
 
-      return elemento.id==id;
-    });
-
-    return result[0];
+    return result[0]
   }
 
-  const  getConcepto = (id:number)=>{
-    const result = conceptos?.filter((elemento)=>{
-
-      return elemento.codigoConcepto==id;
-    });
-
-    return result[0];
-  }
-
-  const [loading, setLoading] = useState<boolean>(false)
+  const [open, setOpen]                 = useState(false);
+  const [loading, setLoading]           = useState<boolean>(false)
+  const [concepto, setConcepto]         = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto))
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [open, setOpen] = useState(false);
-  const [controlAplica,setControlAplica] = useState<any>(getControlAplica(rhPersonaMovCtrSeleccionado.controlAplica))
-  const [concepto,setConcepto] = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto))
 
-  const defaultValues:IRhPersonasMovControlResponseDto = {
-    codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl,
-    codigoPersona :rhPersonaMovCtrSeleccionado.codigoPersona,
-    codigoConcepto :rhPersonaMovCtrSeleccionado.codigoConcepto,
-    controlAplica :rhPersonaMovCtrSeleccionado.controlAplica,
-    descripcionControlAplica:rhPersonaMovCtrSeleccionado.descripcionControlAplica,
-    descripcionConcepto:rhPersonaMovCtrSeleccionado.descripcionConcepto
+  const defaultValues: UpdateRhMovNominaCommand = {
+    codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina,
+    codigoTipoNomina: rhPersonaMovCtrSeleccionado.codigoTipoNomina,
+    codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona,
+    codigoConcepto: rhPersonaMovCtrSeleccionado.codigoConcepto,
+    complementoConcepto: rhPersonaMovCtrSeleccionado.complementoConcepto,
+    tipo: rhPersonaMovCtrSeleccionado.tipo,
+    frecuenciaId: rhPersonaMovCtrSeleccionado.frecuenciaId,
+    monto: rhPersonaMovCtrSeleccionado.monto,
+    status: rhPersonaMovCtrSeleccionado.status,
+    usuarioUpd: 1
   }
 
   const {
@@ -73,16 +56,7 @@ const FormRhVariacionUpdateAsync = () => {
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
-  const handlerControlAplica=async (e: any,value:any)=>{
-    if (value!=null) {
-      setValue('controlAplica',value.id);
-      setControlAplica(value);
-    } else {
-      setValue('controlAplica',0);
-    }
-  }
-
-  const handlerConceptos =(e: any,value:any)=>{
+  const handlerConceptos = (e: any,value:any)=>{
     console.log('conceptos',value)
     if(value){
       dispatch(setConceptoSeleccionado(value));
@@ -101,12 +75,11 @@ const FormRhVariacionUpdateAsync = () => {
     dispatch(setRhExperienciaSeleccionado({}))
   };
 
-
   const handleDelete = async  () => {
     setOpen(false);
 
-    const deleteMovControl : IRhPersonasMovControlDeleteDto={
-      codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl
+    const deleteMovControl: DeleteRhMovNominaCommand = {
+      codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina
     }
 
     const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Delete',deleteMovControl);
@@ -116,19 +89,25 @@ const FormRhVariacionUpdateAsync = () => {
       dispatch(setVerRhPersonaMovCtrActive(false))
       dispatch(setRhPersonaMovCtrSeleccionado({}))
     }
-  };
+  }
 
-  const onSubmit = async (data:FormInputs) => {
+  const onSubmit = async (data: FormInputs) => {
     setLoading(true)
 
-    const updateMovControl:IRhPersonasMovControlUpdateDto ={
-      codigoPersonaMovCtrl:rhPersonaMovCtrSeleccionado.codigoPersonaMovCtrl,
-      codigoPersona :rhPersonaMovCtrSeleccionado.codigoPersona,
-      codigoConcepto :data.codigoConcepto,
-      controlAplica :data.controlAplica,
+    const updateMovControl: UpdateRhMovNominaCommand = {
+      codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina,
+      codigoTipoNomina: rhPersonaMovCtrSeleccionado.codigoTipoNomina,
+      codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona,
+      codigoConcepto: data.codigoConcepto,
+      complementoConcepto: data.complementoConcepto,
+      tipo: data.tipo,
+      frecuenciaId: data.frecuenciaId,
+      monto: data.monto,
+      status: data.status,
+      usuarioUpd: 1
     };
 
-    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Update',updateMovControl);
+    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Update', updateMovControl);
 
     if(responseAll.data.isValid){
       dispatch(setRhPersonaMovCtrSeleccionado(responseAll.data.data))
@@ -156,11 +135,11 @@ const FormRhVariacionUpdateAsync = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
 
-            {/* descripcionId */}
+            {/* CodigoPersona (Solo lectura o Hidden) */}
             <Grid item sm={2} xs={12}>
               <FormControl fullWidth size="small">
                 <Controller
-                  name='codigoPersonaMovCtrl'
+                  name='codigoPersona'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange } }) => (
@@ -170,45 +149,68 @@ const FormRhVariacionUpdateAsync = () => {
                       label='Id'
                       onChange={onChange}
                       placeholder='0'
-                      error={Boolean(errors.codigoPersonaMovCtrl)}
-                      aria-describedby='validation-async-codigoPersonaMovCtrl'
+                      error={Boolean(errors.codigoPersona)}
+                      aria-describedby='validation-async-codigoPersona'
                       disabled
                     />
                   )}
                 />
-                {errors.codigoPersonaMovCtrl && (
-                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoPersonaMovCtrl'>
+                {errors.codigoPersona && (
+                  <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoPersona'>
                     This field is required
                   </FormHelperText>
                 )}
               </FormControl>
             </Grid>
 
-            <Grid item sm={6} xs={12}>
+            {/* Selección de Concepto */}
+            <Grid item sm={10} xs={12}>
               <Autocomplete
                 size="small"
-                sx={{ width: 350 }}
                 options={conceptos}
                 id='autocomplete-concepto'
                 value={concepto}
                 isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
-                getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
+                getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina +'-'+ option.denominacion}
                 onChange={handlerConceptos}
                 renderInput={params => <TextField {...params} label='Conceptos' />}
               />
             </Grid>
 
-            {/* Control Aplica */}
-            <Grid item sm={6} xs={12}>
-              <Autocomplete
-                size="small"
-                options={listControlAplica}
-                value={controlAplica}
-                id='autocomplete-graduado'
-                isOptionEqualToValue={(option, value) => option.id=== value.id}
-                getOptionLabel={option => option.id + '-' + option.descripcion }
-                onChange={handlerControlAplica}
-                renderInput={params => <TextField {...params} label='Control Aplica' />}
+            {/* Monto */}
+            <Grid item sm={4} xs={12}>
+              <Controller
+                name='monto'
+                control={control}
+                rules={{ required: true, min: 0.01 }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="number"
+                    size="small"
+                    label='Monto'
+                    error={Boolean(errors.monto)}
+                    helperText={errors.monto && "Monto requerido"}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* Complemento / Descripción adicional */}
+            <Grid item sm={8} xs={12}>
+              <Controller
+                name='complementoConcepto'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    size="small"
+                    label='Complemento del Concepto'
+                    placeholder='Información adicional...'
+                  />
+                )}
               />
             </Grid>
 

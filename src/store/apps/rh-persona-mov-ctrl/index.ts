@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
+import { ResponseRhMovNominaCommand } from 'src/rh/variacion/interfaces';
 
 export const rhPersonaMovCtrlSlice = createSlice({
   name: 'rhPersonaMovCtrl',
   initialState: {
-    rhPersonaMovCtrSeleccionado: {} as IRhPersonasMovControlResponseDto,
+    /* rhPersonaMovCtrSeleccionado: {} as IRhPersonasMovControlResponseDto, */
+    rhPersonaMovCtrSeleccionado: {} as ResponseRhMovNominaCommand,
     listRhPersonaMovCtr:[] as IRhPersonasMovControlResponseDto[],
     verRhPersonaMovCtrActive:false,
     operacionCrudRhPersonaMovCtr:0,
