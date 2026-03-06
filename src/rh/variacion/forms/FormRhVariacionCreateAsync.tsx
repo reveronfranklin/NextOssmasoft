@@ -16,7 +16,7 @@ import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src
 import { setConceptoSeleccionado } from 'src/store/apps/rh'
 import { CreateRhMovNominaCommand } from '../interfaces'
 
-interface FormInputs extends CreateRhMovNominaCommand {}
+type FormInputs = CreateRhMovNominaCommand
 
 const FormRhVariacionCreateAsync = () => {
   const dispatch = useDispatch()
