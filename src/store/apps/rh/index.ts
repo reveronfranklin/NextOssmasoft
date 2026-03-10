@@ -34,7 +34,8 @@ export const nominaSlice = createSlice({
     listEstados: [] as ISelectListDescriptiva[],
     listTipoIdentificacion: [] as ISelectListDescriptiva[],
     listEstadoCivil: [] as ISelectListDescriptiva[],
-
+    frecuencias: [] as ISelectListDescriptiva[],
+    frecuenciaSeleccionada: [] as ISelectListDescriptiva[]
   },
   reducers: {
 
@@ -125,7 +126,14 @@ export const nominaSlice = createSlice({
     setListEstadoCivil:(state,action)=>{
       state.listEstadoCivil=action.payload
     },
-
+    setFrecuencias:(state,action) => {
+      state.isLoading   = false;
+      state.frecuencias = action.payload
+    },
+    setFrecuenciaSeleccionada:(state,action) => {
+      state.isLoading = false;
+      state.frecuenciaSeleccionada = action.payload
+    }
   },
 
 });
@@ -151,5 +159,7 @@ export const {startLoadingNomina,
               setListEstados,
               setTipoNominaSeleccionado,
               setListTipoIdentificacion,
-              setListEstadoCivil
+              setListEstadoCivil,
+              setFrecuencias,
+              setFrecuenciaSeleccionada
             } = nominaSlice.actions;

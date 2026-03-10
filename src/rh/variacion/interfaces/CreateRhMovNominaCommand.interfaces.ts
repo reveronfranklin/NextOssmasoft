@@ -8,4 +8,7 @@ export interface CreateRhMovNominaCommand {
     monto: number;
     status: 'A' | null | string;
     usuarioIns: number;
+    extra1?: string;
+    extra2?: string;
+    extra3?: string;
 }

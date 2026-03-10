@@ -9,4 +9,7 @@ export interface UpdateRhMovNominaCommand {
     monto: number;
     status: string;
     usuarioUpd: number;
+    extra1?: string;
+    extra2?: string;
+    extra3?: string;
 }

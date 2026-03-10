@@ -11,7 +11,7 @@ import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
 import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
-import { setConceptos } from 'src/store/apps/rh';
+import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
 import validateAmount from 'src/utilities/validateAmount';
 import FormatNumber from 'src/utilities/format-numbers';
@@ -23,6 +23,7 @@ interface TotalesState {
 }
 
 const VariacionList = () => {
+  const dispatch        = useDispatch();
   const columnsDataGrid = useColumnsDataGrid()
 
   const handleView=  (row : IRhPersonasMovControlResponseDto) => {
@@ -59,7 +60,6 @@ const VariacionList = () => {
     dispatch(setVerRhPersonaMovCtrActive(true))
   }
 
-  const dispatch = useDispatch();
 
   const {verRhPersonaMovCtrActive = false} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const [loading, setLoading] = useState(false);
@@ -81,6 +81,20 @@ const VariacionList = () => {
       asignacionesTotales: FormatNumber(asignacionesTotales) ?? 0,
       deduccionesTotales: FormatNumber(deduccionesTotales) ?? 0
     }
+  }
+
+  const getConceptos = async () => {
+    const responseAllConceptos = await ossmmasofApi.get<any>('/RhConceptos/GetAll')
+    const { data } = responseAllConceptos
+
+    return data
+  }
+
+  const getFrecuencias = async () => {
+    const responseAllFrecuencias = await ossmmasofApi.post<any>('/RhDescriptivas/GetByTitulo', { tituloId: 49})
+    const { data } = responseAllFrecuencias
+
+    return data
   }
 
   useEffect(() => {
@@ -105,11 +119,16 @@ const VariacionList = () => {
         const totales = getTotal( responseData.total1, responseData.total2, responseData. total3)
         setTotales(totales)
 
-        const responseAllConceptos = await ossmmasofApi.get<any>('/RhConceptos/GetAll')
-        const { data } = responseAllConceptos
+        const frecuenciasList = await getFrecuencias()
 
-        if (data) {
-          dispatch(setConceptos(data))
+        if (frecuenciasList) {
+          dispatch(setFrecuencias(frecuenciasList))
+        }
+
+        const conceptosList = await getConceptos()
+
+        if (conceptosList) {
+          dispatch(setConceptos(conceptosList))
         }
       }
 

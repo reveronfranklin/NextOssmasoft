@@ -5,25 +5,38 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import CircularProgress from '@mui/material/CircularProgress'
 import toast from 'react-hot-toast'
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import { styled } from '@mui/material/styles'
+import { NumericFormat } from 'react-number-format'
 import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { useDispatch } from 'react-redux'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import { useEffect, useState } from 'react'
-import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
+import { Autocomplete, Box } from '@mui/material'
 import { setRhExperienciaSeleccionado, setVerRhExperienciaActive } from 'src/store/apps/rh-experiencia'
 import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
-import { setConceptoSeleccionado } from 'src/store/apps/rh'
+import { setConceptoSeleccionado, setFrecuenciaSeleccionada } from 'src/store/apps/rh'
 import { UpdateRhMovNominaCommand, DeleteRhMovNominaCommand } from '../interfaces'
 
 type FormInputs = UpdateRhMovNominaCommand
 
+const StyledCustomInput = styled(TextField)(() => ({
+  width: '100%'
+}))
+
 const FormRhVariacionUpdateAsync = () => {
   const dispatch = useDispatch()
 
+  const moventTypeOptions = [
+		{ value: 'E', label: 'Especial' },
+		{ value: 'F', label: 'Fijo' },
+		{ value: 'V', label: 'Variable' }
+  ]
+
   const { rhPersonaMovCtrSeleccionado } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos } = useSelector((state: RootState) => state.nomina)
+  const { conceptos, frecuencias } = useSelector((state: RootState) => state.nomina)
 
   const  getConcepto = (id:number) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
@@ -31,10 +44,26 @@ const FormRhVariacionUpdateAsync = () => {
     return result[0]
   }
 
-  const [open, setOpen]                 = useState(false);
-  const [loading, setLoading]           = useState<boolean>(false)
-  const [concepto, setConcepto]         = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto))
-  const [errorMessage, setErrorMessage] = useState<string>('')
+  const getFrecuencia = (id:number) => {
+    const result = frecuencias?.filter((elemento) => elemento.id == id)
+
+    return result[0]
+  }
+
+  const getTipoMovimientoLabel = (tipo: string) => {
+    const result = moventTypeOptions.filter((elemento) => elemento.value == tipo)
+
+    return result[0]
+  }
+
+  const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+  const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
+  const [monto, setMonto]                         = useState<number>(0)
+  const [loading, setLoading]                     = useState<boolean>(false)
+  const [concepto, setConcepto]                   = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto))
+  const [frecuencia, setFrecuencia]               = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId))
+  const [tipoMovimiento, setTipoMovimiento]       = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo))
+  const [errorMessage, setErrorMessage]           = useState<string>('')
 
   const defaultValues: UpdateRhMovNominaCommand = {
     codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina,
@@ -53,46 +82,119 @@ const FormRhVariacionUpdateAsync = () => {
     control,
     handleSubmit,
     setValue,
-    formState: { errors }
-  } = useForm<FormInputs>({ defaultValues })
+    setError,
+    clearErrors,
+    trigger,
+    reset,
+    watch,
+    getFieldState,
+    formState: { errors, isValid }
+  } = useForm<FormInputs>({
+    defaultValues,
+    mode: 'onChange'
+  })
 
-  const handlerConceptos = (e: any,value:any)=>{
-    console.log('conceptos',value)
-    if(value){
-      dispatch(setConceptoSeleccionado(value));
-      setConcepto(value);
-      setValue('codigoConcepto',value.codigoConcepto);
+  const watchMonto = watch('monto')
+  const stateMonto = getFieldState('monto')
+
+  const setErrorMonto = () => {
+    setError('monto', {
+      type: 'manual',
+      message: 'El monto es requerido, ingrese un monto válido.'
+    }, { shouldFocus: true })
+  }
+
+  useEffect(() => {
+    if (!monto) {
+      setErrorMonto()
+    } else {
+      clearErrors('monto')
+      trigger('monto')
+    }
+  }, [monto, setError, clearErrors, trigger])
+
+  useEffect(() => {
+    setMonto(watchMonto || 0)
+  }, [watchMonto, setMonto])
+
+  const handleOnChangeAmount = (amount: string) => {
+    const amountToPay = parseFloat(amount) || 0
+    setMonto(amountToPay)
+    setValue('monto', amountToPay)
+  }
+
+  const handlerConceptos = (e: any, value:any) => {
+    if (value) {
+      dispatch(setConceptoSeleccionado(value))
+      setConcepto(value)
+      setValue('codigoConcepto', value.codigoConcepto)
     }
   }
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const handlerFrecuencias = (e: any,value:any) => {
+    if (value) {
+      dispatch(setFrecuenciaSeleccionada(value))
+      setFrecuencia(value)
+      setValue('frecuenciaId', value.id)
+    }
+  }
 
-  const handleClose = () => {
-    setOpen(false);
-    dispatch(setVerRhExperienciaActive(false))
-    dispatch(setRhExperienciaSeleccionado({}))
-  };
+  const handlerTipoMovimiento = (e: any,option:any) => {
+    if (option) {
+      setTipoMovimiento(option)
+      setValue('tipo', option.value)
+    }
+  }
+
+  const clearForm = () => {
+    setFrecuencia(null)
+    setConcepto(null)
+    setTipoMovimiento(null)
+    setMonto(0)
+    reset(defaultValues)
+  }
+
+  const handleOpenDialog = () => {
+    if (stateMonto.invalid) {
+      setErrorMonto()
+    } else {
+      setDialogOpen(true)
+    }
+  }
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false)
+  }
+
+  const handleOpenDialogDelete = () => {
+    setDialogDeleteOpen(true)
+  }
+
+  const handleCloseDialogDelete = () => {
+    setDialogDeleteOpen(false)
+  }
 
   const handleDelete = async  () => {
-    setOpen(false);
+    handleCloseDialogDelete()
 
     const deleteMovControl: DeleteRhMovNominaCommand = {
       codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina
     }
 
-    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Delete',deleteMovControl);
+    const responseAll= await ossmmasofApi.post<any>('/RhMovNomina/delete',deleteMovControl);
     setErrorMessage(responseAll.data.message)
 
     if (responseAll.data.isValid) {
       dispatch(setVerRhPersonaMovCtrActive(false))
       dispatch(setRhPersonaMovCtrSeleccionado({}))
+      clearForm()
+      toast.success('Form Submitted')
     }
   }
 
-  const onSubmit = async (data: FormInputs) => {
+  const onSubmitUpdate = async (data: FormInputs) => {
     setLoading(true)
+    handleCloseDialog()
 
     const updateMovControl: UpdateRhMovNominaCommand = {
       codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina,
@@ -107,17 +209,19 @@ const FormRhVariacionUpdateAsync = () => {
       usuarioUpd: 1
     };
 
-    const responseAll= await ossmmasofApi.post<any>('/RhPersonasMovControl/Update', updateMovControl);
+    const responseAll = await ossmmasofApi.post<any>('/RhMovNomina/update', updateMovControl);
 
-    if(responseAll.data.isValid){
+    if (responseAll.data.isValid) {
       dispatch(setRhPersonaMovCtrSeleccionado(responseAll.data.data))
       dispatch(setVerRhPersonaMovCtrActive(false))
+      clearForm()
       toast.success('Form Submitted')
     }
 
     setErrorMessage(responseAll.data.message)
     setLoading(false)
   }
+
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
@@ -132,7 +236,7 @@ const FormRhVariacionUpdateAsync = () => {
   return (
     <>
       <Box sx={{ my: 4 }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <Grid container spacing={2}>
 
             {/* CodigoPersona (Solo lectura o Hidden) */}
@@ -164,22 +268,64 @@ const FormRhVariacionUpdateAsync = () => {
             </Grid>
 
             {/* Selección de Concepto */}
-            <Grid item sm={10} xs={12}>
+            <Grid item sm={5} xs={12}>
               <Autocomplete
                 size="small"
                 options={conceptos}
                 id='autocomplete-concepto'
                 value={concepto}
-                isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
-                getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina +'-'+ option.denominacion}
+                isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
+                getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
                 onChange={handlerConceptos}
                 renderInput={params => <TextField {...params} label='Conceptos' />}
               />
             </Grid>
 
+            {/* Selección de frecuencia */}
+            <Grid item sm={5} xs={12}>
+              <Autocomplete
+                size="small"
+                options={frecuencias}
+                id='autocomplete-frecuencia'
+                value={frecuencia}
+                getOptionLabel={option => option.id + '-' + option.descripcion}
+                onChange={handlerFrecuencias}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label='Frecuencias'
+                    required
+                    error={Boolean(errors.frecuenciaId)}
+                    helperText={errors.frecuenciaId && "Frecuencia requerida"}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* Selección tipo */}
+            <Grid item sm={5} xs={12}>
+              <Autocomplete
+                size="small"
+                options={moventTypeOptions}
+                id='autocomplete-tipo-movimiento'
+                value={tipoMovimiento}
+                getOptionLabel={option => option.label}
+                onChange={handlerTipoMovimiento}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label='Tipos de Movimiento'
+                    required
+                    error={Boolean(errors.tipo)}
+                    helperText={errors.tipo && "Tipo de movimiento requerido"}
+                  />
+                )}
+              />
+            </Grid>
+
             {/* Monto */}
-            <Grid item sm={4} xs={12}>
-              <Controller
+            <Grid item sm={7} xs={12}>
+            {/*    <Controller
                 name='monto'
                 control={control}
                 rules={{ required: true, min: 0.01 }}
@@ -194,11 +340,37 @@ const FormRhVariacionUpdateAsync = () => {
                     helperText={errors.monto && "Monto requerido"}
                   />
                 )}
+              /> */}
+
+              <NumericFormat
+                size='small'
+                value={monto}
+                customInput={StyledCustomInput}
+                thousandSeparator="."
+                decimalSeparator=","
+                allowNegative={false}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                label="Monto"
+                required
+                onFocus={(event) => {
+                  event.target.select()
+                }}
+                onValueChange={(values: any) => {
+                  const { value } = values
+                  handleOnChangeAmount(value)
+                }}
+                placeholder='Monto'
+                inputProps={{
+                  type: 'text'
+                }}
+                error={!!errors.monto}
+                helperText={errors.monto?.message}
               />
             </Grid>
 
             {/* Complemento / Descripción adicional */}
-            <Grid item sm={8} xs={12}>
+            <Grid item sm={12} xs={12}>
               <Controller
                 name='complementoConcepto'
                 control={control}
@@ -214,8 +386,37 @@ const FormRhVariacionUpdateAsync = () => {
               />
             </Grid>
 
+            <DialogConfirmation
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+              onConfirm={handleSubmit(onSubmitUpdate)}
+              loading={loading}
+              title="Actualizar registro"
+              content="¿Desea continuar con la actualización de este registro?"
+            />
+
+            <DialogConfirmation
+              open={dialogDeleteOpen}
+              onClose={handleCloseDialogDelete}
+              onConfirm={handleDelete}
+              loading={loading}
+              title="Eliminar registro"
+              content="¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer."
+            />
+
             <Grid item xs={12}>
-              <Button size='small' type='submit' variant='contained'>
+              <Button
+                size='small'
+                variant='contained'
+                sx={{ pb: 0 }}
+                disabled={!isValid}
+                onClick={async () => {
+                  const isValid = await trigger()
+                  if (isValid) {
+                    handleOpenDialog()
+                  }
+                }}
+              >
                 {loading ? (
                   <CircularProgress
                     sx={{
@@ -228,34 +429,25 @@ const FormRhVariacionUpdateAsync = () => {
                 ) : null}
                 Guardar
               </Button>
-              <Button variant="outlined"  size='small' onClick={handleClickOpen} sx={{ color: 'error.main' ,ml:2}} >
+              <Button
+                variant="outlined"
+                size='small'
+                onClick={handleOpenDialogDelete}
+                disabled={!isValid && loading}
+                sx={{ color: 'error.main', ml: 2, pb: 0 }}
+              >
                 Eliminar
               </Button>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Esta Seguro de Eliminar estos Datos de Variación?"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Se eliminaran los datos de Variación por lo tanto este concepto se considerará en las nominas de este trabajador.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>No</Button>
-                  <Button onClick={handleDelete} autoFocus>
-                    Si
-                  </Button>
-                </DialogActions>
-              </Dialog>
             </Grid>
           </Grid>
           <Box>
-            {errorMessage.length>0 && <FormHelperText sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}>{errorMessage}</FormHelperText>}
+            { errorMessage.length> 0 &&
+              <FormHelperText
+                sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}
+              >
+                {errorMessage}
+              </FormHelperText>
+            }
           </Box>
         </form>
       </Box>
