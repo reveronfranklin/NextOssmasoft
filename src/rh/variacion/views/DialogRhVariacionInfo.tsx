@@ -1,149 +1,96 @@
-// ** React Imports
-import { Ref, forwardRef, ReactElement} from 'react'
-
-// ** MUI Imports
-
-import Card from '@mui/material/Card'
-
-import Dialog from '@mui/material/Dialog'
-import Button from '@mui/material/Button'
-
-
 import IconButton from '@mui/material/IconButton'
-
-//import CardContent from '@mui/material/CardContent'
-import Fade, { FadeProps } from '@mui/material/Fade'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-
-// ** Icon Imports
 import Icon from 'src/@core/components/icon'
 import { useDispatch } from 'react-redux'
-
-
 import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
-
-
-
-// ** Third Party Imports
-//import { ReactDatePickerProps } from 'react-datepicker'
-
-
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-
-// ** Third Party Imports
-import { ReactDatePickerProps } from 'react-datepicker'
-
-
 import FormRhVariacionCreateAsync from '../forms/FormRhVariacionCreateAsync'
 import FormRhVariacionUpdateAsync from '../forms/FormRhVariacionUpdateAsync'
-import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
-import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
+import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
+import { ResponseRhMovNominaCommand } from '../interfaces'
 
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  Tooltip
+} from '@mui/material';
 
-// ** Custom Component Imports
-
-const Transition = forwardRef(function Transition(
-  props: FadeProps & { children?: ReactElement<any, any> },
-  ref: Ref<unknown>
-) {
-  return <Fade ref={ref} {...props} />
-})
-
-
-
-const DialogRhVariacionInfo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] })  => {
-
-
-  // ** States
+const DialogRhVariacionInfo = ()  => {
   const dispatch = useDispatch();
 
-  const {operacionCrudRhPersonaMovCtr,verRhPersonaMovCtrActive} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const { operacionCrudRhPersonaMovCtr, isExpandedAccordion } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
 
-
-/*   const fechaActual = new Date()
-
-  const currentYear  = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-  const currentMonthString ='00' + monthByIndex(currentMonth).toString();
-
-  const currentDay =new Date().getDate();
-  const currentDayString = '00' + currentDay.toString();
-  const defaultDate :IFechaDto = {year:currentYear.toString(),month:currentMonthString.slice(-2),day:currentDayString.slice(-2)}
-
-  const defaultDateString = fechaActual.toISOString(); */
-  const handleSetShow= (active:boolean)=>{
-
-    if(active==false){
-
-
-      const defaultValues:IRhPersonasMovControlResponseDto = {
-
-        codigoPersonaMovCtrl:0,
-        codigoPersona :personaSeleccionado.codigoPersona,
-        codigoConcepto :0,
-        controlAplica :0,
-        descripcionControlAplica:'',
-        descripcionConcepto:''
-
-    }
-
+  const handleSetShow= (active: boolean)=>{
+    if (active == false) {
+      const defaultValues: ResponseRhMovNominaCommand = {
+        codigoTipoNomina: 12,
+        codigoPersona: personaSeleccionado.codigoPersona,
+        codigoConcepto: null,
+        complementoConcepto: null,
+        tipo: 'E',
+        frecuenciaId: null,
+        monto: 0,
+        status: 'A'
+      }
 
       dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
-
-
-
     }
+
     dispatch(setVerRhPersonaMovCtrActive(active))
-
-
   }
 
+  const handleAdd = () => {
+    handleSetShow(true)
+    dispatch(setIsExpandedAccordion(true))
+  }
 
-    return (
-      <Card>
+  const handleEdit = () => {
+    handleSetShow(false)
+    dispatch(setIsExpandedAccordion(true))
+  }
 
-        <Dialog
-          fullWidth
-          open={verRhPersonaMovCtrActive}
-          maxWidth='md'
-          scroll='body'
-          onClose={() => handleSetShow(false)}
-          TransitionComponent={Transition}
-          onBackdropClick={() => handleSetShow(false)}
-        >
-          <DialogContent sx={{ pb: 8, px: { xs: 8, sm: 15 }, pt: { xs: 8, sm: 12.5 }, position: 'relative' }}>
-            <IconButton
-              size='small'
-              onClick={() => handleSetShow(false)}
-              sx={{ position: 'absolute', right: '1rem', top: '1rem' }}
-            >
-              <Icon icon='mdi:close' />
-            </IconButton>
+  return (
+    <Accordion
+      expanded={isExpandedAccordion}
+      onChange={(event, expanded) => dispatch(setIsExpandedAccordion(expanded))}
+      sx={{ boxShadow: 'none', '&:before': { display: 'none' } }}
+    >
+      <AccordionSummary
+        expandIcon={
+          operacionCrudRhPersonaMovCtr === 1
+            ? (
+              <Tooltip title='Agregar'>
+                <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
+                  <Icon icon='ci:add-row' fontSize={20} />
+                </IconButton>
+              </Tooltip>
+            )
+            : (
+              <Tooltip title='Editar'>
+                <IconButton size='small' onClick={() => handleEdit()}>
+                  <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                </IconButton>
+              </Tooltip>
+            )
+        }
+        sx={{ backgroundColor: 'action.hover', borderRadius: 1 }}
+      >
+        <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: 'text.primary' }}>
+          {operacionCrudRhPersonaMovCtr === 1 ? 'RH - Crear Variación' : 'RH - Modificar Variación'}
+        </Typography>
+      </AccordionSummary>
 
-            <DatePickerWrapper>
-              { operacionCrudRhPersonaMovCtr===1
-              ?  <FormRhVariacionCreateAsync popperPlacement={popperPlacement}/>
-                :<FormRhVariacionUpdateAsync popperPlacement={popperPlacement} />
-              }
-            </DatePickerWrapper>
-
-
-          </DialogContent>
-          <DialogActions sx={{ pb: { xs: 8, sm: 12.5 }, justifyContent: 'center' }}>
-
-            <Button variant='outlined' color='secondary' onClick={() => handleSetShow(false)}>
-              Cerrar
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-      </Card>
-    )
-
-
+      <AccordionDetails sx={{ pt: 2 }}>
+        {operacionCrudRhPersonaMovCtr === 1 ? (
+          <FormRhVariacionCreateAsync />
+        ) : (
+          <FormRhVariacionUpdateAsync />
+        )}
+      </AccordionDetails>
+    </Accordion>
+  )
 }
 
 export default DialogRhVariacionInfo

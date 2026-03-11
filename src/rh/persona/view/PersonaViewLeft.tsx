@@ -189,7 +189,6 @@ const PersonaViewLeft = () => {
       const responseAll = await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona', filter)
       dispatch(setPersonaSeleccionado(responseAll.data))
       dispatch(setPersonasDtoSeleccionado(responseAll.data))
-      console.log('responseAll.data persona', responseAll.data)
     } else {
       const filter = { codigoPersona: 0 }
       const responseAll = await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona', filter)
