@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import FormRhVariacionCreateAsync from '../forms/FormRhVariacionCreateAsync'
 import FormRhVariacionUpdateAsync from '../forms/FormRhVariacionUpdateAsync'
 import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
-import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto'
+import { ResponseRhMovNominaCommand } from '../interfaces'
 
 import {
   Accordion,
@@ -22,15 +22,17 @@ const DialogRhVariacionInfo = ()  => {
   const { operacionCrudRhPersonaMovCtr, isExpandedAccordion } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
 
-  const handleSetShow= (active:boolean)=>{
+  const handleSetShow= (active: boolean)=>{
     if (active == false) {
-      const defaultValues:IRhPersonasMovControlResponseDto = {
-        codigoPersonaMovCtrl:0,
-        codigoPersona :personaSeleccionado.codigoPersona,
-        codigoConcepto :0,
-        controlAplica :0,
-        descripcionControlAplica:'',
-        descripcionConcepto:''
+      const defaultValues: ResponseRhMovNominaCommand = {
+        codigoTipoNomina: 12,
+        codigoPersona: personaSeleccionado.codigoPersona,
+        codigoConcepto: null,
+        complementoConcepto: null,
+        tipo: 'E',
+        frecuenciaId: null,
+        monto: 0,
+        status: 'A'
       }
 
       dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
@@ -45,7 +47,8 @@ const DialogRhVariacionInfo = ()  => {
   }
 
   const handleEdit = () => {
-    console.log('Edit button clicked for row:')
+    handleSetShow(false)
+    dispatch(setIsExpandedAccordion(true))
   }
 
   return (

@@ -9,7 +9,7 @@ import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
-import { IRhPersonasMovControlResponseDto } from 'src/interfaces/rh/RhPersonasMovControlResponseDto';
+import { ResponseRhMovNominaCommand } from '../interfaces';
 import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
 import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
@@ -26,7 +26,7 @@ const VariacionList = () => {
   const dispatch        = useDispatch();
   const columnsDataGrid = useColumnsDataGrid()
 
-  const handleView=  (row : IRhPersonasMovControlResponseDto) => {
+  const handleView = (row : ResponseRhMovNominaCommand) => {
    if (personaSeleccionado && personaSeleccionado.codigoPersona > 0) {
       dispatch(setIsExpandedAccordion(true))
       dispatch(setRhPersonaMovCtrSeleccionado(row))
@@ -45,13 +45,15 @@ const VariacionList = () => {
       return;
     }
 
-    const defaultValues:IRhPersonasMovControlResponseDto = {
-      codigoPersonaMovCtrl:0,
-      codigoPersona :personaSeleccionado.codigoPersona,
-      codigoConcepto :0,
-      controlAplica :0,
-      descripcionControlAplica:'',
-      descripcionConcepto:''
+    const defaultValues: ResponseRhMovNominaCommand = {
+      codigoTipoNomina: 12,
+      codigoPersona: personaSeleccionado.codigoPersona,
+      codigoConcepto: null,
+      complementoConcepto: null,
+      tipo: 'E',
+      frecuenciaId: null,
+      monto: 0,
+      status: 'A'
     }
 
     dispatch(setIsExpandedAccordion(true))
@@ -60,11 +62,13 @@ const VariacionList = () => {
     dispatch(setVerRhPersonaMovCtrActive(true))
   }
 
+  const { verRhPersonaMovCtrActive = false } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
 
-  const {verRhPersonaMovCtrActive = false} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<IRhPersonasMovControlResponseDto[]>([])
-  const {personaSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const [data, setData]       = useState<ResponseRhMovNominaCommand[]>([])
+
+  const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
+
   const [totales, setTotales] = useState<TotalesState>({
     montoTotal: 0,
     asignacionesTotales: 0,
@@ -137,6 +141,23 @@ const VariacionList = () => {
 
     getData();
   }, [verRhPersonaMovCtrActive, personaSeleccionado]);
+
+  useEffect(() => {
+    if (!personaSeleccionado || personaSeleccionado.codigoPersona >= 0) {
+      const defaultValues: ResponseRhMovNominaCommand = {
+        codigoTipoNomina: 12,
+        codigoPersona: personaSeleccionado.codigoPersona,
+        codigoConcepto: null,
+        complementoConcepto: null,
+        tipo: 'E',
+        frecuenciaId: null,
+        monto: 0,
+        status: 'A'
+      }
+
+      dispatch(setRhPersonaMovCtrSeleccionado(defaultValues))
+    }
+  }, [personaSeleccionado])
 
   return (
     <Grid item xs={12}>

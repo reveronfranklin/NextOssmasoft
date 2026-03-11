@@ -5,11 +5,10 @@ import { ResponseRhMovNominaCommand } from 'src/rh/variacion/interfaces';
 export const rhPersonaMovCtrlSlice = createSlice({
   name: 'rhPersonaMovCtrl',
   initialState: {
-    /* rhPersonaMovCtrSeleccionado: {} as IRhPersonasMovControlResponseDto, */
     rhPersonaMovCtrSeleccionado: {} as ResponseRhMovNominaCommand,
     listRhPersonaMovCtr:[] as IRhPersonasMovControlResponseDto[],
     verRhPersonaMovCtrActive:false,
-    operacionCrudRhPersonaMovCtr:0,
+    operacionCrudRhPersonaMovCtr:1,
     isExpandedAccordion: false
   },
   reducers: {

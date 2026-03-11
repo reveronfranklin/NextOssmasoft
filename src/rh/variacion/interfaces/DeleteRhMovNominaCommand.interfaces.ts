@@ -1,3 +1,3 @@
 export interface DeleteRhMovNominaCommand {
-    codigoMovNomina: number;
+    codigoMovNomina: number | null;
 }
