@@ -122,8 +122,6 @@ const FormRhVariacionUpdateAsync = () => {
   useEffect(() => {
     setLoading(true)
 
-    console.log('vbalues real time', rhPersonaMovCtrSeleccionado)
-
     if (!defaultValues.codigoMovNomina || defaultValues.codigoMovNomina === 0) {
       dispatch(setOperacionCrudRhPersonaMovCtr(1))
 
