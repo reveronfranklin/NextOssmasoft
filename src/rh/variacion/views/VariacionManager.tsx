@@ -11,6 +11,7 @@ import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { ResponseRhMovNominaCommand } from '../interfaces';
 import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setListRhTipoNomina } from 'src/store/apps/rh-tipoNomina';
 import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
 import validateAmount from 'src/utilities/validateAmount';
@@ -46,7 +47,7 @@ const VariacionList = () => {
     }
 
     const defaultValues: ResponseRhMovNominaCommand = {
-      codigoTipoNomina: 12,
+      codigoTipoNomina: 0,
       codigoPersona: personaSeleccionado.codigoPersona,
       codigoConcepto: null,
       complementoConcepto: null,
@@ -101,6 +102,13 @@ const VariacionList = () => {
     return data
   }
 
+  const getTipoNomina = async () => {
+    const responseAllTipoNomina = await ossmmasofApi.get<any>('/RhTipoNomina/GetAll')
+    const { data } = responseAllTipoNomina
+
+    return data
+  }
+
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
@@ -133,6 +141,12 @@ const VariacionList = () => {
 
         if (conceptosList) {
           dispatch(setConceptos(conceptosList))
+        }
+
+        const tipoNominaList = await getTipoNomina()
+
+        if (tipoNominaList) {
+          dispatch(setListRhTipoNomina(tipoNominaList))
         }
       }
 

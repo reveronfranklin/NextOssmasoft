@@ -52,7 +52,8 @@ const FormRhVariacionUpdateAsync = () => {
   ]
 
   const { rhPersonaMovCtrSeleccionado } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias } = useSelector((state: RootState) => state.nomina)
+  const { conceptos, frecuencias }      = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }            = useSelector((state: RootState) => state.rhTipoNomina)
 
   const  getConcepto = (id:number) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
@@ -72,6 +73,12 @@ const FormRhVariacionUpdateAsync = () => {
     return result[0]
   }
 
+  const getTipoNomina = (id:number) => {
+    const result = listRhTipoNomina?.filter((elemento) => elemento.codigoTipoNomina == id)
+
+    return result[0]
+  }
+
   const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
   const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
   const [monto, setMonto]                         = useState<number>(0)
@@ -79,6 +86,7 @@ const FormRhVariacionUpdateAsync = () => {
   const [concepto, setConcepto]                   = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || 0))
   const [frecuencia, setFrecuencia]               = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || 0))
   const [tipoMovimiento, setTipoMovimiento]       = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || 'E'))
+  const [tipoNomina, setTipoNomina]               = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0))
   const [errorMessage, setErrorMessage]           = useState<string>('')
 
   const defaultValues: UpdateRhMovNominaCommand = {
@@ -114,6 +122,8 @@ const FormRhVariacionUpdateAsync = () => {
   useEffect(() => {
     setLoading(true)
 
+    console.log('vbalues real time', rhPersonaMovCtrSeleccionado)
+
     if (!defaultValues.codigoMovNomina || defaultValues.codigoMovNomina === 0) {
       dispatch(setOperacionCrudRhPersonaMovCtr(1))
 
@@ -123,6 +133,7 @@ const FormRhVariacionUpdateAsync = () => {
     setValue('codigoPersona', defaultValues.codigoPersona)
     setValue('codigoConcepto', defaultValues.codigoConcepto)
     setValue('frecuenciaId', defaultValues.frecuenciaId)
+    setValue('codigoTipoNomina', defaultValues.codigoTipoNomina)
     setValue('tipo', defaultValues.tipo)
     setValue('monto', defaultValues.monto)
     setValue('complementoConcepto', defaultValues.complementoConcepto)
@@ -130,6 +141,7 @@ const FormRhVariacionUpdateAsync = () => {
     setConcepto(getConcepto(defaultValues.codigoConcepto || 0))
     setFrecuencia(getFrecuencia(defaultValues.frecuenciaId || 0))
     setTipoMovimiento(getTipoMovimientoLabel(defaultValues.tipo || 'E'))
+    setTipoNomina(getTipoNomina(defaultValues.codigoTipoNomina || 0))
 
     setTimeout(() => {
       setLoading(false)
@@ -138,10 +150,11 @@ const FormRhVariacionUpdateAsync = () => {
 
   const stateMonto = getFieldState('monto')
 
-  const watchMonto          = watch('monto')
-  const watchCodigoConcepto = watch('codigoConcepto')
-  const watchFrecuenciaId   = watch('frecuenciaId')
-  const watchTipo           = watch('tipo')
+  const watchMonto            = watch('monto')
+  const watchCodigoConcepto   = watch('codigoConcepto')
+  const watchFrecuenciaId     = watch('frecuenciaId')
+  const watchTipo             = watch('tipo')
+  const watchCodigoTipoNomina = watch('codigoTipoNomina')
 
   const setErrorDynamic = (field: Path<FormInputs>) => {
     setError(field, {
@@ -192,6 +205,13 @@ const FormRhVariacionUpdateAsync = () => {
     }
   }
 
+  const handlerTipoNomina = (e: any, option:any) => {
+    if (option) {
+      setTipoNomina(option)
+      setValue('codigoTipoNomina', option.codigoTipoNomina)
+    }
+  }
+
   const clearForm = () => {
     setFrecuencia(null)
     setConcepto(null)
@@ -201,6 +221,7 @@ const FormRhVariacionUpdateAsync = () => {
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
+    setValue('codigoTipoNomina', 0)
   }
 
   const handleOpenDialog = () => {
@@ -212,6 +233,8 @@ const FormRhVariacionUpdateAsync = () => {
       setErrorDynamic('frecuenciaId')
     } else if (!watchTipo) {
       setErrorDynamic('tipo')
+    } else if (!watchCodigoTipoNomina) {
+      setErrorDynamic('codigoTipoNomina')
     } else {
       clearErrors()
       setDialogOpen(true)
@@ -264,8 +287,8 @@ const FormRhVariacionUpdateAsync = () => {
 
     const updateMovControl: UpdateRhMovNominaCommand = {
       codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina || 0,
-      codigoTipoNomina: rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0,
       codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || 0,
+      codigoTipoNomina: data.codigoTipoNomina || 0,
       codigoConcepto: data.codigoConcepto,
       complementoConcepto: data.complementoConcepto,
       codigoEmpresa: 13,
@@ -396,12 +419,12 @@ const FormRhVariacionUpdateAsync = () => {
                   </Grid>
 
                   {/* Selección tipo */}
-                  <Grid item sm={5} xs={12}>
+                  <Grid item sm={3} xs={12}>
                     <Autocomplete
                       size="small"
                       options={moventTypeOptions}
                       id='autocomplete-tipo-movimiento'
-                      value={tipoMovimiento}
+                      value={tipoMovimiento || null}
                       getOptionLabel={(option) => option.label || ""}
                       isOptionEqualToValue={(option, value) => option.value === value.value}
                       onChange={handlerTipoMovimiento}
@@ -417,32 +440,37 @@ const FormRhVariacionUpdateAsync = () => {
                     />
                   </Grid>
 
-                  {/* Monto */}
-                  <Grid item sm={7} xs={12}>
-                  {/*    <Controller
-                      name='monto'
-                      control={control}
-                      rules={{ required: true, min: 0.01 }}
-                      render={({ field }) => (
+                  {/* Selección tipo codigo nomina */}
+                  <Grid item sm={4} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={listRhTipoNomina || null}
+                      id='autocomplete-codigo-tipo-nomina'
+                      value={tipoNomina || null}
+                      getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
+                      isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
+                      onChange={handlerTipoNomina}
+                      renderInput={(params) => (
                         <TextField
-                          {...field}
-                          fullWidth
-                          type="number"
-                          size="small"
-                          label='Monto'
-                          error={Boolean(errors.monto)}
-                          helperText={errors.monto && "Monto requerido"}
+                          {...params}
+                          label='Tipos de nomina'
+                          required
+                          error={Boolean(errors.tipo)}
+                          helperText={errors.tipo && "Tipo de nomina requerido"}
                         />
                       )}
-                    /> */}
+                    />
+                  </Grid>
 
+                  {/* Monto */}
+                  <Grid item sm={5} xs={12}>
                     <NumericFormat
                       size='small'
                       value={monto}
                       customInput={StyledCustomInput}
                       thousandSeparator="."
                       decimalSeparator=","
-                      allowNegative={false}
+                      allowNegative={true}
                       decimalScale={2}
                       fixedDecimalScale={true}
                       label="Monto"

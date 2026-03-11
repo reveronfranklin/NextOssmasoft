@@ -36,6 +36,7 @@ const FormRhVariacionCreateAsync = () => {
 
   const { rhPersonaMovCtrSeleccionado }                 = useSelector((state: RootState) => state.rhPersonaMovCtrl)
   const { conceptos, frecuencias, personaSeleccionado } = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }                             = useSelector((state: RootState) => state.rhTipoNomina)
 
   const  getConcepto = (id:number) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
@@ -55,17 +56,24 @@ const FormRhVariacionCreateAsync = () => {
     return result[0]
   }
 
+  const getTipoNomina = (id:number) => {
+    const result = listRhTipoNomina?.filter((elemento) => elemento.codigoTipoNomina == id)
+
+    return result[0]
+  }
+
   const [dialogOpen, setDialogOpen]         = useState<boolean>(false)
   const [monto, setMonto]                   = useState<number>(0)
   const [loading, setLoading]               = useState<boolean>(false)
   const [frecuencia, setFrecuencia]         = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || 0))
   const [concepto, setConcepto]             = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || 0))
   const [tipoMovimiento, setTipoMovimiento] = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || 'E'))
+  const [tipoNomina, setTipoNomina]         = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0))
   const [errorMessage, setErrorMessage]     = useState<string>('')
 
   const defaultValues: CreateRhMovNominaCommand = {
     codigoEmpresa: 13,
-    codigoTipoNomina: 12,
+    codigoTipoNomina: 0,
     codigoPersona: personaSeleccionado.codigoPersona || 0,
     codigoConcepto: 0,
     complementoConcepto: '',
@@ -103,9 +111,10 @@ const FormRhVariacionCreateAsync = () => {
 
   const stateMonto = getFieldState('monto')
 
-  const watchCodigoConcepto = watch('codigoConcepto')
-  const watchFrecuenciaId   = watch('frecuenciaId')
-  const watchTipo           = watch('tipo')
+  const watchCodigoConcepto   = watch('codigoConcepto')
+  const watchFrecuenciaId     = watch('frecuenciaId')
+  const watchTipo             = watch('tipo')
+  const watchCodigoTipoNomina = watch('codigoTipoNomina')
 
   const setErrorDynamic = (field: Path<FormInputs>) => {
     setError(field, {
@@ -152,6 +161,13 @@ const FormRhVariacionCreateAsync = () => {
     }
   }
 
+  const handlerTipoNomina = (e: any, option:any) => {
+    if (option) {
+      setTipoNomina(option)
+      setValue('codigoTipoNomina', option.codigoTipoNomina)
+    }
+  }
+
   const clearForm = () => {
     setFrecuencia(null)
     setConcepto(null)
@@ -161,6 +177,7 @@ const FormRhVariacionCreateAsync = () => {
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
+    setValue('codigoTipoNomina', 0)
   }
 
   const handleOpenDialog = () => {
@@ -172,6 +189,8 @@ const FormRhVariacionCreateAsync = () => {
       setErrorDynamic('frecuenciaId')
     } else if (!watchTipo) {
       setErrorDynamic('tipo')
+    } else if (!watchCodigoTipoNomina) {
+      setErrorDynamic('codigoTipoNomina')
     } else {
       clearErrors()
       setDialogOpen(true)
@@ -188,7 +207,7 @@ const FormRhVariacionCreateAsync = () => {
 
     const createMovControl: CreateRhMovNominaCommand = {
       codigoEmpresa: 13,
-      codigoTipoNomina: 12,
+      codigoTipoNomina: data.codigoTipoNomina,
       codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || 0,
       codigoConcepto: data.codigoConcepto,
       complementoConcepto: data.complementoConcepto,
@@ -277,7 +296,7 @@ const FormRhVariacionCreateAsync = () => {
                       size="small"
                       options={conceptos}
                       id='autocomplete-concepto'
-                      value={concepto}
+                      value={concepto || null}
                       isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
                       getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
                       onChange={handlerConceptos}
@@ -316,10 +335,10 @@ const FormRhVariacionCreateAsync = () => {
                   </Grid>
 
                   {/* Selección tipo */}
-                  <Grid item sm={5} xs={12}>
+                  <Grid item sm={3} xs={12}>
                     <Autocomplete
                       size="small"
-                      options={moventTypeOptions}
+                      options={moventTypeOptions || null}
                       id='autocomplete-tipo-movimiento'
                       value={tipoMovimiento || null}
                       getOptionLabel={(option) => option.label || ""}
@@ -337,32 +356,37 @@ const FormRhVariacionCreateAsync = () => {
                     />
                   </Grid>
 
-                  {/* Monto */}
-                  <Grid item sm={7} xs={12}>
-                  {/*    <Controller
-                      name='monto'
-                      control={control}
-                      rules={{ required: true, min: 0.01 }}
-                      render={({ field }) => (
+                  {/* Selección tipo codigo nomina */}
+                  <Grid item sm={4} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={listRhTipoNomina || null}
+                      id='autocomplete-codigo-tipo-nomina'
+                      value={tipoNomina || null}
+                      getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
+                      isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
+                      onChange={handlerTipoNomina}
+                      renderInput={(params) => (
                         <TextField
-                          {...field}
-                          fullWidth
-                          type="number"
-                          size="small"
-                          label='Monto'
-                          error={Boolean(errors.monto)}
-                          helperText={errors.monto && "Monto requerido"}
+                          {...params}
+                          label='Tipos de nomina'
+                          required
+                          error={Boolean(errors.tipo)}
+                          helperText={errors.tipo && "Tipo de nomina requerido"}
                         />
                       )}
-                    /> */}
+                    />
+                  </Grid>
 
+                  {/* Monto */}
+                  <Grid item sm={5} xs={12}>
                     <NumericFormat
                       size='small'
                       value={monto}
                       customInput={StyledCustomInput}
                       thousandSeparator="."
                       decimalSeparator=","
-                      allowNegative={false}
+                      allowNegative={true}
                       decimalScale={2}
                       fixedDecimalScale={true}
                       label="Monto"
