@@ -8,5 +8,6 @@ export interface IListConceptosDto{
   codigoTipoNomina:number
   denominacion :string;
   dercripcion:string;
+  automatico:boolean;
 
 }

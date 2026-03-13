@@ -1,5 +1,5 @@
 export interface CreateRhMovNominaCommand {
-    codigoTipoNomina: number;
+    codigoTipoNomina: number | null;
     codigoPersona: number;
     codigoConcepto: number | null;
     complementoConcepto: string | null;

@@ -1,15 +1,16 @@
 export interface ResponseRhMovNominaCommand {
-    codigoMovNomina?:       number;
-    codigoTipoNomina?:      number;
+    automatico:            boolean
+    codigoMovNomina?:       number | null;
+    codigoTipoNomina?:      number | null;
     codigoPersona:         number | null;
     codigoConcepto:        number | null;
     complementoConcepto:   string | null;
-    tipo?:                  string;
+    tipo?:                  string | null;
     frecuenciaId:          number | null;
-    monto?:                 number;
-    asignacion?:            number;
-    deduccion?:             number;
-    asignacionDeduccion?:   number;
+    monto?:                 number | null;
+    asignacion?:            number | null;
+    deduccion?:             number | null;
+    asignacionDeduccion?:   number | null;
     status?:                string;
     codigoFrecuencia?:      string;
     descripcionFrecuencia?: string;
@@ -22,4 +23,5 @@ export interface ResponseRhMovNominaCommand {
     extra1?:                string;
     extra2?:                string;
     extra3?:                string;
+    searchText?:            string;
 }

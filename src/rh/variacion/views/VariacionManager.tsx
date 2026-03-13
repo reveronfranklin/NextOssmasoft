@@ -1,6 +1,5 @@
-import { Box, Card, CardActions, Grid, IconButton, Tooltip, Chip, Avatar } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import Icon from 'src/@core/components/icon'
+import { Box, Card, CardActions, Grid, Avatar, Typography } from '@mui/material'
+import React, { useEffect, useState, ChangeEvent, useRef } from 'react'
 import { DataGrid  } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import Spinner from 'src/@core/components/spinner';
@@ -10,12 +9,17 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { ResponseRhMovNominaCommand } from '../interfaces';
-import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
 import { setListRhTipoNomina } from 'src/store/apps/rh-tipoNomina';
 import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
 import validateAmount from 'src/utilities/validateAmount';
 import FormatNumber from 'src/utilities/format-numbers';
+import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
+
+import MoneyIcon from '@mui/icons-material/AttachMoney';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
 interface TotalesState {
   montoTotal: string | number;
@@ -24,15 +28,15 @@ interface TotalesState {
 }
 
 const VariacionList = () => {
-  const dispatch        = useDispatch();
-  const columnsDataGrid = useColumnsDataGrid()
+  const dispatch            = useDispatch();
+  const columnsDataGrid     = useColumnsDataGrid()
+  const debounceTimeoutRef  = useRef<any>(null)
 
   const handleView = (row : ResponseRhMovNominaCommand) => {
    if (personaSeleccionado && personaSeleccionado.codigoPersona > 0) {
       dispatch(setIsExpandedAccordion(true))
       dispatch(setRhPersonaMovCtrSeleccionado(row))
       dispatch(setOperacionCrudRhPersonaMovCtr(2));
-      dispatch(setVerRhPersonaMovCtrActive(true))
    }
   }
 
@@ -46,27 +50,17 @@ const VariacionList = () => {
       return;
     }
 
-    const defaultValues: ResponseRhMovNominaCommand = {
-      codigoTipoNomina: 0,
-      codigoPersona: personaSeleccionado.codigoPersona,
-      codigoConcepto: null,
-      complementoConcepto: null,
-      tipo: 'E',
-      frecuenciaId: null,
-      monto: 0,
-      status: 'A'
-    }
-
     dispatch(setIsExpandedAccordion(true))
-    dispatch(setRhPersonaMovCtrSeleccionado(defaultValues));
     dispatch(setOperacionCrudRhPersonaMovCtr(1));
-    dispatch(setVerRhPersonaMovCtrActive(true))
   }
 
   const { verRhPersonaMovCtrActive = false } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
 
-  const [loading, setLoading] = useState(false);
-  const [data, setData]       = useState<ResponseRhMovNominaCommand[]>([])
+  const [loading, setLoading]       = useState(false);
+  const [data, setData]             = useState<ResponseRhMovNominaCommand[]>([])
+  const [filteredData, setFilteredData] = useState<ResponseRhMovNominaCommand[]>([])
+  const [buffer, setBuffer]         = useState<string>('')
+  const [searchText, setSearchText] = useState<string>('')
 
   const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
 
@@ -86,6 +80,21 @@ const VariacionList = () => {
       asignacionesTotales: FormatNumber(asignacionesTotales) ?? 0,
       deduccionesTotales: FormatNumber(deduccionesTotales) ?? 0
     }
+  }
+
+  const formatBs = (value: any) => {
+    if (!value) return "0,00 Bs."
+
+    const n = typeof value === 'string'
+      ? parseFloat(value.replace(',', '.'))
+      : value
+
+    if (isNaN(n)) return "0,00 Bs."
+
+    return new Intl.NumberFormat('es-VE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(n) + " Bs."
   }
 
   const getConceptos = async () => {
@@ -121,14 +130,14 @@ const VariacionList = () => {
           CodigoEmpresa: 13,
           PageSize: 1000,
           PageNumber: 1,
-          SearchText: ""
+          SearchText: searchText
         }
 
-        const responseAll   = await  ossmmasofApiVertical.post<any>('/RhCalculoNomina/CalculoPorPersona', filter)
+        const responseAll   = await ossmmasofApiVertical.post<any>('/RhCalculoNomina/CalculoPorPersona', filter)
         const responseData  = responseAll.data
         setData(responseData.data)
 
-        const totales = getTotal( responseData.total1, responseData.total2, responseData. total3)
+        const totales = getTotal(responseData.total1, responseData.total2, responseData.total3)
         setTotales(totales)
 
         const frecuenciasList = await getFrecuencias()
@@ -154,24 +163,43 @@ const VariacionList = () => {
     }
 
     getData();
-  }, [verRhPersonaMovCtrActive, personaSeleccionado]);
+  }, [verRhPersonaMovCtrActive, personaSeleccionado])
+
+  const debouncedSearch = (value: string) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      setSearchText(value)
+    }, 1500)
+  }
+
+  const handleSearch = (value: string) => {
+    setBuffer(value);
+
+    if (value === '') {
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current)
+      setSearchText('')
+
+      return
+    }
+
+    debouncedSearch(value)
+  }
 
   useEffect(() => {
-    if (!personaSeleccionado || personaSeleccionado.codigoPersona >= 0) {
-      const defaultValues: ResponseRhMovNominaCommand = {
-        codigoTipoNomina: 12,
-        codigoPersona: personaSeleccionado.codigoPersona,
-        codigoConcepto: null,
-        complementoConcepto: null,
-        tipo: 'E',
-        frecuenciaId: null,
-        monto: 0,
-        status: 'A'
-      }
+    const searchLower = searchText.toLowerCase()
 
-      dispatch(setRhPersonaMovCtrSeleccionado(defaultValues))
+    if (searchLower === '') {
+      setFilteredData(data)
+    } else {
+      const filterResults = data.filter(item =>
+        item.searchText?.toLowerCase().includes(searchLower)
+      )
+      setFilteredData(filterResults)
     }
-  }, [personaSeleccionado])
+  }, [searchText, data])
 
   return (
     <Grid item xs={12}>
@@ -180,52 +208,83 @@ const VariacionList = () => {
       </Card>
       <Card>
         <CardActions>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-end', width: '100%' }}>
-            <Tooltip title='Agregar'>
-              <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
-                <Icon icon='ci:add-row' fontSize={20} />
-              </IconButton>
-            </Tooltip>
-            <Grid
-              container
-              spacing={2}
-              sx={{ mx: 1, my: 1 }}
-              justifyContent="center"
-              alignContent="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <Tooltip title='Monto total'>
-                  <Chip
-                    avatar={<Avatar>M</Avatar>}
-                    label={totales.montoTotal}
-                    variant="outlined"
-                    color="primary"
-                  />
-                </Tooltip>
+          <Grid container spacing={3} justifyContent="space-around" sx={{ py: 2 }}>
+            {[
+              {
+                label: 'Monto Total',
+                value: formatBs(totales.montoTotal),
+                icon:
+                  <MoneyIcon
+                    sx={{
+                      fontSize: 20,
+                      stroke: "currentColor",
+                      strokeWidth: 1,
+                      filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))"
+                    }}
+                  />,
+                color: 'primary.main'
+              },
+              {
+                label: 'Asignaciones',
+                value: formatBs(totales.asignacionesTotales),
+                icon:
+                  <TrendingUpIcon
+                    sx={{
+                      fontSize: 20,
+                      stroke: "currentColor",
+                      strokeWidth: 1,
+                      filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))"
+                    }}
+                  />,
+                color: 'success.main'
+              },
+              {
+                label: 'Deducciones',
+                value: formatBs(totales.deduccionesTotales),
+                icon:
+                  <TrendingDownIcon
+                    sx={{
+                      fontSize: 20,
+                      stroke: "currentColor",
+                      strokeWidth: 1,
+                      filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))"
+                    }}
+                  />,
+                color: 'error.main'
+              },
+            ].map((item, index) => (
+              <Grid item key={index} sx={{ textAlign: 'center' }}>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  display="block"
+                  sx={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 }}
+                >
+                  {item.label}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 0.5 }}>
+                  <Avatar
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      bgcolor: item.color,
+                      mr: 1,
+                      boxShadow: 1
+                    }}
+                  >
+                    {item.icon}
+                  </Avatar>
+                  <Typography
+                    variant="subtitle1"
+                    color="textPrimary"
+                    sx={{ fontWeight: 'bold', fontFamily: 'monospace' }}
+                  >
+                    {item.value}
+                  </Typography>
+                </Box>
               </Grid>
-              <Grid item>
-                <Tooltip title='Asignaciones totales'>
-                  <Chip
-                    avatar={<Avatar>A</Avatar>}
-                    label={totales.asignacionesTotales}
-                    variant="outlined"
-                    color="primary"
-                  />
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Tooltip title='Deducciones totales'>
-                  <Chip
-                    avatar={<Avatar>D</Avatar>}
-                    label={totales.deduccionesTotales}
-                    variant="outlined"
-                    color="primary"
-                  />
-                </Tooltip>
-              </Grid>
-            </Grid>
-          </Box>
+            ))}
+          </Grid>
         </CardActions>
 
         { loading
@@ -236,8 +295,27 @@ const VariacionList = () => {
               <DataGrid
                 getRowId={(row) => row.codigoMovNomina }
                 columns={columnsDataGrid}
-                rows={data}
+                rows={filteredData}
                 onRowDoubleClick={(row) => handleDoubleClick(row)}
+                components={{ Toolbar: ServerSideToolbarWithAddButton }}
+                componentsProps={{
+                  baseButton: {
+                    variant: 'outlined'
+                  },
+                  toolbar: {
+                    printOptions: { disableToolbarButton: true },
+                    value: buffer,
+                    clearSearch: () => handleSearch(''),
+                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
+                    onAdd: handleAdd,
+                    sx: {
+                      marginTop: 6,
+                      marginRight: 0,
+                      marginBottom: 8,
+                      marginLeft: 4
+                    }
+                  }
+                }}
               />
             </Box>
         }
