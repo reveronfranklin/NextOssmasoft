@@ -12,10 +12,10 @@ import { useForm, Controller, Path } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { useDispatch } from 'react-redux'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box } from '@mui/material'
-import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
+import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
 import { setConceptoSeleccionado, setFrecuenciaSeleccionada } from 'src/store/apps/rh'
 import { UpdateRhMovNominaCommand, DeleteRhMovNominaCommand } from '../interfaces'
 
@@ -51,17 +51,17 @@ const FormRhVariacionUpdateAsync = () => {
 		{ value: 'V', label: 'Variable' }
   ]
 
-  const { rhPersonaMovCtrSeleccionado } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias }      = useSelector((state: RootState) => state.nomina)
-  const { listRhTipoNomina }            = useSelector((state: RootState) => state.rhTipoNomina)
+  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { conceptos, frecuencias }                                = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }                                      = useSelector((state: RootState) => state.rhTipoNomina)
 
-  const  getConcepto = (id:number) => {
+  const  getConcepto = (id:number | null) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
 
     return result[0]
   }
 
-  const getFrecuencia = (id:number) => {
+  const getFrecuencia = (id:number | null) => {
     const result = frecuencias?.filter((elemento) => elemento.id == id)
 
     return result[0]
@@ -73,31 +73,32 @@ const FormRhVariacionUpdateAsync = () => {
     return result[0]
   }
 
-  const getTipoNomina = (id:number) => {
+  const getTipoNomina = (id:number | null) => {
     const result = listRhTipoNomina?.filter((elemento) => elemento.codigoTipoNomina == id)
 
     return result[0]
   }
 
-  const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
+  const [isAutomatic, setIsAutomatic]             = useState<boolean>(false)
   const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
-  const [monto, setMonto]                         = useState<number>(0)
+  const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
   const [loading, setLoading]                     = useState<boolean>(false)
-  const [concepto, setConcepto]                   = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || 0))
-  const [frecuencia, setFrecuencia]               = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || 0))
-  const [tipoMovimiento, setTipoMovimiento]       = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || 'E'))
-  const [tipoNomina, setTipoNomina]               = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0))
+  const [monto, setMonto]                         = useState<number>(0)
+  const [concepto, setConcepto]                   = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || null))
+  const [frecuencia, setFrecuencia]               = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || null))
+  const [tipoNomina, setTipoNomina]               = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || null))
+  const [tipoMovimiento, setTipoMovimiento]       = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || ''))
   const [errorMessage, setErrorMessage]           = useState<string>('')
 
   const defaultValues: UpdateRhMovNominaCommand = {
-    codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina || 0,
-    codigoTipoNomina: rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0,
-    codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || 0,
-    codigoConcepto: rhPersonaMovCtrSeleccionado.codigoConcepto || 0,
+    codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina || null,
+    codigoTipoNomina: rhPersonaMovCtrSeleccionado.codigoTipoNomina || null,
+    codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || null,
+    codigoConcepto: rhPersonaMovCtrSeleccionado.codigoConcepto || null,
     complementoConcepto: rhPersonaMovCtrSeleccionado.complementoConcepto || '',
     codigoEmpresa: 13,
-    tipo: rhPersonaMovCtrSeleccionado.tipo || 'E',
-    frecuenciaId: rhPersonaMovCtrSeleccionado.frecuenciaId || 0,
+    tipo: rhPersonaMovCtrSeleccionado.tipo || '',
+    frecuenciaId: rhPersonaMovCtrSeleccionado.frecuenciaId || null,
     monto: rhPersonaMovCtrSeleccionado.monto || 0,
     status: rhPersonaMovCtrSeleccionado.status || 'A',
     usuarioUpd: 1
@@ -136,14 +137,15 @@ const FormRhVariacionUpdateAsync = () => {
     setValue('monto', defaultValues.monto)
     setValue('complementoConcepto', defaultValues.complementoConcepto)
 
-    setConcepto(getConcepto(defaultValues.codigoConcepto || 0))
-    setFrecuencia(getFrecuencia(defaultValues.frecuenciaId || 0))
-    setTipoMovimiento(getTipoMovimientoLabel(defaultValues.tipo || 'E'))
-    setTipoNomina(getTipoNomina(defaultValues.codigoTipoNomina || 0))
+    setIsAutomatic(rhPersonaMovCtrSeleccionado.automatico)
+    setConcepto(getConcepto(defaultValues.codigoConcepto || null))
+    setFrecuencia(getFrecuencia(defaultValues.frecuenciaId || null))
+    setTipoMovimiento(getTipoMovimientoLabel(defaultValues.tipo || ''))
+    setTipoNomina(getTipoNomina(defaultValues.codigoTipoNomina || null))
 
     setTimeout(() => {
       setLoading(false)
-    }, 1000)
+    }, 200)
   }, [defaultValues.codigoMovNomina, defaultValues.codigoPersona])
 
   const stateMonto = getFieldState('monto')
@@ -215,11 +217,13 @@ const FormRhVariacionUpdateAsync = () => {
     setConcepto(null)
     setTipoMovimiento(null)
     setMonto(0)
-    reset()
+    reset(defaultValues)
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
-    setValue('codigoTipoNomina', 0)
+    setValue('codigoTipoNomina', null)
+    setValue('codigoPersona', rhPersonaMovCtrSeleccionado.codigoPersona)
+    setErrorMessage('')
   }
 
   const handleOpenDialog = () => {
@@ -260,20 +264,22 @@ const FormRhVariacionUpdateAsync = () => {
     }
 
     try {
-      const responseAll= await ossmmasofApi.post<any>('/RhMovNomina/delete', deleteMovControl);
+      const responseAll= await ossmmasofApiVertical.post<any>('/RhMovNomina/delete', deleteMovControl);
 
       if (responseAll.data.isValid) {
-        dispatch(setVerRhPersonaMovCtrActive(false))
+        const flag = !verRhPersonaMovCtrActive
+        dispatch(setVerRhPersonaMovCtrActive(flag))
+        dispatch(setIsExpandedAccordion(false))
         dispatch(setRhPersonaMovCtrSeleccionado({}))
         clearForm()
         toast.success('Variacion eliminada correctamente')
       } else {
         toast.error(responseAll.data.message || 'Error al eliminar variacion')
+        setErrorMessage(responseAll.data.message)
       }
-
-      setErrorMessage(responseAll.data.message)
-    } catch {
+    } catch (error: any) {
       toast.error('Error al conectar con el servidor')
+      console.error('Error en la solicitud:', error)
     } finally {
       setLoading(false)
     }
@@ -284,9 +290,9 @@ const FormRhVariacionUpdateAsync = () => {
     handleCloseDialog()
 
     const updateMovControl: UpdateRhMovNominaCommand = {
-      codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina || 0,
-      codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || 0,
-      codigoTipoNomina: data.codigoTipoNomina || 0,
+      codigoMovNomina: rhPersonaMovCtrSeleccionado.codigoMovNomina || null,
+      codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || null,
+      codigoTipoNomina: data.codigoTipoNomina || null,
       codigoConcepto: data.codigoConcepto,
       complementoConcepto: data.complementoConcepto,
       codigoEmpresa: 13,
@@ -298,18 +304,17 @@ const FormRhVariacionUpdateAsync = () => {
     };
 
     try {
-      const responseAll = await ossmmasofApi.post<any>('/RhMovNomina/update', updateMovControl);
+      const responseAll = await ossmmasofApiVertical.post<any>('/RhMovNomina/update', updateMovControl);
 
       if (responseAll.data.isValid) {
-        dispatch(setRhPersonaMovCtrSeleccionado(responseAll.data.data))
-        dispatch(setVerRhPersonaMovCtrActive(false))
-        clearForm()
+        const flag = !verRhPersonaMovCtrActive
+        dispatch(setVerRhPersonaMovCtrActive(flag))
+        dispatch(setIsExpandedAccordion(true))
+        dispatch(setRhPersonaMovCtrSeleccionado(updateMovControl))
+        reset(updateMovControl)
         toast.success('Variacion actualizada correctamente')
       } else {
         toast.error(responseAll.data.message || 'Error al actualizar proveedor')
-      }
-
-      if (responseAll?.data?.isValid === false) {
         setErrorMessage(getErrorMessage(responseAll))
       }
     } catch (error: any) {
@@ -389,6 +394,7 @@ const FormRhVariacionUpdateAsync = () => {
                           required
                           error={Boolean(errors.codigoConcepto)}
                           helperText={errors.codigoConcepto && "Concepto requerido"}
+                          disabled={isAutomatic}
                         />
                       )}
                     />
@@ -411,6 +417,7 @@ const FormRhVariacionUpdateAsync = () => {
                           required
                           error={Boolean(errors.frecuenciaId)}
                           helperText={errors.frecuenciaId && "Frecuencia requerida"}
+                          disabled={isAutomatic}
                         />
                       )}
                     />
@@ -433,6 +440,7 @@ const FormRhVariacionUpdateAsync = () => {
                           required
                           error={Boolean(errors.tipo)}
                           helperText={errors.tipo && "Tipo de movimiento requerido"}
+                          disabled={isAutomatic}
                         />
                       )}
                     />
@@ -455,6 +463,7 @@ const FormRhVariacionUpdateAsync = () => {
                           required
                           error={Boolean(errors.tipo)}
                           helperText={errors.tipo && "Tipo de nomina requerido"}
+                          disabled={isAutomatic}
                         />
                       )}
                     />
@@ -486,6 +495,7 @@ const FormRhVariacionUpdateAsync = () => {
                       }}
                       error={!!errors.monto}
                       helperText={errors.monto?.message}
+                      disabled={isAutomatic}
                     />
                   </Grid>
 
@@ -501,6 +511,7 @@ const FormRhVariacionUpdateAsync = () => {
                           size="small"
                           label='Complemento del Concepto'
                           placeholder='Información adicional...'
+                          disabled={isAutomatic}
                         />
                       )}
                     />
@@ -529,7 +540,7 @@ const FormRhVariacionUpdateAsync = () => {
                       size='small'
                       variant='contained'
                       sx={{ pb: 0 }}
-                      disabled={!isValid}
+                      disabled={!isValid || isAutomatic}
                       onClick={async () => {
                         const isValid = await trigger()
                         if (isValid) {
@@ -547,13 +558,13 @@ const FormRhVariacionUpdateAsync = () => {
                           }}
                         />
                       ) : null}
-                      Guardar
+                      Actualizar
                     </Button>
                     <Button
                       variant="outlined"
                       size='small'
                       onClick={handleOpenDialogDelete}
-                      disabled={!isValid && loading}
+                      disabled={(!isValid && loading) || isAutomatic}
                       sx={{ color: 'error.main', ml: 2, pb: 0 }}
                     >
                       Eliminar

@@ -1,7 +1,7 @@
 export interface UpdateRhMovNominaCommand {
-    codigoMovNomina: number;
-    codigoTipoNomina: number;
-    codigoPersona: number;
+    codigoMovNomina: number | null;
+    codigoTipoNomina: number | null;
+    codigoPersona: number | null;
     codigoConcepto: number | null;
     complementoConcepto: string | null;
     codigoEmpresa: number;

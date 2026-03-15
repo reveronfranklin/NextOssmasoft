@@ -12,10 +12,10 @@ import { useForm, Controller, Path } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { useDispatch } from 'react-redux'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box} from '@mui/material'
-import { setRhPersonaMovCtrSeleccionado, setVerRhPersonaMovCtrActive } from 'src/store/apps/rh-persona-mov-ctrl'
+import { setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
 import { setConceptoSeleccionado, setFrecuenciaSeleccionada } from 'src/store/apps/rh'
 import { CreateRhMovNominaCommand } from '../interfaces'
 
@@ -34,17 +34,17 @@ const FormRhVariacionCreateAsync = () => {
 		{ value: 'V', label: 'Variable' }
   ]
 
-  const { rhPersonaMovCtrSeleccionado }                 = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias, personaSeleccionado } = useSelector((state: RootState) => state.nomina)
-  const { listRhTipoNomina }                             = useSelector((state: RootState) => state.rhTipoNomina)
+  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { conceptos, frecuencias, personaSeleccionado }           = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }                                      = useSelector((state: RootState) => state.rhTipoNomina)
 
-  const  getConcepto = (id:number) => {
+  const  getConcepto = (id:number | null) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
 
     return result[0]
   }
 
-  const getFrecuencia = (id:number) => {
+  const getFrecuencia = (id:number | null) => {
     const result = frecuencias?.filter((elemento) => elemento.id == id)
 
     return result[0]
@@ -56,29 +56,36 @@ const FormRhVariacionCreateAsync = () => {
     return result[0]
   }
 
-  const getTipoNomina = (id:number) => {
+  const getTipoNomina = (id:number | null) => {
     const result = listRhTipoNomina?.filter((elemento) => elemento.codigoTipoNomina == id)
 
     return result[0]
   }
 
-  const [dialogOpen, setDialogOpen]         = useState<boolean>(false)
-  const [monto, setMonto]                   = useState<number>(0)
-  const [loading, setLoading]               = useState<boolean>(false)
-  const [frecuencia, setFrecuencia]         = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || 0))
-  const [concepto, setConcepto]             = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || 0))
-  const [tipoMovimiento, setTipoMovimiento] = useState<any>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || 'E'))
-  const [tipoNomina, setTipoNomina]         = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || 0))
-  const [errorMessage, setErrorMessage]     = useState<string>('')
+  const getConceptosOptions = () => {
+    const conceptosOptions = conceptos?.filter((concepto) => concepto.automatico == false)
+
+    setConceptosOptions(conceptosOptions || [])
+  }
+
+  const [dialogOpen, setDialogOpen]             = useState<boolean>(false)
+  const [monto, setMonto]                       = useState<number>(0)
+  const [loading, setLoading]                   = useState<boolean>(false)
+  const [frecuencia, setFrecuencia]             = useState<any | null>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || null))
+  const [concepto, setConcepto]                 = useState<any | null>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || null))
+  const [tipoNomina, setTipoNomina]             = useState<any | null>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || null))
+  const [tipoMovimiento, setTipoMovimiento]     = useState<any | null>(getTipoMovimientoLabel(rhPersonaMovCtrSeleccionado.tipo || ''))
+  const [conceptosOptions, setConceptosOptions] = useState<any | null>([])
+  const [errorMessage, setErrorMessage]         = useState<string>('')
 
   const defaultValues: CreateRhMovNominaCommand = {
     codigoEmpresa: 13,
-    codigoTipoNomina: 0,
-    codigoPersona: personaSeleccionado.codigoPersona || 0,
-    codigoConcepto: 0,
+    codigoTipoNomina: null,
+    codigoPersona: personaSeleccionado.codigoPersona,
+    codigoConcepto: null,
     complementoConcepto: '',
-    tipo: 'E',
-    frecuenciaId: 0,
+    tipo: '',
+    frecuenciaId: null,
     monto: 0,
     status: 'A',
     usuarioIns: 1
@@ -173,11 +180,13 @@ const FormRhVariacionCreateAsync = () => {
     setConcepto(null)
     setTipoMovimiento(null)
     setMonto(0)
-    reset()
+    reset(defaultValues)
+    setValue('codigoPersona', personaSeleccionado.codigoPersona)
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
-    setValue('codigoTipoNomina', 0)
+    setValue('codigoTipoNomina', null)
+    setErrorMessage('')
   }
 
   const handleOpenDialog = () => {
@@ -208,7 +217,7 @@ const FormRhVariacionCreateAsync = () => {
     const createMovControl: CreateRhMovNominaCommand = {
       codigoEmpresa: 13,
       codigoTipoNomina: data.codigoTipoNomina,
-      codigoPersona: rhPersonaMovCtrSeleccionado.codigoPersona || 0,
+      codigoPersona: personaSeleccionado.codigoPersona,
       codigoConcepto: data.codigoConcepto,
       complementoConcepto: data.complementoConcepto,
       tipo: data.tipo,
@@ -219,20 +228,22 @@ const FormRhVariacionCreateAsync = () => {
     }
 
     try {
-      const responseAll= await ossmmasofApi.post<any>('/RhMovNomina/create', createMovControl)
+      const responseAll= await ossmmasofApiVertical.post<any>('/RhMovNomina/create', createMovControl)
 
       if (responseAll.data.isValid) {
-        dispatch(setRhPersonaMovCtrSeleccionado(responseAll.data.data))
-        dispatch(setVerRhPersonaMovCtrActive(false))
+        const flag = !verRhPersonaMovCtrActive
+        dispatch(setVerRhPersonaMovCtrActive(flag))
+        dispatch(setIsExpandedAccordion(false))
         clearForm()
         toast.success('Variacion creada correctamente')
       } else {
         toast.error(responseAll.data.message || 'Error al crear variacion')
+        setErrorMessage(responseAll.data.message)
       }
-
-      setErrorMessage(responseAll.data.message)
-    } catch {
+    } catch (error: any) {
       toast.error('Error al conectar con el servidor')
+      setErrorMessage('Error al conectar con el servidor')
+      console.error('Error en la solicitud:', error)
     } finally {
       setLoading(false)
     }
@@ -240,14 +251,18 @@ const FormRhVariacionCreateAsync = () => {
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true);
-      setLoading(false);
-    };
+      setLoading(true)
+      setLoading(false)
+    }
 
-    getData();
+    getData()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    getConceptosOptions()
+  }, [conceptos])
 
   return (
     <>
@@ -294,7 +309,7 @@ const FormRhVariacionCreateAsync = () => {
                   <Grid item sm={5} xs={12}>
                     <Autocomplete
                       size="small"
-                      options={conceptos}
+                      options={conceptosOptions || null}
                       id='autocomplete-concepto'
                       value={concepto || null}
                       isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
@@ -316,7 +331,7 @@ const FormRhVariacionCreateAsync = () => {
                   <Grid item sm={5} xs={12}>
                     <Autocomplete
                       size="small"
-                      options={frecuencias}
+                      options={frecuencias || null}
                       id='autocomplete-frecuencia'
                       value={frecuencia || null}
                       getOptionLabel={option => option.id + '-' + option.descripcion || ""}
