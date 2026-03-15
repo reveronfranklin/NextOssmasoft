@@ -263,10 +263,8 @@ const handlerPersona= async   (value:any)=>{
 
     const filter={codigoPersona:value.row.codigoPersona}
     const responseAll= await ossmmasofApi.post<IPersonaDto>('/RhPersona/GetPersona',filter);
-    console.log('responseAll.data persona',responseAll.data)
     dispatch(setPersonaSeleccionado(responseAll.data));
     dispatch(setPersonasDtoSeleccionado(responseAll.data));
-    console.log('responseAll.data persona',responseAll.data)
     router.replace("/apps/rh/persona/view/resumen/");
   }
 
