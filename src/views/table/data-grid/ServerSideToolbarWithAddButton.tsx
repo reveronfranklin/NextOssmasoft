@@ -12,16 +12,17 @@ interface ServerSideToolbarWithAddButtonProps {
   onDownloadFile: () => void;
   downloadFile?: boolean;
   sx: any;
+  titleButton: string;
 }
 
 const ServerSideToolbarWithAddButton = (props: ServerSideToolbarWithAddButtonProps) => {
   // Extraer todas las props
-  const { onAdd, onDownloadFile, value, clearSearch, onChange, sx, downloadFile = false, ...otherProps } = props
+  const { onAdd, onDownloadFile, value, clearSearch, onChange, sx, downloadFile = false, titleButton = 'Agregar Lotes', ...otherProps } = props
 
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
       {/* Botón de agregar */}
-      <Tooltip title='Agregar Lotes'>
+      <Tooltip title={titleButton}>
         <IconButton color='primary' size='small' onClick={onAdd} sx={sx}>
           <Icon icon='ci:add-row' fontSize={20} />
         </IconButton>

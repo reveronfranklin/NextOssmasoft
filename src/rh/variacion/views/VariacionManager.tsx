@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { ResponseRhMovNominaCommand } from '../interfaces';
-import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setIsExpandedAccordion, setListRhPersonaMovCtr } from 'src/store/apps/rh-persona-mov-ctrl';
 import { setListRhTipoNomina } from 'src/store/apps/rh-tipoNomina';
 import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
@@ -20,6 +20,7 @@ import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSide
 import MoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import toast from 'react-hot-toast';
 
 interface TotalesState {
   montoTotal: string | number;
@@ -56,13 +57,12 @@ const VariacionList = () => {
 
   const { verRhPersonaMovCtrActive = false } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
 
-  const [loading, setLoading]       = useState(false);
-  const [data, setData]             = useState<ResponseRhMovNominaCommand[]>([])
+  const [loading, setLoading]           = useState(false);
+  const [data, setData]                 = useState<ResponseRhMovNominaCommand[]>([])
   const [filteredData, setFilteredData] = useState<ResponseRhMovNominaCommand[]>([])
-  const [buffer, setBuffer]         = useState<string>('')
-  const [searchText, setSearchText] = useState<string>('')
-
-  const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
+  const [buffer, setBuffer]             = useState<string>('')
+  const [searchText, setSearchText]     = useState<string>('')
+  const { personaSeleccionado }         = useSelector((state: RootState) => state.nomina)
 
   const [totales, setTotales] = useState<TotalesState>({
     montoTotal: 0,
@@ -122,9 +122,13 @@ const VariacionList = () => {
     const getData = async () => {
       setLoading(true)
 
+      if (personaSeleccionado.codigoTipoNomina == 0) {
+        toast.error('La persona selecionada no pertenece a ninguna nómina')
+      }
+
       if (personaSeleccionado.codigoPersona > 0) {
         const filter = {
-          CodigoTipoNomina: 12,
+          CodigoTipoNomina: personaSeleccionado.codigoTipoNomina,
           CodigoPersona: personaSeleccionado.codigoPersona,
           CodigoUsuario: 530,
           CodigoEmpresa: 13,
@@ -136,6 +140,7 @@ const VariacionList = () => {
         const responseAll   = await ossmmasofApiVertical.post<any>('/RhCalculoNomina/CalculoPorPersona', filter)
         const responseData  = responseAll.data
         setData(responseData.data)
+        dispatch(setListRhPersonaMovCtr(responseData.data))
 
         const totales = getTotal(responseData.total1, responseData.total2, responseData.total3)
         setTotales(totales)
@@ -295,7 +300,7 @@ const VariacionList = () => {
               <DataGrid
                 getRowId={(row) => row.codigoMovNomina }
                 columns={columnsDataGrid}
-                rows={filteredData}
+                rows={filteredData || []}
                 onRowDoubleClick={(row) => handleDoubleClick(row)}
                 components={{ Toolbar: ServerSideToolbarWithAddButton }}
                 componentsProps={{
@@ -313,7 +318,8 @@ const VariacionList = () => {
                       marginRight: 0,
                       marginBottom: 8,
                       marginLeft: 4
-                    }
+                    },
+                    titleButton: 'Agregar Variación'
                   }
                 }}
               />
