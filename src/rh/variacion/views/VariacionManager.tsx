@@ -120,14 +120,11 @@ const VariacionList = () => {
 
   useEffect(() => {
     const getData = async () => {
-
-      console.log('tipoNominaSeleccionado vacio', tipoNominaSeleccionado)
-
       setLoading(true)
 
       if (personaSeleccionado.codigoPersona > 0) {
         const filter = {
-          CodigoTipoNomina: tipoNominaSeleccionado.codigoTipoNomina ?? 12,
+          CodigoTipoNomina: personaSeleccionado.codigoTipoNomina,
           CodigoPersona: personaSeleccionado.codigoPersona,
           CodigoUsuario: 530,
           CodigoEmpresa: 13,
