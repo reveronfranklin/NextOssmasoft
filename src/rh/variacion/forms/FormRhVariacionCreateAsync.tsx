@@ -34,9 +34,9 @@ const FormRhVariacionCreateAsync = () => {
 		{ value: 'V', label: 'Variable' }
   ]
 
-  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias, personaSeleccionado }           = useSelector((state: RootState) => state.nomina)
-  const { listRhTipoNomina }                                      = useSelector((state: RootState) => state.rhTipoNomina)
+  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive, listRhPersonaMovCtr }  = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { conceptos, frecuencias, personaSeleccionado }                                 = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }                                                            = useSelector((state: RootState) => state.rhTipoNomina)
 
   const  getConcepto = (id:number | null) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
@@ -62,8 +62,18 @@ const FormRhVariacionCreateAsync = () => {
     return result[0]
   }
 
+  const isConceptUse = (codigoConcepto: number) : boolean => {
+    const existCodigoConcepto = listRhPersonaMovCtr.some((element) => element.codigoConcepto == codigoConcepto)
+
+    return existCodigoConcepto
+  }
+
   const getConceptosOptions = () => {
-    const conceptosOptions = conceptos?.filter((concepto) => concepto.automatico == false)
+    const conceptosOptions = conceptos?.filter((concepto) => {
+      const conceptInUse = isConceptUse(concepto.codigoConcepto)
+
+      return (concepto.automatico == false && !conceptInUse)
+    })
 
     setConceptosOptions(conceptosOptions || [])
   }
@@ -278,7 +288,7 @@ const FormRhVariacionCreateAsync = () => {
                 <Grid container spacing={2}>
 
                   {/* CodigoPersona (Solo lectura o Hidden) */}
-                  <Grid item sm={2} xs={12}>
+                  <Grid item sm={3} xs={12}>
                     <FormControl fullWidth size="small">
                       <Controller
                         name='codigoPersona'
@@ -305,45 +315,23 @@ const FormRhVariacionCreateAsync = () => {
                     </FormControl>
                   </Grid>
 
-                  {/* Selección de Concepto */}
-                  <Grid item sm={5} xs={12}>
+                  {/* Selección tipo codigo nomina */}
+                  <Grid item sm={6} xs={12}>
                     <Autocomplete
                       size="small"
-                      options={conceptosOptions || null}
-                      id='autocomplete-concepto'
-                      value={concepto || null}
-                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
-                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
-                      onChange={handlerConceptos}
+                      options={listRhTipoNomina || null}
+                      id='autocomplete-codigo-tipo-nomina'
+                      value={tipoNomina || null}
+                      getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
+                      isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
+                      onChange={handlerTipoNomina}
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label='Conceptos'
+                          label='Tipos de nomina'
                           required
-                          error={Boolean(errors.codigoConcepto)}
-                          helperText={errors.codigoConcepto && "Concepto requerido"}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Selección de frecuencia */}
-                  <Grid item sm={5} xs={12}>
-                    <Autocomplete
-                      size="small"
-                      options={frecuencias || null}
-                      id='autocomplete-frecuencia'
-                      value={frecuencia || null}
-                      getOptionLabel={option => option.id + '-' + option.descripcion || ""}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
-                      onChange={handlerFrecuencias}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label='Frecuencias'
-                          required
-                          error={Boolean(errors.frecuenciaId)}
-                          helperText={errors.frecuenciaId && "Frecuencia requerida"}
+                          error={Boolean(errors.tipo)}
+                          helperText={errors.tipo && "Tipo de nomina requerido"}
                         />
                       )}
                     />
@@ -371,30 +359,52 @@ const FormRhVariacionCreateAsync = () => {
                     />
                   </Grid>
 
-                  {/* Selección tipo codigo nomina */}
+                  {/* Selección de Concepto */}
                   <Grid item sm={4} xs={12}>
                     <Autocomplete
                       size="small"
-                      options={listRhTipoNomina || null}
-                      id='autocomplete-codigo-tipo-nomina'
-                      value={tipoNomina || null}
-                      getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
-                      isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
-                      onChange={handlerTipoNomina}
+                      options={conceptosOptions || null}
+                      id='autocomplete-concepto'
+                      value={concepto || null}
+                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
+                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
+                      onChange={handlerConceptos}
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label='Tipos de nomina'
+                          label='Conceptos'
                           required
-                          error={Boolean(errors.tipo)}
-                          helperText={errors.tipo && "Tipo de nomina requerido"}
+                          error={Boolean(errors.codigoConcepto)}
+                          helperText={errors.codigoConcepto && "Concepto requerido"}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Selección de frecuencia */}
+                  <Grid item sm={4} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={frecuencias || null}
+                      id='autocomplete-frecuencia'
+                      value={frecuencia || null}
+                      getOptionLabel={option => option.id + '-' + option.descripcion || ""}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      onChange={handlerFrecuencias}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label='Frecuencias'
+                          required
+                          error={Boolean(errors.frecuenciaId)}
+                          helperText={errors.frecuenciaId && "Frecuencia requerida"}
                         />
                       )}
                     />
                   </Grid>
 
                   {/* Monto */}
-                  <Grid item sm={5} xs={12}>
+                  <Grid item sm={4} xs={12}>
                     <NumericFormat
                       size='small'
                       value={monto}

@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 import DialogRhVariacionInfo from './DialogRhVariacionInfo';
 import { ResponseRhMovNominaCommand } from '../interfaces';
-import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl';
+import { setOperacionCrudRhPersonaMovCtr, setRhPersonaMovCtrSeleccionado, setIsExpandedAccordion, setListRhPersonaMovCtr } from 'src/store/apps/rh-persona-mov-ctrl';
 import { setListRhTipoNomina } from 'src/store/apps/rh-tipoNomina';
 import { setConceptos, setFrecuencias } from 'src/store/apps/rh';
 import useColumnsDataGrid from '../components/headers/ColumnsDataGrid';
@@ -56,13 +56,13 @@ const VariacionList = () => {
 
   const { verRhPersonaMovCtrActive = false } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
 
-  const [loading, setLoading]       = useState(false);
-  const [data, setData]             = useState<ResponseRhMovNominaCommand[]>([])
+  const [loading, setLoading]           = useState(false);
+  const [data, setData]                 = useState<ResponseRhMovNominaCommand[]>([])
   const [filteredData, setFilteredData] = useState<ResponseRhMovNominaCommand[]>([])
-  const [buffer, setBuffer]         = useState<string>('')
-  const [searchText, setSearchText] = useState<string>('')
+  const [buffer, setBuffer]             = useState<string>('')
+  const [searchText, setSearchText]     = useState<string>('')
 
-  const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
+  const { personaSeleccionado, tipoNominaSeleccionado } = useSelector((state: RootState) => state.nomina)
 
   const [totales, setTotales] = useState<TotalesState>({
     montoTotal: 0,
@@ -120,11 +120,14 @@ const VariacionList = () => {
 
   useEffect(() => {
     const getData = async () => {
+
+      console.log('tipoNominaSeleccionado vacio', tipoNominaSeleccionado)
+
       setLoading(true)
 
       if (personaSeleccionado.codigoPersona > 0) {
         const filter = {
-          CodigoTipoNomina: 12,
+          CodigoTipoNomina: tipoNominaSeleccionado.codigoTipoNomina ?? 12,
           CodigoPersona: personaSeleccionado.codigoPersona,
           CodigoUsuario: 530,
           CodigoEmpresa: 13,
@@ -136,6 +139,7 @@ const VariacionList = () => {
         const responseAll   = await ossmmasofApiVertical.post<any>('/RhCalculoNomina/CalculoPorPersona', filter)
         const responseData  = responseAll.data
         setData(responseData.data)
+        dispatch(setListRhPersonaMovCtr(responseData.data))
 
         const totales = getTotal(responseData.total1, responseData.total2, responseData.total3)
         setTotales(totales)
@@ -295,7 +299,7 @@ const VariacionList = () => {
               <DataGrid
                 getRowId={(row) => row.codigoMovNomina }
                 columns={columnsDataGrid}
-                rows={filteredData}
+                rows={filteredData || []}
                 onRowDoubleClick={(row) => handleDoubleClick(row)}
                 components={{ Toolbar: ServerSideToolbarWithAddButton }}
                 componentsProps={{
