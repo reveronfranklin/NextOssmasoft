@@ -63,6 +63,14 @@ const FormRhVariacionCreateAsync = () => {
   }
 
   const isConceptUse = (codigoConcepto: number) : boolean => {
+    if (!listRhPersonaMovCtr) {
+      return false
+    }
+
+    if (listRhPersonaMovCtr.length === 0) {
+      return false
+    }
+
     const existCodigoConcepto = listRhPersonaMovCtr.some((element) => element.codigoConcepto == codigoConcepto)
 
     return existCodigoConcepto
@@ -245,9 +253,9 @@ const FormRhVariacionCreateAsync = () => {
         dispatch(setVerRhPersonaMovCtrActive(flag))
         dispatch(setIsExpandedAccordion(false))
         clearForm()
-        toast.success('Variacion creada correctamente')
+        toast.success('Variación creada correctamente')
       } else {
-        toast.error(responseAll.data.message || 'Error al crear variacion')
+        toast.error(responseAll.data.message || 'Error al crear variación')
         setErrorMessage(responseAll.data.message)
       }
     } catch (error: any) {

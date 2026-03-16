@@ -139,7 +139,7 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
               <Icon fontSize={20} icon='mdi:link' />
-              Variacion
+              Variación
             </Box>
           }
         />

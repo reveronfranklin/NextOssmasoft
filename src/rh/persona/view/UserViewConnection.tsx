@@ -26,7 +26,7 @@ const UserViewConnection = () => {
 
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Variacion' />
+          <CardHeader title='Variación' />
           <Divider sx={{ m: '0 !important' }} />
           <CardContent>
             <Grid item xs={12}>

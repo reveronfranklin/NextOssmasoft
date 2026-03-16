@@ -20,6 +20,7 @@ import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSide
 import MoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import toast from 'react-hot-toast';
 
 interface TotalesState {
   montoTotal: string | number;
@@ -61,8 +62,7 @@ const VariacionList = () => {
   const [filteredData, setFilteredData] = useState<ResponseRhMovNominaCommand[]>([])
   const [buffer, setBuffer]             = useState<string>('')
   const [searchText, setSearchText]     = useState<string>('')
-
-  const { personaSeleccionado, tipoNominaSeleccionado } = useSelector((state: RootState) => state.nomina)
+  const { personaSeleccionado }         = useSelector((state: RootState) => state.nomina)
 
   const [totales, setTotales] = useState<TotalesState>({
     montoTotal: 0,
@@ -121,6 +121,10 @@ const VariacionList = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
+
+      if (personaSeleccionado.codigoTipoNomina == 0) {
+        toast.error('La persona selecionada no pertenece a ninguna nómina')
+      }
 
       if (personaSeleccionado.codigoPersona > 0) {
         const filter = {
@@ -314,7 +318,8 @@ const VariacionList = () => {
                       marginRight: 0,
                       marginBottom: 8,
                       marginLeft: 4
-                    }
+                    },
+                    titleButton: 'Agregar Variación'
                   }
                 }}
               />

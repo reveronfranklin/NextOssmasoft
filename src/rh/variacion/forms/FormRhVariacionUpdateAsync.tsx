@@ -80,6 +80,14 @@ const FormRhVariacionUpdateAsync = () => {
   }
 
   const isConceptUse = (codigoConcepto: number) : boolean => {
+    if (!listRhPersonaMovCtr) {
+      return false
+    }
+
+    if (listRhPersonaMovCtr.length === 0) {
+      return false
+    }
+
     if (rhPersonaMovCtrSeleccionado.codigoConcepto != codigoConcepto) {
       const existCodigoConcepto = listRhPersonaMovCtr.some((element) => element.codigoConcepto == codigoConcepto)
 
@@ -294,9 +302,9 @@ const FormRhVariacionUpdateAsync = () => {
         dispatch(setIsExpandedAccordion(false))
         dispatch(setRhPersonaMovCtrSeleccionado({}))
         clearForm()
-        toast.success('Variacion eliminada correctamente')
+        toast.success('Variación eliminada correctamente')
       } else {
-        toast.error(responseAll.data.message || 'Error al eliminar variacion')
+        toast.error(responseAll.data.message || 'Error al eliminar variación')
         setErrorMessage(responseAll.data.message)
       }
     } catch (error: any) {
@@ -334,7 +342,7 @@ const FormRhVariacionUpdateAsync = () => {
         dispatch(setIsExpandedAccordion(true))
         dispatch(setRhPersonaMovCtrSeleccionado(updateMovControl))
         reset(updateMovControl)
-        toast.success('Variacion actualizada correctamente')
+        toast.success('Variación actualizada correctamente')
       } else {
         toast.error(responseAll.data.message || 'Error al actualizar proveedor')
         setErrorMessage(getErrorMessage(responseAll))

@@ -40,14 +40,14 @@ const DialogRhVariacionInfo = ()  => {
         expandIcon={
           operacionCrudRhPersonaMovCtr === 1
             ? (
-              <Tooltip title='Agregar'>
+              <Tooltip title='Agregar Variación'>
                 <IconButton  color='primary' size='small' onClick={() => handleAdd()}>
                   <Icon icon='ci:add-row' fontSize={20} />
                 </IconButton>
               </Tooltip>
             )
             : (
-              <Tooltip title='Editar'>
+              <Tooltip title='Editar Variacion'>
                 <IconButton size='small' onClick={() => handleEdit()}>
                   <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
                 </IconButton>
