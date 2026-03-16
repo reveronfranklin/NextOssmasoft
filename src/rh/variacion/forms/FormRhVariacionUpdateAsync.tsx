@@ -51,9 +51,9 @@ const FormRhVariacionUpdateAsync = () => {
 		{ value: 'V', label: 'Variable' }
   ]
 
-  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive } = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias }                                = useSelector((state: RootState) => state.nomina)
-  const { listRhTipoNomina }                                      = useSelector((state: RootState) => state.rhTipoNomina)
+  const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive, listRhPersonaMovCtr} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
+  const { conceptos, frecuencias }                                                    = useSelector((state: RootState) => state.nomina)
+  const { listRhTipoNomina }                                                          = useSelector((state: RootState) => state.rhTipoNomina)
 
   const  getConcepto = (id:number | null) => {
     const result = conceptos?.filter((elemento) => elemento.codigoConcepto == id)
@@ -79,11 +79,41 @@ const FormRhVariacionUpdateAsync = () => {
     return result[0]
   }
 
+  const isConceptUse = (codigoConcepto: number) : boolean => {
+    if (!listRhPersonaMovCtr) {
+      return false
+    }
+
+    if (listRhPersonaMovCtr.length === 0) {
+      return false
+    }
+
+    if (rhPersonaMovCtrSeleccionado.codigoConcepto != codigoConcepto) {
+      const existCodigoConcepto = listRhPersonaMovCtr.some((element) => element.codigoConcepto == codigoConcepto)
+
+      return existCodigoConcepto
+    } else {
+
+      return false
+    }
+  }
+
+  const getConceptosOptions = () => {
+    const conceptosOptions = conceptos?.filter((concepto) => {
+      const concetInUse = isConceptUse(concepto.codigoConcepto)
+
+      return !concetInUse
+    })
+
+    setConceptosOptions(conceptosOptions || [])
+  }
+
   const [isAutomatic, setIsAutomatic]             = useState<boolean>(false)
   const [dialogDeleteOpen, setDialogDeleteOpen]   = useState<boolean>(false)
   const [dialogOpen, setDialogOpen]               = useState<boolean>(false)
   const [loading, setLoading]                     = useState<boolean>(false)
   const [monto, setMonto]                         = useState<number>(0)
+  const [conceptosOptions, setConceptosOptions]   = useState<any | null>([])
   const [concepto, setConcepto]                   = useState<any>(getConcepto(rhPersonaMovCtrSeleccionado.codigoConcepto || null))
   const [frecuencia, setFrecuencia]               = useState<any>(getFrecuencia(rhPersonaMovCtrSeleccionado.frecuenciaId || null))
   const [tipoNomina, setTipoNomina]               = useState<any>(getTipoNomina(rhPersonaMovCtrSeleccionado.codigoTipoNomina || null))
@@ -272,9 +302,9 @@ const FormRhVariacionUpdateAsync = () => {
         dispatch(setIsExpandedAccordion(false))
         dispatch(setRhPersonaMovCtrSeleccionado({}))
         clearForm()
-        toast.success('Variacion eliminada correctamente')
+        toast.success('Variación eliminada correctamente')
       } else {
-        toast.error(responseAll.data.message || 'Error al eliminar variacion')
+        toast.error(responseAll.data.message || 'Error al eliminar variación')
         setErrorMessage(responseAll.data.message)
       }
     } catch (error: any) {
@@ -312,7 +342,7 @@ const FormRhVariacionUpdateAsync = () => {
         dispatch(setIsExpandedAccordion(true))
         dispatch(setRhPersonaMovCtrSeleccionado(updateMovControl))
         reset(updateMovControl)
-        toast.success('Variacion actualizada correctamente')
+        toast.success('Variación actualizada correctamente')
       } else {
         toast.error(responseAll.data.message || 'Error al actualizar proveedor')
         setErrorMessage(getErrorMessage(responseAll))
@@ -336,6 +366,10 @@ const FormRhVariacionUpdateAsync = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    getConceptosOptions()
+  }, [conceptos, rhPersonaMovCtrSeleccionado.codigoConcepto])
+
   return (
     <>
       { loading
@@ -350,7 +384,7 @@ const FormRhVariacionUpdateAsync = () => {
                 <Grid container spacing={2}>
 
                   {/* CodigoPersona (Solo lectura o Hidden) */}
-                  <Grid item sm={2} xs={12}>
+                  <Grid item sm={3} xs={12}>
                     <FormControl fullWidth size="small">
                       <Controller
                         name='codigoPersona'
@@ -377,77 +411,8 @@ const FormRhVariacionUpdateAsync = () => {
                     </FormControl>
                   </Grid>
 
-                  {/* Selección de Concepto */}
-                  <Grid item sm={5} xs={12}>
-                    <Autocomplete
-                      size="small"
-                      options={conceptos}
-                      id='autocomplete-concepto'
-                      value={concepto || null}
-                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
-                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
-                      onChange={handlerConceptos}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label='Conceptos'
-                          required
-                          error={Boolean(errors.codigoConcepto)}
-                          helperText={errors.codigoConcepto && "Concepto requerido"}
-                          disabled={isAutomatic}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Selección de frecuencia */}
-                  <Grid item sm={5} xs={12}>
-                    <Autocomplete
-                      size="small"
-                      options={frecuencias}
-                      id='autocomplete-frecuencia'
-                      value={frecuencia || null}
-                      getOptionLabel={option => option.id + '-' + option.descripcion || ""}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
-                      onChange={handlerFrecuencias}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label='Frecuencias'
-                          required
-                          error={Boolean(errors.frecuenciaId)}
-                          helperText={errors.frecuenciaId && "Frecuencia requerida"}
-                          disabled={isAutomatic}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  {/* Selección tipo */}
-                  <Grid item sm={3} xs={12}>
-                    <Autocomplete
-                      size="small"
-                      options={moventTypeOptions}
-                      id='autocomplete-tipo-movimiento'
-                      value={tipoMovimiento || null}
-                      getOptionLabel={(option) => option.label || ""}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      onChange={handlerTipoMovimiento}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label='Tipos de Movimiento'
-                          required
-                          error={Boolean(errors.tipo)}
-                          helperText={errors.tipo && "Tipo de movimiento requerido"}
-                          disabled={isAutomatic}
-                        />
-                      )}
-                    />
-                  </Grid>
-
                   {/* Selección tipo codigo nomina */}
-                  <Grid item sm={4} xs={12}>
+                  <Grid item sm={6} xs={12}>
                     <Autocomplete
                       size="small"
                       options={listRhTipoNomina || null}
@@ -469,8 +434,77 @@ const FormRhVariacionUpdateAsync = () => {
                     />
                   </Grid>
 
+                  {/* Selección tipo */}
+                  <Grid item sm={3} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={moventTypeOptions || null}
+                      id='autocomplete-tipo-movimiento'
+                      value={tipoMovimiento || null}
+                      getOptionLabel={(option) => option.label || ""}
+                      isOptionEqualToValue={(option, value) => option.value === value.value}
+                      onChange={handlerTipoMovimiento}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label='Tipos de Movimiento'
+                          required
+                          error={Boolean(errors.tipo)}
+                          helperText={errors.tipo && "Tipo de movimiento requerido"}
+                          disabled={isAutomatic}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Selección de Concepto */}
+                  <Grid item sm={4} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={conceptosOptions || null}
+                      id='autocomplete-concepto'
+                      value={concepto || null}
+                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
+                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
+                      onChange={handlerConceptos}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label='Conceptos'
+                          required
+                          error={Boolean(errors.codigoConcepto)}
+                          helperText={errors.codigoConcepto && "Concepto requerido"}
+                          disabled={isAutomatic}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Selección de frecuencia */}
+                  <Grid item sm={4} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={frecuencias || null}
+                      id='autocomplete-frecuencia'
+                      value={frecuencia || null}
+                      getOptionLabel={option => option.id + '-' + option.descripcion || ""}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      onChange={handlerFrecuencias}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label='Frecuencias'
+                          required
+                          error={Boolean(errors.frecuenciaId)}
+                          helperText={errors.frecuenciaId && "Frecuencia requerida"}
+                          disabled={isAutomatic}
+                        />
+                      )}
+                    />
+                  </Grid>
+
                   {/* Monto */}
-                  <Grid item sm={5} xs={12}>
+                  <Grid item sm={4} xs={12}>
                     <NumericFormat
                       size='small'
                       value={monto}
