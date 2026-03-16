@@ -185,6 +185,7 @@ const FormRhVariacionUpdateAsync = () => {
   const watchFrecuenciaId     = watch('frecuenciaId')
   const watchTipo             = watch('tipo')
   const watchCodigoTipoNomina = watch('codigoTipoNomina')
+  const complementoValue      = watch('complementoConcepto', '') || '';
 
   const setErrorDynamic = (field: Path<FormInputs>) => {
     setError(field, {
@@ -384,7 +385,7 @@ const FormRhVariacionUpdateAsync = () => {
                 <Grid container spacing={2}>
 
                   {/* CodigoPersona (Solo lectura o Hidden) */}
-                  <Grid item sm={3} xs={12}>
+                  <Grid item sm={2} xs={12}>
                     <FormControl fullWidth size="small">
                       <Controller
                         name='codigoPersona'
@@ -412,7 +413,7 @@ const FormRhVariacionUpdateAsync = () => {
                   </Grid>
 
                   {/* Selección tipo codigo nomina */}
-                  <Grid item sm={6} xs={12}>
+                  <Grid item sm={10} xs={12}>
                     <Autocomplete
                       size="small"
                       options={listRhTipoNomina || null}
@@ -428,6 +429,29 @@ const FormRhVariacionUpdateAsync = () => {
                           required
                           error={Boolean(errors.tipo)}
                           helperText={errors.tipo && "Tipo de nomina requerido"}
+                          disabled={isAutomatic}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Selección de Concepto */}
+                  <Grid item sm={12} xs={12}>
+                    <Autocomplete
+                      size="small"
+                      options={conceptosOptions || null}
+                      id='autocomplete-concepto'
+                      value={concepto || null}
+                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
+                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
+                      onChange={handlerConceptos}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label='Conceptos'
+                          required
+                          error={Boolean(errors.codigoConcepto)}
+                          helperText={errors.codigoConcepto && "Concepto requerido"}
                           disabled={isAutomatic}
                         />
                       )}
@@ -457,31 +481,8 @@ const FormRhVariacionUpdateAsync = () => {
                     />
                   </Grid>
 
-                  {/* Selección de Concepto */}
-                  <Grid item sm={4} xs={12}>
-                    <Autocomplete
-                      size="small"
-                      options={conceptosOptions || null}
-                      id='autocomplete-concepto'
-                      value={concepto || null}
-                      isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
-                      getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
-                      onChange={handlerConceptos}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label='Conceptos'
-                          required
-                          error={Boolean(errors.codigoConcepto)}
-                          helperText={errors.codigoConcepto && "Concepto requerido"}
-                          disabled={isAutomatic}
-                        />
-                      )}
-                    />
-                  </Grid>
-
                   {/* Selección de frecuencia */}
-                  <Grid item sm={4} xs={12}>
+                  <Grid item sm={6} xs={12}>
                     <Autocomplete
                       size="small"
                       options={frecuencias || null}
@@ -504,7 +505,7 @@ const FormRhVariacionUpdateAsync = () => {
                   </Grid>
 
                   {/* Monto */}
-                  <Grid item sm={4} xs={12}>
+                  <Grid item sm={3} xs={12}>
                     <NumericFormat
                       size='small'
                       value={monto}
@@ -538,6 +539,13 @@ const FormRhVariacionUpdateAsync = () => {
                     <Controller
                       name='complementoConcepto'
                       control={control}
+                      rules={{
+                        required: false,
+                        maxLength: {
+                          value: 100,
+                          message: 'Máximo 100 caracter'
+                        }
+                      }}
                       render={({ field }) => (
                         <TextField
                           {...field}
@@ -545,6 +553,15 @@ const FormRhVariacionUpdateAsync = () => {
                           size="small"
                           label='Complemento del Concepto'
                           placeholder='Información adicional...'
+                          multiline
+                          rows={3}
+                          helperText={
+                            <Box component="span" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <span>{errors.complementoConcepto?.message || 'Información adicional'}</span>
+                              <span>{`${complementoValue.length}/100`}</span>
+                            </Box>
+                          }
+                          error={!!errors.complementoConcepto}
                           disabled={isAutomatic}
                         />
                       )}

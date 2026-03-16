@@ -20,7 +20,6 @@ import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSide
 import MoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import toast from 'react-hot-toast';
 
 interface TotalesState {
   montoTotal: string | number;
@@ -123,7 +122,8 @@ const VariacionList = () => {
       setLoading(true)
 
       if (personaSeleccionado.codigoTipoNomina == 0) {
-        toast.error('La persona selecionada no pertenece a ninguna nómina')
+
+        return
       }
 
       if (personaSeleccionado.codigoPersona > 0) {
