@@ -1,4 +1,5 @@
 import Grid from '@mui/material/Grid'
+import { useEffect } from 'react'
 import { Box, Typography, Card } from '@mui/material';
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
@@ -11,6 +12,12 @@ import VariacionManager from 'src/rh/variacion/views/VariacionManager'
 const UserViewConnection = () => {
   const { personaSeleccionado } = useSelector((state: RootState) => state.nomina)
 
+  useEffect(() => {
+    if (personaSeleccionado.codigoTipoNomina == 0) {
+      toast.error('La persona seleccionada no pertenece a ninguna nómina')
+    }
+  }, [personaSeleccionado.codigoTipoNomina])
+
   if (!personaSeleccionado.codigoPersona) {
     return (
       <Box sx={{ p: 2 }}>
@@ -22,8 +29,6 @@ const UserViewConnection = () => {
   }
 
   if (personaSeleccionado.codigoTipoNomina == 0) {
-    toast.error('La persona selecionada no pertenece a ninguna nómina')
-
     return (
       <Box sx={{ p: 2 }}>
         <Typography variant="body2" color="text.secondary">

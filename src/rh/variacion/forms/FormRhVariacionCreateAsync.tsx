@@ -86,6 +86,16 @@ const FormRhVariacionCreateAsync = () => {
     setConceptosOptions(conceptosOptions || [])
   }
 
+  const checkNominaDeshabilitada = (option: any) => {
+    const isActive = (option.codigoTipoNomina == personaSeleccionado.codigoTipoNomina)
+
+    if (isActive) {
+      setTipoNomina(option)
+    }
+
+    return !isActive
+  }
+
   const [dialogOpen, setDialogOpen]             = useState<boolean>(false)
   const [monto, setMonto]                       = useState<number>(0)
   const [loading, setLoading]                   = useState<boolean>(false)
@@ -98,7 +108,7 @@ const FormRhVariacionCreateAsync = () => {
 
   const defaultValues: CreateRhMovNominaCommand = {
     codigoEmpresa: 13,
-    codigoTipoNomina: null,
+    codigoTipoNomina: personaSeleccionado.codigoTipoNomina,
     codigoPersona: personaSeleccionado.codigoPersona,
     codigoConcepto: null,
     complementoConcepto: '',
@@ -127,7 +137,12 @@ const FormRhVariacionCreateAsync = () => {
 
   useEffect(() => {
     setLoading(true)
+    clearForm()
+
     setValue('codigoPersona', defaultValues.codigoPersona)
+    setValue('codigoTipoNomina', defaultValues.codigoTipoNomina)
+
+    setTipoNomina(getTipoNomina(defaultValues.codigoTipoNomina || null))
 
     setTimeout(() => {
       setLoading(false)
@@ -204,7 +219,7 @@ const FormRhVariacionCreateAsync = () => {
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
-    setValue('codigoTipoNomina', null)
+    setValue('codigoTipoNomina', personaSeleccionado.codigoTipoNomina)
     setErrorMessage('')
   }
 
@@ -235,7 +250,7 @@ const FormRhVariacionCreateAsync = () => {
 
     const createMovControl: CreateRhMovNominaCommand = {
       codigoEmpresa: 13,
-      codigoTipoNomina: data.codigoTipoNomina,
+      codigoTipoNomina: personaSeleccionado.codigoTipoNomina,
       codigoPersona: personaSeleccionado.codigoPersona,
       codigoConcepto: data.codigoConcepto,
       complementoConcepto: data.complementoConcepto,
@@ -331,6 +346,7 @@ const FormRhVariacionCreateAsync = () => {
                       options={listRhTipoNomina || null}
                       id='autocomplete-codigo-tipo-nomina'
                       value={tipoNomina || null}
+                      getOptionDisabled={checkNominaDeshabilitada}
                       getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
                       onChange={handlerTipoNomina}
