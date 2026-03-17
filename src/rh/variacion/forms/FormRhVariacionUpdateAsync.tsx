@@ -52,7 +52,7 @@ const FormRhVariacionUpdateAsync = () => {
   ]
 
   const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive, listRhPersonaMovCtr} = useSelector((state: RootState) => state.rhPersonaMovCtrl)
-  const { conceptos, frecuencias }                                                    = useSelector((state: RootState) => state.nomina)
+  const { conceptos, frecuencias, personaSeleccionado }                               = useSelector((state: RootState) => state.nomina)
   const { listRhTipoNomina }                                                          = useSelector((state: RootState) => state.rhTipoNomina)
 
   const  getConcepto = (id:number | null) => {
@@ -106,6 +106,16 @@ const FormRhVariacionUpdateAsync = () => {
     })
 
     setConceptosOptions(conceptosOptions || [])
+  }
+
+  const checkNominaDeshabilitada = (option: any) => {
+    const isActive = (option.codigoTipoNomina == personaSeleccionado.codigoTipoNomina)
+
+    if (isActive) {
+      setTipoNomina(option)
+    }
+
+    return !isActive
   }
 
   const [isAutomatic, setIsAutomatic]             = useState<boolean>(false)
@@ -419,6 +429,7 @@ const FormRhVariacionUpdateAsync = () => {
                       options={listRhTipoNomina || null}
                       id='autocomplete-codigo-tipo-nomina'
                       value={tipoNomina || null}
+                      getOptionDisabled={checkNominaDeshabilitada}
                       getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
                       onChange={handlerTipoNomina}

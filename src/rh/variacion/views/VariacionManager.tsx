@@ -154,7 +154,8 @@ const VariacionList = () => {
         const conceptosList = await getConceptos()
 
         if (conceptosList) {
-          dispatch(setConceptos(conceptosList))
+          const conceptosListFiltered = conceptosList.filter((element: any) => element.codigoTipoNomina == personaSeleccionado.codigoTipoNomina)
+          dispatch(setConceptos(conceptosListFiltered))
         }
 
         const tipoNominaList = await getTipoNomina()
