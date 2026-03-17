@@ -109,13 +109,7 @@ const FormRhVariacionUpdateAsync = () => {
   }
 
   const checkNominaDeshabilitada = (option: any) => {
-    const isActive = (option.codigoTipoNomina == personaSeleccionado.codigoTipoNomina)
-
-    if (isActive) {
-      setTipoNomina(option)
-    }
-
-    return !isActive
+    return (option.codigoTipoNomina !== personaSeleccionado.codigoTipoNomina)
   }
 
   const [isAutomatic, setIsAutomatic]             = useState<boolean>(false)
@@ -429,7 +423,7 @@ const FormRhVariacionUpdateAsync = () => {
                       options={listRhTipoNomina || null}
                       id='autocomplete-codigo-tipo-nomina'
                       value={tipoNomina || null}
-                      getOptionDisabled={checkNominaDeshabilitada}
+                      getOptionDisabled={(option) => checkNominaDeshabilitada(option)}
                       getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
                       onChange={handlerTipoNomina}

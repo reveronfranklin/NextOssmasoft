@@ -87,13 +87,7 @@ const FormRhVariacionCreateAsync = () => {
   }
 
   const checkNominaDeshabilitada = (option: any) => {
-    const isActive = (option.codigoTipoNomina == personaSeleccionado.codigoTipoNomina)
-
-    if (isActive) {
-      setTipoNomina(option)
-    }
-
-    return !isActive
+    return (option.codigoTipoNomina !== personaSeleccionado.codigoTipoNomina)
   }
 
   const [dialogOpen, setDialogOpen]             = useState<boolean>(false)
@@ -134,6 +128,16 @@ const FormRhVariacionCreateAsync = () => {
     defaultValues,
     mode: 'onChange'
   })
+
+  useEffect(() => {
+    const nominaActiva = listRhTipoNomina.find(
+      (option: any) => option.codigoTipoNomina === personaSeleccionado.codigoTipoNomina
+    )
+
+    if (nominaActiva) {
+      setTipoNomina(nominaActiva)
+    }
+  }, [personaSeleccionado.codigoTipoNomina, listRhTipoNomina])
 
   useEffect(() => {
     setLoading(true)
@@ -346,7 +350,7 @@ const FormRhVariacionCreateAsync = () => {
                       options={listRhTipoNomina || null}
                       id='autocomplete-codigo-tipo-nomina'
                       value={tipoNomina || null}
-                      getOptionDisabled={checkNominaDeshabilitada}
+                      getOptionDisabled={(option) => checkNominaDeshabilitada(option)}
                       getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
                       onChange={handlerTipoNomina}
