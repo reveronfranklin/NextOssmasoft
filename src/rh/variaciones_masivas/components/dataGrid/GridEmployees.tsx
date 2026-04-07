@@ -1,12 +1,16 @@
-import { ChangeEvent, useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridSelectionModel } from '@mui/x-data-grid';
 import { Box, styled } from '@mui/material';
 import Spinner from 'src/@core/components/spinner';
-import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar';
+import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSideToolbarWithAddButton';
 import useColumnsGridEmployees from './headers/ColumnsGridEmployees';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
+import { FilterEmployee } from '../../interfaces';
+import { setIsExpandedAccordion, setListEmployeeCodes, setIsOpenSearchCriteriaDialog } from 'src/store/apps/rh-variaciones_masivas';
+import { RootState } from 'src/store';
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -14,34 +18,35 @@ const StyledDataGridContainer = styled(Box)(() => ({
 }))
 
 const DataGridComponent = () => {
-    const [pageNumber, setPage]         = useState<number>(0)
-    const [pageSize, setPageSize]       = useState<number>(5)
-    const [searchText, setSearchText]   = useState<string>('')
-    const [buffer, setBuffer]           = useState<string>('')
+    const dispatch = useDispatch()
 
-    const debounceTimeoutRef    = useRef<any>(null)
-    const qc: QueryClient       = useQueryClient()
-    const { getList, message }  = useServices()
-    const columns               = useColumnsGridEmployees()
+    const { searchCustomText } = useSelector((state: RootState) => state.rhVariacionesMasivas )
 
-    const filter: any = {
-        pageSize,
-        pageNumber,
-        searchText
+    const [selectionModel, setSelectionModel]       = useState<GridSelectionModel>([]);
+    const [pageNumber, setPage]                     = useState<number>(0)
+    const [pageSize, setPageSize]                   = useState<number>(5)
+
+    const queryClient: QueryClient  = useQueryClient()
+    const { getList, message }      = useServices()
+    const columns                   = useColumnsGridEmployees()
+
+    const timeInMemory = 1000 * 60 * 30
+
+    const filters: FilterEmployee = {
+        p_where: searchCustomText
     }
 
-    const query = useQuery({
-        queryKey: ['maestroCuentaTable', pageSize, pageNumber, searchText],
-        queryFn: () => getList({ ...filter, pageSize, pageNumber, searchText }),
-        initialData: () => {
-            return qc.getQueryData(['maestroCuentaTable', pageSize, pageNumber, searchText])
-        },
-        staleTime: 1000 * 60,
+    const { data, refetch, isLoading } = useQuery({
+        queryKey: ['employeesTable'],
+        queryFn: () => getList(filters),
+        enabled: false,
+        staleTime: timeInMemory,
+        gcTime: timeInMemory,
         retry: 3
-    }, qc)
+    }, queryClient)
 
-    const rows      = query?.data?.data || []
-    const rowCount  = query?.data?.cantidadRegistros || 0
+    const rows      = data?.data || []
+    const rowCount  = data?.cantidadRegistros || 0
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
@@ -52,36 +57,43 @@ const DataGridComponent = () => {
         setPageSize(newPageSize)
     }
 
-    const handleSearch = (value: string) => {
-        if (value === '') {
-            setSearchText('')
-            setBuffer('')
+    const handleAdd = () => {
+        dispatch(setIsExpandedAccordion(true))
+    }
 
-            return
+    const handleButtonRight = () => {
+        dispatch(setIsOpenSearchCriteriaDialog(true))
+    }
+
+    const handleButtonRightTwo = () => {
+        if (!filters.p_where || filters.p_where === '' || filters.p_where === '1=1') {
+            console.log('Filtros vacíos: Limpiando tabla...')
+            queryClient.removeQueries({ queryKey: ['employeesTable'] });
+
+            return;
         }
 
-        const newBuffer = value
-        setBuffer(newBuffer)
-        debouncedSearch()
+        console.log('Ejecutando búsqueda con:', filters.p_where)
+        refetch()
     }
 
-    const debouncedSearch = () => {
-        clearTimeout(debounceTimeoutRef.current)
-
-        debounceTimeoutRef.current = setTimeout(() => {
-            setSearchText(buffer)
-        }, 2500)
-    }
+    useEffect(() => {
+        dispatch(setListEmployeeCodes(selectionModel as number[]))
+    }, [selectionModel])
 
     return (
         <>
             {
-                query.isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
+                isLoading ? (<Spinner sx={{ height: '100%' }} />) : rows && (
                     <StyledDataGridContainer>
                         <DataGrid
                             autoHeight
                             pagination
-                            getRowId={(row) => row.codigoCuentaBanco}
+                            getRowId={(row) => row.codigoPersona}
+                            checkboxSelection
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setSelectionModel(newSelectionModel);
+                            }}
                             rows={rows}
                             rowCount={rowCount}
                             columns={columns}
@@ -93,17 +105,39 @@ const DataGridComponent = () => {
                             rowsPerPageOptions={[5, 10, 50]}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
-                            components={{ Toolbar: ServerSideToolbar }}
+                            components={{ Toolbar: ServerSideToolbarWithAddButton }}
                             componentsProps={{
                                 baseButton: {
                                     variant: 'outlined'
                                 },
                                 toolbar: {
                                     printOptions: { disableToolbarButton: true },
-                                    value: buffer,
-                                    clearSearch: () => handleSearch(''),
-                                    onChange: (event: ChangeEvent<HTMLInputElement>) => handleSearch(event.target.value),
-                                    sx: { paddingLeft: 0, paddingRight: 0 }
+                                    serverSideToolbarActive: false,
+                                    addButton: true,
+                                    titleButton: 'Agregar variación por lote',
+                                    sx: {
+                                        px: 3,
+                                        mb: 3
+                                    },
+                                    onAdd: handleAdd,
+                                    buttonRight: true,
+                                    titleButtonRight: 'Agregar filtros',
+                                    sxRight: {
+                                        px: 3,
+                                        mb: 3
+                                    },
+                                    disabledButtonRight: false,
+                                    onButtonRight: handleButtonRight,
+                                    buttonRightTwo: true,
+                                    titleButtonRightTwo: 'Buscar',
+                                    sxRightTwo: {
+                                        px: 3,
+                                        mb: 3
+                                    },
+                                    disabledButtonRightTwo: Boolean(!searchCustomText || searchCustomText.length === 0),
+                                    onButtonRightTwo: handleButtonRightTwo,
+                                    searchCustom: true,
+                                    searchCustomText: searchCustomText
                                 }
                             }}
                         />

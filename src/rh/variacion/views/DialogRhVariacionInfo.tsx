@@ -54,7 +54,7 @@ const DialogRhVariacionInfo = ()  => {
               </Tooltip>
             )
         }
-        sx={{ backgroundColor: 'action.hover', borderRadius: 1 }}
+        sx={{ backgroundColor: 'action.hover', borderRadius: 2 }}
       >
         <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: 'text.primary' }}>
           {operacionCrudRhPersonaMovCtr === 1 ? 'RH - Crear Variación' : 'RH - Modificar Variación'}

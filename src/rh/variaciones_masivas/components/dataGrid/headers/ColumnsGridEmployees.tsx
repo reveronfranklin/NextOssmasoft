@@ -1,107 +1,86 @@
-import Box from '@mui/material/Box';
-import Icon from 'src/@core/components/icon';
 import { useMemo } from 'react';
-import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { GridRenderCellParams, GridColDef } from '@mui/x-data-grid';
-import {
-    setIsOpenDialogCuenta,
-    setMaestroCuentaShow,
-    setTypeOperation
-} from 'src/store/apps/pagos/cuentas';
+import validateAmount from 'src/utilities/validateAmount';
+import FormatNumber from 'src/utilities/format-numbers';
 
 const useColumnsGridEmployees = (): GridColDef[] => {
     const dispatch = useDispatch()
 
-    const handleEdit = (maestroCuenta: any) => {
-        dispatch(setTypeOperation('update'))
-        dispatch(setIsOpenDialogCuenta(true))
-        dispatch(setMaestroCuentaShow(maestroCuenta))
+    const statusOptions: { [key: string]: string } = {
+		'A': 'Activo',
+		'I': 'Inactivo'
     }
-
-    const StyledIconButton = styled(IconButton)(({ theme }) => ({
-        '&:hover': {
-            color: theme.palette.primary.main,
-            transform: 'scale(1.5)',
-            transition: 'transform 0.2s ease-in-out',
-        },
-    }))
 
     const columns = useMemo<GridColDef[]>(() => [
         {
-            flex: 0,
-            minWidth: 40,
-            sortable: false,
-            headerName: 'Acciones',
-            field: 'actions',
-            renderCell: ({ row }: any) => (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Tooltip title='Editar'>
-                        <StyledIconButton size='small' onClick={() => handleEdit(row)}>
-                            <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
-                        </StyledIconButton>
-                    </Tooltip>
-                </Box>
-            )
-        },
-        {
             flex: 1,
-            headerName: 'Descripción',
-            field: 'descripcionBanco',
+            headerName: 'Cédula',
+            field: 'cedula',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionBanco === '' ? 'NO DISPONIBLE' : params.row.descripcionBanco}
+                    {params.row.cedula === '' ? 'NO DISPONIBLE' : params.row.cedula}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'Tipo de cuenta',
-            field: 'descripcionTipoCuenta',
+            headerName: 'Nombre',
+            field: 'nombre',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionTipoCuenta === '' ? 'NO DISPONIBLE' : params.row.descripcionTipoCuenta}
+                    {params.row.nombre === '' ? 'NO DISPONIBLE' : params.row.nombre}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'Numero de cuenta',
-            field: 'noCuenta',
+            headerName: 'Apellido',
+            field: 'apellido',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.noCuenta === '' ? 'NO DISPONIBLE' : params.row.noCuenta}
+                    {params.row.apellido === '' ? 'NO DISPONIBLE' : params.row.apellido}
                 </Typography>
             )
         },
         {
             flex: 1,
-            headerName: 'Denominación Funcional',
-            field: 'descripcionDenominacionFuncional',
+            headerName: 'Fecha de Ingreso',
+            field: 'fechaIngreso',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.descripcionDenominacionFuncional === '' ? 'NO DISPONIBLE' : params.row.descripcionDenominacionFuncional}
+                    {params.row.fechaIngreso ? new Date(params.row.fechaIngreso).toLocaleDateString() : 'NO DISPONIBLE'}
                 </Typography>
             )
         },
         {
             flex: 0.5,
-            headerName: 'Código',
-            field: 'codigo',
+            headerName: 'Sexo',
+            field: 'sexo',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.codigo === null ? 'NO DISPONIBLE' : params.row.codigo}
+                    {params.row.sexo === '' ? 'NO DISPONIBLE' : params.row.sexo}
                 </Typography>
             )
         },
         {
-            flex: 0.5,
-            headerName: 'Cuenta Principal',
-            field: 'principal',
+            flex: 1,
+            headerName: 'Sueldo',
+            field: 'sueldo',
             renderCell: (params: GridRenderCellParams) => (
                 <Typography variant='body2' sx={{ color: 'text.primary' }}>
-                    {params.row.principal ? 'SI' :'NO'}
+                    {params.row.sueldo ? `Bs ${FormatNumber(validateAmount(parseFloat(params.row.sueldo)))}` : 'NO DISPONIBLE'}
+                </Typography>
+            )
+        },
+        {
+            flex: 1,
+            headerName: 'Estatus',
+            field: 'status',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: 'text.primary' }}>
+                    {params.row.status === null ? 'NO DISPONIBLE' : statusOptions[params.row.status]}
                 </Typography>
             )
         }
@@ -109,6 +88,5 @@ const useColumnsGridEmployees = (): GridColDef[] => {
 
     return columns
 }
-
 
 export default useColumnsGridEmployees

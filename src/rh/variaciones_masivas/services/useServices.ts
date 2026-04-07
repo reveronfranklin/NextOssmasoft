@@ -1,16 +1,13 @@
 import { useCallback, useState } from 'react';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { ApiPaths } from '../constants';
 
 import {
-    ApiResponse
-    SisBancoResponseDto,
-    SisBancoFilterDto,
-    SisBancoCreateDto,
-    SisBancoUpdateDto,
-    SisBancoDeleteDto
+    ApiResponse,
+    Employee,
+    FilterEmployee
 } from '../interfaces';
 
 const useServices = () => {
@@ -22,12 +19,12 @@ const useServices = () => {
         isValid: true
     })
 
-    const getList = useCallback(async (filters: SisBancoFilterDto): Promise<any> => {
+    const getList = useCallback(async (filters: FilterEmployee): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ApiResponse<SisBancoResponseDto>>(ApiPaths.GET_FIXED_PARAMS , filters)
+            const response = await ossmmasofApiVertical.post<ApiResponse<Employee>>(ApiPaths.GET_EMPLOYEES , filters)
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
+            return handleApiResponse<Employee>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
@@ -35,47 +32,19 @@ const useServices = () => {
         }
     }, [])
 
-/*     const store = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
+    const store = useCallback(async (payload: any): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
+            const response  = await ossmmasofApiVertical.post<ApiResponse<any>>(ApiPaths.STORE_LOTE_VARIACION, payload)
             const message   = 'Cuenta creada exitosamente'
 
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
+            return handleApiResponse<any>(response.data, message, setMessage, setError)
         } catch (e: any) {
             return handleApiError(e, setMessage, setError)
         } finally {
             setLoading(false)
         }
     }, [])
-
-    const update = useCallback(async (payload: SisBancoUpdateDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATEMAESTROBANCO, payload)
-            const message   = 'Cuenta actualizada exitosamente'
-
-            return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, [])
-
-    const remove = useCallback(async (payload: SisBancoDeleteDto): Promise<any> => {
-        try {
-            setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETEMAESTROBANCO, payload)
-            const message   = 'Cuenta eliminada exitosamente'
-
-            return handleApiResponse<SisBancoDeleteDto>(response.data, message, setMessage, setError)
-        } catch (e: any) {
-            return handleApiError(e, setMessage, setError)
-        } finally {
-            setLoading(false)
-        }
-    }, []) */
 
     return {
         error,
@@ -83,9 +52,7 @@ const useServices = () => {
         loading,
         setMessage,
         getList,
-/*         store,
-        update,
-        remove */
+        store
     }
 }
 

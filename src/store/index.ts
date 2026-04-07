@@ -51,6 +51,7 @@ import { admLotePagosSlice } from './apps/pagos/lote-pagos'
 import { admPreOrdenPagoSlice } from './apps/preOrdenPago'
 import { proveedorSlice } from './apps/adm-proveedor'
 import { admProveedorSlice } from './apps/proveedor-comunicacion'
+import { rhVariacionesMasivasSlice } from './apps/rh-variaciones_masivas'
 
 export const store = configureStore({
   reducer: {
@@ -103,6 +104,7 @@ export const store = configureStore({
     admPreOrdenPago: admPreOrdenPagoSlice.reducer,
     proveedor: proveedorSlice.reducer,
     admProveedor: admProveedorSlice.reducer,
+    rhVariacionesMasivas: rhVariacionesMasivasSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

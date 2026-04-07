@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { ApiPaths } from '../constants';
@@ -17,7 +17,7 @@ const useServices = () => {
     const getList = useCallback(async (): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<ApiResponse<FixedParams>>(ApiPaths.GET_FIXED_PARAMS )
+            const response = await ossmmasofApiVertical.post<ApiResponse<FixedParams>>(ApiPaths.GET_FIXED_PARAMS )
 
             return handleApiResponse<FixedParams>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
