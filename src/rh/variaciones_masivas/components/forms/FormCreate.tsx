@@ -1,23 +1,30 @@
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import CircularProgress from '@mui/material/CircularProgress'
-import toast from 'react-hot-toast'
-import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
-import { styled } from '@mui/material/styles'
+import { useState, useEffect } from 'react';
+
+/* import { useQueryClient, QueryClient } from '@tanstack/react-query'; */
+
+import { Controller, useForm, Path } from 'react-hook-form';
+import { CleaningServices } from '@mui/icons-material';
 import { NumericFormat } from 'react-number-format'
-import { useForm, Controller, Path } from 'react-hook-form'
-import { useSelector } from 'react-redux'
+import {
+    Box,
+    Grid,
+    TextField,
+    Autocomplete,
+    Button,
+    styled
+} from '@mui/material';
+
+import AlertMessage from 'src/views/components/alerts/AlertMessage';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import getRules from './rules';
+import { useServices } from '../../services';
+import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'src/store'
-import { useDispatch } from 'react-redux'
+import toast from 'react-hot-toast'
 import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
-import { useEffect, useState } from 'react'
-import { Autocomplete, Box} from '@mui/material'
+import { CreateRhMovNominaCommand } from '../../interfaces'
 import { setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
 import { setConceptoSeleccionado, setFrecuenciaSeleccionada } from 'src/store/apps/rh'
-import { CreateRhMovNominaCommand } from '../interfaces'
 
 type FormInputs = CreateRhMovNominaCommand
 
@@ -25,13 +32,30 @@ const StyledCustomInput = styled(TextField)(() => ({
   width: '100%'
 }))
 
-const FormRhVariacionCreateAsync = () => {
-  const dispatch = useDispatch()
+
+const FormCreate = () => {
+    const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
+
+    /* const qc: QueryClient   = useQueryClient() */
+    const rules             = getRules()
+
+    console.log('🚀 ~ file: FormCreate.tsx:28 ~ FormCreate ~ rules:', rules)
+
+      const handleClearPagoLote = () => {
+
+          reset(defaultValues)
+      }
+
+    const {
+        message,
+    } = useServices()
+
+const dispatch = useDispatch()
 
   const moventTypeOptions = [
-		{ value: 'E', label: 'Especial' },
-		{ value: 'F', label: 'Fijo' },
-		{ value: 'V', label: 'Variable' }
+    { value: 'E', label: 'Especial' },
+    { value: 'F', label: 'Fijo' },
+    { value: 'V', label: 'Variable' }
   ]
 
   const { rhPersonaMovCtrSeleccionado, verRhPersonaMovCtrActive, listRhPersonaMovCtr }  = useSelector((state: RootState) => state.rhPersonaMovCtrl)
@@ -251,6 +275,8 @@ const FormRhVariacionCreateAsync = () => {
   const onSubmitCreate = async (data: FormInputs) => {
     setLoading(true)
     handleCloseDialog()
+    setIsFormEnabled(true)
+    console.log(errorMessage)
 
     const createMovControl: CreateRhMovNominaCommand = {
       codigoEmpresa: 13,
@@ -302,49 +328,27 @@ const FormRhVariacionCreateAsync = () => {
     getConceptosOptions()
   }, [conceptos])
 
+
   return (
     <>
-      { loading
-        ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          )
-        : (
-            <Box sx={{ my: 4 }}>
+      <Grid container spacing={5} paddingTop={1}>
+        <Grid
+          item
+          sm={12}
+          xs={12}
+          sx={{
+            overflow: 'auto',
+            padding: '0 1rem',
+          }}
+        >
+          <Box>
+            {!!isFormEnabled ?
               <form>
-                <Grid container spacing={2}>
+<Grid container spacing={2}>
 
-                  {/* CodigoPersona (Solo lectura o Hidden) */}
-                  <Grid item sm={2} xs={12}>
-                    <FormControl fullWidth size="small">
-                      <Controller
-                        name='codigoPersona'
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
-                          <TextField
-                            size="small"
-                            value={value || 0}
-                            label='Id'
-                            onChange={onChange}
-                            placeholder='0'
-                            error={Boolean(errors.codigoPersona)}
-                            aria-describedby='validation-async-codigoPersona'
-                            disabled
-                          />
-                        )}
-                      />
-                      {errors.codigoPersona && (
-                        <FormHelperText sx={{ color: 'error.main' }} id='validation-async-codigoPersona'>
-                          This field is required
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
 
                   {/* Selección tipo codigo nomina */}
-                  <Grid item sm={10} xs={12}>
+                  <Grid item sm={12} xs={12}>
                     <Autocomplete
                       size="small"
                       options={listRhTipoNomina || null}
@@ -502,51 +506,49 @@ const FormRhVariacionCreateAsync = () => {
                     title="Crear nuevo registro"
                     content="¿Desea continuar con la creación del registro?"
                   />
-
-                  <Grid item xs={12}>
-                    <Button
-                      size='small'
-                      variant='contained'
-                      sx={{ pb: 0 }}
-                      disabled={!isValid}
-                      onClick={async () => {
-                        const isValid = await trigger()
-
-                        if (isValid) {
-                          handleOpenDialog()
-                        }
-                      }}
-                    >
-                      {loading ? (
-                        <CircularProgress
-                          sx={{
-                            color: 'common.white',
-                            width: '20px !important',
-                            height: '20px !important',
-                            mr: theme => theme.spacing(2)
-                          }}
-                        />
-                      ) : null}
-                      Guardar
-                    </Button>
-                  </Grid>
                 </Grid>
 
-                <Box>
-                  { errorMessage.length> 0 &&
-                    <FormHelperText
-                      sx={{ color: 'error.main' ,fontSize: 20,mt:4 }}
-                    >
-                      {errorMessage}
-                    </FormHelperText>
-                  }
+                <DialogConfirmation
+                  open={dialogOpen}
+                  onClose={handleCloseDialog}
+                  onConfirm={handleSubmit(onSubmitCreate)}
+                  loading={loading}
+                  title="Crear nuevo registro"
+                  content="¿Desea continuar con la creación del registro?"
+                />
+
+                <Box sx={{ paddingTop: 6 }}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    size='small'
+                    onClick={handleOpenDialog}
+                    disabled={!isValid}
+                  >
+                    { 'Crear' }
+                  </Button>
+                  <Button
+                    color='primary'
+                    size='small'
+                    onClick={handleClearPagoLote}
+                  >
+                    <CleaningServices /> Limpiar
+                  </Button>
                 </Box>
               </form>
-            </Box>
-          )
-      }
+              : null
+            }
+          </Box>
+        </Grid>
+      </Grid>
+      <AlertMessage
+        message={message?.text ?? ''}
+        severity={message?.isValid ? 'success' : 'error'}
+        duration={8000}
+        show={message?.text ? true : false}
+      />
     </>
   )
 }
 
-export default FormRhVariacionCreateAsync
+export default FormCreate

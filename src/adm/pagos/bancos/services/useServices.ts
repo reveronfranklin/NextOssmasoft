@@ -4,7 +4,7 @@ import { IAlertMessageDto } from 'src/interfaces/alert-message-dto';
 import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { UrlServices } from '../enums/UrlServices.enum';
 import {
-    IResponse,
+    ResponseDto,
     SisBancoResponseDto,
     SisBancoFilterDto,
     SisBancoCreateDto,
@@ -24,7 +24,7 @@ const useServices = () => {
     const getList = useCallback(async (filters: SisBancoFilterDto): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
+            const response = await ossmmasofApi.post<ResponseDto<SisBancoResponseDto>>(UrlServices.GETMAESTROBANCO , filters)
 
             return handleApiResponse<SisBancoResponseDto>(response.data, undefined, setMessage, setError)
         } catch (e: any) {
@@ -37,7 +37,7 @@ const useServices = () => {
     const store = useCallback(async (payload: SisBancoCreateDto): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<SisBancoResponseDto>>(UrlServices.CREATEMAESTROBANCO, payload)
             const message   = 'Cuenta creada exitosamente'
 
             return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
@@ -51,7 +51,7 @@ const useServices = () => {
     const update = useCallback(async (payload: SisBancoUpdateDto): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoResponseDto>>(UrlServices.UPDATEMAESTROBANCO, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<SisBancoResponseDto>>(UrlServices.UPDATEMAESTROBANCO, payload)
             const message   = 'Cuenta actualizada exitosamente'
 
             return handleApiResponse<SisBancoResponseDto>(response.data, message, setMessage, setError)
@@ -65,7 +65,7 @@ const useServices = () => {
     const remove = useCallback(async (payload: SisBancoDeleteDto): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApi.post<IResponse<SisBancoDeleteDto>>(UrlServices.DELETEMAESTROBANCO, payload)
+            const response  = await ossmmasofApi.post<ResponseDto<SisBancoDeleteDto>>(UrlServices.DELETEMAESTROBANCO, payload)
             const message   = 'Cuenta eliminada exitosamente'
 
             return handleApiResponse<SisBancoDeleteDto>(response.data, message, setMessage, setError)
