@@ -35,9 +35,13 @@ const StyledCustomInput = styled(TextField)(() => ({
 
 const FormCreate = () => {
     const [isFormEnabled, setIsFormEnabled] = useState<boolean>(true)
+    const { listEmployeeCodes } = useSelector((state: RootState) => state.rhVariacionesMasivas)
+    const disabledForm = (listEmployeeCodes.length === 0)
+
+
 
     /* const qc: QueryClient   = useQueryClient() */
-    const rules             = getRules()
+    const rules             = getRules('formCreateVariacion')
 
     console.log('🚀 ~ file: FormCreate.tsx:28 ~ FormCreate ~ rules:', rules)
 
@@ -365,6 +369,7 @@ const dispatch = useDispatch()
                           required
                           error={Boolean(errors.tipo)}
                           helperText={errors.tipo && "Tipo de nomina requerido"}
+                          disabled={disabledForm}
                         />
                       )}
                     />
@@ -387,6 +392,7 @@ const dispatch = useDispatch()
                           required
                           error={Boolean(errors.codigoConcepto)}
                           helperText={errors.codigoConcepto && "Concepto requerido"}
+                          disabled={disabledForm}
                         />
                       )}
                     />
@@ -409,6 +415,7 @@ const dispatch = useDispatch()
                           required
                           error={Boolean(errors.tipo)}
                           helperText={errors.tipo && "Tipo de movimiento requerido"}
+                          disabled={disabledForm}
                         />
                       )}
                     />
@@ -431,6 +438,7 @@ const dispatch = useDispatch()
                           required
                           error={Boolean(errors.frecuenciaId)}
                           helperText={errors.frecuenciaId && "Frecuencia requerida"}
+                          disabled={disabledForm}
                         />
                       )}
                     />
@@ -462,6 +470,7 @@ const dispatch = useDispatch()
                       }}
                       error={!!errors.monto}
                       helperText={errors.monto?.message}
+                      disabled={disabledForm}
                     />
                   </Grid>
 
@@ -493,6 +502,7 @@ const dispatch = useDispatch()
                             </Box>
                           }
                           error={!!errors.complementoConcepto}
+                          disabled={disabledForm}
                         />
                       )}
                     />
@@ -523,14 +533,15 @@ const dispatch = useDispatch()
                     color='primary'
                     size='small'
                     onClick={handleOpenDialog}
-                    disabled={!isValid}
+                    disabled={!isValid || loading || disabledForm}
                   >
-                    { 'Crear' }
+                    { 'Procesar' }
                   </Button>
                   <Button
                     color='primary'
                     size='small'
                     onClick={handleClearPagoLote}
+                    disabled={loading || disabledForm}
                   >
                     <CleaningServices /> Limpiar
                   </Button>

@@ -10,7 +10,11 @@ const useColumnsGridEmployees = (): GridColDef[] => {
 
     const statusOptions: { [key: string]: string } = {
 		'A': 'Activo',
-		'I': 'Inactivo'
+		'I': 'Interino',
+        'E': 'Egresado',
+        'P': 'Permiso',
+        'S': 'Suspendido',
+        'V': 'Vacaciones'
     }
 
     const columns = useMemo<GridColDef[]>(() => [

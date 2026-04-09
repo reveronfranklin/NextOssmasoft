@@ -1,3 +1,11 @@
+import { AutocompleteOption } from "./model.interface";
+
+export interface RuleForm {
+  field: AutocompleteOption | null;
+  operator: AutocompleteOption | null;
+  value: any;
+}
+
 export interface CreateRhMovNominaCommand {
     codigoTipoNomina: number | null;
     codigoPersona: number;

@@ -5,7 +5,7 @@ import { handleApiResponse, handleApiError } from 'src/utilities/api-handlers';
 import { ApiPaths } from '../constants';
 import { ApiResponse, FixedParams } from '../interfaces';
 
-const useServices = () => {
+const useServiceFixedParams = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError]     = useState<string>('')
     const [message, setMessage] = useState<IAlertMessageDto>({
@@ -36,4 +36,4 @@ const useServices = () => {
     }
 }
 
-export default useServices
+export default useServiceFixedParams

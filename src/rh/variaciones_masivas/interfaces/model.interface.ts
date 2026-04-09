@@ -1,17 +1,3 @@
-export interface Value {
-    code:        string;
-    description: string;
-}
-
-export interface Item {
-    field:  string;
-    values: Value[];
-}
-
-export interface FixedParams {
-    items: Item[];
-}
-
 export interface Employee {
     codigoPersona:           number;
     cedula:                  string;
@@ -52,4 +38,30 @@ export interface Employee {
     noCuenta:                string;
     siglastipoNomina:        string;
     rif:                     string;
+}
+
+export interface AutocompleteOption {
+    label: string;
+    value: string;
+    type?: string;
+    sendAs?: string | null;
+}
+
+export interface FieldOptionMap {
+    [key: string]: AutocompleteOption[];
+}
+
+export interface Value {
+    code:        string;
+    description: string;
+}
+
+export interface Item {
+    field:              string;
+    fieldDescription:   string;
+    values:             Value[];
+}
+
+export interface FixedParams {
+    items: Item[];
 }

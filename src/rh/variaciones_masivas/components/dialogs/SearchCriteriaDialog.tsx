@@ -17,6 +17,7 @@ const Transition = forwardRef(function Transition(
 
 const SearchCriteriaDialog = () => {
   const dispatch = useDispatch()
+
   const { isOpenSearchCriteriaDialog } = useSelector((state: RootState) => state.rhVariacionesMasivas )
 
   const handleClose = () => {
@@ -36,11 +37,11 @@ const SearchCriteriaDialog = () => {
       sx={{
         '& .MuiDialog-paper': {
           width: '100%',
-          height: '55vh',
+          height: '70vh',
           margin: 0,
           borderRadius: 0,
-          padding: 0,
-        },
+          padding: 0
+        }
       }}
     >
       <Grid>

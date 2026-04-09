@@ -20,7 +20,7 @@ const StyledDataGridContainer = styled(Box)(() => ({
 const DataGridComponent = () => {
     const dispatch = useDispatch()
 
-    const { searchCustomText } = useSelector((state: RootState) => state.rhVariacionesMasivas )
+    const { customQuery } = useSelector((state: RootState) => state.rhVariacionesMasivas )
 
     const [selectionModel, setSelectionModel]       = useState<GridSelectionModel>([]);
     const [pageNumber, setPage]                     = useState<number>(0)
@@ -33,7 +33,7 @@ const DataGridComponent = () => {
     const timeInMemory = 1000 * 60 * 30
 
     const filters: FilterEmployee = {
-        p_where: searchCustomText
+        p_where: customQuery
     }
 
     const { data, refetch, isLoading } = useQuery({
@@ -134,10 +134,10 @@ const DataGridComponent = () => {
                                         px: 3,
                                         mb: 3
                                     },
-                                    disabledButtonRightTwo: Boolean(!searchCustomText || searchCustomText.length === 0),
+                                    disabledButtonRightTwo: Boolean(!customQuery || customQuery.length === 0),
                                     onButtonRightTwo: handleButtonRightTwo,
                                     searchCustom: true,
-                                    searchCustomText: searchCustomText
+                                    searchCustomText: customQuery
                                 }
                             }}
                         />
