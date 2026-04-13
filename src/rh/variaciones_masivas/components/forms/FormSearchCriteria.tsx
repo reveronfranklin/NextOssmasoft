@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { CleaningServices } from '@mui/icons-material';
@@ -215,10 +215,11 @@ const FormSearchCriteria = () => {
     const { finalQuery, error } = buildSecureQuery(sanitizedQuery)
 
     if (error) {
-      setErrorMessage(error);
-      toast.error(error);
-      setDialogOpen(false);
-      return;
+      setErrorMessage(error)
+      toast.error(error)
+      setDialogOpen(false)
+
+      return
     }
 
     dispatch(setselectedPayrollTypeCode(isPayrollAlreadyAdded ? localPayrollCode : null))
@@ -318,8 +319,10 @@ const FormSearchCriteria = () => {
                             onChange={(_, newValue) => onChange(newValue)}
                             getOptionDisabled={(option) => {
                               if (currentFieldRestriction?.allowedOperators) {
-                                return !currentFieldRestriction.allowedOperators.includes(option.value);
+
+                                return !currentFieldRestriction.allowedOperators.includes(option.value)
                               }
+
                               return false
                             }}
                             renderInput={(params) => (

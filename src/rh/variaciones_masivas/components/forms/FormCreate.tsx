@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useQueryClient, QueryClient, useQuery } from '@tanstack/react-query';
-import { Controller, useForm, Path } from 'react-hook-form';
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { Controller, useForm } from 'react-hook-form';
 import { CleaningServices } from '@mui/icons-material';
 import { NumericFormat } from 'react-number-format';
 import Spinner from 'src/@core/components/spinner';
@@ -17,9 +17,9 @@ import {
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
-import { useServices } from '../../services';
 import { RootState } from 'src/store';
-import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
+import { setErrorDynamic } from 'src/utilities/forms/formUtils';
+import { useServices } from '../../services';
 import { MOVEMENT_TYPE_OPTIONS } from '../../constants/options';
 import { selectEmployeeListIsEmpty } from 'src/store/apps/rh-variaciones_masivas';
 import { setIsExpandedAccordion } from 'src/store/apps/rh-variaciones_masivas';
@@ -37,12 +37,16 @@ const StyledCustomInput = styled(TextField)(() => ({
 }))
 
 const FormCreate = () => {
-  const dispatch = useDispatch()
+  const dispatch                  = useDispatch()
+  const queryClient: QueryClient  = useQueryClient()
 
   const { listEmployeeCodes, selectedPayrollTypeCode } = useSelector((state: RootState) => state.rhVariacionesMasivas)
 
-  const queryClient: QueryClient  = useQueryClient()
-  const { store, message }        = useServices()
+  const {
+    store,
+    message,
+    loading: loadingStore
+  } = useServices()
 
   const disableForm   = useSelector(selectEmployeeListIsEmpty)
   const rules         = getRules('formCreateVariacion')
@@ -54,13 +58,12 @@ const FormCreate = () => {
   } = usePayrollMetadata()
 
   const { conceptos: conceptosOptions } = usePayrollMetadata({
-    codigoTipoNomina: selectedPayrollTypeCode,
+    codigoTipoNomina: Number(selectedPayrollTypeCode),
     automatico: false
   })
 
   const [dialogOpen, setDialogOpen]             = useState<boolean>(false)
   const [loading, setLoading]                   = useState<boolean>(false)
-  const [errorMessage, setErrorMessage]         = useState<string>('')
   const [monto, setMonto]                       = useState<number>(0)
   const [tipoNomina, setTipoNomina]             = useState<TypePayroll | null>()
   const [concepto, setConcepto]                 = useState<Concept | null>()
@@ -68,9 +71,10 @@ const FormCreate = () => {
   const [tipoMovimiento, setTipoMovimiento]      = useState<AutocompleteOption | null>()
 
   const defaultValues: VariationMovementForm = {
+    codigoMovNomina: null,
     codigoEmpresa: 13,
-    codigoTipoNomina: selectedPayrollTypeCode,
-    listCodigoPersona: listEmployeeCodes,
+    codigoTipoNomina: Number(selectedPayrollTypeCode),
+    codigoPersona: listEmployeeCodes,
     codigoConcepto: null,
     complementoConcepto: '',
     tipo: '',
@@ -88,37 +92,20 @@ const FormCreate = () => {
     clearErrors,
     trigger,
     reset,
-    getFieldState,
     watch,
+    getValues,
     formState: { errors, isValid }
   } = useForm<VariationMovementForm>({
     defaultValues,
     mode: 'onChange'
   })
 
-  const stateMonto = getFieldState('monto')
-
   const watchCodigoConcepto   = watch('codigoConcepto')
   const watchFrecuenciaId     = watch('frecuenciaId')
   const watchTipo             = watch('tipo')
   const watchCodigoTipoNomina = watch('codigoTipoNomina')
-  const complementoValue      = watch('complementoConcepto', '') || '';
-
-  const setErrorDynamic = (field: Path<VariationMovementForm>) => {
-    setError(field, {
-      type: 'manual',
-      message: `El ${field} es requerido, ingrese un monto válido.`
-    }, { shouldFocus: true })
-  }
-
-  useEffect(() => {
-    if (!monto) {
-      setErrorDynamic('monto')
-    } else {
-      clearErrors('monto')
-      trigger('monto')
-    }
-  }, [monto, setError, clearErrors, trigger])
+  const complementoValue      = watch('complementoConcepto', '') || ''
+  const watchMonto            = watch('monto')
 
   const handleOnChangeAmount = (amount: string) => {
     const amountToPay = parseFloat(amount) || 0
@@ -155,34 +142,61 @@ const FormCreate = () => {
   }
 
   const clearForm = () => {
-    setTipoNomina(null)
     setConcepto(null)
     setFrecuencia(null)
     setTipoMovimiento(null)
     setMonto(0)
-    reset(defaultValues)
-    setValue('listCodigoPersona', null)
+
+    setValue('codigoPersona', listEmployeeCodes)
+    setValue('codigoTipoNomina', Number(selectedPayrollTypeCode))
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
-    setValue('codigoTipoNomina', null)
-    setErrorMessage('')
+
+    reset(defaultValues)
+  }
+
+  const checkFormIsValid = () => {
+    const fields: { name: keyof VariationMovementForm; value: any; message?: string; isMonto?: boolean }[] = [
+      { name: 'codigoTipoNomina', value: watchCodigoTipoNomina || selectedPayrollTypeCode },
+      { name: 'codigoConcepto', value: watchCodigoConcepto },
+      { name: 'tipo', value: watchTipo },
+      { name: 'frecuenciaId', value: watchFrecuenciaId },
+      {
+        name: 'monto',
+        value: watchMonto,
+        isMonto: true,
+        message: 'Monto es requerido, acepta números negativos, pero no se permite 0'
+      }
+    ]
+
+    const firstError = fields.find(field => {
+      if (field.isMonto) {
+        const amount = Number(field.value)
+
+        return field.value === '' || isNaN(amount) || amount === 0
+      }
+
+      return !field.value
+    })
+
+    if (firstError) {
+      setErrorDynamic(setError, firstError.name, firstError.message)
+
+      return false
+    }
+
+    return true
   }
 
   const handleOpenDialog = () => {
-    if (stateMonto.invalid) {
-      setErrorDynamic('monto')
-    } else if (!watchCodigoConcepto) {
-      setErrorDynamic('codigoConcepto')
-    } else if (!watchFrecuenciaId) {
-      setErrorDynamic('frecuenciaId')
-    } else if (!watchTipo) {
-      setErrorDynamic('tipo')
-    } else if (!watchCodigoTipoNomina) {
-      setErrorDynamic('codigoTipoNomina')
-    } else {
-      clearErrors()
+    const formIsValid = checkFormIsValid()
+
+    if (formIsValid) {
       setDialogOpen(true)
+      clearErrors()
+    } else {
+      trigger()
     }
   }
 
@@ -194,45 +208,47 @@ const FormCreate = () => {
     return (option.codigoTipoNomina != selectedPayrollTypeCode)
   }
 
-  const onSubmitCreate = async (data: VariationMovementForm) => {
-    setLoading(true)
+  const onSubmitCreate = async (formDataVariation: VariationMovementForm) => {
+    setLoading(loadingStore)
     handleCloseDialog()
-    console.log(errorMessage)
 
-    const createMovControl: VariationMovementForm = {
-      codigoEmpresa: 13,
-      codigoTipoNomina: selectedPayrollTypeCode,
-      listCodigoPersona: listEmployeeCodes,
-      codigoConcepto: data.codigoConcepto,
-      complementoConcepto: data.complementoConcepto,
-      tipo: data.tipo,
-      frecuenciaId: data.frecuenciaId,
-      monto: data.monto,
-      status: data.status,
-      usuarioIns: 1
+    const variationMovement: VariationMovementForm = {
+      ...formDataVariation,
+      codigoPersona: listEmployeeCodes
     }
 
     try {
-      const responseAll= await ossmmasofApiVertical.post<any>('/RhMovNomina/create', createMovControl)
+      const responseAll = await store(variationMovement)
 
-      if (responseAll.data.isValid) {
+      if (responseAll.isValid) {
         dispatch(setIsExpandedAccordion(false))
         clearForm()
-        toast.success('Variación creada correctamente')
+
+        await queryClient.refetchQueries({
+          queryKey: ['employeesTable'],
+          exact: true
+        })
+
+        toast.success('Variaciones procesadas correctamente')
       } else {
-        toast.error(responseAll.data.message || 'Error al crear variación')
-        setErrorMessage(responseAll.data.message)
+        toast.error(responseAll.data.message || 'Error al crear el lote de variaciones')
       }
     } catch (error: any) {
       toast.error('Error al conectar con el servidor')
-      setErrorMessage('Error al conectar con el servidor')
       console.error('Error en la solicitud:', error)
     } finally {
-      setLoading(false)
+      setLoading(loadingStore)
     }
   }
 
   useEffect(() => {
+    const currentFormValue = getValues('codigoTipoNomina')
+    const newValue = Number(selectedPayrollTypeCode)
+
+    if (currentFormValue !== newValue) {
+      setValue('codigoTipoNomina', newValue)
+    }
+
     const selectedPayroll = tiposNominaOptions.find(
       (option: any) => Number(option.id) === Number(selectedPayrollTypeCode)
     )
@@ -242,7 +258,7 @@ const FormCreate = () => {
     } else {
       setTipoNomina(null)
     }
-  }, [selectedPayrollTypeCode, tiposNominaOptions])
+  }, [selectedPayrollTypeCode, tiposNominaOptions, setValue, getValues])
 
   return (
     <>
@@ -275,14 +291,18 @@ const FormCreate = () => {
                         isOptionEqualToValue={(option, value) => option.id === value.id}
                         onChange={(_, newValue) => {
                           handlerTipoNomina(_, newValue ? newValue.value : null)
+
+                          if (newValue) {
+                            clearErrors('codigoTipoNomina')
+                          }
                         }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label='Tipos de nomina'
-                            required
-                            error={Boolean(errors.tipo)}
-                            helperText={errors.tipo && "Tipo de nomina requerido"}
+                            required={ rules.tipoNomina.required }
+                            error={Boolean(errors.codigoTipoNomina)}
+                            helperText={errors.codigoTipoNomina && "Tipo de nomina requerido"}
                             disabled={disableForm}
                           />
                         )}
@@ -300,12 +320,16 @@ const FormCreate = () => {
                         getOptionLabel={(option) => option.label || ''}
                         onChange={(_, newValue) => {
                           handlerConceptos(_, newValue ? newValue.value : null)
+
+                          if (newValue) {
+                            clearErrors('codigoConcepto')
+                          }
                         }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label='Conceptos'
-                            required
+                            required={ rules.concepto.required }
                             error={Boolean(errors.codigoConcepto)}
                             helperText={errors.codigoConcepto && "Concepto requerido"}
                             disabled={disableForm}
@@ -323,12 +347,18 @@ const FormCreate = () => {
                         value={tipoMovimiento || null}
                         getOptionLabel={(option) => option.label || ""}
                         isOptionEqualToValue={(option, value) => option.value === value.value}
-                        onChange={handlerTipoMovimiento}
+                        onChange={(_, newValue) => {
+                          handlerTipoMovimiento(_, newValue)
+
+                          if (newValue) {
+                            clearErrors('tipo')
+                          }
+                        }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label='Tipos de Movimiento'
-                            required
+                            required={ rules.tipo.required }
                             error={Boolean(errors.tipo)}
                             helperText={errors.tipo && "Tipo de movimiento requerido"}
                             disabled={disableForm}
@@ -348,12 +378,16 @@ const FormCreate = () => {
                         isOptionEqualToValue={(option, value) => option.id === value.id}
                         onChange={(_, newValue) => {
                           handlerFrecuencias(_, newValue ? newValue.value : null)
+
+                          if (newValue) {
+                            clearErrors('frecuenciaId')
+                          }
                         }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label='Frecuencias'
-                            required
+                            required={ rules.frecuencia.required }
                             error={Boolean(errors.frecuenciaId)}
                             helperText={errors.frecuenciaId && "Frecuencia requerida"}
                             disabled={disableForm}
@@ -374,13 +408,17 @@ const FormCreate = () => {
                         decimalScale={2}
                         fixedDecimalScale={true}
                         label="Monto"
-                        required
+                        required={ rules.monto.required }
                         onFocus={(event) => {
                           event.target.select()
                         }}
                         onValueChange={(values: any) => {
                           const { value } = values
                           handleOnChangeAmount(value)
+
+                          if (value) {
+                            clearErrors('monto')
+                          }
                         }}
                         placeholder='Monto'
                         inputProps={{
@@ -397,13 +435,7 @@ const FormCreate = () => {
                       <Controller
                         name='complementoConcepto'
                         control={control}
-                        rules={{
-                          required: false,
-                          maxLength: {
-                            value: 100,
-                            message: 'Máximo 100 caracter'
-                          }
-                        }}
+                        rules={ rules.complementoConcepto }
                         render={({ field }) => (
                           <TextField
                             {...field}

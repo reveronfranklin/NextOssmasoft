@@ -43,7 +43,7 @@ export const MOVEMENT_TYPE_OPTIONS: AutocompleteOption[] = [
 ]
 
 export const FIRST_FIELD = 'CODIGO_TIPO_NOMINA' as const
-export const MESSAGE_WARNING_QUERY = `La consulta debe iniciar obligatoriamente con el campo "CODIGO_TIPO_NOMINA" usando el operador de igualdad ("="). Ejemplo: CODIGO_TIPO_NOMINA = 1` as const
+export const MESSAGE_WARNING_QUERY = `El criterio de  búsqueda debe iniciar obligatoriamente con el item "Tipo Nomina".` as const
 
 export const FIELD_RESTRICTIONS: Record<string, FieldRestriction> = {
   CODIGO_TIPO_NOMINA: {

@@ -7,7 +7,8 @@ import { ApiPaths } from '../constants';
 import {
     ApiResponse,
     Employee,
-    FilterEmployee
+    FilterEmployee,
+    VariationMovementForm
 } from '../interfaces';
 
 const useServices = () => {
@@ -32,11 +33,11 @@ const useServices = () => {
         }
     }, [])
 
-    const store = useCallback(async (payload: any): Promise<any> => {
+    const store = useCallback(async (payload: VariationMovementForm): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApiVertical.post<ApiResponse<any>>(ApiPaths.STORE_LOTE_VARIACION, payload)
-            const message   = 'Cuenta creada exitosamente'
+            const response  = await ossmmasofApiVertical.post<ApiResponse<VariationMovementForm>>(ApiPaths.STORE_LOTE_VARIACION, payload)
+            const message   = 'Variaciones procesadas exitosamente'
 
             return handleApiResponse<any>(response.data, message, setMessage, setError)
         } catch (e: any) {

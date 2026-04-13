@@ -7,8 +7,9 @@ export interface RuleForm {
 }
 
 export interface VariationMovementForm {
+    codigoMovNomina: number | null;
     codigoTipoNomina: number | null;
-    listCodigoPersona: number[] | null;
+    codigoPersona: number[] | null;
     codigoConcepto: number | null;
     complementoConcepto: string | null;
     codigoEmpresa: number;

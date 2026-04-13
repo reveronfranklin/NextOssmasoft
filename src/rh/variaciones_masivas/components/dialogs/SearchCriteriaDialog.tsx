@@ -34,6 +34,7 @@ const SearchCriteriaDialog = () => {
       onClose={() => handleClose()}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
+      disableEnforceFocus
       sx={{
         '& .MuiDialog-paper': {
           width: '100%',

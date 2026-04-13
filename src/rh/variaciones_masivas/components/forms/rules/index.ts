@@ -1,26 +1,25 @@
 const rules =  {
     formCreateVariacion:{
-        tipoPagoId: {
-            required: 'Este campo es requerido',
-            isNumeric: 'El ID debe ser un número'
+        tipoNomina: {
+            required: true
         },
-        fechaPago: {
-            required: 'Este campo es requerido',
-            isTimestamp: 'Debe ser una fecha válida en formato timestamp'
+        concepto: {
+            required: true
         },
-        codigoCuentaBanco: {
-            required: 'Este campo es requerido',
-            isNumeric: 'El ID debe ser un número'
+        tipo: {
+            required: true
         },
-        titulo: {
-            required: 'Este campo es requerido',
-            minLength: {
-                value: 1,
-                message: 'Mínimo 1 caracter'
-            },
+        frecuencia: {
+            required: true
+        },
+        monto: {
+            required: true
+        },
+        complementoConcepto: {
+            required: false,
             maxLength: {
-                value: 200,
-                message: 'Máximo 200 caracter'
+                value: 100,
+                message: 'Máximo 100 caracter'
             }
         }
     },

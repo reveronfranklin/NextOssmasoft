@@ -67,7 +67,6 @@ const DataGridComponent = () => {
 
     const handleButtonRightTwo = () => {
         if (!filters.p_where || filters.p_where === '' || filters.p_where === '1=1') {
-            console.log('Filtros vacíos: Limpiando tabla...')
             queryClient.removeQueries({ queryKey: ['employeesTable'] })
 
             return
