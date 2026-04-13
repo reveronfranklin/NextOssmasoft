@@ -1,6 +1,15 @@
-export interface CreateRhMovNominaCommand {
+import { AutocompleteOption } from "./model.interface";
+
+export interface RuleForm {
+  field: AutocompleteOption | null;
+  operator: AutocompleteOption | null;
+  value: any;
+}
+
+export interface VariationMovementForm {
+    codigoMovNomina: number | null;
     codigoTipoNomina: number | null;
-    codigoPersona: number;
+    codigoPersona: number[] | null;
     codigoConcepto: number | null;
     complementoConcepto: string | null;
     codigoEmpresa: number;

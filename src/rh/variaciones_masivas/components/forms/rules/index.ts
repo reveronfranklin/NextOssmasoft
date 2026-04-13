@@ -1,31 +1,42 @@
 const rules =  {
-    tipoPagoId: {
-        required: 'Este campo es requerido',
-        isNumeric: 'El ID debe ser un número'
-    },
-    fechaPago: {
-        required: 'Este campo es requerido',
-        isTimestamp: 'Debe ser una fecha válida en formato timestamp'
-    },
-    codigoCuentaBanco: {
-        required: 'Este campo es requerido',
-        isNumeric: 'El ID debe ser un número'
-    },
-    titulo: {
-        required: 'Este campo es requerido',
-        minLength: {
-            value: 1,
-            message: 'Mínimo 1 caracter'
+    formCreateVariacion:{
+        tipoNomina: {
+            required: true
         },
-        maxLength: {
-            value: 200,
-            message: 'Máximo 200 caracter'
+        concepto: {
+            required: true
+        },
+        tipo: {
+            required: true
+        },
+        frecuencia: {
+            required: true
+        },
+        monto: {
+            required: true
+        },
+        complementoConcepto: {
+            required: false,
+            maxLength: {
+                value: 100,
+                message: 'Máximo 100 caracter'
+            }
+        }
+    },
+    formSearchCriteria: {
+        field: {
+            required: 'El campo es requerido',
+        },
+        operator: {
+            required: 'El operador es requerido',
+        },
+        value: {
+            required: 'El valor es requerido',
         }
     }
-}
+} as const;
 
-const getRules = () => {
-    return rules
+export const getRules = <T extends keyof typeof rules>(type: T) => {
+    return rules[type];
 }
-
 export default getRules

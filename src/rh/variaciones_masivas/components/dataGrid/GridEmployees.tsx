@@ -20,7 +20,7 @@ const StyledDataGridContainer = styled(Box)(() => ({
 const DataGridComponent = () => {
     const dispatch = useDispatch()
 
-    const { searchCustomText } = useSelector((state: RootState) => state.rhVariacionesMasivas )
+    const { customQuery } = useSelector((state: RootState) => state.rhVariacionesMasivas )
 
     const [selectionModel, setSelectionModel]       = useState<GridSelectionModel>([]);
     const [pageNumber, setPage]                     = useState<number>(0)
@@ -33,7 +33,7 @@ const DataGridComponent = () => {
     const timeInMemory = 1000 * 60 * 30
 
     const filters: FilterEmployee = {
-        p_where: searchCustomText
+        p_where: customQuery
     }
 
     const { data, refetch, isLoading } = useQuery({
@@ -67,19 +67,27 @@ const DataGridComponent = () => {
 
     const handleButtonRightTwo = () => {
         if (!filters.p_where || filters.p_where === '' || filters.p_where === '1=1') {
-            console.log('Filtros vacíos: Limpiando tabla...')
-            queryClient.removeQueries({ queryKey: ['employeesTable'] });
+            queryClient.removeQueries({ queryKey: ['employeesTable'] })
 
-            return;
+            return
         }
 
-        console.log('Ejecutando búsqueda con:', filters.p_where)
         refetch()
+    }
+
+    const handleOpenDetails = (row: any) => {
+        console.log('Abriendo detalles para:', row)
     }
 
     useEffect(() => {
         dispatch(setListEmployeeCodes(selectionModel as number[]))
     }, [selectionModel])
+
+    useEffect(() => {
+        queryClient.removeQueries({ queryKey: ['employeesTable'] })
+        setPage(0)
+        setSelectionModel([])
+    }, [customQuery, queryClient])
 
     return (
         <>
@@ -103,6 +111,7 @@ const DataGridComponent = () => {
                             sortingMode='server'
                             paginationMode='server'
                             rowsPerPageOptions={[5, 10, 50]}
+                            onRowDoubleClick={(params) => handleOpenDetails(params.row)}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
                             components={{ Toolbar: ServerSideToolbarWithAddButton }}
@@ -134,10 +143,10 @@ const DataGridComponent = () => {
                                         px: 3,
                                         mb: 3
                                     },
-                                    disabledButtonRightTwo: Boolean(!searchCustomText || searchCustomText.length === 0),
+                                    disabledButtonRightTwo: Boolean(!customQuery || customQuery.length === 0),
                                     onButtonRightTwo: handleButtonRightTwo,
                                     searchCustom: true,
-                                    searchCustomText: searchCustomText
+                                    searchCustomText: customQuery
                                 }
                             }}
                         />

@@ -119,7 +119,7 @@ const ServerSideToolbarWithAddButton = (props: ServerSideToolbarWithAddButtonPro
               label='Criterio de búsqueda'
               placeholder='Ingrese el criterio de búsqueda'
               multiline
-              rows={3}
+              rows={4}
               disabled
               value={searchCustomText ?? ''}
             />

@@ -1,11 +1,12 @@
 import { Ref, forwardRef, ReactElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Dialog, DialogContent, Grid, Toolbar, Typography, Box, Button } from "@mui/material";
+import { Dialog, DialogContent, Grid, Toolbar, Typography, Box } from "@mui/material";
 import Fade, { FadeProps } from '@mui/material/Fade';
 import IconButton from '@mui/material/IconButton';
 import Icon from 'src/@core/components/icon';
+import FormSearchCriteria from '../forms/FormSearchCriteria';
 import { RootState } from 'src/store';
-import { setIsOpenSearchCriteriaDialog, setSearchCustomText } from 'src/store/apps/rh-variaciones_masivas';
+import { setIsOpenSearchCriteriaDialog } from 'src/store/apps/rh-variaciones_masivas';
 
 const Transition = forwardRef(function Transition(
   props: FadeProps & { children?: ReactElement<any, any> },
@@ -16,14 +17,10 @@ const Transition = forwardRef(function Transition(
 
 const SearchCriteriaDialog = () => {
   const dispatch = useDispatch()
+
   const { isOpenSearchCriteriaDialog } = useSelector((state: RootState) => state.rhVariacionesMasivas )
 
   const handleClose = () => {
-    dispatch(setIsOpenSearchCriteriaDialog(false))
-  }
-
-  const handleSearch = () => {
-    dispatch(setSearchCustomText('SUELDO > 400'))
     dispatch(setIsOpenSearchCriteriaDialog(false))
   }
 
@@ -37,14 +34,15 @@ const SearchCriteriaDialog = () => {
       onClose={() => handleClose()}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
+      disableEnforceFocus
       sx={{
         '& .MuiDialog-paper': {
           width: '100%',
-          height: '50vh',
+          height: '70vh',
           margin: 0,
           borderRadius: 0,
-          padding: 0,
-        },
+          padding: 0
+        }
       }}
     >
       <Grid>
@@ -63,15 +61,7 @@ const SearchCriteriaDialog = () => {
           </Toolbar>
         </Box>
         <DialogContent>
-           <Button
-              variant='contained'
-              color='primary'
-              size='small'
-              onClick={handleSearch}
-            >
-              { 'Aceptar' }
-            </Button>
-          {/* Aquí puedes agregar el contenido de tu diálogo */}
+          <FormSearchCriteria />
         </DialogContent>
       </Grid>
     </Dialog>
