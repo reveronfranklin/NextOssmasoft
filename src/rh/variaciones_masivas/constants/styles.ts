@@ -14,7 +14,7 @@ export const operatorButtonStyle = (theme: any) => ({
   '&:active': {
     cursor: 'grabbing',
     boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.15)',
-    backgroundColor: theme.palette.action.selected,
+    backgroundColor: theme.palette.action.selected
   },
   '&:hover': {
     backgroundColor: theme.palette.mode === 'light'
@@ -27,9 +27,9 @@ export const operatorButtonStyle = (theme: any) => ({
     }
   },
   transition: theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'transform'], {
-    duration: theme.transitions.duration.short,
+    duration: theme.transitions.duration.short
   })
-});
+})
 
 export const boxQueryStyle = (theme: any, isDraggingOver: boolean) => ({
   transition: 'all 0.2s ease-in-out',
@@ -40,24 +40,24 @@ export const boxQueryStyle = (theme: any, isDraggingOver: boolean) => ({
         : 'rgba(102, 108, 255, 0.15)',
       outline: `2px dashed ${theme.palette.primary.main}`,
       outlineOffset: '-10px',
-      borderRadius: '12px',
+      borderRadius: '12px'
     }),
     transition: 'all 0.2s ease-in-out'
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    borderWidth: isDraggingOver ? 0 : 1,
+    borderWidth: isDraggingOver ? 0 : 1
   },
   '@keyframes pulse': {
     '0%': { opacity: 1 },
     '50%': { opacity: 0.6 },
-    '100%': { opacity: 1 },
+    '100%': { opacity: 1 }
   },
   ...(isDraggingOver && {
-    animation: 'pulse 1.5s infinite ease-in-out',
+    animation: 'pulse 1.5s infinite ease-in-out'
   }),
   '& .MuiInputBase-input': {
     userSelect: isDraggingOver ? 'none' : 'text',
-    pointerEvents: isDraggingOver ? 'none' : 'auto',
+    pointerEvents: isDraggingOver ? 'none' : 'auto'
   },
   '& *': { pointerEvents: isDraggingOver ? 'none' : 'auto' }
 })

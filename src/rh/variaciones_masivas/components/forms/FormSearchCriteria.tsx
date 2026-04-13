@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import { CleaningServices } from '@mui/icons-material';
@@ -19,18 +19,23 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import useServiceFixedParams from '../../services/useServiceFixedParams';
 import getRules from './rules';
-import { setIsOpenSearchCriteriaDialog, setCustomQuery } from 'src/store/apps/rh-variaciones_masivas';
+import { setIsOpenSearchCriteriaDialog, setCustomQuery, setselectedPayrollTypeCode } from 'src/store/apps/rh-variaciones_masivas';
 import {
   mapFieldConfigs,
   formatRuleToString,
   validateOperatorAddition,
   validateRuleAddition,
   validateDataIntegrity,
-  validateFinalQuery
+  validateFinalQuery,
+  buildSecureQuery,
+  applyFieldConstraints
 } from '../../utils';
 import {
   FIELD_OPTIONS,
   OPERATOR_OPTIONS,
+  FIRST_FIELD,
+  FIELD_RESTRICTIONS,
+  MESSAGE_WARNING_QUERY,
   operatorButtonStyle,
   boxQueryStyle
 } from '../../constants';
@@ -40,11 +45,17 @@ const FormSearchCriteria = () => {
   const dispatch  = useDispatch()
   const rules     = getRules('formSearchCriteria')
 
-  const [errorMessage, setErrorMessage]     = useState<string | null>(null)
-  const [dialogOpen, setDialogOpen]         = useState<boolean>(false)
-  const [currentQuery, setCurrentQuery]     = useState<string>('')
-  const [isDraggingOver, setIsDraggingOver] = useState(false)
-  const [dragCounter, setDragCounter]       = useState(0)
+  const [warningQuery, setWarningQuery]         = useState<string | null>(`${MESSAGE_WARNING_QUERY}`)
+  const [errorMessage, setErrorMessage]         = useState<string | null>(null)
+  const [dialogOpen, setDialogOpen]             = useState<boolean>(false)
+  const [currentQuery, setCurrentQuery]         = useState<string>('')
+  const [isDraggingOver, setIsDraggingOver]     = useState(false)
+  const [dragCounter, setDragCounter]           = useState(0)
+  const [localPayrollCode, setLocalPayrollCode] = useState<string | null>(null)
+
+  const isPayrollAlreadyAdded = currentQuery
+    .toUpperCase()
+    .includes(`${FIRST_FIELD}`)
 
   const queryClient: QueryClient  = useQueryClient()
   const { getList, message }      = useServiceFixedParams()
@@ -78,9 +89,11 @@ const FormSearchCriteria = () => {
     mode: 'onChange'
   })
 
-  const watchedField    = watch('field');
-  const dynamicOptions  = fieldMap && watchedField ? fieldMap[watchedField.value] : null;
-  const isAutocomplete  = Boolean(dynamicOptions && dynamicOptions.length > 0);
+  const watchedField    = watch('field')
+  const dynamicOptions  = fieldMap && watchedField ? fieldMap[watchedField.value] : null
+  const isAutocomplete  = Boolean(dynamicOptions && dynamicOptions.length > 0)
+
+  const currentFieldRestriction = watchedField?.value ? FIELD_RESTRICTIONS[watchedField.value] : null;
 
   const handleAddRule = (data: RuleForm) => {
     const grammarValidation = validateRuleAddition(currentQuery)
@@ -178,7 +191,7 @@ const FormSearchCriteria = () => {
       handleAddOperator(operator)
     }
 
-    console.log('Operador soltado:', dragCounter)
+    console.log('Drag Counter:', dragCounter)
   }
 
   const sanitizeQuery = (query: string) => {
@@ -199,13 +212,24 @@ const FormSearchCriteria = () => {
       return
     }
 
-    dispatch(setCustomQuery(sanitizedQuery))
+    const { finalQuery, error } = buildSecureQuery(sanitizedQuery)
+
+    if (error) {
+      setErrorMessage(error);
+      toast.error(error);
+      setDialogOpen(false);
+      return;
+    }
+
+    dispatch(setselectedPayrollTypeCode(isPayrollAlreadyAdded ? localPayrollCode : null))
+    dispatch(setCustomQuery(finalQuery))
     dispatch(setIsOpenSearchCriteriaDialog(false))
   }
 
   const handleClearQuery = () => {
     setCurrentQuery('')
     dispatch(setCustomQuery(''))
+    dispatch(setselectedPayrollTypeCode(null))
   }
 
   const handleClose = () => {
@@ -235,6 +259,18 @@ const FormSearchCriteria = () => {
       }
 
       {
+        warningQuery && (
+          <Alert
+            severity="warning"
+            onClose={() => setWarningQuery(null)}
+            sx={{ mb: 2 }}
+          >
+            {warningQuery}
+          </Alert>
+        )
+      }
+
+      {
         isLoading
           ? (<Spinner sx={{ height: '100%' }} />)
           : (
@@ -255,8 +291,11 @@ const FormSearchCriteria = () => {
                             isOptionEqualToValue={(option, value) => option.value === value?.value}
                             onChange={(_, newValue) => {
                               onChange(newValue);
-                              setValue('value', '');
+                              applyFieldConstraints(newValue, setValue)
                             }}
+                            getOptionDisabled={(option) =>
+                              isPayrollAlreadyAdded && option.value === `${FIRST_FIELD}`
+                            }
                             renderInput={(params) => (
                               <TextField {...params} label="Item" error={!!error} helperText={error?.message} />
                             )}
@@ -277,6 +316,12 @@ const FormSearchCriteria = () => {
                             getOptionLabel={(option) => option.label}
                             isOptionEqualToValue={(option, value) => option.value === value?.value}
                             onChange={(_, newValue) => onChange(newValue)}
+                            getOptionDisabled={(option) => {
+                              if (currentFieldRestriction?.allowedOperators) {
+                                return !currentFieldRestriction.allowedOperators.includes(option.value);
+                              }
+                              return false
+                            }}
                             renderInput={(params) => (
                               <TextField {...params} label="Condición" error={!!error} helperText={error?.message} />
                             )}
@@ -297,7 +342,14 @@ const FormSearchCriteria = () => {
                               options={dynamicOptions!}
                               getOptionLabel={(option) => option.label}
                               value={dynamicOptions?.find(element => element.value === value) || null}
-                              onChange={(_, newValue) => onChange(newValue?.value || '')}
+                              onChange={(_, newValue) => {
+                                const val = newValue?.value || ''
+                                onChange(val)
+
+                                if (watchedField?.value === `${FIRST_FIELD}`) {
+                                  setLocalPayrollCode(val)
+                                }
+                              }}
                               renderInput={(params) => (
                                 <TextField {...params} label="Seleccione valor" error={!!error} helperText={error?.message} />
                               )}

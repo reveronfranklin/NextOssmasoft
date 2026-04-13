@@ -6,7 +6,8 @@ export const rhVariacionesMasivasSlice = createSlice({
     isExpandedAccordion: false as boolean,
     listEmployeeCodes: [] as number[],
     isOpenSearchCriteriaDialog: false as boolean,
-    customQuery: null as string | null
+    customQuery: null as string | null,
+    selectedPayrollTypeCode: null as number | null
   },
   reducers: {
     setIsExpandedAccordion:(state, action) => {
@@ -20,13 +21,22 @@ export const rhVariacionesMasivasSlice = createSlice({
     },
     setCustomQuery:(state, action) => {
       state.customQuery = action.payload
+    },
+    setselectedPayrollTypeCode:(state, action) => {
+      state.selectedPayrollTypeCode = action.payload
     }
   }
 })
+
+// Selectores (Getters)
+export const selectEmployeeListIsEmpty = (state: any) => {
+  return state.rhVariacionesMasivas.listEmployeeCodes.length === 0
+}
 
 export const {
   setIsExpandedAccordion,
   setListEmployeeCodes,
   setIsOpenSearchCriteriaDialog,
-  setCustomQuery
+  setCustomQuery,
+  setselectedPayrollTypeCode
 } = rhVariacionesMasivasSlice.actions;

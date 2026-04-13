@@ -1,4 +1,4 @@
-import { AutocompleteOption } from '../interfaces'
+import { AutocompleteOption, FieldRestriction } from '../interfaces'
 
 const FIELD_EXCEPTIONS: Record<string, string> = {
   'Tipo Nomina': 'CODIGO_TIPO_NOMINA',
@@ -32,6 +32,42 @@ export const OPERATOR_OPTIONS: AutocompleteOption[] = [
   { label: 'Mayor que', value: '>' },
   { label: 'Menor que', value: '<' },
   { label: 'Diferente que', value: '<>' }
-] as const;
+] as const
 
-export const LOGIC_OPERATORS = ['AND', 'OR'] as const;
+export const LOGIC_OPERATORS = ['AND', 'OR'] as const
+
+export const MOVEMENT_TYPE_OPTIONS: AutocompleteOption[] = [
+  { value: 'E', label: 'Especial' },
+  { value: 'F', label: 'Fijo' },
+  { value: 'V', label: 'Variable' }
+]
+
+export const FIRST_FIELD = 'CODIGO_TIPO_NOMINA' as const
+export const MESSAGE_WARNING_QUERY = `La consulta debe iniciar obligatoriamente con el campo "CODIGO_TIPO_NOMINA" usando el operador de igualdad ("="). Ejemplo: CODIGO_TIPO_NOMINA = 1` as const
+
+export const FIELD_RESTRICTIONS: Record<string, FieldRestriction> = {
+  CODIGO_TIPO_NOMINA: {
+    forcedOperator: '=',
+    allowedOperators: ['=']
+  },
+  SEXO: {
+    forcedOperator: '=',
+    allowedOperators: ['=', '<>']
+  },
+  CEDULA: {
+    forcedOperator: '=',
+    allowedOperators: ['=', '<>']
+  },
+  DESCRIPCION_CARGO: {
+    forcedOperator: '=',
+    allowedOperators: ['=', '<>']
+  },
+  NACIONALIDAD: {
+    forcedOperator: '=',
+    allowedOperators: ['=', '<>']
+  },
+  ESTADO_CIVIL: {
+    forcedOperator: '=',
+    allowedOperators: ['=', '<>']
+  }
+}

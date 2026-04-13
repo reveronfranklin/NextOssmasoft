@@ -152,8 +152,6 @@ export const validateDataIntegrity = (
   return { isValid: true };
 };
 
-// queryValidator.ts
-
 export const validateFinalQuery = (query: string): { isValid: boolean; error?: string } => {
   const trimmedQuery = query.trim();
 
@@ -201,4 +199,48 @@ export const validateFinalQuery = (query: string): { isValid: boolean; error?: s
   }
 
   return { isValid: true };
+};
+
+export const buildSecureQuery = (query: string): { finalQuery: string; error?: string } => {
+  const sanitized = query.replace(/\s+/g, ' ').trim();
+
+  if (!sanitized) return { finalQuery: '', error: 'La consulta no puede estar vacía.' };
+
+  // 1. Separar la primera regla del resto
+  const firstLogicMatch = sanitized.match(/\s+(AND|OR)\s+/i);
+  let payrollPart = "";
+  let remainderPart = "";
+
+  if (firstLogicMatch && firstLogicMatch.index !== undefined) {
+    payrollPart = sanitized.substring(0, firstLogicMatch.index).trim();
+    remainderPart = sanitized.substring(firstLogicMatch.index).trim();
+  } else {
+    payrollPart = sanitized;
+  }
+
+  // 2. Validar que empiece con la nómina
+  const payrollRegex = /^CODIGO_TIPO_NOMINA\s*=\s*['"]?\w+['"]?/i;
+  if (!payrollRegex.test(payrollPart)) {
+    return {
+      finalQuery: '',
+      error: 'La consulta debe iniciar con "CODIGO_TIPO_NOMINA = [valor]"'
+    };
+  }
+
+  // 3. Blindaje Final
+  if (remainderPart) {
+    // Extraemos el resto sin el AND/OR inicial que puso el usuario
+    const restWithoutOperator = remainderPart.replace(/^(AND|OR)\s+/i, "").trim();
+
+    // Verificamos si ya tiene paréntesis externos para no ensuciar tanto el string
+    const hasParentheses = restWithoutOperator.startsWith('(') && restWithoutOperator.endsWith(')');
+    const finalRemainder = hasParentheses ? restWithoutOperator : `(${restWithoutOperator})`;
+
+    // Retornamos la estructura blindada (Forzamos AND intermedio)
+    return {
+      finalQuery: `(${payrollPart}) AND ${finalRemainder}`
+    };
+  }
+
+  return { finalQuery: `(${payrollPart})` };
 };

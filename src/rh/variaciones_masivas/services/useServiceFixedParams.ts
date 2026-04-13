@@ -17,7 +17,7 @@ const useServiceFixedParams = () => {
     const getList = useCallback(async (): Promise<any> => {
         try {
             setLoading(true)
-            const response = await ossmmasofApiVertical.post<ApiResponse<FixedParams>>(ApiPaths.GET_FIXED_PARAMS )
+            const response = await ossmmasofApiVertical.post<ApiResponse<FixedParams>>(ApiPaths.GET_FIXED_PARAMS)
 
             return handleApiResponse<FixedParams>(response.data, undefined, setMessage, setError)
         } catch (e: any) {

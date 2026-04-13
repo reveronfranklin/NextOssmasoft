@@ -6,9 +6,9 @@ export interface RuleForm {
   value: any;
 }
 
-export interface CreateRhMovNominaCommand {
+export interface VariationMovementForm {
     codigoTipoNomina: number | null;
-    codigoPersona: number;
+    listCodigoPersona: number[] | null;
     codigoConcepto: number | null;
     complementoConcepto: string | null;
     codigoEmpresa: number;

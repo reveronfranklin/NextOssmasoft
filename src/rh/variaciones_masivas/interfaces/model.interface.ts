@@ -40,9 +40,45 @@ export interface Employee {
     rif:                     string;
 }
 
+export interface Concept {
+    codigoConcepto:        number;
+    codigo:                string;
+    codigoTipoNomina:      number;
+    tipoNominaDescripcion: string;
+    denominacion:          string;
+    descripcion:           string;
+    tipoConcepto:          string;
+    moduloId:              number;
+    moduloDescripcion:     string;
+    codigoPuc:             number;
+    codigoPucConcat:       string;
+    status:                string;
+    frecuenciaId:          number;
+    frecuenciaDescripcion: string;
+    dedusible:             number;
+    automatico:            number;
+    idModeloCalculo:       number;
+    extra1:                string;
+}
+
+export interface Frequency {
+    id:          number;
+    descripcion: string;
+}
+
+export interface TypePayroll {
+    codigoTipoNomina: number;
+    descripcion:      string;
+    siglasTipoNomina: string;
+    frecuenciaPagoId: number;
+    frecuenciaPago:   string;
+    sueldoMinimo:     number;
+}
+
 export interface AutocompleteOption {
     label: string;
     value: string;
+    id?: string;
     type?: string;
     sendAs?: string | null;
 }

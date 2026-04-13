@@ -68,18 +68,27 @@ const DataGridComponent = () => {
     const handleButtonRightTwo = () => {
         if (!filters.p_where || filters.p_where === '' || filters.p_where === '1=1') {
             console.log('Filtros vacíos: Limpiando tabla...')
-            queryClient.removeQueries({ queryKey: ['employeesTable'] });
+            queryClient.removeQueries({ queryKey: ['employeesTable'] })
 
-            return;
+            return
         }
 
-        console.log('Ejecutando búsqueda con:', filters.p_where)
         refetch()
+    }
+
+    const handleOpenDetails = (row: any) => {
+        console.log('Abriendo detalles para:', row)
     }
 
     useEffect(() => {
         dispatch(setListEmployeeCodes(selectionModel as number[]))
     }, [selectionModel])
+
+    useEffect(() => {
+        queryClient.removeQueries({ queryKey: ['employeesTable'] })
+        setPage(0)
+        setSelectionModel([])
+    }, [customQuery, queryClient])
 
     return (
         <>
@@ -103,6 +112,7 @@ const DataGridComponent = () => {
                             sortingMode='server'
                             paginationMode='server'
                             rowsPerPageOptions={[5, 10, 50]}
+                            onRowDoubleClick={(params) => handleOpenDetails(params.row)}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
                             components={{ Toolbar: ServerSideToolbarWithAddButton }}
