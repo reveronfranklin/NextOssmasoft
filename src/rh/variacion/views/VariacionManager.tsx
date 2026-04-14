@@ -82,18 +82,9 @@ const VariacionList = () => {
   }
 
   const formatBs = (value: any) => {
-    if (!value) return "0,00 Bs."
+    if (!value || value == 0) return "0,00 Bs."
 
-    const n = typeof value === 'string'
-      ? parseFloat(value.replace(',', '.'))
-      : value
-
-    if (isNaN(n)) return "0,00 Bs."
-
-    return new Intl.NumberFormat('es-VE', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(n) + " Bs."
+    return `${ value } Bs.`
   }
 
   const getConceptos = async () => {
