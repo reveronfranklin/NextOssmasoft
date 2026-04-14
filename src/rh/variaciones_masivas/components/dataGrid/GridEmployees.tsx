@@ -8,8 +8,15 @@ import ServerSideToolbarWithAddButton from 'src/views/table/data-grid/ServerSide
 import useColumnsGridEmployees from './headers/ColumnsGridEmployees';
 import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import { useServices } from '../../services';
-import { FilterEmployee } from '../../interfaces';
-import { setIsExpandedAccordion, setListEmployeeCodes, setIsOpenSearchCriteriaDialog } from 'src/store/apps/rh-variaciones_masivas';
+import { Employee, FilterEmployee } from '../../interfaces';
+import {
+    setIsExpandedAccordion,
+    setListEmployeeCodes,
+    setIsOpenSearchCriteriaDialog,
+    setIsOpenManageEmployeeVariationDialog,
+    setSelectedEmployee
+} from 'src/store/apps/rh-variaciones_masivas';
+import { setPersonaSeleccionado } from 'src/store/apps/rh';
 import { RootState } from 'src/store';
 
 const StyledDataGridContainer = styled(Box)(() => ({
@@ -75,8 +82,10 @@ const DataGridComponent = () => {
         refetch()
     }
 
-    const handleOpenDetails = (row: any) => {
-        console.log('Abriendo detalles para:', row)
+    const handleOpenManageEmployeeVariation = (row: Employee) => {
+        dispatch(setSelectedEmployee(row))
+        dispatch(setPersonaSeleccionado(row))
+        dispatch(setIsOpenManageEmployeeVariationDialog(true))
     }
 
     useEffect(() => {
@@ -111,7 +120,7 @@ const DataGridComponent = () => {
                             sortingMode='server'
                             paginationMode='server'
                             rowsPerPageOptions={[5, 10, 50]}
-                            onRowDoubleClick={(params) => handleOpenDetails(params.row)}
+                            onRowDoubleClick={(params) => handleOpenManageEmployeeVariation(params.row)}
                             onPageSizeChange={handleSizeChange}
                             onPageChange={handlePageChange}
                             components={{ Toolbar: ServerSideToolbarWithAddButton }}

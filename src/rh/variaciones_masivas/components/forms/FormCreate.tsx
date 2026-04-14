@@ -18,7 +18,7 @@ import AlertMessage from 'src/views/components/alerts/AlertMessage';
 import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
 import getRules from './rules';
 import { RootState } from 'src/store';
-import { setErrorDynamic } from 'src/utilities/forms/formUtils';
+import { validateFields } from 'src/utilities/forms/formUtils';
 import { useServices } from '../../services';
 import { MOVEMENT_TYPE_OPTIONS } from '../../constants/options';
 import { selectEmployeeListIsEmpty } from 'src/store/apps/rh-variaciones_masivas';
@@ -170,23 +170,7 @@ const FormCreate = () => {
       }
     ]
 
-    const firstError = fields.find(field => {
-      if (field.isMonto) {
-        const amount = Number(field.value)
-
-        return field.value === '' || isNaN(amount) || amount === 0
-      }
-
-      return !field.value
-    })
-
-    if (firstError) {
-      setErrorDynamic(setError, firstError.name, firstError.message)
-
-      return false
-    }
-
-    return true
+    return validateFields(fields, setError)
   }
 
   const handleOpenDialog = () => {

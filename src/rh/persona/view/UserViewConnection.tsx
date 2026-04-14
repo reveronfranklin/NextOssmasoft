@@ -1,11 +1,8 @@
-import Grid from '@mui/material/Grid'
 import { useEffect } from 'react'
-import { Box, Typography, Card } from '@mui/material';
+import { Box, Typography, Card, CardContent, CardHeader, Divider, Grid } from '@mui/material';
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import toast from 'react-hot-toast'
-import CardContent from '@mui/material/CardContent'
-import { CardHeader, Divider } from '@mui/material'
 import VariacionManager from 'src/rh/variacion/views/VariacionManager'
 
 
@@ -44,7 +41,7 @@ const UserViewConnection = () => {
 
       <Grid item xs={12}>
         <Card>
-          <CardHeader title='Variación' />
+          <CardHeader title={ 'Gestionar Variaciones' } />
           <Divider sx={{ m: '0 !important' }} />
           <CardContent>
             <Grid item xs={12}>

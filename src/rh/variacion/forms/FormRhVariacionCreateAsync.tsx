@@ -5,10 +5,11 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import CircularProgress from '@mui/material/CircularProgress'
 import toast from 'react-hot-toast'
-import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic';
+import DialogConfirmation from 'src/views/components/dialogs/DialogConfirmationDynamic'
+import { CleaningServices } from '@mui/icons-material'
 import { styled } from '@mui/material/styles'
 import { NumericFormat } from 'react-number-format'
-import { useForm, Controller, Path } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { useDispatch } from 'react-redux'
@@ -18,6 +19,7 @@ import { Autocomplete, Box} from '@mui/material'
 import { setVerRhPersonaMovCtrActive, setIsExpandedAccordion } from 'src/store/apps/rh-persona-mov-ctrl'
 import { setConceptoSeleccionado, setFrecuenciaSeleccionada } from 'src/store/apps/rh'
 import { CreateRhMovNominaCommand } from '../interfaces'
+import { validateFields } from 'src/utilities/forms/formUtils'
 
 type FormInputs = CreateRhMovNominaCommand
 
@@ -121,7 +123,6 @@ const FormRhVariacionCreateAsync = () => {
     clearErrors,
     trigger,
     reset,
-    getFieldState,
     watch,
     formState: { errors, isValid }
   } = useForm<FormInputs>({
@@ -153,29 +154,12 @@ const FormRhVariacionCreateAsync = () => {
     }, 1000)
   }, [defaultValues.codigoPersona])
 
-  const stateMonto = getFieldState('monto')
-
   const watchCodigoConcepto   = watch('codigoConcepto')
   const watchFrecuenciaId     = watch('frecuenciaId')
   const watchTipo             = watch('tipo')
   const watchCodigoTipoNomina = watch('codigoTipoNomina')
-  const complementoValue      = watch('complementoConcepto', '') || '';
-
-  const setErrorDynamic = (field: Path<FormInputs>) => {
-    setError(field, {
-      type: 'manual',
-      message: `El ${field} es requerido, ingrese un monto válido.`
-    }, { shouldFocus: true })
-  }
-
-  useEffect(() => {
-    if (!monto) {
-      setErrorDynamic('monto')
-    } else {
-      clearErrors('monto')
-      trigger('monto')
-    }
-  }, [monto, setError, clearErrors, trigger])
+  const complementoValue      = watch('complementoConcepto', '') || ''
+  const watchMonto            = watch('monto')
 
   const handleOnChangeAmount = (amount: string) => {
     const amountToPay = parseFloat(amount) || 0
@@ -218,29 +202,43 @@ const FormRhVariacionCreateAsync = () => {
     setConcepto(null)
     setTipoMovimiento(null)
     setMonto(0)
-    reset(defaultValues)
+
     setValue('codigoPersona', personaSeleccionado.codigoPersona)
+    setValue('codigoTipoNomina', personaSeleccionado.codigoTipoNomina)
     setValue('codigoConcepto', null)
     setValue('frecuenciaId', null)
     setValue('tipo', '')
-    setValue('codigoTipoNomina', personaSeleccionado.codigoTipoNomina)
+
     setErrorMessage('')
+    reset(defaultValues)
+  }
+
+  const checkFormIsValid = () => {
+    const fields: { name: keyof CreateRhMovNominaCommand; value: any; message?: string; isMonto?: boolean }[] = [
+      { name: 'codigoTipoNomina', value: watchCodigoTipoNomina || personaSeleccionado.codigoTipoNomina },
+      { name: 'codigoConcepto', value: watchCodigoConcepto },
+      { name: 'tipo', value: watchTipo },
+      { name: 'frecuenciaId', value: watchFrecuenciaId },
+      {
+        name: 'monto',
+        value: watchMonto,
+        isMonto: true,
+        message: 'Monto es requerido, acepta números negativos, pero no se permite 0'
+      }
+    ]
+
+    return validateFields(fields, setError)
   }
 
   const handleOpenDialog = () => {
-    if (stateMonto.invalid) {
-      setErrorDynamic('monto')
-    } else if (!watchCodigoConcepto) {
-      setErrorDynamic('codigoConcepto')
-    } else if (!watchFrecuenciaId) {
-      setErrorDynamic('frecuenciaId')
-    } else if (!watchTipo) {
-      setErrorDynamic('tipo')
-    } else if (!watchCodigoTipoNomina) {
-      setErrorDynamic('codigoTipoNomina')
-    } else {
-      clearErrors()
+    const formIsValid = checkFormIsValid()
+
+    if (formIsValid) {
       setDialogOpen(true)
+      clearErrors()
+      setErrorMessage('')
+    } else {
+      trigger()
     }
   }
 
@@ -322,12 +320,11 @@ const FormRhVariacionCreateAsync = () => {
                         name='codigoPersona'
                         control={control}
                         rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field: { value } }) => (
                           <TextField
                             size="small"
                             value={value || 0}
                             label='Id'
-                            onChange={onChange}
                             placeholder='0'
                             error={Boolean(errors.codigoPersona)}
                             aria-describedby='validation-async-codigoPersona'
@@ -353,14 +350,20 @@ const FormRhVariacionCreateAsync = () => {
                       getOptionDisabled={(option) => checkNominaDeshabilitada(option)}
                       getOptionLabel={(option) => option.siglasTipoNomina + ' - ' + option.descripcion + ' - ' + option.frecuenciaPago || ""}
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
-                      onChange={handlerTipoNomina}
+                      onChange={(_, newValue) => {
+                        handlerTipoNomina(_, newValue)
+
+                        if (newValue) {
+                          clearErrors('codigoTipoNomina')
+                        }
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
                           label='Tipos de nomina'
                           required
-                          error={Boolean(errors.tipo)}
-                          helperText={errors.tipo && "Tipo de nomina requerido"}
+                          error={Boolean(errors.codigoTipoNomina)}
+                          helperText={errors.codigoTipoNomina && "Tipo de nomina requerido"}
                         />
                       )}
                     />
@@ -375,7 +378,13 @@ const FormRhVariacionCreateAsync = () => {
                       value={concepto || null}
                       isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
                       getOptionLabel={option => option.codigo + '-' + option.codigoTipoNomina + '-' + option.denominacion}
-                      onChange={handlerConceptos}
+                      onChange={(_, newValue) => {
+                        handlerConceptos(_, newValue)
+
+                        if (newValue) {
+                          clearErrors('codigoConcepto')
+                        }
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -397,7 +406,13 @@ const FormRhVariacionCreateAsync = () => {
                       value={tipoMovimiento || null}
                       getOptionLabel={(option) => option.label || ""}
                       isOptionEqualToValue={(option, value) => option.value === value.value}
-                      onChange={handlerTipoMovimiento}
+                      onChange={(_, newValue) => {
+                        handlerTipoMovimiento(_, newValue)
+
+                        if (newValue) {
+                          clearErrors('tipo')
+                        }
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -419,7 +434,13 @@ const FormRhVariacionCreateAsync = () => {
                       value={frecuencia || null}
                       getOptionLabel={option => option.id + '-' + option.descripcion || ""}
                       isOptionEqualToValue={(option, value) => option.id === value.id}
-                      onChange={handlerFrecuencias}
+                      onChange={(_, newValue) => {
+                        handlerFrecuencias(_, newValue)
+
+                        if (newValue) {
+                          clearErrors('frecuenciaId')
+                        }
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -451,6 +472,10 @@ const FormRhVariacionCreateAsync = () => {
                       onValueChange={(values: any) => {
                         const { value } = values
                         handleOnChangeAmount(value)
+
+                        if (value) {
+                          clearErrors('monto')
+                        }
                       }}
                       placeholder='Monto'
                       inputProps={{
@@ -503,11 +528,10 @@ const FormRhVariacionCreateAsync = () => {
                     content="¿Desea continuar con la creación del registro?"
                   />
 
-                  <Grid item xs={12}>
+                  <Grid item xs={12} sx={{ m: 1 }}>
                     <Button
                       size='small'
                       variant='contained'
-                      sx={{ pb: 0 }}
                       disabled={!isValid}
                       onClick={async () => {
                         const isValid = await trigger()
@@ -528,6 +552,14 @@ const FormRhVariacionCreateAsync = () => {
                         />
                       ) : null}
                       Guardar
+                    </Button>
+                    <Button
+                      color='primary'
+                      size='small'
+                      onClick={clearForm}
+                      disabled={loading}
+                    >
+                      <CleaningServices /> Limpiar
                     </Button>
                   </Grid>
                 </Grid>

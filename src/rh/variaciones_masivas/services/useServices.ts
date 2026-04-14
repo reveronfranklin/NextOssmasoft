@@ -36,7 +36,7 @@ const useServices = () => {
     const store = useCallback(async (payload: VariationMovementForm): Promise<any> => {
         try {
             setLoading(true)
-            const response  = await ossmmasofApiVertical.post<ApiResponse<VariationMovementForm>>(ApiPaths.STORE_LOTE_VARIACION, payload)
+            const response  = await ossmmasofApiVertical.post<ApiResponse<VariationMovementForm>>(ApiPaths.STORE_LOTE_VARIATION, payload)
             const message   = 'Variaciones procesadas exitosamente'
 
             return handleApiResponse<any>(response.data, message, setMessage, setError)
