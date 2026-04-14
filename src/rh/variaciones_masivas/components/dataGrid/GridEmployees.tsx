@@ -37,7 +37,7 @@ const DataGridComponent = () => {
     const { getList, message }      = useServices()
     const columns                   = useColumnsGridEmployees()
 
-    const timeInMemory = 1000 * 60 * 30
+    const timeInMemory = 1000 * 60 * 60
 
     const filters: FilterEmployee = {
         p_where: customQuery
