@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+import { Employee } from 'src/rh/variaciones_masivas/interfaces';
 
 export const rhVariacionesMasivasSlice = createSlice({
   name: 'rhVariacionesMasivas',
@@ -7,7 +8,9 @@ export const rhVariacionesMasivasSlice = createSlice({
     listEmployeeCodes: [] as number[],
     isOpenSearchCriteriaDialog: false as boolean,
     customQuery: null as string | null,
-    selectedPayrollTypeCode: null as number | null
+    selectedPayrollTypeCode: null as number | null,
+    isOpenManageEmployeeVariationDialog: false as boolean,
+    selectedEmployee: {} as Employee
   },
   reducers: {
     setIsExpandedAccordion:(state, action) => {
@@ -24,6 +27,12 @@ export const rhVariacionesMasivasSlice = createSlice({
     },
     setselectedPayrollTypeCode:(state, action) => {
       state.selectedPayrollTypeCode = action.payload
+    },
+    setIsOpenManageEmployeeVariationDialog:(state, action) => {
+      state.isOpenManageEmployeeVariationDialog = action.payload
+    },
+    setSelectedEmployee: (state, action) => {
+      state.selectedEmployee = action.payload
     }
   }
 })
@@ -38,5 +47,7 @@ export const {
   setListEmployeeCodes,
   setIsOpenSearchCriteriaDialog,
   setCustomQuery,
-  setselectedPayrollTypeCode
+  setselectedPayrollTypeCode,
+  setIsOpenManageEmployeeVariationDialog,
+  setSelectedEmployee
 } = rhVariacionesMasivasSlice.actions;

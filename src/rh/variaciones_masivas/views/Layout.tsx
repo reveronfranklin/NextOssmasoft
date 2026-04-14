@@ -3,6 +3,7 @@ import DataGridComponent from '../components/dataGrid/GridEmployees';
 import LayoutAccordionComponent from './LayoutAccordion';
 import Icon from 'src/@core/components/icon';
 import SearchCriteriaDialog from '../components/dialogs/SearchCriteriaDialog';
+import ManageEmployeeVariationDialog from '../components/dialogs/ManageEmployeeVariationDialog';
 
 const LayoutComponent = () => {
   const dateToday = new Date().toLocaleDateString('es-ES', {
@@ -40,6 +41,7 @@ const LayoutComponent = () => {
         </CardContent>
       </Card>
       <SearchCriteriaDialog />
+      <ManageEmployeeVariationDialog />
     </>
 	)
 }
