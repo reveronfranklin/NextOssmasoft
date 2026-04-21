@@ -27,13 +27,44 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+
+# copias locales de env (sensibles)
+Copia de .env*
 .yarn/
 *.zip
-.gitignore
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-/public/
+
+# Public (por defecto NO se publica contenido)
+/public/*
+
+# Permitir solo lo necesario para el POC y traducciones
+!/public/manuals/
+!/public/manuals/**
+!/public/locales/
+!/public/locales/**
+
+# Permitir iconos (si la app los requiere). Ajusta si quieres bloquearlos también.
+!/public/images/
+/public/images/*
+!/public/images/icons/
+!/public/images/icons/**
+
+# Datos/fotos y archivos internos: siempre ignorados
+/public/images/avatars/
+/public/images/Fotos/
+/public/BmFiles/
+/public/ExcelFiles/
+/public/RhFiles/
+
+# Modelos (muy grandes) - se descargan vía scripts
+/public/models/*
+!/public/models/README.md
+
+# Basura de sistema (repetido al final porque arriba hay reglas de "unignore")
+**/.DS_Store
+**/Thumbs.db
 

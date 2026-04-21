@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "lint:assistant",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"eslint",
+				"src/components/AssistantChatFab.tsx",
+				"src/context/LLMWorkerProvider.tsx",
+				"src/workers/llm-worker.js",
+				"src/workers/llm-worker-wasm.js",
+				"--fix"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "lint:assistant",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"eslint",
+				"src/components/AssistantChatFab.tsx",
+				"src/context/LLMWorkerProvider.tsx",
+				"--max-warnings=0"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

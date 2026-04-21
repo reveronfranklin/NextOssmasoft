@@ -39,6 +39,8 @@ import WindowWrapper from 'src/@core/components/window-wrapper'
 
 // ** Spinner Import
 import Spinner from 'src/@core/components/spinner'
+import { LLMWorkerProvider } from '../context/LLMWorkerProvider'
+import AssistantChatFab from '../components/AssistantChatFab'
 
 // ** Contexts
 import { AuthProvider } from 'src/context/AuthContext'
@@ -131,38 +133,41 @@ const App = (props: ExtendedAppProps) => {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <CacheProvider value={emotionCache}>
-          <Head>
-            <title>{`Ossmmasoft`}</title>
-            <meta
-              name='description'
-              content={`Ossmmasoft`}
-            />
-            <meta name='keywords' content='Ossmmasoft' />
-            <meta name='viewport' content='initial-scale=1, width=device-width' />
-          </Head>
+          <LLMWorkerProvider>
+            <Head>
+              <title>{`Ossmmasoft`}</title>
+              <meta
+                name='description'
+                content={`Ossmmasoft`}
+              />
+              <meta name='keywords' content='Ossmmasoft' />
+              <meta name='viewport' content='initial-scale=1, width=device-width' />
+            </Head>
 
-          <AuthProvider>
-            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-              <SettingsConsumer>
-                {({ settings }) => {
-                  return (
-                    <ThemeComponent settings={settings}>
-                      <WindowWrapper>
-                        <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                          <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                            {getLayout(<Component {...pageProps} />)}
-                          </AclGuard>
-                        </Guard>
-                      </WindowWrapper>
-                      <ReactHotToast>
-                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                      </ReactHotToast>
-                    </ThemeComponent>
-                  )
-                }}
-              </SettingsConsumer>
-            </SettingsProvider>
-          </AuthProvider>
+            <AuthProvider>
+              <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+                <SettingsConsumer>
+                  {({ settings }) => {
+                    return (
+                      <ThemeComponent settings={settings}>
+                        <WindowWrapper>
+                          <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                            <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                              {getLayout(<Component {...pageProps} />)}
+                            </AclGuard>
+                          </Guard>
+                        </WindowWrapper>
+                        <ReactHotToast>
+                          <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                        </ReactHotToast>
+                        <AssistantChatFab />
+                      </ThemeComponent>
+                    )
+                  }}
+                </SettingsConsumer>
+              </SettingsProvider>
+            </AuthProvider>
+          </LLMWorkerProvider>
         </CacheProvider>
       </Provider>
 

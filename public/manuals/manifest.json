@@ -1,0 +1,17 @@
+{
+  "version": "2026-03-18-1",
+  "manuals": [
+    {
+      "url": "/manuals/manual-usuario.md",
+      "title": "Manual de Usuario"
+    },
+    {
+      "url": "/manuals/manual-tecnico.md",
+      "title": "Manual Técnico"
+    },
+    {
+      "url": "/manuals/solicitud-compromiso.md",
+      "title": "Manual: Registro de Solicitud de Compromiso"
+    }
+  ]
+}
