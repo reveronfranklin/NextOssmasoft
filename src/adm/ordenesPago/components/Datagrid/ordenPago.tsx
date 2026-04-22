@@ -36,7 +36,6 @@ const DataGridComponent = () => {
         presupuestoSeleccionado,
         deleteOrden,
         message,
-        clearMessage
     } = useServices()
 
     const { retornarOrdenPago, message: gestionMessage, clearGestionMessage } = useGestionOrdenPago()
