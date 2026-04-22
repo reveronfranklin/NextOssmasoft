@@ -56,10 +56,27 @@ const useGestionOrdenPago = () => {
     }
   }, [dispatch])
 
+  const retornarOrdenPago = useCallback(async (filters: IGestionOrdenPago, onSuccess?: () => void): Promise<IApiResponse<IGestionOrdenPago>> => {
+    try {
+      setLoading(true)
+      const responseFetch = await ossmmasofApi.post<IResponseBase<IGestionOrdenPago>>(UrlServices.RETORNARPENDIENTE, filters)
+      const responseHandleApi = handleApiResponse<IGestionOrdenPago>(responseFetch.data, 'Documento retornado a Pendiente', setMessage, setError)
+
+      if (onSuccess) onSuccess()
+
+      return responseHandleApi
+    } catch (e: any) {
+      return handleApiError(e, setMessage, setError)
+    } finally {
+      setLoading(false)
+    }
+  }, [dispatch])
+
   return {
     message, loading, error,
     anularOrdenPago,
-    aprobarOrdenPago
+    aprobarOrdenPago,
+    retornarOrdenPago
   }
 }
 

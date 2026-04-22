@@ -28,7 +28,7 @@ interface GestionConfig {
 }
 
 const FormUpdateOrdenPago = () => {
-    const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
+    const [gestionConfig, setGestionConfig] = useState<GestionConfig[]>([])
     const [showMessage, setShowMessage] = useState(false)
     const [currentMessage, setCurrentMessage] = useState<IAlertMessageDto>()
 
@@ -45,7 +45,7 @@ const FormUpdateOrdenPago = () => {
     console.log(data) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
     const { getRetenciones } = useServicesRetenciones()
-    const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago } = useGestionOrdenPago()
+    const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago, retornarOrdenPago } = useGestionOrdenPago()
     const { message: serviceMessage, updateOrden, loading} = useServices()
 
     const { compromisoSeleccionadoListaDetalle, codigoIdentificador } = useSelector((state: RootState) => state.admOrdenPago)
@@ -110,19 +110,50 @@ const FormUpdateOrdenPago = () => {
 
         setShowMessage(false)
 
+        const handleAction = (actionFn: typeof aprobarOrdenPago) => {
+            return () => actionFn(filter, () => {
+                qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] });
+                qc.invalidateQueries({ queryKey: ['retencionesTable'] });
+
+                setTimeout(() => {
+                    dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+                }, 5000)
+            })
+        }
+
+        if (status === 'AP') {
+            const configs = [
+                {
+                    action: anularOrdenPago,
+                    message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
+                    nameButton: 'Anular',
+                    newStatus: 'AN',
+                    showButton: true,
+                },
+                {
+                    action: retornarOrdenPago,
+                    message: `¿Está usted seguro de RETORNAR la orden (${codigoOrdenPago}) a Pendiente?`,
+                    nameButton: 'Retornar',
+                    newStatus: 'PE',
+                    showButton: true,
+                }
+            ]
+
+            return configs.map(cfg => ({
+                handle: handleAction(cfg.action),
+                message: cfg.message,
+                nameButton: cfg.nameButton,
+                status: cfg.newStatus,
+                showButton: cfg.showButton
+            }))
+        }
+
         const actionConfigs: any = {
             PE: {
                 action: aprobarOrdenPago,
                 message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
                 nameButton: 'Aprobar',
                 newStatus: 'AP',
-                showButton: true,
-            },
-            AP: {
-                action: anularOrdenPago,
-                message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
-                nameButton: 'Anular',
-                newStatus: 'AN',
                 showButton: true,
             }
         }
@@ -135,24 +166,13 @@ const FormUpdateOrdenPago = () => {
             showButton: false
         }
 
-        const handleAction = (actionFn: typeof aprobarOrdenPago) => {
-            return () => actionFn(filter, () => {
-                qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] });
-                qc.invalidateQueries({ queryKey: ['retencionesTable'] });
-
-                setTimeout(() => {
-                    dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                }, 5000)
-            })
-        }
-
-        return {
+        return [{
             handle: handleAction(config.action),
             message: config.message,
             nameButton: config.nameButton,
             status: config.newStatus,
             showButton: config.showButton !== false
-        }
+        }]
     }
 
     useEffect(() => {

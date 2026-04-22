@@ -81,9 +81,19 @@ const AlertMessage = ({
     backdropFilter: 'blur(4px)',
     backgroundColor: alpha(theme.palette.background.paper, 0.9),
     width: '100%',
+
+    '& .MuiAlert-icon': {
+      color: theme.palette[severity || 'info'].main,
+    },
+
     '& .MuiAlert-message': {
       width: '100%',
-      fontWeight: 500
+      fontWeight: 600,
+      color: theme.palette[severity || 'info'].main,
+    },
+
+    '& .MuiAlert-action': {
+      color: theme.palette[severity || 'info'].main,
     }
   });
 

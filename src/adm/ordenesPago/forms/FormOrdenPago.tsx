@@ -24,7 +24,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Para aprobar
 import BlockIcon from '@mui/icons-material/Block'; // Para anular
 import SettingsIcon from '@mui/icons-material/Settings'
 import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
+import UndoIcon from '@mui/icons-material/Undo'
 
+import AlertMessage from 'src/views/components/alerts/AlertMessage'
 import MensajeCompromiso from './mensajeCompromiso'
 
 export interface FormInputs {
@@ -225,6 +227,7 @@ const FormOrdenPago = (props: {
         switch (actionName?.toLowerCase()) {
             case 'aprobar': return <CheckCircleIcon />
             case 'anular': return <BlockIcon />
+            case 'retornar': return <UndoIcon />
             default: return <SettingsIcon />
         }
     }
@@ -550,24 +553,32 @@ const FormOrdenPago = (props: {
                                 VER PDF
                             </Button>
                         )}
-                        { handleGestionOrdenPago?.showButton && (
-                            <span>
-                                <ButtonWithConfirm
-                                    color="primary"
-                                    onAction={() => handleGestionOrdenPago?.handle()}
-                                    confirmMessage={handleGestionOrdenPago?.message}
-                                    showLoading={true}
-                                    disableBackdropClick={true}
-                                    startIcon={getActionIcon(handleGestionOrdenPago?.nameButton)}
-                                    sx={{ minWidth: '120px' }}
-                                >
-                                    {handleGestionOrdenPago?.nameButton}
-                                </ButtonWithConfirm>
-                            </span>
-                        )}
+                        {handleGestionOrdenPago.map((cfg: any, idx: number) => (
+                            cfg.showButton && (
+                                <span key={idx} style={{ marginLeft: 8 }}>
+                                    <ButtonWithConfirm
+                                        color="primary"
+                                        onAction={() => cfg.handle()}
+                                        confirmMessage={cfg.message}
+                                        showLoading={true}
+                                        disableBackdropClick={true}
+                                        startIcon={getActionIcon(cfg.nameButton)}
+                                        sx={{ minWidth: '120px' }}
+                                    >
+                                        {cfg.nameButton}
+                                    </ButtonWithConfirm>
+                                </span>
+                            )
+                        ))}
                     </Box>
                 </form> : <MensajeCompromiso />
-            }
+                }
+            <AlertMessage
+                message={props.message?.text ?? ''}
+                severity={props.message?.severity || 'info'}
+                duration={10000}
+                show={!!props.message?.text}
+            />
         </Box>
     )
 }
