@@ -22,6 +22,15 @@ const useGestionOrdenPago = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const dispatch = useDispatch()
 
+  const clearGestionMessage = useCallback(() => {
+    setMessage({
+      text: '',
+      timestamp: Date.now(),
+      isValid: true,
+    });
+    setError('');
+  }, []);
+
   const aprobarOrdenPago = useCallback(async (filters: IGestionOrdenPago, onSuccess?: () => void): Promise<IApiResponse<IGestionOrdenPago>> => {
     try {
       setLoading(true)
@@ -76,7 +85,8 @@ const useGestionOrdenPago = () => {
     message, loading, error,
     anularOrdenPago,
     aprobarOrdenPago,
-    retornarOrdenPago
+    retornarOrdenPago,
+    clearGestionMessage
   }
 }
 

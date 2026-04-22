@@ -35,15 +35,17 @@ const DataGridComponent = () => {
         getOrdenesPagoByPresupuesto,
         presupuestoSeleccionado,
         deleteOrden,
-        message
+        message,
+        clearMessage
     } = useServices()
 
-    const { retornarOrdenPago, message: gestionMessage } = useGestionOrdenPago()
+    const { retornarOrdenPago, message: gestionMessage, clearGestionMessage } = useGestionOrdenPago()
 
     const actions = {
         deleteOrden,
         presupuestoSeleccionado,
         retornarOrdenPago,
+        clearGestionMessage
     }
 
     const filter: any = {
@@ -142,11 +144,12 @@ const DataGridComponent = () => {
                             }}
                         />
                         <AlertMessage
-                            key={message?.text || gestionMessage?.text || 'empty'}
+                            key={gestionMessage?.timestamp || message?.timestamp || 'empty'}
                             message={message?.text || gestionMessage?.text  || ''}
                             severity={message?.severity ?? gestionMessage?.severity ?? 'error'}
-                            duration={4000}
+                            duration={3000}
                             show={!!(message?.text || gestionMessage?.text)}
+                            onClose={clearGestionMessage}
                         />
                     </StyledDataGridContainer>
                 )
