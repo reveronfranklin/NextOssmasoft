@@ -41,6 +41,15 @@ const useServices = () => {
 
     const queryClient: QueryClient = useQueryClient()
 
+    const clearMessage = useCallback(() => {
+        setMessage({
+            text: '',
+            timestamp: Date.now(),
+            isValid: true,
+        });
+        setError('');
+    }, []);
+
     const getCompromisoByPresupuesto = useCallback(async (filters: FiltersGetOrdenes): Promise<ResponseGetOrdenes | null> => {
         try {
             setLoading(true)
@@ -255,7 +264,8 @@ const useServices = () => {
         fetchDescriptivaById,
         getCompromisoByOrden,
         getListPucByOrdenPago,
-        fetchUpdatePucByOrdenPago
+        fetchUpdatePucByOrdenPago,
+        clearMessage
     }
 }
 
