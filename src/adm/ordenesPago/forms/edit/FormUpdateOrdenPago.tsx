@@ -213,7 +213,7 @@ const FormUpdateOrdenPago = () => {
                         orden={compromisoSeleccionadoListaDetalle}
                         onFormData={handleUpdateOrden}
                         onFormClear={handleClearCompromiso}
-                        handleGestionOrdenPago={gestionConfig || {}}
+                        handleGestionOrdenPago={gestionConfig}
                         onViewerPdf={() => dispatch(setIsOpenViewerPdf(true))}
                         titleButton={'Actualizar'}
                         message={currentMessage}
