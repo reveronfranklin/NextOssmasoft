@@ -553,7 +553,7 @@ const FormOrdenPago = (props: {
                                 VER PDF
                             </Button>
                         )}
-                        {handleGestionOrdenPago.map((cfg: any, idx: number) => (
+                        {(Array.isArray(handleGestionOrdenPago) ? handleGestionOrdenPago : []).map((cfg: any, idx: number) => (
                             cfg.showButton && (
                                 <span key={idx} style={{ marginLeft: 8 }}>
                                     <ButtonWithConfirm
