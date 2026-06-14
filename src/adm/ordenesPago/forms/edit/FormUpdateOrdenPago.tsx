@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { RootState } from "src/store"
-import { useSelector } from "react-redux"
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { RootState } from 'src/store'
+import { useSelector } from 'react-redux'
 import { IUpdateOrdenPago } from '../../interfaces/updateOrdenPago.interfaces'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import {
-    setIsOpenDialogOrdenPagoDetalle,
-    setCompromisoSeleccionadoDetalle,
-    setIsOpenViewerPdf
-} from "src/store/apps/ordenPago"
+  setIsOpenDialogOrdenPagoDetalle,
+  setCompromisoSeleccionadoDetalle,
+  setIsOpenViewerPdf
+} from 'src/store/apps/ordenPago'
 import TabsComponent from '../../../shared/components/Tabs'
 import { tabs } from '../../config/tabsOrdenPago'
 import FormOrdenPago from '../../forms/FormOrdenPago'
@@ -20,201 +20,210 @@ import { IAlertMessageDto } from 'src/interfaces/alert-message-dto'
 import TwoColumnLayout from '../../../shared/views/twoColumnLayout'
 
 interface GestionConfig {
-    handle: () => Promise<any> | void;
-    message: string;
-    nameButton: string;
-    status?: string;
-    showButton: boolean;
+  handle: () => Promise<any> | void
+  message: string
+  nameButton: string
+  status?: string
+  showButton: boolean
 }
 
 const FormUpdateOrdenPago = () => {
-    const [gestionConfig, setGestionConfig] = useState<GestionConfig | null>(null)
-    const [showMessage, setShowMessage] = useState(false)
-    const [currentMessage, setCurrentMessage] = useState<IAlertMessageDto>()
+  const [gestionConfig, setGestionConfig] = useState<GestionConfig[]>([])
+  const [showMessage, setShowMessage] = useState(false)
+  const [currentMessage, setCurrentMessage] = useState<IAlertMessageDto>()
 
-    const qc: QueryClient = useQueryClient()
-    const dispatch = useDispatch()
+  const qc: QueryClient = useQueryClient()
+  const dispatch = useDispatch()
 
-    const { data } = useQuery({
-        queryKey: ['retencionesTable'],
-        queryFn: () => getRetenciones(),
-        staleTime: 60 * 1000,
-        retry: 3,
-    }, qc)
+  const { data } = useQuery(
+    {
+      queryKey: ['retencionesTable'],
+      queryFn: () => getRetenciones(),
+      staleTime: 60 * 1000,
+      retry: 3
+    },
+    qc
+  )
 
-    console.log(data) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
+  console.log(data) // eslint-disable-line @typescript-eslint/no-unused-vars, no-unused-vars
 
-    const { getRetenciones } = useServicesRetenciones()
-    const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago } = useGestionOrdenPago()
-    const { message: serviceMessage, updateOrden, loading} = useServices()
+  const { getRetenciones } = useServicesRetenciones()
+  const { message: gestionMessage, anularOrdenPago, aprobarOrdenPago, retornarOrdenPago } = useGestionOrdenPago()
+  const { message: serviceMessage, updateOrden, loading } = useServices()
 
-    const { compromisoSeleccionadoListaDetalle, codigoIdentificador } = useSelector((state: RootState) => state.admOrdenPago)
+  const { compromisoSeleccionadoListaDetalle, codigoIdentificador } = useSelector(
+    (state: RootState) => state.admOrdenPago
+  )
 
-    const handleUpdateOrden = async (dataFormOrder: any) => {
-        try {
-            const {
-                codigoOrdenPago,
-                codigoPresupuesto,
-                tipoOrdenPagoId,
-                fechaComprobante,
-                fechaOrdenPago,
-            } = compromisoSeleccionadoListaDetalle
+  const handleUpdateOrden = async (dataFormOrder: any) => {
+    try {
+      const { codigoOrdenPago, codigoPresupuesto, tipoOrdenPagoId, fechaComprobante, fechaOrdenPago } =
+        compromisoSeleccionadoListaDetalle
 
-            const {
-                motivo,
-                frecuenciaPagoId,
-                tipoPagoId,
-                cantidadPago,
-                conFactura,
-            } = dataFormOrder
+      const { motivo, frecuenciaPagoId, tipoPagoId, cantidadPago, conFactura } = dataFormOrder
 
-            const payload: IUpdateOrdenPago = {
-                codigoOrdenPago,
-                codigoPresupuesto,
-                codigoCompromiso: codigoIdentificador,
-                fechaOrdenPago,
-                tipoOrdenPagoId,
-                cantidadPago,
-                frecuenciaPagoId,
-                tipoPagoId,
-                motivo,
-                fechaComprobante,
-                numeroComprobante: null,
-                numeroComprobante2: null,
-                numeroComprobante3: null,
-                numeroComprobante4: null,
-                conFactura
-            }
+      const payload: IUpdateOrdenPago = {
+        codigoOrdenPago,
+        codigoPresupuesto,
+        codigoCompromiso: codigoIdentificador,
+        fechaOrdenPago,
+        tipoOrdenPagoId,
+        cantidadPago,
+        frecuenciaPagoId,
+        tipoPagoId,
+        motivo,
+        fechaComprobante,
+        numeroComprobante: null,
+        numeroComprobante2: null,
+        numeroComprobante3: null,
+        numeroComprobante4: null,
+        conFactura
+      }
 
-            const response = await updateOrden(payload)
+      const response = await updateOrden(payload)
 
-            if (response.isValid) {
-                dispatch(setCompromisoSeleccionadoDetalle(response.data))
-            }
-        } catch (e: any) {
-            console.error(e)
-        } finally {
-            qc.invalidateQueries({
-                queryKey: ['ordenesPagoTable']
-            })
-        }
+      if (response.isValid) {
+        dispatch(setCompromisoSeleccionadoDetalle(response.data))
+      }
+    } catch (e: any) {
+      console.error(e)
+    } finally {
+      qc.invalidateQueries({
+        queryKey: ['ordenesPagoTable']
+      })
+    }
+  }
+
+  const handleClearCompromiso = () => {
+    setShowMessage(false)
+  }
+
+  const handleGestionOrdenPago = () => {
+    const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
+    const filter = { codigoOrdenPago }
+
+    setShowMessage(false)
+
+    const handleAction = (actionFn: typeof aprobarOrdenPago) => {
+      return () =>
+        actionFn(filter, () => {
+          qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] })
+          qc.invalidateQueries({ queryKey: ['retencionesTable'] })
+
+          setTimeout(() => {
+            dispatch(setIsOpenDialogOrdenPagoDetalle(false))
+          }, 5000)
+        })
     }
 
-    const handleClearCompromiso = () => {
-        setShowMessage(false)
+    if (status === 'AP') {
+      const configs = [
+        {
+          action: anularOrdenPago,
+          message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
+          nameButton: 'Anular',
+          newStatus: 'AN',
+          showButton: true
+        },
+        {
+          action: retornarOrdenPago,
+          message: `¿Está usted seguro de RETORNAR la orden (${codigoOrdenPago}) a Pendiente?`,
+          nameButton: 'Retornar',
+          newStatus: 'PE',
+          showButton: true
+        }
+      ]
+
+      return configs.map(cfg => ({
+        handle: handleAction(cfg.action),
+        message: cfg.message,
+        nameButton: cfg.nameButton,
+        status: cfg.newStatus,
+        showButton: cfg.showButton
+      }))
     }
 
-    const handleGestionOrdenPago = () => {
-        const { status, codigoOrdenPago } = compromisoSeleccionadoListaDetalle
-        const filter = { codigoOrdenPago }
-
-        setShowMessage(false)
-
-        const actionConfigs: any = {
-            PE: {
-                action: aprobarOrdenPago,
-                message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
-                nameButton: 'Aprobar',
-                newStatus: 'AP',
-                showButton: true,
-            },
-            AP: {
-                action: anularOrdenPago,
-                message: `¿Está usted seguro de ANULAR la orden (${codigoOrdenPago})?`,
-                nameButton: 'Anular',
-                newStatus: 'AN',
-                showButton: true,
-            }
-        }
-
-        const config = actionConfigs[status as keyof typeof actionConfigs] || {
-            action: () => console.log('No disponible'),
-            message: 'Orden de pago no disponible para gestionar',
-            nameButton: 'Gestionar',
-            newStatus: status,
-            showButton: false
-        }
-
-        const handleAction = (actionFn: typeof aprobarOrdenPago) => {
-            return () => actionFn(filter, () => {
-                qc.invalidateQueries({ queryKey: ['ordenesPagoTable'] });
-                qc.invalidateQueries({ queryKey: ['retencionesTable'] });
-
-                setTimeout(() => {
-                    dispatch(setIsOpenDialogOrdenPagoDetalle(false))
-                }, 5000)
-            })
-        }
-
-        return {
-            handle: handleAction(config.action),
-            message: config.message,
-            nameButton: config.nameButton,
-            status: config.newStatus,
-            showButton: config.showButton !== false
-        }
+    const actionConfigs: any = {
+      PE: {
+        action: aprobarOrdenPago,
+        message: `¿Está usted seguro de APROBAR la orden (${codigoOrdenPago})?`,
+        nameButton: 'Aprobar',
+        newStatus: 'AP',
+        showButton: true
+      }
     }
 
-    useEffect(() => {
-        if (gestionMessage?.text) {
-            const status = compromisoSeleccionadoListaDetalle.status
-            const severity = status === 'AP' ? 'success' :
-                            status === 'AN' ? 'warning' :
-                            'info'
-            setCurrentMessage({
-                text: gestionMessage.text,
-                isValid: gestionMessage.isValid,
-                severity,
-                timestamp: Date.now(),
-            })
-            setShowMessage(true)
-        }
-        else if (serviceMessage?.text) {
-            setCurrentMessage({
-                text: serviceMessage.text,
-                isValid: serviceMessage.isValid,
-                severity: serviceMessage.isValid ? 'success' : 'error',
-                timestamp: Date.now()
-            });
-            setShowMessage(true)
-        }
-    }, [gestionMessage, serviceMessage, compromisoSeleccionadoListaDetalle.status])
+    const config = actionConfigs[status as keyof typeof actionConfigs] || {
+      action: () => console.log('No disponible'),
+      message: 'Orden de pago no disponible para gestionar',
+      nameButton: 'Gestionar',
+      newStatus: status,
+      showButton: false
+    }
 
-    useEffect(() => {
-        setGestionConfig(handleGestionOrdenPago())
-    }, [compromisoSeleccionadoListaDetalle])
+    return [
+      {
+        handle: handleAction(config.action),
+        message: config.message,
+        nameButton: config.nameButton,
+        status: config.newStatus,
+        showButton: config.showButton !== false
+      }
+    ]
+  }
 
-    return (
-        <>
-            <TwoColumnLayout
-                leftContent={
-                    <FormOrdenPago
-                        modo="edicion"
-                        orden={compromisoSeleccionadoListaDetalle}
-                        onFormData={handleUpdateOrden}
-                        onFormClear={handleClearCompromiso}
-                        handleGestionOrdenPago={gestionConfig || {}}
-                        onViewerPdf={() => dispatch(setIsOpenViewerPdf(true))}
-                        titleButton={'Actualizar'}
-                        message={currentMessage}
-                        loading={loading}
-                    />
-                }
-                rightContent={
-                    <TabsComponent
-                        tabs={tabs}
-                        hasInvoice={compromisoSeleccionadoListaDetalle.conFactura}
-                    />
-                }
-            />
-            <AlertMessage
-                message={currentMessage?.text ?? ''}
-                severity={currentMessage?.severity || 'info'}
-                duration={10000}
-                show={showMessage}
-            />
-        </>
-    )
+  useEffect(() => {
+    if (gestionMessage?.text) {
+      const status = compromisoSeleccionadoListaDetalle.status
+      const severity = status === 'AP' ? 'success' : status === 'AN' ? 'warning' : 'info'
+      setCurrentMessage({
+        text: gestionMessage.text,
+        isValid: gestionMessage.isValid,
+        severity,
+        timestamp: Date.now()
+      })
+      setShowMessage(true)
+    } else if (serviceMessage?.text) {
+      setCurrentMessage({
+        text: serviceMessage.text,
+        isValid: serviceMessage.isValid,
+        severity: serviceMessage.isValid ? 'success' : 'error',
+        timestamp: Date.now()
+      })
+      setShowMessage(true)
+    }
+  }, [gestionMessage, serviceMessage, compromisoSeleccionadoListaDetalle.status])
+
+  useEffect(() => {
+    setGestionConfig(handleGestionOrdenPago())
+  }, [compromisoSeleccionadoListaDetalle])
+
+  return (
+    <>
+      <TwoColumnLayout
+        leftContent={
+          <FormOrdenPago
+            modo='edicion'
+            orden={compromisoSeleccionadoListaDetalle}
+            onFormData={handleUpdateOrden}
+            onFormClear={handleClearCompromiso}
+            handleGestionOrdenPago={gestionConfig}
+            onViewerPdf={() => dispatch(setIsOpenViewerPdf(true))}
+            titleButton={'Actualizar'}
+            message={currentMessage}
+            loading={loading}
+          />
+        }
+        rightContent={<TabsComponent tabs={tabs} hasInvoice={compromisoSeleccionadoListaDetalle.conFactura} />}
+      />
+      <AlertMessage
+        message={currentMessage?.text ?? ''}
+        severity={currentMessage?.severity || 'info'}
+        duration={10000}
+        show={showMessage}
+      />
+    </>
+  )
 }
 
 export default FormUpdateOrdenPago

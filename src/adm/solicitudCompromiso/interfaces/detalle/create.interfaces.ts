@@ -7,4 +7,6 @@ export interface CreateDetalle {
     precioUnitario: number;
     tipoImpuestoId: number;
     codigoProducto: number;
+    nroFilaReferencia?: number;
+    posicionInsercion?: string;
 }

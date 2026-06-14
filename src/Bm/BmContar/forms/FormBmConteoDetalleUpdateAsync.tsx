@@ -110,7 +110,8 @@ const FormBmConteoDetalleUpdateAsync = () => {
     const updateDto: IBmConteoDetalleUpdateDto = {
       codigoBmConteoDetalle: data.codigoBmConteoDetalle,
       cantidadContada: data.cantidadContada,
-      comentario: data.comentario
+      comentario: data.comentario,
+      replicarComentario: false
     }
 
     console.log('updateDto', updateDto)

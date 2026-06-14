@@ -710,6 +710,48 @@ const menuRh: VerticalNavItemsType= [
 
 ]
 
+const menuSis: VerticalNavItemsType = [
+  {
+    title: 'Sistema',
+    icon: 'mdi:shield-account-outline',
+    children: [
+      {
+        title: 'Roles Usuario',
+        path: '/apps/sis/usuario-rol'
+      },
+      {
+        title: 'Usuarios',
+        path: '/apps/sis/usuarios'
+      },
+      {
+        title: 'Seguridad',
+        path: '/apps/sis/seguridad'
+      },
+      {
+        title: 'Soporte',
+        children: [
+          {
+            title: 'Tickets',
+            path: '/apps/soporte/tickets'
+          },
+          {
+            title: 'Dashboard',
+            path: '/apps/soporte/dashboard'
+          },
+          {
+            title: 'Notificaciones',
+            path: '/apps/soporte/notificaciones'
+          },
+          {
+            title: 'Configuracion',
+            path: '/apps/soporte/configuracion'
+          }
+        ]
+      }
+    ]
+  }
+]
+
 
 const navigation = (): VerticalNavItemsType => {
 
@@ -720,7 +762,7 @@ const navigation = (): VerticalNavItemsType => {
 
   return (
 
-    [...defaultColumns,...menuPre,...menuRh]
+    [...defaultColumns,...menuPre,...menuRh,...menuSis]
 
 
   )

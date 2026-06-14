@@ -17,7 +17,7 @@ import calculatePrice from '../../helpers/calculoTotalPrecioDetalle'
 import formatPrice from '../../helpers/formateadorPrecio'
 import DialogListProductsInfo from './../../components/Productos/view/DialogListProductsInfo'
 import Icon from 'src/@core/components/icon'
-import { setProductSeleccionado, setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
+import { setDetalleInsercionSolicitud, setProductSeleccionado, setVerDialogListProductsInfoActive } from 'src/store/apps/adm'
 
 const CreateDetalleSolicitudCompromiso = () => {
     const [cantidad, setCantidad] = useState<any>(0)
@@ -27,8 +27,10 @@ const CreateDetalleSolicitudCompromiso = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [udmId, setUdmId] = useState<number>(0)
     const [impuesto, setImpuesto] = useState<number>(0)
+    const [tipoImpuestoId, setTipoImpuestoId] = useState<number>(0)
 
     const { codigoSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso.solicitudCompromisoSeleccionado)
+    const { detalleInsercionSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso)
 
     const productSeleccionado: Product = useSelector((state: RootState) => state.admSolicitudCompromiso.productSeleccionado)
     const labelProduct = productSeleccionado?.codigoConcat + ' - ' + productSeleccionado?.descripcion
@@ -42,6 +44,7 @@ const CreateDetalleSolicitudCompromiso = () => {
     const defaultValues: any = {
         codigoDetalleSolicitud: 0,
         codigoSolicitud,
+        nroFila: 0,
         cantidad: 0,
         udmId: 0,
         descripcion: '',
@@ -70,6 +73,7 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     const handleTipoImpuestoChange = (tipoImpuesto: any) => {
         setValue('tipoImpuestoId', tipoImpuesto.id)
+        setTipoImpuestoId(tipoImpuesto.id)
         setImpuesto(tipoImpuesto.value)
         setErrorMessage('')
     }
@@ -100,12 +104,14 @@ const CreateDetalleSolicitudCompromiso = () => {
 
     const resetForm = () => {
         dispatch(setProductSeleccionado(null))
+        dispatch(setDetalleInsercionSolicitud(null))
         setCantidad(0)
         setPrecioUnitario(0)
         setLoading(false)
         reset()
         setUdmId(0)
         setImpuesto(0)
+        setTipoImpuestoId(0)
     }
 
     const onSubmitCreateDetalle = async (dataForm: FormInputs) => {
@@ -119,6 +125,8 @@ const CreateDetalleSolicitudCompromiso = () => {
             precioUnitario: precioUnitario,
             tipoImpuestoId: dataForm.tipoImpuestoId,
             codigoProducto: dataForm.codigoProducto,
+            nroFilaReferencia: detalleInsercionSolicitud?.nroFilaReferencia,
+            posicionInsercion: detalleInsercionSolicitud?.posicionInsercion,
         }
 
         if (dataForm.descripcion === null || dataForm.descripcion == '') {
@@ -132,6 +140,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                 qc.invalidateQueries({
                     queryKey: ['detalleSolicitudCompromiso', dataForm.codigoSolicitud]
                 })
+                resetForm()
             }
 
             setErrorMessage(responseCreateDetalle?.data.message)
@@ -156,6 +165,13 @@ const CreateDetalleSolicitudCompromiso = () => {
             }}>
                 <CardHeader title='Crear detalle' />
                 <CardContent>
+                    {detalleInsercionSolicitud && (
+                        <Box sx={{ mb: 4 }}>
+                            <FormHelperText sx={{ color: 'primary.main', fontSize: 14 }}>
+                                Insertar {detalleInsercionSolicitud.posicionInsercion === 'ANTES' ? 'encima' : 'debajo'} de la fila {detalleInsercionSolicitud.nroFilaReferencia}
+                            </FormHelperText>
+                        </Box>
+                    )}
                     <form onSubmit={handleSubmitCreateDetalle(onSubmitCreateDetalle)}>
                         <Grid container spacing={5} paddingTop={5}>
                             <Grid item sm={2} xs={12}>
@@ -277,7 +293,7 @@ const CreateDetalleSolicitudCompromiso = () => {
                             </Grid>
                             <Grid item sm={6} xs={12}>
                                 <TipoImpuesto
-                                    id={impuesto}
+                                    id={tipoImpuestoId}
                                     onSelectionChange={handleTipoImpuestoChange}
                                     autocompleteRef={autocompleteRef}
                                 />

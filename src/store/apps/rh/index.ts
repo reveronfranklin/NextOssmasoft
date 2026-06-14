@@ -8,13 +8,24 @@ import { IRhProcesoGetDto } from '../../../interfaces/rh/i-rh-procesos-get-dto';
 import { IPersonaDto } from 'src/interfaces/rh/i-rh-persona-dto';
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 
+const getDefaultNominaDateRange = () => {
+  const fechaHasta = new Date()
+  const fechaDesde = new Date(fechaHasta)
+  fechaDesde.setFullYear(fechaDesde.getFullYear() - 1)
 
+  return {
+    fechaDesde,
+    fechaHasta
+  }
+}
+
+const defaultNominaDateRange = getDefaultNominaDateRange()
 
 export const nominaSlice = createSlice({
   name: 'nomina',
   initialState: {
-    fechaDesde: new Date(2010, 0, 1),
-    fechaHasta:new Date(),
+    fechaDesde: defaultNominaDateRange.fechaDesde,
+    fechaHasta: defaultNominaDateRange.fechaHasta,
     filterHistorico:{} as IFilterHistoricoNomina,
     conceptoSeleccionado: [] as IListConceptosDto[],
     conceptos: [] as IListConceptosDto[],

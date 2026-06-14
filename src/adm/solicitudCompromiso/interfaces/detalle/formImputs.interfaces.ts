@@ -1,6 +1,7 @@
 export interface FormInputs {
     codigoDetalleSolicitud: number
     codigoSolicitud: number
+    nroFila: number
     cantidad: number
     cantidadComprada: number
     cantidadAnulada: number

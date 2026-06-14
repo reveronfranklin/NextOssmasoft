@@ -12,28 +12,50 @@ import CustomInput from 'src/utilities/pickers//PickersCustomInput'
 
 // ** Types
 import { DateType } from 'src/types/forms/reactDatepickerTypes'
-import { Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@mui/material'
+import { Alert, Autocomplete, Card, CardContent, CardHeader, Grid, TextField } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { setConceptoSeleccionado, setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTipoQuery, setTiposNomina, setTiposNominaSeleccionado } from 'src/store/apps/rh'
-import { fetchDataConceptos } from 'src/store/apps/rh/thunks'
 
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { monthByIndex } from 'src/utilities/ge-date-by-object'
+
+const MAX_RANGE_MESSAGE = 'El rango de fechas no puede ser mayor a un año.'
+
+const getMaxHastaDate = (desde: DateType) => {
+  if (!desde) {
+    return undefined
+  }
+
+  const maxHasta = new Date(desde)
+  maxHasta.setFullYear(maxHasta.getFullYear() + 1)
+
+  return maxHasta
+}
+
+const isDateRangeGreaterThanOneYear = (desde: DateType, hasta: DateType) => {
+  const maxHasta = getMaxHastaDate(desde)
+
+  if (!maxHasta || !hasta) {
+    return false
+  }
+
+  return hasta > maxHasta
+}
 
 const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
 
 
   const dispatch = useDispatch();
 
-  const {fechaDesde,fechaHasta,tiposNomina,conceptos,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNomina,tiposNominaSeleccionado,conceptos,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
 
   const fechaActual = new Date()
 
@@ -50,30 +72,72 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
   const [dateHasta, setDateHasta] = useState<DateType>(fechaHasta)
   const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
+  const [dateRangeError, setDateRangeError] = useState('')
+
+  const unwrapApiData = <T,>(responseData: any): T[] => {
+    if (Array.isArray(responseData)) {
+      return responseData
+    }
+
+    if (Array.isArray(responseData?.data)) {
+      return responseData.data
+    }
+
+    return []
+  }
+
+  const tiposNominaOptions = Array.isArray(tiposNomina) ? tiposNomina : []
+  const tiposNominaSeleccionadoValue = Array.isArray(tiposNominaSeleccionado) ? tiposNominaSeleccionado : []
+  const conceptosOptions = Array.isArray(conceptosPorTipoNomina) ? conceptosPorTipoNomina : []
+  const conceptoSeleccionadoValue = Array.isArray(conceptoSeleccionado) ? conceptoSeleccionado : []
+  const maxHastaDate = getMaxHastaDate(dateDesde)
+
+  const clearNominaFilters = () => {
+    dispatch(setTiposNomina([]))
+    dispatch(setTiposNominaSeleccionado([]))
+    dispatch(setConceptos([]))
+    dispatch(setConceptoSeleccionado([]))
+    setConceptosPorTipoNomina([])
+  }
+
+  const validateDateRange = (desde: DateType, hasta: DateType) => {
+    if (isDateRangeGreaterThanOneYear(desde, hasta)) {
+      setDateRangeError(MAX_RANGE_MESSAGE)
+      clearNominaFilters()
+
+      return false
+    }
+
+    setDateRangeError('')
+
+    return true
+  }
+
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
+    clearNominaFilters()
     dispatch(setFechaDesde(desde));
+    validateDateRange(desde, dateHasta)
 
 
   }
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
+    clearNominaFilters()
     dispatch(setFechaHasta(hasta));
+    validateDateRange(dateDesde, hasta)
 
   }
   const handleTiposNomina= (e: any,value:any)=>{
     console.log('handler tipo nomina',value)
     if(value!=null){
       dispatch(setTiposNominaSeleccionado(value));
+      dispatch(setConceptoSeleccionado([]));
       buscarConceptos(value);
     }else{
-      const tipoNomina: IListTipoNominaDto[]=[{
-        codigoTipoNomina: 0,
-        descripcion :  ''
-      }]
-      dispatch(setTiposNominaSeleccionado(tipoNomina));
+      dispatch(setTiposNominaSeleccionado([]));
       dispatch(setConceptoSeleccionado([]));
-      buscarConceptos(tipoNomina);
+      buscarConceptos([]);
 
     }
 
@@ -82,60 +146,63 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
   }
 
   const dataTipoNomina= async (value:any)=>{
+    if (!validateDateRange(fechaDesde, fechaHasta)) {
+      return []
+    }
+
     const filterTipoNomina:IPersonaFilterDto = {
       codigoPersona:value.codigoPersona,
       desde:fechaDesde,
       hasta:fechaHasta
     }
-    const responseAllTipoNomina= await ossmmasofApi.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
+    const responseAllTipoNomina= await ossmmasofApiVertical.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
 
 
-    const {data} = responseAllTipoNomina;
+    const data = unwrapApiData<IListTipoNominaDto>(responseAllTipoNomina.data);
 
     if(data){
       console.log('responseAll tipo nomina por persona',dataTipoNomina)
       dispatch(setTiposNomina(data));
 
     }
+
+    return data
   }
 
-  const dataConceptos= async (value:any)=>{
+  const dataConceptos= async (value:any, tiposNominaSeleccionados:IListTipoNominaDto[] = tiposNominaSeleccionadoValue)=>{
+    if (!validateDateRange(fechaDesde, fechaHasta)) {
+      return []
+    }
+
     const filter:IPersonaFilterDto = {
       codigoPersona:value.codigoPersona,
       desde:fechaDesde,
-      hasta:fechaHasta
+      hasta:fechaHasta,
+      codigoTipoNomina: tiposNominaSeleccionados
+        .filter(tipoNomina => tipoNomina.codigoTipoNomina > 0)
+        .map(tipoNomina => ({ codigoTipoNomina: tipoNomina.codigoTipoNomina }))
     }
-    const responseAll= await ossmmasofApi.post<any>('/RhConceptos/GetConceptosByPersonas',filter);
+    const responseAll= await ossmmasofApiVertical.post<any>('/RhConceptos/GetConceptosByPersonas',filter);
 
 
-    const {data} = responseAll;
+    const data = unwrapApiData<IListConceptosDto>(responseAll.data);
 
     if(data){
 
       dispatch(setConceptos(data));
+      setConceptosPorTipoNomina(data);
 
     }
+
+    return data;
   }
 
 
   const buscarConceptos=async (codigoTipoNomina:IListTipoNominaDto[])=>{
 
     console.log('buscar conceptos',codigoTipoNomina);
-    if(personaSeleccionado){
-      await  dataConceptos(personaSeleccionado)
-      await fetchDataConceptos(dispatch);
-    }
-
-    let conceptosNew:IListConceptosDto[]=[];
-    for (let index = 0; index < codigoTipoNomina.length; index++) {
-      const element = codigoTipoNomina[index];
-      console.log(element)
-      const dataFilter= conceptos.filter(concepto=>concepto.codigoTipoNomina==element.codigoTipoNomina);
-      conceptosNew= [...conceptosNew,...dataFilter]
-    }
-    console.log(conceptosNew)
-
-    setConceptosPorTipoNomina(conceptosNew);
+    const source = personaSeleccionado ? await dataConceptos(personaSeleccionado, codigoTipoNomina) : conceptos
+    setConceptosPorTipoNomina(source);
   }
 
 
@@ -160,6 +227,10 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
 
 
     const getData = async () => {
+      if (!validateDateRange(fechaDesde, fechaHasta)) {
+        return
+      }
+
       const persona:IListSimplePersonaDto ={
         apellido:'',
         cedula:0,
@@ -188,12 +259,14 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
         identificacionId:0,
         numeroIdentificacion:0,
         numeroGacetaNacional:0,
+        codigoTipoNomina:0,
 
       };
 
 
      await  dataTipoNomina(persona);
-     await dataConceptos(persona);
+     const conceptosData = await dataConceptos(persona, []);
+     setConceptosPorTipoNomina(conceptosData);
      dispatch(setPersonaSeleccionado(persona));
 
 
@@ -213,6 +286,11 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
     <Card>
       <CardHeader title='Filtrar Nomina Masivo' />
       <CardContent>
+        {dateRangeError ? (
+          <Alert severity='warning' sx={{ mb: 4 }}>
+            {dateRangeError}
+          </Alert>
+        ) : null}
         <Grid container spacing={6}>
           <Grid item xs={12} >
           <Box sx={{ display: 'flex', flexWrap: 'wrap' }} className='demo-space-x'>
@@ -233,6 +311,8 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
                   selected={dateHasta}
                   id='basic-input-hasta'
                   popperPlacement={popperPlacement}
+                  minDate={dateDesde ?? undefined}
+                  maxDate={maxHastaDate}
                   onChange={(dateHasta: Date) => (handlerHasta(dateHasta))}
                   placeholderText='Click to select a date'
                   customInput={<CustomInput label='Hasta' />}
@@ -245,7 +325,8 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
                     ( <Autocomplete
                       multiple={true}
                       sx={{ width: 350 }}
-                      options={tiposNomina}
+                      options={tiposNominaOptions}
+                      value={tiposNominaSeleccionadoValue}
                       id='autocomplete-tipo-nomina'
                       isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
                       getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
@@ -260,9 +341,9 @@ const FilterHistoricoNominaMasivo = ({ popperPlacement }: { popperPlacement: Rea
                 <Autocomplete
                     multiple={true}
                     sx={{ width: 350 }}
-                    options={conceptosPorTipoNomina}
+                    options={conceptosOptions}
                     id='autocomplete-concepto'
-                    value={conceptoSeleccionado}
+                    value={conceptoSeleccionadoValue}
                     isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
                     getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
                     onChange={handlerConceptos}

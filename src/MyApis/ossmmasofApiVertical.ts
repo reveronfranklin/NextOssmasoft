@@ -8,6 +8,26 @@ export const ossmmasofApiVertical = axios.create({
   baseURL: !authConfig.isProduction ? urlDevelopment : urlProduction
 })
 
+const getStoredRefreshToken = () => {
+  const directToken =
+    localStorage.getItem(authConfig.onTokenExpiration) ||
+    localStorage.getItem('refreshToken') ||
+    localStorage.getItem('RefreshToken')
+
+  if (directToken) {
+    return directToken
+  }
+
+  try {
+    const userData = localStorage.getItem('userData')
+    const parsedUserData = userData ? JSON.parse(userData) : null
+
+    return parsedUserData?.refreshToken || parsedUserData?.RefreshToken || ''
+  } catch {
+    return ''
+  }
+}
+
 ossmmasofApiVertical.interceptors.request.use(
   config => {
     const token = localStorage.getItem(authConfig.storageTokenKeyName)
@@ -15,6 +35,12 @@ ossmmasofApiVertical.interceptors.request.use(
     if (token) {
       // Configure this as per your backend requirements
       config.headers!['Authorization'] = 'Bearer ' + token
+    }
+
+    const refreshToken = getStoredRefreshToken()
+
+    if (refreshToken) {
+      config.headers!['X-Refresh-Token'] = refreshToken
     }
 
     return config

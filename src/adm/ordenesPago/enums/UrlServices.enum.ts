@@ -9,6 +9,8 @@ export enum UrlServices {
     UPDATEORDENPAGO             = '/AdmOrdenPago/Update',
     DELETEORDENPAGO             = '/AdmOrdenPago/Delete',
 
+    RETORNARPENDIENTE           = '/AdmOrdenPago/Retornar',
+
     DESCRIPTIVAS                = '/AdmDescriptivas/GetSelectDescriptiva',
 
     GETCOMPROMISOBYORDENPAGO    = '/AdmCompromisoOp/GetByOrdenPago',
