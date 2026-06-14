@@ -41,6 +41,14 @@ const getStoredUserData = (): UserDataType | null => {
   }
 }
 
+const getAuthResponseValue = (data: any, camelCaseKey: string, pascalCaseKey: string) => {
+  return data?.[camelCaseKey] ?? data?.[pascalCaseKey] ?? ''
+}
+
+const getAuthUserData = (data: any) => {
+  return data?.userData ?? data?.UserData ?? null
+}
+
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
@@ -55,8 +63,12 @@ const AuthProvider = ({ children }: Props) => {
       const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
       const storedUserData = getStoredUserData()
 
-      if (storedUserData) {
+      if (storedUserData && storedToken && refreshToken) {
         setUser(storedUserData)
+      }
+
+      if (storedUserData && (!storedToken || !refreshToken)) {
+        window.localStorage.removeItem('userData')
       }
 
       if (storedToken && refreshToken) {
@@ -70,13 +82,20 @@ const AuthProvider = ({ children }: Props) => {
             }
           })
           .then(async response => {
+            const accessToken = getAuthResponseValue(response.data, 'accessToken', 'AccessToken')
+            const newRefreshToken = getAuthResponseValue(response.data, 'refreshToken', 'RefreshToken')
+            const userData = getAuthUserData(response.data)
+
             setLoading(false)
 
+            if (!accessToken || !newRefreshToken || !userData) {
+              throw new Error('Respuesta de autenticacion invalida.')
+            }
 
-            localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken);
-            localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken);
-            setUser({ ...response.data.userData })
-            window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
+            localStorage.setItem(authConfig.storageTokenKeyName, accessToken);
+            localStorage.setItem(authConfig.onTokenExpiration, newRefreshToken);
+            setUser({ ...userData })
+            window.localStorage.setItem('userData', JSON.stringify(userData))
 
           })
           .catch(() => {
@@ -110,13 +129,21 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-        window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
+        const accessToken = getAuthResponseValue(response.data, 'accessToken', 'AccessToken')
+        const refreshToken = getAuthResponseValue(response.data, 'refreshToken', 'RefreshToken')
+        const userData = getAuthUserData(response.data)
+
+        if (!accessToken || !refreshToken || !userData) {
+          throw new Error('Respuesta de autenticacion invalida.')
+        }
+
+        window.localStorage.setItem(authConfig.storageTokenKeyName, accessToken)
+        window.localStorage.setItem(authConfig.onTokenExpiration, refreshToken)
         const returnUrl = router.query.returnUrl
 
 
-        setUser({ ...response.data.userData })
-        window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
+        setUser({ ...userData })
+        window.localStorage.setItem('userData', JSON.stringify(userData))
 
 
         //if(response.data.accessToken.length<= 0) handleLogout();

@@ -25,8 +25,14 @@ const AuthGuard = (props: AuthGuardProps) => {
 
       if (auth.user === null) {
         const userData = window.localStorage.getItem('userData')
+        const hasAccessToken = window.localStorage.getItem('accessToken')
+        const hasRefreshToken = window.localStorage.getItem('refreshToken')
 
-        if (userData) {
+        if (userData && (!hasAccessToken || !hasRefreshToken)) {
+          window.localStorage.removeItem('userData')
+        }
+
+        if (userData && hasAccessToken && hasRefreshToken) {
           try {
             auth.setUser(JSON.parse(userData))
 
