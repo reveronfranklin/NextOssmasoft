@@ -22,7 +22,11 @@ const GuestGuard = (props: GuestGuardProps) => {
       return
     }
 
-    if (window.localStorage.getItem('userData')) {
+    const hasUserData = window.localStorage.getItem('userData')
+    const hasAccessToken = window.localStorage.getItem('accessToken')
+    const hasRefreshToken = window.localStorage.getItem('refreshToken')
+
+    if (hasUserData && hasAccessToken && hasRefreshToken) {
       router.replace('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

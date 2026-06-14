@@ -59,9 +59,10 @@ ossmmasofApi.interceptors.response.use(
 
           localStorage.removeItem(authConfig.storageTokenKeyName)
           localStorage.removeItem(authConfig.onTokenExpiration)
+          localStorage.removeItem('userData')
 
-          // Redirecting the user to the landing page
-          window.location.href = window.location.origin
+          // Redirecting the user to login
+          window.location.href = `${window.location.origin}/login/`
 
           return Promise.reject(_error)
         }
