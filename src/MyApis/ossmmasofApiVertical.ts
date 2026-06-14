@@ -8,6 +8,10 @@ export const ossmmasofApiVertical = axios.create({
   baseURL: !authConfig.isProduction ? urlDevelopment : urlProduction
 })
 
+const getAuthResponseValue = (data: any, camelCaseKey: string, pascalCaseKey: string) => {
+  return data?.[camelCaseKey] ?? data?.[pascalCaseKey] ?? ''
+}
+
 const getStoredRefreshToken = () => {
   const directToken =
     localStorage.getItem(authConfig.onTokenExpiration) ||
@@ -63,16 +67,42 @@ ossmmasofApiVertical.interceptors.response.use(
         originalConfig._retry = true
 
         try {
-          const rs = await axios.post(authConfig.refreshEndPoint, {
-            headers: {
-              Authorization: 'Bearer' + localStorage.getItem(authConfig.storageTokenKeyName)!
+          const currentAccessToken = localStorage.getItem(authConfig.storageTokenKeyName) || ''
+          const currentRefreshToken = getStoredRefreshToken()
+
+          const rs = await axios.post(
+            authConfig.refreshEndPoint,
+            {
+              accessToken: currentAccessToken,
+              refreshToken: currentRefreshToken
+            },
+            {
+              headers: {
+                Authorization: 'Bearer ' + currentAccessToken
+              }
             }
-          })
+          )
+
+          const accessToken = getAuthResponseValue(rs.data, 'accessToken', 'AccessToken')
+          const refreshToken = getAuthResponseValue(rs.data, 'refreshToken', 'RefreshToken')
+
+          if (!accessToken || !refreshToken) {
+            throw new Error('Invalid refresh token response.')
+          }
+
+          localStorage.setItem(authConfig.storageTokenKeyName, accessToken)
+          localStorage.setItem(authConfig.onTokenExpiration, refreshToken)
 
           console.log(
             'desde el interceptor de la repuesta para evaluar el token de las cookies rs.data.data',
             rs.data.data
           )
+
+          originalConfig.headers = {
+            ...originalConfig.headers,
+            Authorization: 'Bearer ' + accessToken,
+            'X-Refresh-Token': refreshToken
+          }
 
           return ossmmasofApiVertical(originalConfig)
         } catch (_error) {
