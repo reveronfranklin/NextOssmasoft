@@ -12,7 +12,6 @@ import authConfig from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
-import { IRefreshTokenDto } from 'src/interfaces/SIS/resultRefreshTokenDto'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -63,60 +62,18 @@ const AuthProvider = ({ children }: Props) => {
       const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
       const storedUserData = getStoredUserData()
 
-      if (storedUserData && storedToken && refreshToken) {
-        setUser(storedUserData)
-      }
-
       if (storedUserData && (!storedToken || !refreshToken)) {
         window.localStorage.removeItem('userData')
       }
 
-      if (storedToken && refreshToken) {
+      if (storedUserData && storedToken && refreshToken) {
+        setUser(storedUserData)
+        setLoading(false)
 
-        const refreshToke:IRefreshTokenDto={refreshToken:refreshToken,accessToken:storedToken};
-        setLoading(true)
-        await axios
-          .post(authConfig.meEndpoint,refreshToke, {
-            headers: {
-              Authorization: 'Bearer ' + storedToken
-            }
-          })
-          .then(async response => {
-            const accessToken = getAuthResponseValue(response.data, 'accessToken', 'AccessToken')
-            const newRefreshToken = getAuthResponseValue(response.data, 'refreshToken', 'RefreshToken')
-            const userData = getAuthUserData(response.data)
-
-            setLoading(false)
-
-            if (!accessToken || !newRefreshToken || !userData) {
-              throw new Error('Respuesta de autenticacion invalida.')
-            }
-
-            localStorage.setItem(authConfig.storageTokenKeyName, accessToken);
-            localStorage.setItem(authConfig.onTokenExpiration, newRefreshToken);
-            setUser({ ...userData })
-            window.localStorage.setItem('userData', JSON.stringify(userData))
-
-          })
-          .catch(() => {
-            if (storedUserData) {
-              setUser(storedUserData)
-              setLoading(false)
-
-              return
-            }
-
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (!router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
+        return
       }
 
+      setUser(null)
       setLoading(false)
     }
 
