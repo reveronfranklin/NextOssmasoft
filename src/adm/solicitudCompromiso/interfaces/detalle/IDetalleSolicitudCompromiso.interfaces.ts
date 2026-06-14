@@ -16,6 +16,7 @@ export interface IDetalleSolicitudCompromiso {
 export interface DetalleSolicitudCompromiso {
     codigoDetalleSolicitud: number
     codigoSolicitud: number
+    nroFila: number
     cantidad: number
     cantidadComprada: number
     cantidadAnulada: number

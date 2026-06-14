@@ -15,6 +15,8 @@ export const rhTipoNominaSlice = createSlice({
     operacionCrudRhTipoNomina:0,
     rhFrecuenciaSeleccionado: {} as ISelectListDescriptiva,
     listRhFrecuencia:[] as ISelectListDescriptiva[],
+    isOpenViewerReportePersonal:false,
+    rhTipoNominaReporteSeleccionado: {} as IRhTiposNominaResponseDto,
 
   },
   reducers: {
@@ -44,6 +46,12 @@ export const rhTipoNominaSlice = createSlice({
     },
     setOperacionCrudRhTipoNomina:(state,action)=>{
       state.operacionCrudRhTipoNomina=action.payload;
+    },
+    setIsOpenViewerReportePersonal:(state,action)=>{
+      state.isOpenViewerReportePersonal=action.payload;
+    },
+    setRhTipoNominaReporteSeleccionado:(state,action)=>{
+      state.rhTipoNominaReporteSeleccionado=action.payload;
     }
 
   },
@@ -56,7 +64,9 @@ export const {
                 setRhFrecuenciaSeleccionado,
                 setListRhFrecuencia,
                 setVerRhTipoNominaActive,
-                setOperacionCrudRhTipoNomina
+                setOperacionCrudRhTipoNomina,
+                setIsOpenViewerReportePersonal,
+                setRhTipoNominaReporteSeleccionado
 
 
               } = rhTipoNominaSlice.actions;

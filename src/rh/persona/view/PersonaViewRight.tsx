@@ -30,6 +30,7 @@ import UserViewSecurity from './UserViewSecurity'
 import UserViewNotification from './UserViewNotification'
 import PersonaViewDirecciones from './PersonaViewDirecciones'
 import PersonaViewExperienciaLaboral from './PersonaViewExperienciaLaboral'
+import PersonaViewDocumentos from './PersonaViewDocumentos'
 
 interface Props {
   tab: string
@@ -153,6 +154,15 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
           }
         />
         <Tab
+          value='documentos'
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
+              <Icon fontSize={20} icon='mdi:file-document-outline' />
+              Documentos
+            </Box>
+          }
+        />
+        <Tab
           value='experiencia_laboral'
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
@@ -187,6 +197,9 @@ const PersonaViewRight = ({ tab, invoiceData }: Props) => {
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='direcciones'>
               <PersonaViewDirecciones />
+            </TabPanel>
+            <TabPanel sx={{ p: 0 }} value='documentos'>
+              <PersonaViewDocumentos />
             </TabPanel>
             <TabPanel sx={{ p: 0 }} value='experiencia_laboral'>
               <PersonaViewExperienciaLaboral />

@@ -9,9 +9,7 @@ import Autocomplete from 'src/layouts/components/Autocomplete'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import LanguageDropdown from 'src/@core/layouts/components/shared-components/LanguageDropdown'
-/* import NotificationDropdown, {
-  NotificationsType
-} from  */'src/@core/layouts/components/shared-components/NotificationDropdown'
+import SupportNotificationBell from 'src/soporte/components/SupportNotificationBell'
 
 import ShortcutsDropdown, { ShortcutsType } from 'src/@core/layouts/components/shared-components/ShortcutsDropdown'
 
@@ -127,7 +125,7 @@ const AppBarContent = (props: Props) => {
       <LanguageDropdown settings={settings} saveSettings={saveSettings} />
       <ModeToggler settings={settings} saveSettings={saveSettings} />
       <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
-     {/*  <NotificationDropdown settings={settings} notifications={notifications} /> */}
+      <SupportNotificationBell />
       <UserDropdown settings={settings} />
     </Box>
   )

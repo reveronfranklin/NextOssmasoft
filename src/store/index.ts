@@ -22,6 +22,7 @@ import { rhAdministrativosSlice } from './apps/rh-administrativos'
 import { reportViewSlice } from './apps/report'
 import { bmBm1Slice } from './apps/bm'
 import { rhComunicacionSlice } from './apps/rh-comunicacion'
+import { rhDocumentosSlice } from './apps/rh-documentos'
 import { rhFamiliaresSlice } from './apps/rh-familiares'
 import { rhEducacionSlice } from './apps/rh-educacion'
 import { rhExperienciaSlice } from './apps/rh-experiencia'
@@ -52,6 +53,7 @@ import { admPreOrdenPagoSlice } from './apps/preOrdenPago'
 import { proveedorSlice } from './apps/adm-proveedor'
 import { admProveedorSlice } from './apps/proveedor-comunicacion'
 import { rhVariacionesMasivasSlice } from './apps/rh-variaciones_masivas'
+import { ossUsuarioRolSlice } from './apps/oss-usuario-rol'
 
 export const store = configureStore({
   reducer: {
@@ -75,6 +77,7 @@ export const store = configureStore({
     reportView: reportViewSlice.reducer,
     bmBm1: bmBm1Slice.reducer,
     rhComunicacion: rhComunicacionSlice.reducer,
+    rhDocumento: rhDocumentosSlice.reducer,
     rhFamiliares: rhFamiliaresSlice.reducer,
     rhEducacion: rhEducacionSlice.reducer,
     rhExperiencia: rhExperienciaSlice.reducer,
@@ -104,7 +107,8 @@ export const store = configureStore({
     admPreOrdenPago: admPreOrdenPagoSlice.reducer,
     proveedor: proveedorSlice.reducer,
     admProveedor: admProveedorSlice.reducer,
-    rhVariacionesMasivas: rhVariacionesMasivasSlice.reducer
+    rhVariacionesMasivas: rhVariacionesMasivasSlice.reducer,
+    ossUsuarioRol: ossUsuarioRolSlice.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

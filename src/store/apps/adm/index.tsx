@@ -17,6 +17,7 @@ export const admSolicitudCompromisoSlice = createSlice({
         filtroEstatus: Estatus.DEFAULT,
         solicitudCompromisoSeleccionado: {} as any,
         solicitudCompromisoSeleccionadoDetalle: {} as any,
+        detalleInsercionSolicitud: null as any,
         pucSeleccionado: {} as any,
         listTipoDeSolicitud: {} as ITipoSolicitud[],
         listProveedores: {} as any[],
@@ -59,6 +60,9 @@ export const admSolicitudCompromisoSlice = createSlice({
         setSolicitudCompromisoSeleccionadoDetalle: (state, action) => {
             state.solicitudCompromisoSeleccionadoDetalle = action.payload
         },
+        setDetalleInsercionSolicitud: (state, action) => {
+            state.detalleInsercionSolicitud = action.payload
+        },
         setPucSeleccionado: (state, action) => {
             state.pucSeleccionado = action.payload
         },
@@ -87,6 +91,7 @@ export const {
         setSolicitudCompromisoSeleccionado,
         setListTipoDeSolicitud,
         setSolicitudCompromisoSeleccionadoDetalle,
+        setDetalleInsercionSolicitud,
         setVerSolicitudCompromisoDetalleActive,
         setVerSolicitudCompromisoPucActive,
         setVerDialogListProductsInfoActive,

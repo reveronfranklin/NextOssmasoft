@@ -97,17 +97,13 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
-          : null
+        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
+        window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
         const returnUrl = router.query.returnUrl
 
 
         setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
 
 
         //if(response.data.accessToken.length<= 0) handleLogout();
@@ -126,6 +122,7 @@ const AuthProvider = ({ children }: Props) => {
     setUser(null)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    window.localStorage.removeItem(authConfig.onTokenExpiration)
     router.push('/login')
   }
 

@@ -7,6 +7,7 @@ import Icon from 'src/@core/components/icon'
 import formatNumber from '../../../helpers/formateadorNumeros'
 import { useTheme } from '@mui/material/styles'
 import {
+    setDetalleInsercionSolicitud,
     setSolicitudCompromisoSeleccionadoDetalle,
     setVerSolicitudCompromisoDetalleActive
 } from "src/store/apps/adm"
@@ -18,6 +19,14 @@ function ColumnsDetalleDataGrid() {
     const handleEdit = (row: any) => {
         dispatch(setSolicitudCompromisoSeleccionadoDetalle(row))
         dispatch(setVerSolicitudCompromisoDetalleActive(true))
+    }
+
+    const handleInsert = (row: any, posicionInsercion: 'ANTES' | 'DESPUES') => {
+        dispatch(setDetalleInsercionSolicitud({
+            nroFilaReferencia: row.nroFila,
+            posicionInsercion,
+            codigoDetalleSolicitud: row.codigoDetalleSolicitud
+        }))
     }
 
     const getRowColor = (row: any) => {
@@ -33,7 +42,19 @@ function ColumnsDetalleDataGrid() {
     return [
         {
             flex: 0,
-            minWidth: 80,
+            minWidth: 70,
+            sortable: false,
+            headerName: 'Fila',
+            field: 'nroFila',
+            renderCell: (params: GridRenderCellParams) => (
+                <Typography variant='body2' sx={{ color: getRowColor(params.row), fontWeight: 600 }}>
+                    {params.row.nroFila}
+                </Typography>
+            )
+        },
+        {
+            flex: 0,
+            minWidth: 150,
             sortable: false,
             headerName: 'Acciones',
             field: 'actions',
@@ -42,6 +63,16 @@ function ColumnsDetalleDataGrid() {
                     <Tooltip title='Editar'>
                         <IconButton size='small' onClick={() => handleEdit(row)}>
                             <Icon icon='mdi:file-document-edit-outline' fontSize={20} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Insertar arriba'>
+                        <IconButton size='small' onClick={() => handleInsert(row, 'ANTES')}>
+                            <Icon icon='mdi:arrow-up-bold-box-outline' fontSize={20} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Insertar abajo'>
+                        <IconButton size='small' onClick={() => handleInsert(row, 'DESPUES')}>
+                            <Icon icon='mdi:arrow-down-bold-box-outline' fontSize={20} />
                         </IconButton>
                     </Tooltip>
                 </Box>

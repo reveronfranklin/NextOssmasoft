@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 interface ITipoImpuesto {
     id: number
     descripcion: string
+    value: number
 }
 
 const TipoImpuesto = (props: any) => {
@@ -29,8 +30,9 @@ const TipoImpuesto = (props: any) => {
 
             return
         }
-        setSelectedValue(listTipo.filter((item: { id: number }) => item?.id == props?.id)[0])
-    }, [props.id])
+        const selectedTipo = listTipo.find((item: { id: number }) => item?.id == props?.id)
+        setSelectedValue(selectedTipo ?? null)
+    }, [props.id, listTipo])
 
     const handleChange = (e: any, newValue: any) => {
         if (newValue) {

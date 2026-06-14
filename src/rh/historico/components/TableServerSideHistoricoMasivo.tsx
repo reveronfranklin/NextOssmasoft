@@ -25,8 +25,8 @@ import { ThemeColor } from 'src/@core/layouts/types'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
-import {  Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Toolbar, Tooltip } from '@mui/material'
 
 
 // ** Types
@@ -35,11 +35,23 @@ import { RootState } from 'src/store'
 import { useSelector } from 'react-redux'
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
+import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import Spinner from 'src/@core/components/spinner';
 import dayjs from 'dayjs'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import Icon from 'src/@core/components/icon'
+
+const MAX_RANGE_MESSAGE = 'El rango de fechas no puede ser mayor a un año.'
+const MASIVO_QUERY_TYPE = 'MASIVO'
+const MASIVO_EXCEL_QUERY_TYPE = 'MASIVO_EXCEL'
+
+const isDateRangeGreaterThanOneYear = (desde: Date, hasta: Date) => {
+  const maxHasta = new Date(desde)
+  maxHasta.setFullYear(maxHasta.getFullYear() + 1)
+
+  return hasta > maxHasta
+}
 
 
 
@@ -206,6 +218,8 @@ const columns: any = [
 ]
 
 const TableServerSideHistoricoMasivo = () => {
+  const {fechaDesde,fechaHasta,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[]} = useSelector((state: RootState) => state.nomina)
+
   // ** State
   const [page, setPage] = useState(0)
   
@@ -217,22 +231,151 @@ const TableServerSideHistoricoMasivo = () => {
   const [allRows, setAllRows] = useState<IHistoricoMovimiento[]>([])
   const [mensaje, setMensaje] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const [openExcelDialog, setOpenExcelDialog] = useState(false)
+  const [excelDesde, setExcelDesde] = useState<Date>(fechaDesde)
+  const [excelHasta, setExcelHasta] = useState<Date>(fechaHasta)
+  const [excelTiposNomina, setExcelTiposNomina] = useState<IListTipoNominaDto[]>([])
+  const [excelConceptos, setExcelConceptos] = useState<IListConceptosDto[]>([])
+  const [excelTiposNominaOptions, setExcelTiposNominaOptions] = useState<IListTipoNominaDto[]>([])
+  const [excelConceptosOptions, setExcelConceptosOptions] = useState<IListConceptosDto[]>([])
+  const [excelLoading, setExcelLoading] = useState(false)
+  const [excelMessage, setExcelMessage] = useState('')
 
   //const [rows, setRows] = useState<DataGridRowType[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string>('fechaNominaMov')
 
-  const {fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[]} = useSelector((state: RootState) => state.nomina)
+  const unwrapApiData = <T,>(responseData: any): T[] => {
+    if (Array.isArray(responseData)) {
+      return responseData
+    }
 
-  function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
-    //if(currentPage<=0) currentPage=1;
+    if (Array.isArray(responseData?.data)) {
+      return responseData.data
+    }
 
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    return []
   }
 
+  const formatDateInputValue = (date: Date) => dayjs(date).format('YYYY-MM-DD')
+
+  const parseDateInputValue = (value: string) => new Date(`${value}T00:00:00`)
+
+  const fetchExcelTiposNomina = useCallback(
+    async (desde: Date, hasta: Date) => {
+      const filterTipoNomina: IPersonaFilterDto = {
+        codigoPersona: 0,
+        desde,
+        hasta,
+        sinRestriccionFecha: true
+      }
+
+      const responseAllTipoNomina = await ossmmasofApiVertical.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona', filterTipoNomina)
+      const data = unwrapApiData<IListTipoNominaDto>(responseAllTipoNomina.data)
+
+      setExcelTiposNominaOptions(data)
+
+      return data
+    },
+    []
+  )
+
+  const fetchExcelConceptos = useCallback(
+    async (desde: Date, hasta: Date, tiposNomina: IListTipoNominaDto[]) => {
+      const filter: IPersonaFilterDto = {
+        codigoPersona: 0,
+        desde,
+        hasta,
+        sinRestriccionFecha: true,
+        codigoTipoNomina: tiposNomina
+          .filter(tipoNomina => tipoNomina.codigoTipoNomina > 0)
+          .map(tipoNomina => ({ codigoTipoNomina: tipoNomina.codigoTipoNomina }))
+      }
+
+      const responseAll = await ossmmasofApiVertical.post<any>('/RhConceptos/GetConceptosByPersonas', filter)
+      const data = unwrapApiData<IListConceptosDto>(responseAll.data)
+
+      setExcelConceptosOptions(data)
+
+      return data
+    },
+    []
+  )
+
+  const openExcelExportDialog = async () => {
+    setExcelDesde(fechaDesde)
+    setExcelHasta(fechaHasta)
+    setExcelTiposNomina(tiposNominaSeleccionado)
+    setExcelConceptos(conceptoSeleccionado)
+    setExcelMessage('')
+    setOpenExcelDialog(true)
+
+    try {
+      setExcelLoading(true)
+      await fetchExcelTiposNomina(fechaDesde, fechaHasta)
+      await fetchExcelConceptos(fechaDesde, fechaHasta, tiposNominaSeleccionado)
+    } catch (error) {
+      setExcelMessage('Error al cargar parámetros de descarga')
+    } finally {
+      setExcelLoading(false)
+    }
+  }
+
+  const handleExcelDesdeChange = async (value: string) => {
+    const desde = parseDateInputValue(value)
+    setExcelDesde(desde)
+    setExcelTiposNomina([])
+    setExcelConceptos([])
+    setExcelConceptosOptions([])
+
+    try {
+      setExcelLoading(true)
+      setExcelMessage('')
+      await fetchExcelTiposNomina(desde, excelHasta)
+      await fetchExcelConceptos(desde, excelHasta, [])
+    } catch (error) {
+      setExcelMessage('Error al cargar parámetros de descarga')
+    } finally {
+      setExcelLoading(false)
+    }
+  }
+
+  const handleExcelHastaChange = async (value: string) => {
+    const hasta = parseDateInputValue(value)
+    setExcelHasta(hasta)
+    setExcelTiposNomina([])
+    setExcelConceptos([])
+    setExcelConceptosOptions([])
+
+    try {
+      setExcelLoading(true)
+      setExcelMessage('')
+      await fetchExcelTiposNomina(excelDesde, hasta)
+      await fetchExcelConceptos(excelDesde, hasta, [])
+    } catch (error) {
+      setExcelMessage('Error al cargar parámetros de descarga')
+    } finally {
+      setExcelLoading(false)
+    }
+  }
+
+  const handleExcelTiposNominaChange = async (value: IListTipoNominaDto[]) => {
+    setExcelTiposNomina(value)
+    setExcelConceptos([])
+
+    try {
+      setExcelLoading(true)
+      setExcelMessage('')
+      await fetchExcelConceptos(excelDesde, excelHasta, value)
+    } catch (error) {
+      setExcelMessage('Error al cargar conceptos')
+    } finally {
+      setExcelLoading(false)
+    }
+  }
 
   const fetchTableData = useCallback(
-    async (desde:Date,hasta:Date,tipoQuery:string,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[]) => {
+    async (desde:Date,hasta:Date,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[]) => {
 
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
@@ -241,16 +384,23 @@ const TableServerSideHistoricoMasivo = () => {
       setLoading(true);
       setAllRows([]);
       setTotal(0);
-      setRows(loadServerRows(page, []))
+      setRows([])
       
       //setLinkData('')
+
+      if (isDateRangeGreaterThanOneYear(desde, hasta)) {
+        setMensaje(MAX_RANGE_MESSAGE)
+        setLoading(false)
+
+        return
+      }
 
 
 
       const filterHistorico:FilterHistorico={
         desde,
         hasta,
-        tipoQuery,
+        tipoQuery: MASIVO_QUERY_TYPE,
         codigoTipoNomina,
         codigoConcepto,
         codigoPersona:0,
@@ -261,50 +411,138 @@ const TableServerSideHistoricoMasivo = () => {
         codigoProceso:0
       }
 
+      try {
+        const responseAll = await ossmmasofApiVertical.post<any>('/RhHistoricoMovimiento/GetHistoricoFecha', filterHistorico)
+        const historico = responseAll.data?.data ?? []
+        const totalRecords = responseAll.data?.cantidadRegistros ?? historico.length
 
-      const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
-      setAllRows(responseAll.data.data);
-      setTotal(responseAll.data.data.length);
-
-      setRows(loadServerRows(page, responseAll.data.data))
+        setAllRows(historico)
+        setTotal(totalRecords)
+        setRows(historico)
+        setMensaje(responseAll.data?.isValid === false ? responseAll.data?.message ?? 'Error al consultar histórico' : '')
+      } catch (error) {
+        setMensaje('Error al consultar histórico')
+        setAllRows([])
+        setTotal(0)
+        setRows([])
+      }
 
       //setLinkData(responseAll.data.linkData)
 
       setLoading(false);
 
-      if( responseAll.data.data.length>0){
-        setMensaje('')
-      }else{
-        setMensaje('')
-      }
-
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [page, pageSize, sort, sortColumn]
   )
 
 
-
   useEffect(() => {
-    fetchTableData(fechaDesde,fechaHasta,tipoQuery,tiposNominaSeleccionado,conceptoSeleccionado);
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPage(0)
   }, [fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado])
 
+  useEffect(() => {
+    fetchTableData(fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado);
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(allRows)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-  
-    // Buffer to store the generated Excel file
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    })
-  
-    saveAs(blob, 'historicoMasivo.xlsx')
+
+  }, [fetchTableData, fechaDesde,fechaHasta,tiposNominaSeleccionado,conceptoSeleccionado])
+
+
+  const exportToExcel = async () => {
+    if (isDateRangeGreaterThanOneYear(fechaDesde, fechaHasta)) {
+      setMensaje(MAX_RANGE_MESSAGE)
+
+      return
+    }
+
+    const filterHistorico: FilterHistorico = {
+      desde: fechaDesde,
+      hasta: fechaHasta,
+      tipoQuery: MASIVO_QUERY_TYPE,
+      codigoTipoNomina: tiposNominaSeleccionado,
+      codigoConcepto: conceptoSeleccionado,
+      codigoPersona: 0,
+      page: 0,
+      pageSize: 0,
+      tipoSort: sort,
+      sortColumn: sortColumn,
+      codigoProceso: 0
+    }
+
+    try {
+      setMensaje('')
+      const responseAll = await ossmmasofApiVertical.post<any>('/RhHistoricoMovimiento/GetHistoricoFecha', filterHistorico)
+      const exportRows = responseAll.data?.data ?? []
+
+      const worksheet = XLSX.utils.json_to_sheet(exportRows)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+      const blob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+      })
+
+      saveAs(blob, 'historicoMasivo.xlsx')
+    } catch (error) {
+      setMensaje('Error al exportar histórico')
+    }
+  }
+
+  const exportExpandedToExcel = async () => {
+    if (excelHasta < excelDesde) {
+      setExcelMessage('Fecha Hasta no puede ser menor que Fecha Desde')
+
+      return
+    }
+
+    const filterHistorico: FilterHistorico = {
+      desde: excelDesde,
+      hasta: excelHasta,
+      tipoQuery: MASIVO_EXCEL_QUERY_TYPE,
+      codigoTipoNomina: excelTiposNomina,
+      codigoConcepto: excelConceptos,
+      codigoPersona: 0,
+      page: 0,
+      pageSize: 0,
+      tipoSort: sort,
+      sortColumn: sortColumn,
+      codigoProceso: 0
+    }
+
+    try {
+      setExcelLoading(true)
+      setExcelMessage('')
+      const responseAll = await ossmmasofApiVertical.post<any>('/RhHistoricoMovimiento/GetHistoricoFecha', filterHistorico)
+      const exportRows = responseAll.data?.data ?? []
+
+      if (responseAll.data?.isValid === false) {
+        setExcelMessage(responseAll.data?.message ?? 'Error al exportar histórico')
+
+        return
+      }
+
+      if (!exportRows.length) {
+        setExcelMessage('No hay datos para exportar')
+
+        return
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(exportRows)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+      const blob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+      })
+
+      saveAs(blob, 'historicoMasivoAmpliado.xlsx')
+      setOpenExcelDialog(false)
+    } catch (error) {
+      setExcelMessage('Error al exportar histórico')
+    } finally {
+      setExcelLoading(false)
+    }
   }
 
   const handleSortModel = (newModel: GridSortModel) => {
@@ -328,7 +566,7 @@ const TableServerSideHistoricoMasivo = () => {
 
             const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
             const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
-            setRows(loadServerRows(page, dataToFilter))
+            setRows(dataToFilter)
       }
 
 
@@ -361,7 +599,6 @@ const TableServerSideHistoricoMasivo = () => {
   const handlePageChange = (newPage:number) => {
 
     setPage(newPage)
-    setRows(loadServerRows(newPage, allRows))
 
   }
 
@@ -377,11 +614,87 @@ const TableServerSideHistoricoMasivo = () => {
                 <Icon icon='ci:download' fontSize={20} />
               </IconButton>
             </Tooltip>
+            <Tooltip title='Descarga ampliada'>
+              <IconButton color='primary' size='small' onClick={openExcelExportDialog}>
+                <Icon icon='mdi:file-excel-outline' fontSize={20} />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </Grid>
       ) : (
         <Typography>{mensaje}</Typography>
       )}
+
+      {mensaje && !loading ? (
+        <Typography sx={{ mx: 4, mb: 4 }} color='error'>
+          {mensaje}
+        </Typography>
+      ) : null}
+
+      <Dialog open={openExcelDialog} onClose={() => setOpenExcelDialog(false)} fullWidth maxWidth='md'>
+        <DialogTitle>Descarga ampliada</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={4} sx={{ pt: 2 }}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                type='date'
+                label='Desde'
+                value={formatDateInputValue(excelDesde)}
+                onChange={event => handleExcelDesdeChange(event.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                type='date'
+                label='Hasta'
+                value={formatDateInputValue(excelHasta)}
+                onChange={event => handleExcelHastaChange(event.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                multiple
+                options={excelTiposNominaOptions}
+                value={excelTiposNomina}
+                id='autocomplete-excel-tipo-nomina'
+                isOptionEqualToValue={(option, value) => option.codigoTipoNomina === value.codigoTipoNomina}
+                getOptionLabel={option => `${option.codigoTipoNomina}-${option.descripcion}`}
+                onChange={(event, value) => handleExcelTiposNominaChange(value)}
+                renderInput={params => <TextField {...params} label='Tipo Nomina' />}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                multiple
+                options={excelConceptosOptions}
+                value={excelConceptos}
+                id='autocomplete-excel-concepto'
+                isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo + value.codigoTipoNomina}
+                getOptionLabel={option => `${option.codigo}-${option.codigoTipoNomina}-${option.denominacion}`}
+                onChange={(event, value) => setExcelConceptos(value)}
+                renderInput={params => <TextField {...params} label='Conceptos' />}
+              />
+            </Grid>
+            {excelMessage ? (
+              <Grid item xs={12}>
+                <Typography color='error'>{excelMessage}</Typography>
+              </Grid>
+            ) : null}
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenExcelDialog(false)} disabled={excelLoading}>
+            Cancelar
+          </Button>
+          <Button variant='contained' onClick={exportExpandedToExcel} disabled={excelLoading}>
+            Descargar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
      { loading  ? (
        <Spinner sx={{ height: '100%' }} />
@@ -394,6 +707,7 @@ const TableServerSideHistoricoMasivo = () => {
         rows={rows}
         rowCount={total}
         columns={columns}
+        page={page}
         pageSize={pageSize}
         sortingMode='server'
 
@@ -405,7 +719,10 @@ const TableServerSideHistoricoMasivo = () => {
 
         //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+        onPageSizeChange={newPageSize => {
+          setPage(0)
+          setPageSize(newPageSize)
+        }}
         componentsProps={{
           baseButton: {
             variant: 'outlined'

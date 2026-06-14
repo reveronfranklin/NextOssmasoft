@@ -22,8 +22,9 @@ import { RootState } from 'src/store';
 import { ISelectListDescriptiva } from 'src/interfaces/rh/SelectListDescriptiva';
 
 import { IRhTiposNominaResponseDto } from 'src/interfaces/rh/TipoNomina/RhTiposNominaResponseDto';
-import { setListRhFrecuencia, setListRhTipoNomina, setOperacionCrudRhTipoNomina, setRhTipoNominaSeleccionado, setVerRhTipoNominaActive } from 'src/store/apps/rh-tipoNomina';
+import { setIsOpenViewerReportePersonal, setListRhFrecuencia, setListRhTipoNomina, setOperacionCrudRhTipoNomina, setRhTipoNominaReporteSeleccionado, setRhTipoNominaSeleccionado, setVerRhTipoNominaActive } from 'src/store/apps/rh-tipoNomina';
 import DialogRhTipoNominaInfo from './DialogRhTipoNominaInfo';
+import DialogReportePersonalTipoNomina from './DialogReportePersonalTipoNomina';
 
 
 const TipoNominaList = () => {
@@ -35,6 +36,28 @@ const TipoNominaList = () => {
   const columns = [
 
 
+    {
+      field: 'actions',
+      headerName: 'Acciones',
+      width: 100,
+      sortable: false,
+      renderCell: ({ row }: { row: IRhTiposNominaResponseDto }) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title='Reporte de personal'>
+            <IconButton
+              color='primary'
+              size='small'
+              onClick={event => {
+                event.stopPropagation()
+                handleReportePersonal(row)
+              }}
+            >
+              <Icon icon='mdi:file-pdf-box' fontSize={20} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )
+    },
     {
 
       field: 'codigoTipoNomina'
@@ -71,6 +94,10 @@ const TipoNominaList = () => {
 
   ]
 
+  const handleReportePersonal = (row: IRhTiposNominaResponseDto) => {
+    dispatch(setRhTipoNominaReporteSeleccionado(row))
+    dispatch(setIsOpenViewerReportePersonal(true))
+  }
 
   const handleView=  (row : IRhTiposNominaResponseDto)=>{
 
@@ -232,6 +259,7 @@ const TipoNominaList = () => {
         <DatePickerWrapper>
               <DialogRhTipoNominaInfo  popperPlacement={popperPlacement} />
         </DatePickerWrapper>
+        <DialogReportePersonalTipoNomina />
     </Grid>
 
 
