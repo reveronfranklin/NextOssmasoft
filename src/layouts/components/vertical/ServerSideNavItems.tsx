@@ -160,11 +160,8 @@ const ServerSideNavItems = () => {
 
         setMenuItems(normalizeMenuResponse(response.data))
       } catch (error) {
-        console.warn('No se pudo cargar menu por POST, se intenta endpoint GET legado.', error)
-
-        const response = await ossmmasofApi.get<any>('/SisUsuarios/GetMenu')
-
-        setMenuItems(normalizeMenuResponse(response.data))
+        console.warn('No se pudo cargar menu por usuario.', error)
+        setMenuItems(ensureSecurityMenu([]))
       }
     }
 
