@@ -36,6 +36,16 @@ const securityMenu = {
   path: '/apps/sis/seguridad'
 }
 
+const sisUsersMenu = {
+  title: 'Usuarios',
+  path: '/apps/sis/usuarios'
+}
+
+const userRolesMenu = {
+  title: 'Roles Usuario',
+  path: '/apps/sis/usuario-rol'
+}
+
 const getStoredUserData = () => {
   try {
     const userData = localStorage.getItem('userData')
@@ -61,6 +71,8 @@ const ensureAdminMenus = (items: any[]) => {
 
   const hasSecurity = JSON.stringify(items).includes('/apps/sis/seguridad')
   const hasSupport = JSON.stringify(items).includes('/apps/soporte')
+  const hasSisUsers = JSON.stringify(items).includes('/apps/sis/usuarios')
+  const hasUserRoles = JSON.stringify(items).includes('/apps/sis/usuario-rol')
   let sistema = items.find(item => item?.title === 'Sistema')
 
   if (!sistema) {
@@ -74,6 +86,14 @@ const ensureAdminMenus = (items: any[]) => {
 
   if (!Array.isArray(sistema.children)) {
     sistema.children = []
+  }
+
+  if (!hasUserRoles) {
+    sistema.children.push(userRolesMenu)
+  }
+
+  if (!hasSisUsers) {
+    sistema.children.push(sisUsersMenu)
   }
 
   if (!hasSecurity) {
@@ -160,11 +180,8 @@ const ServerSideNavItems = () => {
 
         setMenuItems(normalizeMenuResponse(response.data))
       } catch (error) {
-        console.warn('No se pudo cargar menu por POST, se intenta endpoint GET legado.', error)
-
-        const response = await ossmmasofApi.get<any>('/SisUsuarios/GetMenu')
-
-        setMenuItems(normalizeMenuResponse(response.data))
+        console.warn('No se pudo cargar menu por usuario.', error)
+        setMenuItems(ensureSecurityMenu([]))
       }
     }
 

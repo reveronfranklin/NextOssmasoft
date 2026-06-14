@@ -12,6 +12,46 @@ const getAuthResponseValue = (data: any, camelCaseKey: string, pascalCaseKey: st
   return data?.[camelCaseKey] ?? data?.[pascalCaseKey] ?? ''
 }
 
+let refreshTokenRequest: Promise<{ accessToken: string; refreshToken: string }> | null = null
+
+const refreshAuthToken = async () => {
+  if (!refreshTokenRequest) {
+    refreshTokenRequest = (async () => {
+      const currentAccessToken = localStorage.getItem(authConfig.storageTokenKeyName) || ''
+      const currentRefreshToken = localStorage.getItem(authConfig.onTokenExpiration) || ''
+
+      const rs = await axios.post(
+        authConfig.refreshEndPoint,
+        {
+          accessToken: currentAccessToken,
+          refreshToken: currentRefreshToken
+        },
+        {
+          headers: {
+            Authorization: 'Bearer ' + currentAccessToken
+          }
+        }
+      )
+
+      const accessToken = getAuthResponseValue(rs.data, 'accessToken', 'AccessToken')
+      const refreshToken = getAuthResponseValue(rs.data, 'refreshToken', 'RefreshToken')
+
+      if (!accessToken || !refreshToken) {
+        throw new Error('Invalid refresh token response.')
+      }
+
+      localStorage.setItem(authConfig.storageTokenKeyName, accessToken)
+      localStorage.setItem(authConfig.onTokenExpiration, refreshToken)
+
+      return { accessToken, refreshToken }
+    })().finally(() => {
+      refreshTokenRequest = null
+    })
+  }
+
+  return refreshTokenRequest
+}
+
 ossmmasofApi.interceptors.request.use(
   config => {
     const token = localStorage.getItem(authConfig.storageTokenKeyName)
@@ -41,36 +81,7 @@ ossmmasofApi.interceptors.response.use(
         originalConfig._retry = true
 
         try {
-          const currentAccessToken = localStorage.getItem(authConfig.storageTokenKeyName) || ''
-          const currentRefreshToken = localStorage.getItem(authConfig.onTokenExpiration) || ''
-
-          const rs = await axios.post(
-            authConfig.refreshEndPoint,
-            {
-              accessToken: currentAccessToken,
-              refreshToken: currentRefreshToken
-            },
-            {
-              headers: {
-                Authorization: 'Bearer ' + currentAccessToken
-              }
-            }
-          )
-
-          const accessToken = getAuthResponseValue(rs.data, 'accessToken', 'AccessToken')
-          const refreshToken = getAuthResponseValue(rs.data, 'refreshToken', 'RefreshToken')
-
-          if (!accessToken || !refreshToken) {
-            throw new Error('Invalid refresh token response.')
-          }
-
-          localStorage.setItem(authConfig.storageTokenKeyName, accessToken)
-          localStorage.setItem(authConfig.onTokenExpiration, refreshToken)
-
-          console.log(
-            'desde el interceptor de la repuesta para evaluar el token de las cookies rs.data.data',
-            rs.data.data
-          )
+          const { accessToken, refreshToken } = await refreshAuthToken()
 
           originalConfig.headers = {
             ...originalConfig.headers,
