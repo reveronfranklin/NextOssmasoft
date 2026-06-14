@@ -27,6 +27,7 @@ export type UserDataType = {
   fullName: string
   username: string
   password: string
+  isSuperuser?: boolean
   avatar?: string | null
 }
 

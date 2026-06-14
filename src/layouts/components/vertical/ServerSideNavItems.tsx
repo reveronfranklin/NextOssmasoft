@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import authConfig from 'src/configs/auth'
+import navigation from 'src/navigation/vertical'
 
 const supportMenu = {
   title: 'Soporte',
@@ -46,6 +47,8 @@ const userRolesMenu = {
   path: '/apps/sis/usuario-rol'
 }
 
+const cloneMenu = (items: any[]) => JSON.parse(JSON.stringify(items))
+
 const getStoredUserData = () => {
   try {
     const userData = localStorage.getItem('userData')
@@ -60,8 +63,9 @@ const isAdminUser = () => {
   const userData = getStoredUserData()
   const role = String(userData?.role || '').toLowerCase()
   const roles = Array.isArray(userData?.roles) ? userData.roles : []
+  const isSuperuser = userData?.isSuperuser === true || userData?.IsSuperuser === true || Number(userData?.IS_SUPERUSER ?? 0) === 1
 
-  return userData?.isSuperuser === true || role === 'admin' || roles.some((item: any) => String(item?.role || item).toLowerCase() === 'admin')
+  return isSuperuser || role === 'admin' || roles.some((item: any) => String(item?.role || item).toLowerCase() === 'admin')
 }
 
 const ensureAdminMenus = (items: any[]) => {
@@ -181,7 +185,7 @@ const ServerSideNavItems = () => {
         setMenuItems(normalizeMenuResponse(response.data))
       } catch (error) {
         console.warn('No se pudo cargar menu por usuario.', error)
-        setMenuItems(ensureSecurityMenu([]))
+        setMenuItems(ensureSecurityMenu(cloneMenu(navigation())))
       }
     }
 
