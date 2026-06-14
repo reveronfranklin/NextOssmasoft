@@ -31,6 +31,16 @@ type Props = {
   children: ReactNode
 }
 
+const getStoredUserData = (): UserDataType | null => {
+  try {
+    const userData = window.localStorage.getItem('userData')
+
+    return userData ? JSON.parse(userData) : null
+  } catch {
+    return null
+  }
+}
+
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
@@ -43,8 +53,13 @@ const AuthProvider = ({ children }: Props) => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
       const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
+      const storedUserData = getStoredUserData()
 
-      if (storedToken) {
+      if (storedUserData) {
+        setUser(storedUserData)
+      }
+
+      if (storedToken && refreshToken) {
 
         const refreshToke:IRefreshTokenDto={refreshToken:refreshToken,accessToken:storedToken};
         setLoading(true)
@@ -61,18 +76,16 @@ const AuthProvider = ({ children }: Props) => {
             localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken);
             localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken);
             setUser({ ...response.data.userData })
-
-
-            const returnUrl = router.query.returnUrl
-
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
-            router.replace(redirectURL as string)
-
-
+            window.localStorage.setItem('userData', JSON.stringify(response.data.userData))
 
           })
           .catch(() => {
+            if (storedUserData) {
+              setUser(storedUserData)
+              setLoading(false)
+
+              return
+            }
 
             localStorage.removeItem('userData')
             localStorage.removeItem('refreshToken')
@@ -83,9 +96,9 @@ const AuthProvider = ({ children }: Props) => {
               router.replace('/login')
             }
           })
-      } else {
-        setLoading(false)
       }
+
+      setLoading(false)
     }
 
     initAuth()
