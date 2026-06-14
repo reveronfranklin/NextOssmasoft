@@ -9,25 +9,100 @@ import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
 import authConfig from 'src/configs/auth'
 
-const ensureSecurityMenu = (items: any[]) => {
-  const hasSecurity = JSON.stringify(items).includes('/apps/sis/seguridad')
+const supportMenu = {
+  title: 'Soporte',
+  children: [
+    {
+      title: 'Tickets',
+      path: '/apps/soporte/tickets'
+    },
+    {
+      title: 'Dashboard',
+      path: '/apps/soporte/dashboard'
+    },
+    {
+      title: 'Notificaciones',
+      path: '/apps/soporte/notificaciones'
+    },
+    {
+      title: 'Configuracion',
+      path: '/apps/soporte/configuracion'
+    }
+  ]
+}
 
-  if (hasSecurity) {
+const securityMenu = {
+  title: 'Seguridad',
+  path: '/apps/sis/seguridad'
+}
+
+const getStoredUserData = () => {
+  try {
+    const userData = localStorage.getItem('userData')
+
+    return userData ? JSON.parse(userData) : null
+  } catch {
+    return null
+  }
+}
+
+const isAdminUser = () => {
+  const userData = getStoredUserData()
+  const role = String(userData?.role || '').toLowerCase()
+  const roles = Array.isArray(userData?.roles) ? userData.roles : []
+
+  return userData?.isSuperuser === true || role === 'admin' || roles.some((item: any) => String(item?.role || item).toLowerCase() === 'admin')
+}
+
+const ensureAdminMenus = (items: any[]) => {
+  if (!isAdminUser()) {
     return items
   }
 
-  const sistema = items.find(item => item?.title === 'Sistema')
-  const soporte = sistema?.children?.find((item: any) => item?.title === 'Soporte')
+  const hasSecurity = JSON.stringify(items).includes('/apps/sis/seguridad')
+  const hasSupport = JSON.stringify(items).includes('/apps/soporte')
+  let sistema = items.find(item => item?.title === 'Sistema')
 
-  if (soporte?.children && Array.isArray(soporte.children)) {
-    soporte.children.push({
-      title: 'Seguridad',
-      path: '/apps/sis/seguridad',
-      permissions: ['soporte.usuarios.configurar']
-    })
+  if (!sistema) {
+    sistema = {
+      title: 'Sistema',
+      icon: 'mdi:shield-account-outline',
+      children: []
+    }
+    items.push(sistema)
+  }
+
+  if (!Array.isArray(sistema.children)) {
+    sistema.children = []
+  }
+
+  if (!hasSecurity) {
+    sistema.children.push(securityMenu)
+  }
+
+  if (!hasSupport) {
+    sistema.children.push(supportMenu)
   }
 
   return items
+}
+
+const ensureSecurityMenu = (items: any[]) => {
+  const adminItems = ensureAdminMenus(items)
+  const hasSecurity = JSON.stringify(items).includes('/apps/sis/seguridad')
+
+  if (hasSecurity) {
+    return adminItems
+  }
+
+  const sistema = adminItems.find(item => item?.title === 'Sistema')
+  const soporte = sistema?.children?.find((item: any) => item?.title === 'Soporte')
+
+  if (soporte?.children && Array.isArray(soporte.children)) {
+    soporte.children.push(securityMenu)
+  }
+
+  return adminItems
 }
 
 const ServerSideNavItems = () => {
