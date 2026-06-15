@@ -169,7 +169,9 @@ const normalizeServerMenuItem = (item: any): any => {
     return item
   }
 
-  const { action, subject, children, ...rest } = item
+  const { children, ...rest } = item
+  delete rest.action
+  delete rest.subject
 
   return {
     ...rest,
