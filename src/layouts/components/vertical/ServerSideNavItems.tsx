@@ -32,6 +32,121 @@ const supportMenu = {
   ]
 }
 
+const cntMenu = {
+  title: 'Contabilidad',
+  icon: 'mdi:calculator-variant-outline',
+  children: [
+    {
+      title: 'Comprobantes',
+      path: '/apps/cnt/comprobantes'
+    },
+    {
+      title: 'Proceso Automatico',
+      path: '/apps/cnt/proceso-automatico'
+    },
+    {
+      title: 'Procesos',
+      children: [
+        {
+          title: 'Cierre contable',
+          path: '/apps/cnt/procesos/cierre-contable'
+        }
+      ]
+    },
+    {
+      title: 'Conciliacion',
+      children: [
+        {
+          title: 'Conciliaciones',
+          path: '/apps/cnt/conciliacion'
+        },
+        {
+          title: 'Importar estados de cuenta',
+          path: '/apps/cnt/conciliacion/carga-banco'
+        },
+        {
+          title: 'Estados de cuenta',
+          path: '/apps/cnt/conciliacion/estados-cuenta'
+        },
+        {
+          title: 'Libro banco',
+          path: '/apps/cnt/conciliacion/libro-banco'
+        },
+        {
+          title: 'Configuracion',
+          path: '/apps/cnt/conciliacion/configuracion'
+        },
+        {
+          title: 'Formatos banco',
+          path: '/apps/cnt/conciliacion/formatos-banco'
+        }
+      ]
+    },
+    {
+      title: 'Reportes',
+      children: [
+        {
+          title: 'Mayor Analitico',
+          path: '/apps/cnt/reportes/mayor-analitico'
+        },
+        {
+          title: 'Movimiento Auxiliar',
+          path: '/apps/cnt/reportes/movimiento-auxiliar'
+        }
+      ]
+    },
+    {
+      title: 'Catalogos',
+      children: [
+        {
+          title: 'Plan de cuentas',
+          path: '/apps/cnt/catalogos/plan-cuentas'
+        },
+        {
+          title: 'Descriptivas',
+          path: '/apps/cnt/catalogos/descriptivas'
+        },
+        {
+          title: 'Rubros',
+          path: '/apps/cnt/catalogos/rubros'
+        },
+        {
+          title: 'Balances',
+          path: '/apps/cnt/catalogos/balances'
+        },
+        {
+          title: 'Mayores',
+          path: '/apps/cnt/catalogos/mayores'
+        },
+        {
+          title: 'Auxiliares',
+          path: '/apps/cnt/catalogos/auxiliares'
+        },
+        {
+          title: 'Auxiliares PUC',
+          path: '/apps/cnt/catalogos/auxiliares-puc'
+        },
+        {
+          title: 'Periodos',
+          path: '/apps/cnt/catalogos/periodos'
+        },
+        {
+          title: 'Relacion documentos',
+          path: '/apps/cnt/catalogos/relacion-documentos'
+        },
+        {
+          title: 'Saldos',
+          path: '/apps/cnt/catalogos/saldos'
+        }
+      ]
+    },
+    {
+      title: 'Configuracion',
+      path: '/apps/cnt/configuracion'
+    }
+  ]
+}
+
 const securityMenu = {
   title: 'Seguridad',
   path: '/apps/sis/seguridad'
@@ -48,6 +163,21 @@ const userRolesMenu = {
 }
 
 const cloneMenu = (items: any[]) => JSON.parse(JSON.stringify(items))
+
+const normalizeServerMenuItem = (item: any): any => {
+  if (!item || typeof item !== 'object') {
+    return item
+  }
+
+  const { action, subject, children, ...rest } = item
+
+  return {
+    ...rest,
+    ...(Array.isArray(children) ? { children: children.map(normalizeServerMenuItem) } : {})
+  }
+}
+
+const normalizeServerMenu = (items: any[]) => items.map(normalizeServerMenuItem)
 
 const getStoredUserData = () => {
   try {
@@ -75,9 +205,14 @@ const ensureAdminMenus = (items: any[]) => {
 
   const hasSecurity = JSON.stringify(items).includes('/apps/sis/seguridad')
   const hasSupport = JSON.stringify(items).includes('/apps/soporte')
+  const hasCnt = JSON.stringify(items).includes('/apps/cnt')
   const hasSisUsers = JSON.stringify(items).includes('/apps/sis/usuarios')
   const hasUserRoles = JSON.stringify(items).includes('/apps/sis/usuario-rol')
   let sistema = items.find(item => item?.title === 'Sistema')
+
+  if (!hasCnt) {
+    items.push(cntMenu)
+  }
 
   if (!sistema) {
     sistema = {
@@ -160,7 +295,7 @@ const ServerSideNavItems = () => {
         }
       })
 
-      return ensureSecurityMenu(menuArray)
+      return ensureSecurityMenu(normalizeServerMenu(menuArray))
     }
 
     const loadMenu = async () => {
