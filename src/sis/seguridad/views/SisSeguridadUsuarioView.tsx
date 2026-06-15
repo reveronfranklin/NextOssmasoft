@@ -19,6 +19,7 @@ import {
   Grid,
   IconButton,
   InputLabel,
+  List,
   MenuItem,
   Radio,
   RadioGroup,
@@ -32,9 +33,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import Icon from 'src/@core/components/icon'
 import Spinner from 'src/@core/components/spinner'
+import { useSettings } from 'src/@core/hooks/useSettings'
+import VerticalNavItems from 'src/@core/layouts/components/vertical/navigation/VerticalNavItems'
+import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { SisUsuarioDto } from 'src/sis/usuarios/interfaces/SisUsuarioDtos'
 import { fetchSisUsuarios, SIS_USUARIOS_QUERY_KEY } from 'src/sis/usuarios/services/sisUsuarioService'
-import { SisSegPermisoDto, SisSegRolDto, SisSegUsrPermCommand } from '../interfaces/SisSeguridadDtos'
+import { SisSegMenuItemDto, SisSegPermisoDto, SisSegRolDto, SisSegUsrPermCommand } from '../interfaces/SisSeguridadDtos'
 import {
   applySisSegMigracionSugerida,
   cloneSisSegUsuario,
@@ -61,6 +65,79 @@ interface PermCellType {
 }
 
 const jsonPreview = (value: unknown) => JSON.stringify(value ?? [], null, 2)
+
+const normalizeMenuSimulatorItem = (item: SisSegMenuItemDto): any => {
+  const children = Array.isArray(item.children) ? item.children.map(normalizeMenuSimulatorItem) : undefined
+
+  return {
+    ...item,
+    action: undefined,
+    subject: undefined,
+    path: undefined,
+    ...(children ? { children } : {})
+  }
+}
+
+const normalizeMenuSimulatorItems = (jsonMenu: SisSegMenuItemDto[] | undefined): VerticalNavItemsType =>
+  Array.isArray(jsonMenu) ? jsonMenu.map(normalizeMenuSimulatorItem) : []
+
+interface MenuSimulatorProps {
+  jsonMenu?: SisSegMenuItemDto[]
+}
+
+const MenuSimulator = ({ jsonMenu }: MenuSimulatorProps) => {
+  const { settings, saveSettings } = useSettings()
+  const [groupActive, setGroupActive] = useState<string[]>([])
+  const [currentActiveGroup, setCurrentActiveGroup] = useState<string[]>([])
+
+  const navItems = useMemo(() => normalizeMenuSimulatorItems(jsonMenu), [jsonMenu])
+  const previewSettings = useMemo(
+    () => ({
+      ...settings,
+      navCollapsed: false
+    }),
+    [settings]
+  )
+
+  return (
+    <Box
+      sx={{
+        border: theme => `1px solid ${theme.palette.divider}`,
+        borderRadius: 1,
+        bgcolor: 'background.paper',
+        minHeight: 420,
+        overflow: 'hidden'
+      }}
+    >
+      <List
+        className='nav-items'
+        sx={{
+          py: 2,
+          pr: 4.5,
+          '& > :first-of-type': { mt: 0 },
+          '& .nav-link, & .nav-group': {
+            maxWidth: 320
+          }
+        }}
+      >
+        <VerticalNavItems
+          navHover
+          navVisible={false}
+          groupActive={groupActive}
+          setGroupActive={setGroupActive}
+          currentActiveGroup={currentActiveGroup}
+          setCurrentActiveGroup={setCurrentActiveGroup}
+          verticalNavItems={navItems}
+          collapsedNavWidth={68}
+          navigationBorderWidth={0}
+          settings={previewSettings}
+          saveSettings={saveSettings}
+          toggleNavVisibility={() => null}
+        />
+      </List>
+    </Box>
+  )
+}
 
 const SisSeguridadUsuarioView = () => {
   const queryClient = useQueryClient()
@@ -687,21 +764,34 @@ const SisSeguridadUsuarioView = () => {
               {usuarioQuery.data?.isSuperuser && <Chip color='primary' label='Superuser' size='small' />}
             </Box>
             <Divider sx={{ mb: 4 }} />
-            <Box
-              component='pre'
-              sx={{
-                m: 0,
-                p: 4,
-                borderRadius: 1,
-                overflow: 'auto',
-                maxHeight: 420,
-                bgcolor: 'action.hover',
-                fontSize: 12,
-                lineHeight: 1.6
-              }}
-            >
-              {jsonPreview(usuarioQuery.data?.jsonMenu)}
-            </Box>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={4}>
+                <Typography variant='subtitle2' sx={{ mb: 2 }}>
+                  Simulador menu
+                </Typography>
+                <MenuSimulator jsonMenu={usuarioQuery.data?.jsonMenu} />
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Typography variant='subtitle2' sx={{ mb: 2 }}>
+                  JSON_MENU
+                </Typography>
+                <Box
+                  component='pre'
+                  sx={{
+                    m: 0,
+                    p: 4,
+                    borderRadius: 1,
+                    overflow: 'auto',
+                    maxHeight: 420,
+                    bgcolor: 'action.hover',
+                    fontSize: 12,
+                    lineHeight: 1.6
+                  }}
+                >
+                  {jsonPreview(usuarioQuery.data?.jsonMenu)}
+                </Box>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Grid>
