@@ -57,6 +57,7 @@ const StyledLink = styled(Link)({
 
 const VerticalNavHeader = (props: Props) => {
   const [tituloMenu, setTituloMenu] = useState('')
+  const appVersion = process.env.NEXT_PUBLIC_APP_VERSION
 
   // ** Props
   const {
@@ -176,9 +177,16 @@ const VerticalNavHeader = (props: Props) => {
               </g>
             </g>
           </svg> */}
-          <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 3 }) }}>
+          <Box sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 3 }) }}>
+            <HeaderTitle variant='h6'>
               {tituloMenu}
-          </HeaderTitle>
+            </HeaderTitle>
+            {appVersion ? (
+              <Typography variant='caption' color='text.secondary' sx={{ lineHeight: 1 }}>
+                v{appVersion}
+              </Typography>
+            ) : null}
+          </Box>
         </StyledLink>
       )}
 
