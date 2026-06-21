@@ -6,7 +6,7 @@ import { RootState } from "src/store"
 import { getDateByObject } from 'src/utilities/ge-date-by-object'
 import { fechaToFechaObj } from 'src/utilities/fecha-to-fecha-object'
 import { Create } from '../../interfaces/create.interfaces'
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { IFechaDto } from "src/interfaces/fecha-dto";
 import { useDispatch } from "react-redux"
 import {
@@ -24,15 +24,23 @@ import CustomInput from 'src/views/forms/form-elements/pickers/PickersCustomInpu
 import dayjs from 'dayjs'
 import useServices from '../../services/useServices'
 import { CrudOperation } from '../../enums/CrudOperations.enum'
+import AudioDictateButton from '../../components/AudioDictateButton'
 
 const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [motivoAudioState, setMotivoAudioState] = useState<'idle' | 'recording' | 'transcribing'>('idle')
+    const [notaAudioState, setNotaAudioState] = useState<'idle' | 'recording' | 'transcribing'>('idle')
+    const [motivoConfidence, setMotivoConfidence] = useState<number | null>(null)
+    const [notaConfidence, setNotaConfidence] = useState<number | null>(null)
     const [fecha, setFecha] = useState<IFechaDto>({
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1,
         day: new Date().getDate(),
     })
+
+    const motivoInputRef = useRef<HTMLInputElement>(null)
+    const notaInputRef = useRef<HTMLInputElement>(null)
 
     const presupuestoSeleccionado = useSelector((state: RootState) => state.presupuesto.listpresupuestoDtoSeleccionado)
 
@@ -234,13 +242,72 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
-                                            helperText="Caracteres máximo 1150"
+                                            helperText={
+                                                motivoAudioState === 'recording'
+                                                    ? "🔴 Grabando audio... Hable ahora."
+                                                    : motivoAudioState === 'transcribing'
+                                                    ? "⏳ Transcribiendo con Deepgram Nova-3..."
+                                                    : motivoConfidence !== null && motivoConfidence < 0.85
+                                                    ? `⚠️ Revisa esta parte, no estoy seguro de haber escuchado bien (Confianza: ${(motivoConfidence * 100).toFixed(0)}%)`
+                                                    : "Caracteres máximo 1150"
+                                            }
+                                            FormHelperTextProps={{
+                                                sx: { color: motivoConfidence !== null && motivoConfidence < 0.85 ? 'warning.main' : 'text.secondary' }
+                                            }}
                                             value={value || ''}
                                             label="Motivo"
-                                            onChange={onChange}
+                                            inputRef={motivoInputRef}
+                                            onChange={(e) => {
+                                                onChange(e)
+                                                setMotivoConfidence(null)
+                                            }}
                                             placeholder='Motivo'
                                             multiline
                                             rows={4}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    backgroundColor: motivoConfidence !== null && motivoConfidence < 0.85 ? 'rgba(255, 235, 59, 0.12)' : undefined,
+                                                    borderColor: motivoAudioState === 'recording' ? 'red !important' : motivoAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    boxShadow: motivoAudioState === 'recording' ? '0 0 8px rgba(255, 0, 0, 0.5)' : motivoAudioState === 'transcribing' ? '0 0 8px rgba(156, 39, 176, 0.5)' : 'none',
+                                                    transition: 'all 0.3s ease-in-out',
+                                                    '& fieldset': {
+                                                        borderColor: motivoAudioState === 'recording' ? 'red !important' : motivoAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: motivoAudioState === 'recording' ? 'red !important' : motivoAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: motivoAudioState === 'recording' ? 'red !important' : motivoAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    }
+                                                }
+                                            }}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <AudioDictateButton
+                                                        textValue={value}
+                                                        onStateChange={setMotivoAudioState}
+                                                        inputRef={motivoInputRef}
+                                                        onClear={() => {
+                                                            onChange('')
+                                                            setMotivoConfidence(null)
+                                                        }}
+                                                        onTranscriptReceived={(text, confidence) => {
+                                                            const currentVal = value || '';
+                                                            const start = motivoInputRef.current?.selectionStart ?? currentVal.length;
+                                                            const end = motivoInputRef.current?.selectionEnd ?? currentVal.length;
+                                                            const before = currentVal.substring(0, start);
+                                                            const after = currentVal.substring(end);
+                                                            const spaceBefore = before.endsWith(' ') || before.length === 0 ? '' : ' ';
+                                                            const spaceAfter = after.startsWith(' ') || after.length === 0 ? '' : ' ';
+                                                            const newText = before + spaceBefore + text + spaceAfter + after;
+                                                            onChange(newText.toUpperCase().slice(0, 1150));
+                                                            if (confidence !== undefined) {
+                                                                setMotivoConfidence(confidence);
+                                                            }
+                                                        }}
+                                                    />
+                                                )
+                                            }}
                                         />
                                     )}
                                 />
@@ -257,13 +324,72 @@ const FormCreateSolCompromiso = ({ popperPlacement }: { popperPlacement: ReactDa
                                     }}
                                     render={({ field: { value, onChange } }) => (
                                         <TextField
-                                            helperText="Caracteres máximo 1000"
+                                            helperText={
+                                                notaAudioState === 'recording'
+                                                    ? "🔴 Grabando audio... Hable ahora."
+                                                    : notaAudioState === 'transcribing'
+                                                    ? "⏳ Transcribiendo con Deepgram Nova-3..."
+                                                    : notaConfidence !== null && notaConfidence < 0.85
+                                                    ? `⚠️ Revisa esta parte, no estoy seguro de haber escuchado bien (Confianza: ${(notaConfidence * 100).toFixed(0)}%)`
+                                                    : "Caracteres máximo 1000"
+                                            }
+                                            FormHelperTextProps={{
+                                                sx: { color: notaConfidence !== null && notaConfidence < 0.85 ? 'warning.main' : 'text.secondary' }
+                                            }}
                                             value={value || ''}
                                             label="Nota"
-                                            onChange={onChange}
+                                            inputRef={notaInputRef}
+                                            onChange={(e) => {
+                                                onChange(e)
+                                                setNotaConfidence(null)
+                                            }}
                                             placeholder='Nota'
                                             multiline
                                             rows={4}
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    backgroundColor: notaConfidence !== null && notaConfidence < 0.85 ? 'rgba(255, 235, 59, 0.12)' : undefined,
+                                                    borderColor: notaAudioState === 'recording' ? 'red !important' : notaAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    boxShadow: notaAudioState === 'recording' ? '0 0 8px rgba(255, 0, 0, 0.5)' : notaAudioState === 'transcribing' ? '0 0 8px rgba(156, 39, 176, 0.5)' : 'none',
+                                                    transition: 'all 0.3s ease-in-out',
+                                                    '& fieldset': {
+                                                        borderColor: notaAudioState === 'recording' ? 'red !important' : notaAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: notaAudioState === 'recording' ? 'red !important' : notaAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: notaAudioState === 'recording' ? 'red !important' : notaAudioState === 'transcribing' ? '#9c27b0 !important' : undefined,
+                                                    }
+                                                }
+                                            }}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <AudioDictateButton
+                                                        textValue={value}
+                                                        onStateChange={setNotaAudioState}
+                                                        inputRef={notaInputRef}
+                                                        onClear={() => {
+                                                            onChange('')
+                                                            setNotaConfidence(null)
+                                                        }}
+                                                        onTranscriptReceived={(text, confidence) => {
+                                                            const currentVal = value || '';
+                                                            const start = notaInputRef.current?.selectionStart ?? currentVal.length;
+                                                            const end = notaInputRef.current?.selectionEnd ?? currentVal.length;
+                                                            const before = currentVal.substring(0, start);
+                                                            const after = currentVal.substring(end);
+                                                            const spaceBefore = before.endsWith(' ') || before.length === 0 ? '' : ' ';
+                                                            const spaceAfter = after.startsWith(' ') || after.length === 0 ? '' : ' ';
+                                                            const newText = before + spaceBefore + text + spaceAfter + after;
+                                                            onChange(newText.toUpperCase().slice(0, 1000));
+                                                            if (confidence !== undefined) {
+                                                                setNotaConfidence(confidence);
+                                                            }
+                                                        }}
+                                                    />
+                                                )
+                                            }}
                                         />
                                     )}
                                 />
