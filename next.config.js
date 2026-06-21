@@ -19,9 +19,14 @@ const withTM = require('next-transpile-modules')([
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
-  experimental: {
-    esmExternals: false
+  useFileSystemPublicRoutes: false,
+  outputFileTracing: false,
+  images: {
+    unoptimized: true,
   },
+
+
+
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -29,7 +34,8 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
+      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision'),
+      src: path.resolve(__dirname, './src')
     }
 
     config.resolve.fallback = {

@@ -58,18 +58,21 @@ function chunkMarkdown(md: string, maxChunkChars: number, overlapChars: number):
   }
 
   flush()
+
   return chunks.filter(c => c.text && c.text.trim().length > 0)
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`No se pudo leer ${url}. HTTP ${res.status}`)
+
   return res.json() as Promise<T>
 }
 
 async function fetchText(url: string): Promise<string> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`No se pudo leer ${url}. HTTP ${res.status}`)
+
   return res.text()
 }
 

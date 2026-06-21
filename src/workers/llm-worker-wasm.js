@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { pipeline, env } from '@xenova/transformers';
 
 // Cache/Offline: transformers.js puede usar Cache API/IndexedDB interno.

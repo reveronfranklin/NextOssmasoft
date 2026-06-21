@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { CreateMLCEngine } from '@mlc-ai/web-llm';
 
 let engine = null;

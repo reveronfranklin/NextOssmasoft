@@ -44,6 +44,7 @@ import AssistantChatFab from '../components/AssistantChatFab'
 
 // ** Contexts
 import { AuthProvider } from 'src/context/AuthContext'
+import { AppFeaturesProvider } from 'src/context/AppFeaturesContext'
 import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
 
 // ** Styled Components
@@ -133,6 +134,7 @@ const App = (props: ExtendedAppProps) => {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <CacheProvider value={emotionCache}>
+          <AppFeaturesProvider>
           <LLMWorkerProvider>
             <Head>
               <title>{`Ossmmasoft`}</title>
@@ -168,6 +170,7 @@ const App = (props: ExtendedAppProps) => {
               </SettingsProvider>
             </AuthProvider>
           </LLMWorkerProvider>
+          </AppFeaturesProvider>
         </CacheProvider>
       </Provider>
 

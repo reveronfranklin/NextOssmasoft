@@ -95,9 +95,11 @@ export const LLMWorkerProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       ) => {
         const onMessage = (evt: MessageEvent) => {
           const t = (evt as any)?.data?.type;
+
           // Solo 'ready'/'error' finalizan init. El 'progress' debe extender el timeout,
           // no cancelarlo para siempre (puede colgarse tras un único progreso).
           if (t === 'ready' || t === 'error') clearInitTimer();
+
           if (t === 'progress') opts.onInitProgress?.();
           opts.onInitMessage?.(evt);
         };
