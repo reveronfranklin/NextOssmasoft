@@ -11,9 +11,11 @@ interface Props {
   navHover?: boolean
   navVisible?: boolean
   groupActive: string[]
+  collapsedNavWidth?: number
   isSubToSub?: NavGroup
   currentActiveGroup: string[]
   navigationBorderWidth: number
+  toggleNavVisibility?: () => void
   settings: LayoutProps['settings']
   saveSettings: LayoutProps['saveSettings']
   setGroupActive: (value: string[]) => void

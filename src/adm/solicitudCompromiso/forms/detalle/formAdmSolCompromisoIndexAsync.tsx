@@ -1,6 +1,8 @@
 import { Box, Collapse, Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 import CreateDetalleSolicitudCompromiso from 'src/adm/solicitudCompromiso/forms/detalle/formAdmSolCompromisoCreateAsync'
 import DataGridDetalleSolicitudComponent from 'src/adm/solicitudCompromiso/components/DataGrid/DataGridDetalleSolicitud'
@@ -12,6 +14,13 @@ const handleAdd = (setIsUpdateFormOpen: any, isUpdateFormOpen: boolean) => {
 
 const HeaderDetail = () => {
     const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
+    const { detalleInsercionSolicitud } = useSelector((state: RootState) => state.admSolicitudCompromiso)
+
+    useEffect(() => {
+        if (detalleInsercionSolicitud) {
+            setIsUpdateFormOpen(true)
+        }
+    }, [detalleInsercionSolicitud])
 
     return (
         <>
@@ -39,7 +48,7 @@ const IndexDetalleSolicitudCompromiso = (props: any) => {
     return (
         <>
             {
-                HeaderDetail()
+                <HeaderDetail />
             }
             <DataGridDetalleSolicitudComponent codigoSolicitud={ props.codigoSolicitud } />
             <DialogAdmSolCompromisoDetalleInfo />

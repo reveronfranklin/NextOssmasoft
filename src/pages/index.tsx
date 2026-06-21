@@ -24,14 +24,18 @@ const Home = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (auth.user && auth.user.role) {
-      const homeRoute = getHomeRoute(auth.user.role)
-
-      // Redirect user to Home URL
-      router.replace(homeRoute)
+    if (!router.isReady || auth.loading) {
+      return
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+
+    if (auth.user?.role) {
+      router.replace(getHomeRoute(auth.user.role))
+
+      return
+    }
+
+    router.replace('/login')
+  }, [auth.loading, auth.user, router])
 
   return <Spinner sx={{ height: '100%' }} />
 }

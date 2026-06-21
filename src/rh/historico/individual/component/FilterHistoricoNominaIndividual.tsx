@@ -17,12 +17,12 @@ import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { setConceptoSeleccionado, setConceptos, setFechaDesde, setFechaHasta, setPersonaSeleccionado, setProcesoSeleccionado, setTipoQuery, setTiposNomina, setTiposNominaSeleccionado } from 'src/store/apps/rh'
-import { fetchDataConceptos, fetchDataPersonas } from 'src/store/apps/rh/thunks'
+import { fetchDataPersonas } from 'src/store/apps/rh/thunks'
 
 import { IListConceptosDto } from 'src/interfaces/rh/i-list-conceptos'
 import { IListSimplePersonaDto } from '../../../../interfaces/rh/i-list-personas';
 import { IListTipoNominaDto } from 'src/interfaces/rh/i-list-tipo-nomina'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { IPersonaFilterDto } from 'src/interfaces/rh/i-filter-persona'
 import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
@@ -33,7 +33,7 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
 
   const dispatch = useDispatch();
 
-  const {fechaDesde,fechaHasta,tiposNomina,conceptos,personas,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
+  const {fechaDesde,fechaHasta,tiposNomina,tiposNominaSeleccionado,conceptos,personas,personaSeleccionado,conceptoSeleccionado} = useSelector((state: RootState) => state.nomina)
   const fechaActual = new Date()
 
   const currentYear  = new Date().getFullYear();
@@ -49,14 +49,44 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
   const [dateDesde, setDateDesde] = useState<DateType>(fechaDesde)
   const [dateHasta, setDateHasta] = useState<DateType>(fechaHasta)
   const [conceptosPorTipoNomina, setConceptosPorTipoNomina] = useState<IListConceptosDto[]>(conceptos)
+
+  const unwrapApiData = <T,>(responseData: any): T[] => {
+    if (Array.isArray(responseData)) {
+      return responseData
+    }
+
+    if (Array.isArray(responseData?.data)) {
+      return responseData.data
+    }
+
+    return []
+  }
+
+  const personasOptions = Array.isArray(personas) ? personas : []
+  const personaSeleccionadoValue = personaSeleccionado?.codigoPersona ? personaSeleccionado : null
+  const tiposNominaOptions = Array.isArray(tiposNomina) ? tiposNomina : []
+  const tiposNominaSeleccionadoValue = Array.isArray(tiposNominaSeleccionado) ? tiposNominaSeleccionado : []
+  const conceptosOptions = Array.isArray(conceptosPorTipoNomina) ? conceptosPorTipoNomina : []
+  const conceptoSeleccionadoValue = Array.isArray(conceptoSeleccionado) ? conceptoSeleccionado : []
+
+  const clearNominaFilters = () => {
+    dispatch(setTiposNomina([]))
+    dispatch(setTiposNominaSeleccionado([]))
+    dispatch(setConceptos([]))
+    dispatch(setConceptoSeleccionado([]))
+    setConceptosPorTipoNomina([])
+  }
+
   const handlerDesde=(desde:Date)=>{
     setDateDesde(desde)
+    clearNominaFilters()
     dispatch(setFechaDesde(desde));
 
 
   }
   const handlerHasta=(hasta:Date)=>{
     setDateHasta(hasta)
+    clearNominaFilters()
     dispatch(setFechaHasta(hasta));
 
   }
@@ -64,15 +94,12 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
     console.log('handler tipo nomina',value)
     if(value!=null){
       dispatch(setTiposNominaSeleccionado(value));
+      dispatch(setConceptoSeleccionado([]));
       buscarConceptos(value);
     }else{
-      const tipoNomina: IListTipoNominaDto[]=[{
-        codigoTipoNomina: 0,
-        descripcion :  ''
-      }]
-      dispatch(setTiposNominaSeleccionado(tipoNomina));
+      dispatch(setTiposNominaSeleccionado([]));
       dispatch(setConceptoSeleccionado([]));
-      buscarConceptos(tipoNomina);
+      buscarConceptos([]);
 
     }
 
@@ -86,42 +113,52 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
       desde:fechaDesde,
       hasta:fechaHasta
     }
-    const responseAllTipoNomina= await ossmmasofApi.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
+    const responseAllTipoNomina= await ossmmasofApiVertical.post<any>('/RhTipoNomina/GetTipoNominaByCodigoPersona',filterTipoNomina);
 
 
-    const {data} = responseAllTipoNomina;
+    const data = unwrapApiData<IListTipoNominaDto>(responseAllTipoNomina.data);
 
     if(data){
       console.log('responseAll tipo nomina por persona',dataTipoNomina)
       dispatch(setTiposNomina(data));
 
     }
+
+    return data
   }
 
-  const dataConceptos= async (value:any)=>{
+  const dataConceptos= async (value:any, tiposNominaSeleccionados:IListTipoNominaDto[] = tiposNominaSeleccionadoValue)=>{
     const filter:IPersonaFilterDto = {
       codigoPersona:value.codigoPersona,
       desde:fechaDesde,
-      hasta:fechaHasta
+      hasta:fechaHasta,
+      codigoTipoNomina: tiposNominaSeleccionados
+        .filter(tipoNomina => tipoNomina.codigoTipoNomina > 0)
+        .map(tipoNomina => ({ codigoTipoNomina: tipoNomina.codigoTipoNomina }))
     }
-    const responseAll= await ossmmasofApi.post<any>('/RhConceptos/GetConceptosByPersonas',filter);
+    const responseAll= await ossmmasofApiVertical.post<any>('/RhConceptos/GetConceptosByPersonas',filter);
 
 
-    const {data} = responseAll;
+    const data = unwrapApiData<IListConceptosDto>(responseAll.data);
 
     if(data){
       console.log('responseAll conceptos por persona',data)
       dispatch(setConceptos(data));
+      setConceptosPorTipoNomina(data);
 
     }
+
+    return data
   }
   const handlerPersona= async (e: any,value:any)=>{
 
     if(value){
 
-      await  dataConceptos(value)
-      await  dataTipoNomina(value);
       dispatch(setPersonaSeleccionado(value));
+      clearNominaFilters()
+      await  dataTipoNomina(value);
+      const conceptosData = await dataConceptos(value, [])
+      setConceptosPorTipoNomina(conceptosData)
     }else{
 
 
@@ -153,11 +190,13 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
         identificacionId:0,
         numeroIdentificacion:0,
         numeroGacetaNacional:0,
+        codigoTipoNomina:0,
 
       };
 
 
       dispatch(setPersonaSeleccionado(persona));
+      clearNominaFilters()
 
     }
 
@@ -168,21 +207,8 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
   const buscarConceptos=async (codigoTipoNomina:IListTipoNominaDto[])=>{
 
     console.log('buscar conceptos',codigoTipoNomina);
-    if(personaSeleccionado){
-      await  dataConceptos(personaSeleccionado)
-      await fetchDataConceptos(dispatch);
-    }
-
-    let conceptosNew:IListConceptosDto[]=[];
-    for (let index = 0; index < codigoTipoNomina.length; index++) {
-      const element = codigoTipoNomina[index];
-      console.log(element)
-      const dataFilter= conceptos.filter(concepto=>concepto.codigoTipoNomina==element.codigoTipoNomina);
-      conceptosNew= [...conceptosNew,...dataFilter]
-    }
-    console.log(conceptosNew)
-
-    setConceptosPorTipoNomina(conceptosNew);
+    const source = personaSeleccionado?.codigoPersona ? await dataConceptos(personaSeleccionado, codigoTipoNomina) : conceptos
+    setConceptosPorTipoNomina(source);
   }
 
 
@@ -196,18 +222,8 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
   }
 
   useEffect(() => {
-
-
-    /*const persona:IListSimplePersonaDto ={
-      apellido:'',
-      cedula:0,
-      codigoPersona:0,
-      nombre:'',
-      nombreCompleto:''
-    };*/
-
-
     dispatch(setPersonaSeleccionado({}));
+    clearNominaFilters()
 
     const procesoDefault: IRhProcesoGetDto={
       codigoProceso: 0,
@@ -231,7 +247,24 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch,fechaDesde,fechaHasta]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const refreshPersonaFilters = async () => {
+      if (!personaSeleccionado?.codigoPersona) {
+        return
+      }
+
+      clearNominaFilters()
+      await dataTipoNomina(personaSeleccionado)
+      const conceptosData = await dataConceptos(personaSeleccionado, [])
+      setConceptosPorTipoNomina(conceptosData)
+    }
+
+    refreshPersonaFilters()
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fechaDesde, fechaHasta]);
 
   return (
     <Grid item xs={12}>
@@ -267,7 +300,8 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
                 <Autocomplete
 
                     sx={{ width: 450 }}
-                    options={personas}
+                    options={personasOptions}
+                    value={personaSeleccionadoValue}
                     id='autocomplete-persona'
                     isOptionEqualToValue={(option, value) => option.codigoPersona=== value.codigoPersona}
                     getOptionLabel={option => option.cedula + ' ' + option.nombreCompleto}
@@ -279,7 +313,8 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
                 <Autocomplete
                     multiple={true}
                     sx={{ width: 350 }}
-                    options={tiposNomina}
+                    options={tiposNominaOptions}
+                    value={tiposNominaSeleccionadoValue}
                     id='autocomplete-tipo-nomina'
                     isOptionEqualToValue={(option, value) => option.codigoTipoNomina=== value.codigoTipoNomina}
                     getOptionLabel={option => option.codigoTipoNomina + '-'+option.descripcion}
@@ -291,9 +326,9 @@ const FilterHistoricoNominaIndividual = ({ popperPlacement }: { popperPlacement:
                 <Autocomplete
                     multiple={true}
                     sx={{ width: 350 }}
-                    options={conceptosPorTipoNomina}
+                    options={conceptosOptions}
                     id='autocomplete-concepto'
-                    value={conceptoSeleccionado}
+                    value={conceptoSeleccionadoValue}
                     isOptionEqualToValue={(option, value) => option.codigo + option.codigoTipoNomina === value.codigo+ value.codigoTipoNomina}
                     getOptionLabel={option => option.codigo + '-' +option.codigoTipoNomina +'-'+ option.denominacion}
                     onChange={handlerConceptos}

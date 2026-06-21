@@ -19,8 +19,9 @@ const withTM = require('next-transpile-modules')([
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
-  useFileSystemPublicRoutes: false,
-
+  experimental: {
+    esmExternals: false
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -173,18 +173,6 @@ const FormCreate = () => {
         setValue('monto', amountToPay)
     }
 
-    useEffect(() => {
-        if (monto <= 0) {
-            setError('monto', {
-                type: 'manual',
-                message: 'El monto debe ser mayor a 0. Por favor, ingrese un monto válido.'
-            }, { shouldFocus: true })
-        } else {
-            clearErrors('monto')
-            trigger('monto')
-        }
-    }, [monto, setError, clearErrors, trigger])
-
     return (
         <>
             <Grid container spacing={5} paddingTop={1}>

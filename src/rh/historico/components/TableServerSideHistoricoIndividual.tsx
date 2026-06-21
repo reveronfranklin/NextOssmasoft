@@ -29,7 +29,7 @@ import { ThemeColor } from 'src/@core/layouts/types'
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
 import { IHistoricoMovimiento } from 'src/interfaces/rh/I-historico-movimientoDto'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import {  Grid, IconButton, Toolbar, Tooltip } from '@mui/material'
 
 
@@ -47,6 +47,8 @@ import { IRhProcesoGetDto } from 'src/interfaces/rh/i-rh-procesos-get-dto'
 
 
 import Icon from 'src/@core/components/icon'
+
+const INDIVIDUAL_QUERY_TYPE = 'INDIVIDUAL'
 
 
 /*interface StatusObj {
@@ -233,27 +235,6 @@ const TableServerSideHistoricoIndividual = () => {
 
   const {fechaDesde,fechaHasta,tiposNominaSeleccionado=[] as IListTipoNominaDto[],conceptoSeleccionado=[] as IListConceptosDto[],personaSeleccionado={} as IListSimplePersonaDto,procesoSeleccionado={} as IRhProcesoGetDto} = useSelector((state: RootState) => state.nomina)
 
-  function loadServerRows(currentPage: number, data: IHistoricoMovimiento[]) {
-    //if(currentPage<=0) currentPage=1;
-
-    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
-  }
-
-
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(allRows)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-  
-    // Buffer to store the generated Excel file
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    })
-  
-    saveAs(blob, 'historicoIndividual.xlsx')
-  }
-
   const fetchTableData = useCallback(
     async (desde:Date,hasta:Date,tipoQuery:string,codigoTipoNomina:IListTipoNominaDto[],codigoConcepto:IListConceptosDto[],codigoPersona:number,procesoSeleccionado:IRhProcesoGetDto) => {
 
@@ -264,8 +245,14 @@ const TableServerSideHistoricoIndividual = () => {
       setLoading(true);
       setAllRows([]);
       setTotal(0);
-      setRows(loadServerRows(page, []))
+      setRows([])
       setLinkData('')
+
+      if (!codigoPersona || codigoPersona <= 0) {
+        setLoading(false);
+
+        return
+      }
 
 
 
@@ -284,35 +271,83 @@ const TableServerSideHistoricoIndividual = () => {
       }
 
 
-      const responseAll= await ossmmasofApi.post<any>('/HistoricoMovimiento/GetHistoricoFecha',filterHistorico);
-      setAllRows(responseAll.data.data);
-      setTotal(responseAll.data.data.length);
+      try {
+        const responseAll= await ossmmasofApiVertical.post<any>('/RhHistoricoMovimiento/GetHistoricoFecha',filterHistorico);
+        const historico = responseAll.data?.data ?? []
+        const totalRecords = responseAll.data?.cantidadRegistros ?? historico.length
 
-      setRows(loadServerRows(page, responseAll.data.data))
-
-      setLinkData(responseAll.data.linkData)
+        setAllRows(historico);
+        setTotal(totalRecords);
+        setRows(historico)
+        setLinkData(responseAll.data?.linkData ?? '')
+        setMensaje(responseAll.data?.isValid === false ? responseAll.data?.message ?? 'Error al consultar histórico' : '')
+      } catch (error) {
+        setMensaje('Error al consultar histórico')
+        setAllRows([])
+        setTotal(0)
+        setRows([])
+      }
       setLoading(false);
       console.log('linkData desde movimiento de nomina',linkData)
 
-      if( responseAll.data.data.length>0){
-        setMensaje('')
-      }else{
-        setMensaje('')
-      }
-
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [page, pageSize, sort, sortColumn]
   )
 
 
 
   useEffect(() => {
-    fetchTableData(fechaDesde,fechaHasta,'INDIVIDUAL',tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
+    setPage(0)
+  }, [fechaDesde,fechaHasta,personaSeleccionado,tiposNominaSeleccionado,conceptoSeleccionado])
+
+  useEffect(() => {
+    fetchTableData(fechaDesde,fechaHasta,INDIVIDUAL_QUERY_TYPE,tiposNominaSeleccionado,conceptoSeleccionado,personaSeleccionado.codigoPersona,procesoSeleccionado);
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fechaDesde,fechaHasta,personaSeleccionado,tiposNominaSeleccionado,conceptoSeleccionado])
+  }, [fetchTableData, fechaDesde,fechaHasta,personaSeleccionado,tiposNominaSeleccionado,conceptoSeleccionado])
+
+  const exportToExcel = async () => {
+    if (!personaSeleccionado?.codigoPersona || personaSeleccionado.codigoPersona <= 0) {
+      setMensaje('Debe seleccionar una persona.')
+
+      return
+    }
+
+    const filterHistorico:FilterHistorico={
+      desde: fechaDesde,
+      hasta: fechaHasta,
+      tipoQuery: INDIVIDUAL_QUERY_TYPE,
+      codigoTipoNomina: tiposNominaSeleccionado,
+      codigoConcepto: conceptoSeleccionado,
+      codigoPersona: personaSeleccionado.codigoPersona,
+      page: 0,
+      pageSize: 0,
+      tipoSort:sort,
+      sortColumn:sortColumn,
+      codigoProceso:procesoSeleccionado.codigoProceso
+    }
+
+    try {
+      setMensaje('')
+      const responseAll= await ossmmasofApiVertical.post<any>('/RhHistoricoMovimiento/GetHistoricoFecha',filterHistorico);
+      const exportRows = responseAll.data?.data ?? []
+
+      const worksheet = XLSX.utils.json_to_sheet(exportRows)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+      const blob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+      })
+
+      saveAs(blob, 'historicoIndividual.xlsx')
+    } catch (error) {
+      setMensaje('Error al exportar histórico')
+    }
+  }
 
   const handleSortModel = (newModel: GridSortModel) => {
 
@@ -335,7 +370,7 @@ const TableServerSideHistoricoIndividual = () => {
 
             const dataAsc = temp.sort((a, b) => (a[sortColumn] < b[sortColumn] ? -1 : 1))
             const dataToFilter = sort === 'asc' ? dataAsc : dataAsc.reverse()
-            setRows(loadServerRows(page, dataToFilter))
+            setRows(dataToFilter)
       }
 
 
@@ -368,7 +403,6 @@ const TableServerSideHistoricoIndividual = () => {
   const handlePageChange = (newPage:number) => {
 
     setPage(newPage)
-    setRows(loadServerRows(newPage, allRows))
 
   }
 
@@ -400,6 +434,12 @@ const TableServerSideHistoricoIndividual = () => {
         <Typography>{mensaje}</Typography>
       )}
 
+      {mensaje && !loading ? (
+        <Typography sx={{ mx: 4, mb: 4 }} color='error'>
+          {mensaje}
+        </Typography>
+      ) : null}
+
      { loading  ? (
        <Spinner sx={{ height: '100%' }} />
       ) : (
@@ -411,6 +451,7 @@ const TableServerSideHistoricoIndividual = () => {
         rows={rows}
         rowCount={total}
         columns={columns}
+        page={page}
         pageSize={pageSize}
         sortingMode='server'
 
@@ -422,7 +463,10 @@ const TableServerSideHistoricoIndividual = () => {
 
         //onPageChange={newPage => setPage(newPage)}
         components={{ Toolbar: ServerSideToolbar }}
-        onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+        onPageSizeChange={newPageSize => {
+          setPage(0)
+          setPageSize(newPageSize)
+        }}
         componentsProps={{
           baseButton: {
             variant: 'outlined'

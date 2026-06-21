@@ -21,7 +21,10 @@ export const getStaticPaths: GetStaticPaths = () => {
       { params: { tab: 'security' } },
       { params: { tab: 'billing-plan' } },
       { params: { tab: 'notification' } },
-      { params: { tab: 'connection' } }
+      { params: { tab: 'connection' } },
+      { params: { tab: 'direcciones' } },
+      { params: { tab: 'documentos' } },
+      { params: { tab: 'experiencia_laboral' } }
     ],
     fallback: false
   }
@@ -30,7 +33,6 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
   const res = await axios.get('/apps/invoice/invoices')
   const invoiceData: InvoiceType[] = res.data.allData
-  console.log(invoiceData)
 
   return {
     props: {

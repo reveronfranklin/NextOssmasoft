@@ -7,6 +7,7 @@ export interface IListSimplePersonaDto{
 
 
   codigoPersona :number;
+  codigoTipoNomina: number;
   cedula:number;
   nombre :string;
   apellido :string;

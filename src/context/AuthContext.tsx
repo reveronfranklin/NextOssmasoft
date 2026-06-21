@@ -12,7 +12,6 @@ import authConfig from 'src/configs/auth'
 
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
-import { IRefreshTokenDto } from 'src/interfaces/SIS/resultRefreshTokenDto'
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -31,6 +30,24 @@ type Props = {
   children: ReactNode
 }
 
+const getStoredUserData = (): UserDataType | null => {
+  try {
+    const userData = window.localStorage.getItem('userData')
+
+    return userData ? JSON.parse(userData) : null
+  } catch {
+    return null
+  }
+}
+
+const getAuthResponseValue = (data: any, camelCaseKey: string, pascalCaseKey: string) => {
+  return data?.[camelCaseKey] ?? data?.[pascalCaseKey] ?? ''
+}
+
+const getAuthUserData = (data: any) => {
+  return data?.userData ?? data?.UserData ?? null
+}
+
 const AuthProvider = ({ children }: Props) => {
   // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
@@ -43,49 +60,21 @@ const AuthProvider = ({ children }: Props) => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
       const refreshToken = window.localStorage.getItem(authConfig.onTokenExpiration)!
+      const storedUserData = getStoredUserData()
 
-      if (storedToken) {
-
-        const refreshToke:IRefreshTokenDto={refreshToken:refreshToken,accessToken:storedToken};
-        setLoading(true)
-        await axios
-          .post(authConfig.meEndpoint,refreshToke, {
-            headers: {
-              Authorization: 'Bearer ' + storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-
-
-            localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken);
-            localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken);
-            setUser({ ...response.data.userData })
-
-
-            const returnUrl = router.query.returnUrl
-
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
-            router.replace(redirectURL as string)
-
-
-
-          })
-          .catch(() => {
-
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (!router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
-      } else {
-        setLoading(false)
+      if (storedUserData && (!storedToken || !refreshToken)) {
+        window.localStorage.removeItem('userData')
       }
+
+      if (storedUserData && storedToken && refreshToken) {
+        setUser(storedUserData)
+        setLoading(false)
+
+        return
+      }
+
+      setUser(null)
+      setLoading(false)
     }
 
     initAuth()
@@ -97,17 +86,21 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.onTokenExpiration, response.data.refreshToken)
-          : null
+        const accessToken = getAuthResponseValue(response.data, 'accessToken', 'AccessToken')
+        const refreshToken = getAuthResponseValue(response.data, 'refreshToken', 'RefreshToken')
+        const userData = getAuthUserData(response.data)
+
+        if (!accessToken || !refreshToken || !userData) {
+          throw new Error('Respuesta de autenticacion invalida.')
+        }
+
+        window.localStorage.setItem(authConfig.storageTokenKeyName, accessToken)
+        window.localStorage.setItem(authConfig.onTokenExpiration, refreshToken)
         const returnUrl = router.query.returnUrl
 
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
+        setUser({ ...userData })
+        window.localStorage.setItem('userData', JSON.stringify(userData))
 
 
         //if(response.data.accessToken.length<= 0) handleLogout();
@@ -126,6 +119,7 @@ const AuthProvider = ({ children }: Props) => {
     setUser(null)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    window.localStorage.removeItem(authConfig.onTokenExpiration)
     router.push('/login')
   }
 

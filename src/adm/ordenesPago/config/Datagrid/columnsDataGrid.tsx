@@ -41,6 +41,12 @@ function ColumnsDataGrid(props: any) {
         })
     }
 
+    const handleRetornarOrdenPago = async (row: any) => {
+        if (!row) return
+        await props.retornarOrdenPago({ codigoOrdenPago: row.codigoOrdenPago })
+    }
+
+
     const StyledIconButton = styled(IconButton)(({ theme }) => ({
         '&:hover': {
             color: theme.palette.primary.main,
@@ -71,6 +77,18 @@ function ColumnsDataGrid(props: any) {
                             <Icon icon='mdi:file-pdf-box' fontSize={20} />
                         </StyledIconButton>
                     </Tooltip>
+                    { row && row.status === 'AP' &&
+                        <ButtonWithConfirm
+                            color="primary"
+                            onAction={() => handleRetornarOrdenPago(row)}
+                            confirmMessage={`¿Desea regresar la orden de pago # ${row.codigoOrdenPago} a Pendiente?`}
+                            showLoading={true}
+                            disableBackdropClick={true}
+                            startIcon={<Icon icon='mdi:undo' fontSize={20} />}
+                            sx={{ minWidth: '0px', padding: 0, '&:hover': { color: theme.palette.primary.main, transform: 'scale(1)', transition: 'transform 0.2s ease-in-out' } }}
+                        >
+                        </ButtonWithConfirm>
+                    }
                     { row && row.status === 'PE' &&
                         <ButtonWithConfirm
                             color="primary"

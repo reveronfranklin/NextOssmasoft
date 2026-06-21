@@ -1,13 +1,14 @@
 import React from 'react'
-import { useState, ChangeEvent, useRef } from 'react'
+import { useState, ChangeEvent, useRef, useEffect, useMemo } from 'react'
 import { DataGrid } from "@mui/x-data-grid"
 import Spinner from 'src/@core/components/spinner'
 import useServices from 'src/adm/solicitudCompromiso/services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query';
 import ColumnsDetalleDataGrid from 'src/adm/solicitudCompromiso/config/DataGrid/detalle/ColumnsDataGrid'
-import { Box, Grid, styled } from '@mui/material'
+import { Box, Grid, IconButton, styled, TextField, Tooltip } from '@mui/material'
 import formatNumber from '../../helpers/formateadorNumeros'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
+import Icon from 'src/@core/components/icon'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 500,
@@ -19,6 +20,9 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     const [pageSize, setPageSize] = useState<number>(5)
     const [searchText, setSearchText] = useState<string>('')
     const [buffer, setBuffer] = useState<string>('')
+    const [filaDestino, setFilaDestino] = useState<string>('')
+    const [filaObjetivo, setFilaObjetivo] = useState<number | null>(null)
+    const [selectionModel, setSelectionModel] = useState<any[]>([])
 
     const { getDetalleSolicitudFetchTable, presupuestoSeleccionado } = useServices()
     const qc: QueryClient = useQueryClient()
@@ -34,10 +38,10 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     }
 
     const query = useQuery({
-        queryKey: ['detalleSolicitudCompromiso', pageSize, pageNumber, searchText],
+        queryKey: ['detalleSolicitudCompromiso', props.codigoSolicitud, pageSize, pageNumber, searchText],
         queryFn: () => getDetalleSolicitudFetchTable({ ...filter, pageSize, pageNumber, searchText }),
         initialData: () => {
-            return qc.getQueryData(['detalleSolicitudCompromiso', pageSize, pageNumber, searchText])
+            return qc.getQueryData(['detalleSolicitudCompromiso', props.codigoSolicitud, pageSize, pageNumber, searchText])
         },
         staleTime: 1000 * 10,
         refetchOnWindowFocus: true,
@@ -45,7 +49,7 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         retry: 3,
     }, qc)
 
-    const rows = query?.data?.data || []
+    const rows = useMemo(() => query?.data?.data || [], [query?.data?.data])
     const rowCount = query?.data?.cantidadRegistros || 0
 
     const total1 = query?.data?.total1 || 0 //total mas impuesto
@@ -75,6 +79,29 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
         debouncedSearch(newBuffer)
     }
 
+    const handleGoToFila = () => {
+        const nroFila = Number(filaDestino)
+        if (!Number.isInteger(nroFila) || nroFila < 1 || nroFila > rowCount) {
+            return
+        }
+
+        setBuffer('')
+        setSearchText('')
+        setFilaObjetivo(nroFila)
+        setPage(Math.floor((nroFila - 1) / pageSize))
+    }
+
+    useEffect(() => {
+        if (!filaObjetivo || rows.length === 0) {
+            return
+        }
+
+        const row = rows.find((item: any) => item.nroFila === filaObjetivo)
+        if (row) {
+            setSelectionModel([row.codigoDetalleSolicitud])
+        }
+    }, [filaObjetivo, rows])
+
     const debouncedSearch = (currentBuffer: string) => {
         clearTimeout(debounceTimeoutRef.current)
 
@@ -86,6 +113,35 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
     return (
         <>
             <Grid container spacing={0} paddingTop={0} justifyContent="flex-end">
+                <Grid item xs={10} sm={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
+                        <TextField
+                            size='small'
+                            label='Ir a fila'
+                            value={filaDestino}
+                            onChange={(event) => setFilaDestino(event.target.value.replace(/\D/g, ''))}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault()
+                                    handleGoToFila()
+                                }
+                            }}
+                            inputProps={{ inputMode: 'numeric' }}
+                        />
+                        <Tooltip title='Ir a fila'>
+                            <span>
+                                <IconButton
+                                    color='primary'
+                                    size='small'
+                                    onClick={handleGoToFila}
+                                    disabled={rowCount === 0}
+                                >
+                                    <Icon icon='mdi:arrow-right-bold-box-outline' fontSize={22} />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
+                    </Box>
+                </Grid>
                 <Grid item xs={2} sm={6}>
                     <small style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                         <div style={{ padding: '10px', display: 'flex', justifyContent: 'flex-end' }}>
@@ -120,6 +176,8 @@ const DataGridDetalleSolicitudComponent = (props: any) => {
                             rows={rows}
                             rowCount={rowCount}
                             columns={ColumnsDetalleDataGrid() as any}
+                            selectionModel={selectionModel}
+                            onSelectionModelChange={(newSelectionModel) => setSelectionModel(newSelectionModel as any[])}
                             getRowHeight={() => 'auto'}
                             sortingMode='server'
                             paginationMode='server'

@@ -23,6 +23,26 @@ const AuthGuard = (props: AuthGuardProps) => {
         return
       }
 
+      if (auth.user === null) {
+        const userData = window.localStorage.getItem('userData')
+        const hasAccessToken = window.localStorage.getItem('accessToken')
+        const hasRefreshToken = window.localStorage.getItem('refreshToken')
+
+        if (userData && (!hasAccessToken || !hasRefreshToken)) {
+          window.localStorage.removeItem('userData')
+        }
+
+        if (userData && hasAccessToken && hasRefreshToken) {
+          try {
+            auth.setUser(JSON.parse(userData))
+
+            return
+          } catch {
+            window.localStorage.removeItem('userData')
+          }
+        }
+      }
+
       if (auth.user === null && !window.localStorage.getItem('userData')) {
         if (router.asPath !== '/') {
           router.replace({
@@ -35,10 +55,14 @@ const AuthGuard = (props: AuthGuardProps) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.route]
+    [router.route, auth.user]
   )
 
-  if (auth.loading || auth.user === null) {
+  if (auth.loading) {
+    return fallback
+  }
+
+  if (auth.user === null) {
     return fallback
   }
 

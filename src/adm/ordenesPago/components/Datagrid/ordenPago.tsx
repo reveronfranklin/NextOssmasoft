@@ -4,11 +4,13 @@ import { Box, styled } from '@mui/material'
 import Spinner from 'src/@core/components/spinner'
 import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 import ColumnsDataGrid from '../../config/Datagrid/columnsDataGrid'
-import useServices from '../../services/useServices'
 import { useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import AlertMessage from 'src/views/components/alerts/AlertMessage'
+
+import useServices from '../../services/useServices'
+import useGestionOrdenPago from '../../services/useGestionOrdenPago'
 
 const StyledDataGridContainer = styled(Box)(() => ({
     height: 650,
@@ -33,12 +35,16 @@ const DataGridComponent = () => {
         getOrdenesPagoByPresupuesto,
         presupuestoSeleccionado,
         deleteOrden,
-        message
+        message,
     } = useServices()
+
+    const { retornarOrdenPago, message: gestionMessage, clearGestionMessage } = useGestionOrdenPago()
 
     const actions = {
         deleteOrden,
-        presupuestoSeleccionado
+        presupuestoSeleccionado,
+        retornarOrdenPago,
+        clearGestionMessage
     }
 
     const filter: any = {
@@ -137,10 +143,12 @@ const DataGridComponent = () => {
                             }}
                         />
                         <AlertMessage
-                            message={message?.text ?? ''}
-                            severity={message?.isValid ? 'success' : 'error'}
-                            duration={4000}
-                            show={message?.text ? true : false}
+                            key={gestionMessage?.timestamp || message?.timestamp || 'empty'}
+                            message={message?.text || gestionMessage?.text  || ''}
+                            severity={message?.severity ?? gestionMessage?.severity ?? 'error'}
+                            duration={3000}
+                            show={!!(message?.text || gestionMessage?.text)}
+                            onClose={clearGestionMessage}
                         />
                     </StyledDataGridContainer>
                 )

@@ -191,7 +191,7 @@ const FormCreateDocumentosOp = () => {
 
       if (result?.isValid) {
         invalidateReset({
-          tables: ['documentosTable'],
+          tables: ['documentosTable', 'impuestoDocumentosTable', 'retencionesOpTable', 'beneficioOpTable'],
           resetForm: () => clearForm(),
           delay: 5000,
           closeActions: [
@@ -235,7 +235,7 @@ const FormCreateDocumentosOp = () => {
 
       if (result?.isValid) {
         invalidateReset({
-          tables: ['documentosTable'],
+          tables: ['documentosTable', 'impuestoDocumentosTable', 'retencionesOpTable', 'beneficioOpTable'],
           delay: 5000,
           closeActions: [
             () => dispatch(setIsOpenDialogDocumentosEdit(false)),
@@ -259,7 +259,7 @@ const FormCreateDocumentosOp = () => {
 
       if (result?.isValid) {
         invalidateReset({
-          tables: ['documentosTable'],
+          tables: ['documentosTable', 'impuestoDocumentosTable', 'retencionesOpTable', 'beneficioOpTable'],
           resetForm: () => clearForm(),
           delay: 0,
           closeActions: [
