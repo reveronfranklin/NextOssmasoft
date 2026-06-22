@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TextField, MenuItem, Box, Typography, CircularProgress } from '@mui/material'
 import ReportViewAsync from 'src/share/components/Reports/forms/ReportViewAsync'
 import { RootState } from "src/store"
@@ -6,7 +6,10 @@ import { useSelector } from "react-redux"
 import { UrlServices } from '../../enums/UrlServices.enum'
 import Icon from 'src/@core/components/icon'
 import { reportOptions } from '../../config/reportOptions'
-import HandleReportApiTo from 'src/utilities/generateReport/download-report-api-to'
+import { generarReporteOrdenPagoPdf } from '../../services/reporteOrdenPago.service'
+import { generarReporteComprobanteIvaPdf } from '../../services/reporteComprobanteIva.service'
+import { generarReporteRetencionIslrPdf } from '../../services/reporteRetencionIslr.service'
+import { generarReporteTimbreFiscalPdf } from '../../services/reporteTimbreFiscal.service'
 
 const FormViewerPdf: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState(reportOptions[0].value)
@@ -15,37 +18,59 @@ const FormViewerPdf: React.FC = () => {
 
   const { codigoOrdenPago } = useSelector((state: RootState) => state.admOrdenPago)
 
-  const fetchReport = async (reportType: string) => {
-    const moduleReport = 'AdmOrdenPago'
-
+  const fetchReport = useCallback(async (reportType: string) => {
     try {
-      const params = {
-        CodigoOrdenPago: codigoOrdenPago
+      setIsLoading(true)
+
+      if (reportType === UrlServices.GETREPORTBYORDENPAGO) {
+        const objectURL = await generarReporteOrdenPagoPdf(codigoOrdenPago)
+
+        setReportUrl(objectURL)
+
+        return
       }
 
-      const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params, moduleReport }) || ''
+      if (reportType === UrlServices.GETREPORTBYCOMPROBANTE) {
+        const objectURL = await generarReporteComprobanteIvaPdf(codigoOrdenPago)
 
-      setReportUrl(objectURL)
+        setReportUrl(objectURL)
+
+        return
+      }
+
+      if (reportType === UrlServices.GETREPORTBYRETENCIONES) {
+        const objectURL = await generarReporteRetencionIslrPdf(codigoOrdenPago)
+
+        setReportUrl(objectURL)
+
+        return
+      }
+
+      if (reportType === UrlServices.TIMBREFISCAL) {
+        const objectURL = await generarReporteTimbreFiscalPdf(codigoOrdenPago)
+
+        setReportUrl(objectURL)
+
+        return
+      }
     } catch (error) {
       console.error('Error fetching report:', error)
+    } finally {
+      setIsLoading(false)
     }
-  }
+  }, [codigoOrdenPago])
 
   useEffect(() => {
     fetchReport(selectedReport)
-  }, [codigoOrdenPago])
+  }, [fetchReport, selectedReport])
 
-  const handleReportChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleReportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setIsLoading(true)
       const reportType = event.target.value
 
       setSelectedReport(reportType as UrlServices)
-      fetchReport(reportType)
     } catch (e: any) {
       console.log(e)
-    } finally {
-      setIsLoading(false)
     }
   }
 

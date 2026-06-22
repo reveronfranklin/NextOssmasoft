@@ -227,23 +227,6 @@ const renderClient = (row: IListSimplePersonaDto) => {
     }
   ]
 
-
-  /*const crearReporteNomina= async ()=>{
-
-
-    setLoading(true);
-    const filter = {
-      CodigoTipoNomina:10,
-      CodigoPeriodo:3821
-      }
-    const responseAll= await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf',filter);
-    console.log(responseAll)
-
-    dispatch(setReportName("placas.pdf"));
-    dispatch(setVerReportViewActive(true))
-    setLoading(false);
-
-   }*/
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(allRows);
     const workbook = XLSX.utils.book_new();

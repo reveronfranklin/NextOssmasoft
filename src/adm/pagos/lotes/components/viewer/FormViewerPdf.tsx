@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { TextField, MenuItem, Box, Typography, CircularProgress } from '@mui/material';
 import { RootState } from 'src/store'
 import Icon from 'src/@core/components/icon';
 import ReportViewAsync from 'src/share/components/Reports/forms/ReportViewAsync';
-import HandleReportApiTo from 'src/utilities/generateReport/download-report-api-to';
 import { UrlServices } from '../../enums/urlServices.enum';
 import { reportOptions } from './options/index';
+import {
+  generarReportePagoElectronicoPdf,
+  generarReportePagoElectronicoTercerosPdf
+} from '../../services/reportePagoElectronico.service';
+import { generarReporteNotaDebitoTercerosPdf } from '../../services/reporteNotaDebitoTerceros.service';
 
 const FormViewerPdf: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState(reportOptions[0].value)
@@ -18,38 +22,51 @@ const FormViewerPdf: React.FC = () => {
     codigoPago
   } = useSelector((state: RootState) => state.admLotePagos )
 
-  const fetchReport = async (reportType: string) => {
-    const moduleReport  = 'AdmLotePago'
-
+  const fetchReport = useCallback(async (reportType: string) => {
     try {
-      const params = {
-        codigoLotePago: codigoLote,
-        codigoPago: codigoPago ?? 0
+      setIsLoading(true)
+
+      if (reportType === UrlServices.GET_REPORT_BY_ELECTRONIC) {
+        const objectURL = await generarReportePagoElectronicoPdf(codigoLote, codigoPago ?? 0)
+
+        setReportUrl(objectURL)
+
+        return
       }
 
-      const objectURL = await HandleReportApiTo({ tipoReporte: reportType, params, moduleReport }) || ''
+      if (reportType === UrlServices.GET_REPORT_BY_ELECTRONIC_THIRD_PARTIES) {
+        const objectURL = await generarReportePagoElectronicoTercerosPdf(codigoLote, codigoPago ?? 0)
 
-      setReportUrl(objectURL)
+        setReportUrl(objectURL)
+
+        return
+      }
+
+      if (reportType === UrlServices.GET_REPORT_BY_DEBIT_NOTE_THIRD_PARTIES) {
+        const objectURL = await generarReporteNotaDebitoTercerosPdf(codigoLote, codigoPago ?? 0)
+
+        setReportUrl(objectURL)
+
+        return
+      }
     } catch (error) {
       console.error('Error fetching report:', error)
+    } finally {
+      setIsLoading(false)
     }
-  }
+  }, [codigoLote, codigoPago])
 
   useEffect(() => {
     fetchReport(selectedReport)
-  }, [codigoLote, codigoPago])
+  }, [fetchReport, selectedReport])
 
-  const handleReportChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleReportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setIsLoading(true)
       const reportType = event.target.value
 
       setSelectedReport(reportType as UrlServices)
-      fetchReport(reportType)
     } catch (e: any) {
       console.log(e)
-    } finally {
-      setIsLoading(false)
     }
   }
 

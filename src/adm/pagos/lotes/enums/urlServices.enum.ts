@@ -22,7 +22,7 @@ export enum UrlServices {
 
     GET_PROVEEDORES                         = '/AdmProveedores/GetAllProveedoresContactos',
 
-    GET_REPORT_BY_ELECTRONIC                = '/api-v1.0/electronic-payment/pdf/report',
-    GET_REPORT_BY_ELECTRONIC_THIRD_PARTIES  = '/api-v1.0/electronic-payment-third-parties/pdf/report',
-    GET_REPORT_BY_DEBIT_NOTE_THIRD_PARTIES  = '/api-v1.0/debit-note-third-parties/pdf/report'
+    GET_REPORT_BY_ELECTRONIC                = 'reporte-pago-electronico',
+    GET_REPORT_BY_ELECTRONIC_THIRD_PARTIES  = 'reporte-pago-electronico-terceros',
+    GET_REPORT_BY_DEBIT_NOTE_THIRD_PARTIES  = 'reporte-nota-debito-terceros'
 }
