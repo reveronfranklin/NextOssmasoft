@@ -39,6 +39,13 @@ module.exports = withTM({
       apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
     }
 
+    if (process.platform === 'win32') {
+      const webpackParallelism = Number(process.env.WEBPACK_PARALLELISM || 8)
+      config.parallelism = Number.isFinite(webpackParallelism) && webpackParallelism > 0
+        ? webpackParallelism
+        : 8
+    }
+
     // Añade esto para mathjs
     config.resolve.fallback = {
       ...config.resolve.fallback,
