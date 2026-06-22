@@ -20,8 +20,15 @@ interface AudioDictateButtonProps {
 // Constantes
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PREFERRED_MIME_TYPE = 'audio/webm;codecs=opus'
-const FALLBACK_MIME_TYPE = 'audio/webm'
+const MIME_TYPES_PREFERENCE = [
+  'audio/webm;codecs=opus',
+  'audio/webm',
+  'audio/ogg;codecs=opus',
+  'audio/mp4;codecs=mp4a.40.2',
+  'audio/mp4;codecs=aac',
+  'audio/mp4',
+  'audio/aac',
+]
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Componente
@@ -108,8 +115,17 @@ const AudioDictateButton = ({
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
   }
 
-  const getMimeType = (): string =>
-    MediaRecorder.isTypeSupported(PREFERRED_MIME_TYPE) ? PREFERRED_MIME_TYPE : FALLBACK_MIME_TYPE
+  const getMimeType = (): string => {
+    if (typeof window === 'undefined' || !window.MediaRecorder) {
+      return 'audio/webm'
+    }
+    for (const type of MIME_TYPES_PREFERENCE) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        return type
+      }
+    }
+    return '' // Dejar que el navegador decida su formato por defecto
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // Transcripción — proxy interno (la API Key nunca sale al cliente)
@@ -117,7 +133,7 @@ const AudioDictateButton = ({
 
   const sendAudioToDeepgram = async (audioBlob: Blob) => {
     try {
-      const response = await fetch('/api/deepgram/transcribe', {
+      const response = await fetch('/api/deepgram/transcribe?lang=es-419', {
         method: 'POST',
         headers: { 'Content-Type': audioBlob.type || 'audio/webm' },
         body: audioBlob,
@@ -165,19 +181,21 @@ const AudioDictateButton = ({
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          sampleRate: 48000,
           channelCount: 1,
         },
-        
       })
 
       const mimeType = getMimeType()
       let mediaRecorder: MediaRecorder
 
       try {
-        mediaRecorder = new MediaRecorder(stream, { mimeType })
+        if (mimeType) {
+          mediaRecorder = new MediaRecorder(stream, { mimeType })
+        } else {
+          mediaRecorder = new MediaRecorder(stream)
+        }
       } catch (e) {
-        // Fallback para navegadores sin soporte de audio/webm
+        console.warn('Error al inicializar MediaRecorder con mimeType especificado, usando valores por defecto:', e)
         mediaRecorder = new MediaRecorder(stream)
       }
 
@@ -189,8 +207,9 @@ const AudioDictateButton = ({
       }
 
       mediaRecorder.onstop = async () => {
+        const activeMimeType = mediaRecorder.mimeType || mimeType || 'audio/webm'
         const audioBlob = new Blob(audioChunksRef.current, {
-          type: mediaRecorder.mimeType || FALLBACK_MIME_TYPE,
+          type: activeMimeType,
         })
 
         // Liberar el micrófono

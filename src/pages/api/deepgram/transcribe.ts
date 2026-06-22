@@ -21,15 +21,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const contentType = (req.headers['content-type'] as string) || 'audio/webm'
+  const lang = (req.query.lang as string) || 'es-419'
+
+  const budgetPrompt = `
+  presupuesto, auditoría, ONAPRE, LOAFSP, SIGECOF, imputación, traspaso, causado, devengado, compromiso, partida, bolívares, créditos adicionales, partida presupuestaria,
+  `
 
   const params = new URLSearchParams({
     model: 'nova-3',
     smart_format: 'true',
-    language: 'es',
+    language: lang,
     punctuate: 'true',
     filler_words: 'false',
-    sample_rate: '48000',
-    channels: '1',
+    prompt: budgetPrompt,
   })
 
   try {

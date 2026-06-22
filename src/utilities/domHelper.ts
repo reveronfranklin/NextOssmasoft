@@ -254,7 +254,24 @@ export function fillField(field: DetectedField, value: any): boolean {
 
   // Caso 4: Input de texto normal / Textarea
   if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
-    setReactInputValue(el, String(value));
+    let strVal = String(value).trim();
+    if (strVal.length > 0) {
+      strVal = strVal.charAt(0).toUpperCase() + strVal.slice(1);
+    }
+
+    const currentVal = el.value || '';
+    const isFocused = typeof document !== 'undefined' && document.activeElement === el;
+    const selectionStart = isFocused && el.selectionStart !== null ? el.selectionStart : currentVal.length;
+    const selectionEnd = isFocused && el.selectionEnd !== null ? el.selectionEnd : currentVal.length;
+
+    const before = currentVal.substring(0, selectionStart);
+    const after = currentVal.substring(selectionEnd);
+
+    const spaceBefore = (before.endsWith(' ') || before.length === 0) ? '' : ' ';
+    const spaceAfter = (after.startsWith(' ') || after.length === 0) ? '' : ' ';
+
+    const newVal = before + spaceBefore + strVal + spaceAfter + after;
+    setReactInputValue(el, newVal);
     
     return true;
   }
