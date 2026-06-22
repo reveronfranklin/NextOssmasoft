@@ -46,8 +46,8 @@ export enum UrlServices {
     APROBARORDENPAGO            = 'AdmOrdenPago/Aprobar',
     ANULARORDENPAGO             = 'AdmOrdenPago/Anular',
 
-    GETREPORTBYORDENPAGO        = '/api-v1.0/payment-orders/pdf/report',
-    GETREPORTBYRETENCIONES      = '/api-v1.0/income-tax-withholding-voucher/pdf/report',
-    GETREPORTBYCOMPROBANTE      = '/api-v1.0/vat-withholding-voucher/pdf/report',
-    TIMBREFISCAL                = '/api-v1.0/tax-stamp-voucher/pdf/report'
+    GETREPORTBYORDENPAGO        = 'reporte-orden-pago',
+    GETREPORTBYRETENCIONES      = 'reporte-retencion-islr',
+    GETREPORTBYCOMPROBANTE      = 'reporte-comprobante-iva',
+    TIMBREFISCAL                = 'reporte-timbre-fiscal'
 }

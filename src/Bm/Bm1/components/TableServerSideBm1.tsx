@@ -7,6 +7,7 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import { DataGrid, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { ReactDatePickerProps } from 'react-datepicker'
+import DatePicker from 'react-datepicker'
 import GetAppIcon from '@mui/icons-material/GetApp'
 
 //import { DataGridPro } from '@mui/x-data-grid-pro';
@@ -33,18 +34,18 @@ import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Grid, 
 import Spinner from 'src/@core/components/spinner'
 import { Bm1GetDto } from 'src/interfaces/Bm/Bm1HetDto'
 import DialogBM1Info from './DialogBM1Info'
-import { setBm1Seleccionado, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
+import { setBm1Seleccionado, setBmFechaDesde, setBmFechaHasta, setVerBmBm1ActiveActive } from 'src/store/apps/bm'
 import { useDispatch } from 'react-redux'
 import { setListIcp } from 'src/store/apps/ICP'
 import { setListIcpSeleccionado } from 'src/store/apps/bmConteo'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
-import PickersDesdeHasta from 'src/rh/historico/individual/component/PickersDesdeHasta'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 import { Bm1FilterDto } from '../../../interfaces/Bm/Bm1FilterDto'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import CustomInput from 'src/utilities/pickers/PickersCustomInput'
 
 import authConfig from 'src/configs/auth'
 
@@ -163,6 +164,50 @@ const columns: any = [
   }
 ]
 
+const Bm1PickersDesdeHasta = ({
+  popperPlacement,
+  fechaDesde,
+  fechaHasta,
+  onChangeDesde,
+  onChangeHasta
+}: {
+  popperPlacement: ReactDatePickerProps['popperPlacement']
+  fechaDesde: Date
+  fechaHasta: Date
+  onChangeDesde: (desde: Date) => void
+  onChangeHasta: (hasta: Date) => void
+}) => (
+  <Card>
+    <CardHeader title='Filtrar' />
+    <CardContent>
+      <Grid container spacing={5}>
+        <Grid item sm={6} xs={12}>
+          <DatePicker
+            dateFormat='dd/MM/yyyy'
+            selected={fechaDesde}
+            id='basic-input-desde-bm1'
+            popperPlacement={popperPlacement}
+            onChange={(desde: Date) => onChangeDesde(desde)}
+            placeholderText='Click to select a date'
+            customInput={<CustomInput label='Desde' />}
+          />
+        </Grid>
+        <Grid item sm={6} xs={12}>
+          <DatePicker
+            dateFormat='dd/MM/yyyy'
+            selected={fechaHasta}
+            id='basic-input-hasta-bm1'
+            popperPlacement={popperPlacement}
+            onChange={(hasta: Date) => onChangeHasta(hasta)}
+            placeholderText='Click to select a date'
+            customInput={<CustomInput label='Hasta' />}
+          />
+        </Grid>
+      </Grid>
+    </CardContent>
+  </Card>
+)
+
 const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePickerProps['popperPlacement'] }) => {
   // ** Const
   const urlProduction = process.env.NEXT_PUBLIC_BASE_URL_API_NET_PRODUCTION
@@ -181,7 +226,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [isGeneratePlaca, setGeneratePlace] = useState(false)
   const [icps, setIcps] = useState<ICPGetDto[]>([])
   const [listIcpSeleccionadoLocal, setListIcpSeleccionadoLocal] = useState<ICPGetDto[]>([])
-  const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.nomina)
+  const { fechaDesde, fechaHasta } = useSelector((state: RootState) => state.bmBm1)
 
   // const [download, setDownload] = useState('')
 
@@ -189,6 +234,35 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   const [sortColumn, setSortColumn] = useState<string>('')
 
   const dispatch = useDispatch()
+
+  const handleFechaDesde = (desde: Date) => {
+    dispatch(setBmFechaDesde(desde))
+  }
+
+  const handleFechaHasta = (hasta: Date) => {
+    dispatch(setBmFechaHasta(hasta))
+
+    if (fechaDesde > hasta) {
+      dispatch(setBmFechaDesde(hasta))
+    }
+  }
+
+  const fetchFechaPrimerMovimiento = useCallback(async () => {
+    try {
+      const response = await ossmmasofApi.get<any>('/Bm1/GetFechaPrimerMovimiento')
+      const fechaPrimerMovimiento = response.data?.data
+
+      if (fechaPrimerMovimiento) {
+        const fecha = new Date(fechaPrimerMovimiento)
+
+        if (!Number.isNaN(fecha.getTime())) {
+          dispatch(setBmFechaDesde(fecha))
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }, [dispatch])
 
   function loadServerRows(currentPage: number, data: Bm1GetDto[]) {
     //if(currentPage<=0) currentPage=1;
@@ -325,6 +399,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
   )
 
   useEffect(() => {
+    fetchFechaPrimerMovimiento()
     fetchTableData(listIcpSeleccionadoLocal, fechaDesde, fechaHasta)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -404,7 +479,13 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
       <Grid item xs={12}>
         <Grid container spacing={6}>
           <Grid item xs={6}>
-            <PickersDesdeHasta popperPlacement={popperPlacement} />
+            <Bm1PickersDesdeHasta
+              popperPlacement={popperPlacement}
+              fechaDesde={fechaDesde}
+              fechaHasta={fechaHasta}
+              onChangeDesde={handleFechaDesde}
+              onChangeHasta={handleFechaHasta}
+            />
           </Grid>
           <Grid item xs={6}>
             <Card>

@@ -54,6 +54,8 @@ import { IRhPeriodosUpdate } from 'src/interfaces/rh/Periodos/RhPeriodosUpdate'
 import { IFechaDto } from 'src/interfaces/fecha-dto'
 import { monthByIndex } from 'src/utilities/ge-date-by-object'
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo'
+import { generarReporteGeneralNominaPdf } from '../services/reporteGeneralNomina.service'
+import { setReportName, setVerReportViewActive } from 'src/store/apps/report'
 
 /*interface StatusObj {
   [key: number]: {
@@ -117,20 +119,21 @@ const TableServerSide = () => {
   }
 
 
-    const onDownload = async (row: IRhPeriodosResponseDto) => {
-      
-      const filter = {
-        CodigoTipoNomina: row.codigoTipoNomina,
-        CodigoPeriodo: row.codigoPeriodo
-      }
-      await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf', filter)
+  const onDownload = async (row: IRhPeriodosResponseDto) => {
+    setMensaje('')
+    setLoading(true)
 
-
-    const link = document.createElement("a");
-    link.download = `download.txt`;
-    link.href = row.fileName;
-    link.click();
-  };
+    try {
+      const objectUrl = await generarReporteGeneralNominaPdf(row)
+      dispatch(setReportName(objectUrl))
+      dispatch(setVerReportViewActive(true))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo generar el reporte general de nomina'
+      setMensaje(message)
+    } finally {
+      setLoading(false)
+    }
+  }
   const dispatch = useDispatch()
 
   const { rhTipoNominaSeleccionado } = useSelector((state: RootState) => state.rhTipoNomina)
@@ -145,11 +148,8 @@ const TableServerSide = () => {
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title='Reporte Nomina'>
-            <IconButton  
-        
-            size='small' onClick={() => 
-              onDownload(row)}>
-              <Icon icon='mdi:eye-outline' fontSize={20} />
+            <IconButton size='small' onClick={() => onDownload(row)}>
+              <Icon icon='codicon:file-pdf' fontSize={20} />
             </IconButton>
           </Tooltip>
         </Box>
@@ -237,22 +237,6 @@ const TableServerSide = () => {
     }
   ]
 
-  /*const crearReporteNomina= async ()=>{
-
-
-    setLoading(true);
-    const filter = {
-      CodigoTipoNomina:10,
-      CodigoPeriodo:3821
-      }
-    const responseAll= await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf',filter);
-    console.log(responseAll)
-
-    dispatch(setReportName("placas.pdf"));
-    dispatch(setVerReportViewActive(true))
-    setLoading(false);
-
-   }*/
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(allRows)
     const workbook = XLSX.utils.book_new()
@@ -267,31 +251,6 @@ const TableServerSide = () => {
     saveAs(blob, 'data.xlsx')
   }
 
-
-/*   const handleReport = async (row: IRhPeriodosResponseDto) => {
-    console.log('IPreAsignacionesDetalleGetDto', row)
-
-    setLoading(true)
-
-    const filter = {
-      CodigoTipoNomina: row.codigoTipoNomina,
-      CodigoPeriodo: row.codigoPeriodo
-    }
-    const responseAll = await ossmmasofApi.post<any>('/ReportHistoricoNomina/GeneratePdf', filter)
-    console.log('handleReport HistoricoNomina', responseAll.data)
-    const response = await ossmmasofApi.get <any>(`/Files/GetPdfFiles/${responseAll.data}`)
-    //dispatch(setReportName(responseAll.data))
-    //dispatch(setVerReportViewActive(true))
-
-    setLoading(false)
-
-    //dispatch(setPreAsignacionesDetalleSeleccionado(row))
-
-    // Operacion Crud 2 = Modificar presupuesto
-    //dispatch(setOperacionCrudPreAsignacionesDetalle(2));
-    //dispatch(setVerPreAsignacionesDetalleActive(true))
-  }
- */
   const fetchTableData = useCallback(
     async (filter: IRhPeriodosFilterDto) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
