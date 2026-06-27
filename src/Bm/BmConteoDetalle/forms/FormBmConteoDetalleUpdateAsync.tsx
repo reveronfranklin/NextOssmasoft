@@ -35,7 +35,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Box, Checkbox, FormControlLabel } from '@mui/material'
 
@@ -97,7 +97,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
 
     console.log('updateDto', updateDto)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmConteoDetalle/Update', updateDto)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmConteoDetalle/Update', updateDto)
 
     if (responseAll.data.isValid) {
       dispatch(setListBmConteoDetalleResponseDto(responseAll.data.data))

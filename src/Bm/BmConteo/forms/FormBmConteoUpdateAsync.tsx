@@ -36,7 +36,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 
@@ -185,7 +185,7 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
     const deleteConteo: IBmConteoDeleteDto = {
       codigoBmConteo: bmConteoSeleccionado.codigoBmConteo
     }
-    const responseAll = await ossmmasofApi.post<any>('/BmConteo/Delete', deleteConteo)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmConteo/Delete', deleteConteo)
     setErrorMessage(responseAll.data.message)
     if (responseAll.data.isValid) {
       dispatch(setVerBmConteoActive(false))
@@ -204,7 +204,7 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
       codigoBmConteo: bmConteoSeleccionado.codigoBmConteo,
       comentario: getValues('comentario')
     }
-    const responseAll = await ossmmasofApi.post<any>('/BmConteo/CerrarConteo', deleteConteo)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmConteo/CerrarConteo', deleteConteo)
     setErrorMessage(responseAll.data.message)
     if (responseAll.data.isValid) {
       dispatch(setVerBmConteoActive(false))
@@ -232,7 +232,7 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
 
     console.log('updateDto', updateDto)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmConteo/Update', updateDto)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmConteo/Update', updateDto)
 
     if (responseAll.data.isValid) {
       dispatch(setListBmConteoResponseDto(responseAll.data.data))
@@ -250,7 +250,7 @@ const FormBmConteoUpdateAsync = ({ popperPlacement }: { popperPlacement: ReactDa
       setConteos(listConteoDescriptiva)
 
       setPersonas(personasDto)
-      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      const responseIcps = await ossmmasofApiVertical.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
       console.log('responseIcps.data', responseIcps.data.data)
 

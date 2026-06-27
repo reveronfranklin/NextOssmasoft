@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
@@ -158,7 +158,7 @@ const handleClick=(row:any)=>{
     if(bmConteoSeleccionado && bmConteoSeleccionado.codigoBmConteo>0){
       const filter={codigoBmConteo:bmConteoSeleccionado.codigoBmConteo}
 
-      const responseAll= await ossmmasofApi.post<any>('/BmConteoDetalle/GetAllByConteo',filter);
+      const responseAll= await ossmmasofApiVertical.post<any>('/BmConteoDetalle/GetAllByConteo',filter);
       const data = responseAll.data.data;
       if(responseAll.data.isValid && responseAll.data.data!=null){
         console.log('data detalle',data)
@@ -189,7 +189,7 @@ const handleClick=(row:any)=>{
 
 
 
-      const responseAllConteo= await ossmmasofApi.get<any>('/BmConteo/GetAll');
+      const responseAllConteo= await ossmmasofApiVertical.get<any>('/BmConteo/GetAll');
       const dataConteo = responseAllConteo.data.data;
       if(responseAllConteo.data.isValid && responseAllConteo.data.data!=null){
         dispatch(setListBmConteoResponseDto(dataConteo));
@@ -206,7 +206,7 @@ const handleClick=(row:any)=>{
 
         const filter={codigoBmConteo:bmConteoSeleccionado.codigoBmConteo}
 
-        const responseAll= await ossmmasofApi.post<any>('/BmConteoDetalle/GetAllByConteo',filter);
+        const responseAll= await ossmmasofApiVertical.post<any>('/BmConteoDetalle/GetAllByConteo',filter);
         const data = responseAll.data.data;
         if(responseAll.data.isValid && responseAll.data.data!=null){
           console.log('data detalle',data)

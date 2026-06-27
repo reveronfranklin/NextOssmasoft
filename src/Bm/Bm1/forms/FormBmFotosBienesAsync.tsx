@@ -38,7 +38,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 
@@ -146,7 +146,7 @@ const FormBmFotosBienesAsync = () => {
 
     f.append('numeroPlaca', bmBm1Seleccionado.numeroPlaca)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/AddImage/' + bmBm1Seleccionado.codigoBien, f)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmBienesFotos/AddImage/' + bmBm1Seleccionado.codigoBien, f)
 
     if (responseAll.data.isValid) {
       dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))

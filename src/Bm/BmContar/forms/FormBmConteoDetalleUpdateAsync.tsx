@@ -35,7 +35,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box } from '@mui/material'
 
@@ -116,7 +116,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
 
     console.log('updateDto', updateDto)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmConteoDetalle/Update', updateDto)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmConteoDetalle/Update', updateDto)
 
     if (responseAll.data.isValid) {
       dispatch(setListBmConteoDetalleResponseDto(responseAll.data.data))
@@ -129,7 +129,7 @@ const FormBmConteoDetalleUpdateAsync = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
-      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      const responseIcps = await ossmmasofApiVertical.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
       setLoading(false)
     }

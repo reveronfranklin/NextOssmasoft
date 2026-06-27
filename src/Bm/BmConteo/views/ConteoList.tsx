@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store';
 
@@ -160,14 +160,14 @@ const handleClick=(row:any)=>{
     setLoading(true);
 
     const filterConteo={descripcionId:0,tituloId:7}
-    const responseConteos= await ossmmasofApi.post<any>('/BmDescriptivas/GetByTitulo',filterConteo);
-    dispatch(setListConteoDescriptiva(responseConteos.data))
+    const responseConteos= await ossmmasofApiVertical.post<any>('/BmDescriptivas/GetByTitulo',filterConteo);
+    dispatch(setListConteoDescriptiva(responseConteos.data.data ?? []))
 
-    const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+    const responseIcps= await ossmmasofApiVertical.get<any>('/Bm1/GetListICP');
     dispatch(setListIcp(responseIcps.data.data))
     console.log('responseIcps.data',responseIcps.data.data)
 
-    const responseAll= await ossmmasofApi.get<any>('/BmConteo/GetAll');
+    const responseAll= await ossmmasofApiVertical.get<any>('/BmConteo/GetAll');
     console.log(responseAll.data)
     const data = responseAll.data.data;
     if(responseAll.data.isValid && responseAll.data.data!=null){
@@ -195,14 +195,14 @@ const handleClick=(row:any)=>{
 
 
       const filterConteo={descripcionId:0,tituloId:7}
-      const responseConteos= await ossmmasofApi.post<any>('/BmDescriptivas/GetByTitulo',filterConteo);
-      dispatch(setListConteoDescriptiva(responseConteos.data))
+      const responseConteos= await ossmmasofApiVertical.post<any>('/BmDescriptivas/GetByTitulo',filterConteo);
+      dispatch(setListConteoDescriptiva(responseConteos.data.data ?? []))
 
-      const responseIcps= await ossmmasofApi.get<any>('/Bm1/GetListICP');
+      const responseIcps= await ossmmasofApiVertical.get<any>('/Bm1/GetListICP');
       dispatch(setListIcp(responseIcps.data.data))
       console.log('responseIcps.data',responseIcps.data.data)
 
-      const responseAll= await ossmmasofApi.get<any>('/BmConteo/GetAll');
+      const responseAll= await ossmmasofApiVertical.get<any>('/BmConteo/GetAll');
       console.log(responseAll.data)
       const data = responseAll.data.data;
       if(responseAll.data.isValid && responseAll.data.data!=null){

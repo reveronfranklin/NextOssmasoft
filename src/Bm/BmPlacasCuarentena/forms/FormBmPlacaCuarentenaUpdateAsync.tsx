@@ -35,7 +35,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 
@@ -44,11 +44,8 @@ import { ReactDatePickerProps } from 'react-datepicker'
 
 // ** Custom Component Imports
 
-import { setListBmConteoResponseDto, setVerBmConteoActive } from 'src/store/apps/bmConteo'
-
 import { IBmPlacaCuarentenaDeleteDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacaCuarentenaDeleteDto'
 import { setBmPlacaCuarentenaSeleccionado, setVerBmPlacaCuarentenaActive } from 'src/store/apps/bmPlacaCuarentena'
-import { IBmPlacaCuarentenaUpdateDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacaCuarentenaUpdateDto'
 
 interface FormInputs {
   codigoPlacaCuarentena: number
@@ -80,7 +77,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
   // ** Hook
   const {
     control,
-    handleSubmit,
     formState: { errors }
   } = useForm<FormInputs>({ defaultValues })
 
@@ -100,7 +96,7 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
     const deleteConteo: IBmPlacaCuarentenaDeleteDto = {
       codigoPlacaCuarentena: bmPlacaCuarentenaSeleccionado.codigoPlacaCuarentena
     }
-    const responseAll = await ossmmasofApi.post<any>('/BmPlacaCuarentena/Delete', deleteConteo)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmPlacaCuarentena/Delete', deleteConteo)
     setErrorMessage(responseAll.data.message)
     if (responseAll.data.isValid) {
       dispatch(setVerBmPlacaCuarentenaActive(false))
@@ -110,26 +106,6 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
     setLoading(false)
   }
 
-  const onSubmit = async (data: FormInputs) => {
-    setLoading(true)
-    setErrorMessage('')
-    const updateDto: IBmPlacaCuarentenaUpdateDto = {
-      codigoPlacaCuarentena: data.codigoPlacaCuarentena,
-      numeroPlaca: data.numeroPlaca
-    }
-
-    console.log('updateDto', updateDto)
-
-    const responseAll = await ossmmasofApi.post<any>('/BmConteo/Update', updateDto)
-
-    if (responseAll.data.isValid) {
-      dispatch(setListBmConteoResponseDto(responseAll.data.data))
-
-      dispatch(setVerBmConteoActive(false))
-    }
-    setErrorMessage(responseAll.data.message)
-    setLoading(false)
-  }
   useEffect(() => {
     const getData = async () => {
       setLoading(true)
@@ -145,9 +121,9 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
 
   return (
     <Card>
-      <CardHeader title='BM- Modificar Placa Cuarentena' />
+      <CardHeader title='BM- Placa Cuarentena' />
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <Grid container spacing={5}>
             {/* descripcionId */}
             <Grid item sm={2} xs={12}>
@@ -190,6 +166,7 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
                       placeholder='Titulo'
                       error={Boolean(errors.numeroPlaca)}
                       aria-describedby='validation-async-titulo'
+                      disabled
                     />
                   )}
                 />
@@ -202,7 +179,7 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
             </Grid>
 
             <Grid item xs={12}>
-              <Button variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
+              <Button type='button' variant='outlined' size='large' onClick={handleClickOpen} sx={{ color: 'error.main', ml: 2 }}>
                 {loading ? (
                   <CircularProgress
                     sx={{
@@ -231,8 +208,8 @@ const FormBmPlacaCuarentenaUpdateAsync = ({
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>No</Button>
-                  <Button onClick={handleDelete} autoFocus>
+                  <Button type='button' onClick={handleClose}>No</Button>
+                  <Button type='button' onClick={handleDelete} autoFocus>
                     Si
                   </Button>
                 </DialogActions>

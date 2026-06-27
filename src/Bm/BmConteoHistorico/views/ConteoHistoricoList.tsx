@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import Spinner from 'src/@core/components/spinner';
 import { ossmmasofApi } from 'src/MyApis/ossmmasofApi';
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical';
 import DialogBmConteoHistoricoInfo from './DialogBmConteoHistoricoInfo';
 import { IBmConteoHistoricoResponseDto } from 'src/interfaces/Bm/BmConteoHistorico/BmConteoHistoricoResponseDto';
 import DialogReportInfo from 'src/share/components/Reports/views/DialogReportInfo';
@@ -94,7 +95,7 @@ const ConteoHistoricoList = () => {
   const refreshData = async () => {
     setLoading(true);
 
-    const responseAllConteo = await ossmmasofApi.get<any>('/BmConteoHistorico/GetAll');
+    const responseAllConteo = await ossmmasofApiVertical.get<any>('/BmConteoHistorico/GetAll');
     const dataConteo = responseAllConteo.data.data;
 
     if (responseAllConteo.data.isValid && responseAllConteo.data.data!=null) {
@@ -108,7 +109,7 @@ const ConteoHistoricoList = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const responseAllConteo = await ossmmasofApi.get<any>('/BmConteoHistorico/GetAll');
+      const responseAllConteo = await ossmmasofApiVertical.get<any>('/BmConteoHistorico/GetAll');
       responseAllConteo.data.isValid && responseAllConteo.data.data != null ? setListConteo(responseAllConteo.data.data) : setListConteo([]);
     };
 

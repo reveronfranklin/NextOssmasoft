@@ -33,7 +33,7 @@ import { setBm1Seleccionado, setListBmBienesFotoResponseDto, setVerBmBm1ActiveAc
 import { Divider, ImageListItem, Menu, MenuItem, Typography } from '@mui/material'
 
 import ImageList from '@mui/material/ImageList'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import FormBmFotosBienesAsync from '../forms/FormBmFotosBienesAsync'
 
 // ** Custom Component Imports
@@ -88,12 +88,12 @@ const DialogBm1Info = () => {
     }
     console.log('dto ', deleteFoto)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/Delete', deleteFoto)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmBienesFotos/Delete', deleteFoto)
     if (responseAll.data.isValid) {
       const filter = {
         numeroPlaca: bmBm1Seleccionado.numeroPlaca
       }
-      const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
+      const responseAll = await ossmmasofApiVertical.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
 
       dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
     }
@@ -105,7 +105,7 @@ const DialogBm1Info = () => {
         const filter = {
           numeroPlaca: bmBm1Seleccionado.numeroPlaca
         }
-        const responseAll = await ossmmasofApi.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
+        const responseAll = await ossmmasofApiVertical.post<any>('/BmBienesFotos/GetByNumeroPlaca', filter)
 
         dispatch(setListBmBienesFotoResponseDto(responseAll.data.data))
       }
