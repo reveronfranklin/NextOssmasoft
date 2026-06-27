@@ -32,7 +32,7 @@ import ErrorIcon from '@mui/icons-material/Error' // Icono para pendiente/error
 
 import { useDispatch } from 'react-redux'
 import { setBmConteoSeleccionado, setListBmConteoResponseDto, setListIcpSeleccionado } from 'src/store/apps/bmConteo'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { GridSearchIcon } from '@mui/x-data-grid'
 import { ICPGetDto } from 'src/interfaces/Bm/BmConteo/ICPGetDto'
 import { setListIcp } from 'src/store/apps/ICP'
@@ -149,7 +149,7 @@ function Contar() {
       const userDataString = localStorage.getItem(userStorageKey)
       if (userDataString) {
         const userData: UserData = JSON.parse(userDataString)
-        const responseAllConteo = await ossmmasofApi.post<any>('/BmUbicacionesResponsable/GetByUsuarioResponsable', {
+        const responseAllConteo = await ossmmasofApiVertical.post<any>('/BmUbicacionesResponsable/GetByUsuarioResponsable', {
           UsuarioResponsable: userData.username
         })
         const dataConteo = responseAllConteo.data.data
@@ -166,15 +166,15 @@ function Contar() {
         }
       }
 
-      const { data } = await ossmmasofApi.post<ProductDatabase[]>('/Bm1/GetProductMobil', {
+      const responseProductos = await ossmmasofApiVertical.post<any>('/Bm1/GetProductMobil', {
         pageNumber: 1,
         pageSize: 10000,
         codigoDepartamentoResponsable: 0,
         searhText: ''
       })
-      setDataArticulos(data)
+      setDataArticulos(responseProductos.data.data ?? [])
 
-      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      const responseIcps = await ossmmasofApiVertical.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
       setListUnidadTrabajo(responseIcps.data.data)
       setLoading(false)
@@ -426,7 +426,7 @@ function Contar() {
       const payload = mapToConteoCreateDto(changesToSync, dataArticulos)
       console.log('payload a sincronizar>>>>>>', payload)
 
-      const { data } = await ossmmasofApi.post<any>('/BmConteoDetalle/RecibeConteo', payload)
+      const { data } = await ossmmasofApiVertical.post<any>('/BmConteoDetalle/RecibeConteo', payload)
 
       if (data.isValid === true) {
         if (localStorage.getItem('crudItems') !== null) {
@@ -694,10 +694,10 @@ function Contar() {
                 isOptionEqualToValue={(option: UbicacionOption, value: UbicacionOption) =>
                   option.keyUbicacionResponsable === value.keyUbicacionResponsable
                 }
-                value={ubicacionesOptions.find(option => option.descripcion === editingItem.nombre) || null}
+                value={ubicacionesOptions.find(option => option.codigoBmConteo === editingItem.codigoBmConteo) || null}
                 onChange={(event: React.SyntheticEvent, newValue: UbicacionOption | null) => {
                   setEditingItem(prevEditingItem =>
-                    prevEditingItem ? { ...prevEditingItem, nombre: newValue ? newValue.descripcion : '' } : null
+                    prevEditingItem ? { ...prevEditingItem, codigoBmConteo: newValue ? newValue.codigoBmConteo : 0 } : null
                   )
                 }}
                 renderInput={params => (

@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import Spinner from 'src/@core/components/spinner'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
@@ -124,7 +124,7 @@ const ConteoDetalleCompareList = () => {
 
       const filter = { codigoBmConteo: conteo.codigoBmConteo }
 
-      const responseAll = await ossmmasofApi.post<any>('/BmConteoDetalle/GetAllByConteoComparar', filter)
+      const responseAll = await ossmmasofApiVertical.post<any>('/BmConteoDetalle/GetAllByConteoComparar', filter)
       const data = responseAll.data.data
       if (responseAll.data.isValid && responseAll.data.data != null) {
         console.log('data detalle', data)
@@ -149,7 +149,7 @@ const ConteoDetalleCompareList = () => {
 
       dispatch(setListBmConteoDetalleResponseDto([]))
 
-      const responseAllConteo = await ossmmasofApi.get<any>('/BmConteo/GetAll')
+      const responseAllConteo = await ossmmasofApiVertical.get<any>('/BmConteo/GetAll')
       const dataConteo = responseAllConteo.data.data
       if (responseAllConteo.data.isValid && responseAllConteo.data.data != null) {
         dispatch(setListBmConteoResponseDto(dataConteo))

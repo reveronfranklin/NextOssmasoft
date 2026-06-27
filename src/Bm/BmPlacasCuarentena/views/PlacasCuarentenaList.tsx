@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux'
 
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import Spinner from 'src/@core/components/spinner'
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useSelector } from 'react-redux'
 import { RootState } from 'src/store'
 
@@ -100,7 +100,7 @@ const PlacasCuarentenaList = () => {
   const refreshData = async () => {
     setLoading(true)
 
-    const responsePlacas = await ossmmasofApi.get<any>('/Bm1/GetPlacas')
+    const responsePlacas = await ossmmasofApiVertical.get<any>('/Bm1/GetPlacas')
     console.log('responsePlacas', responsePlacas.data.data)
     if (responsePlacas.data.isValid && responsePlacas.data.data != null) {
       dispatch(setListPlacas(responsePlacas.data.data))
@@ -108,7 +108,7 @@ const PlacasCuarentenaList = () => {
       dispatch(setListPlacas([]))
     }
 
-    const responseAll = await ossmmasofApi.get<any>('/BmPlacaCuarentena/GetAll')
+    const responseAll = await ossmmasofApiVertical.get<any>('/BmPlacaCuarentena/GetAll')
     console.log(responseAll.data)
 
     if (responseAll.data.isValid && responseAll.data.data != null) {
@@ -128,7 +128,7 @@ const PlacasCuarentenaList = () => {
     const getData = async () => {
       setLoading(true)
 
-      const responsePlacas = await ossmmasofApi.get<any>('/Bm1/GetPlacas')
+      const responsePlacas = await ossmmasofApiVertical.get<any>('/Bm1/GetPlacas')
       console.log('responsePlacas', responsePlacas.data.data)
       if (responsePlacas.data.isValid && responsePlacas.data.data != null) {
         dispatch(setListPlacas(responsePlacas.data.data))
@@ -136,7 +136,7 @@ const PlacasCuarentenaList = () => {
         dispatch(setListPlacas([]))
       }
 
-      const responseAll = await ossmmasofApi.get<any>('/BmPlacaCuarentena/GetAll')
+      const responseAll = await ossmmasofApiVertical.get<any>('/BmPlacaCuarentena/GetAll')
       console.log(responseAll.data)
 
       if (responseAll.data.isValid && responseAll.data.data != null) {

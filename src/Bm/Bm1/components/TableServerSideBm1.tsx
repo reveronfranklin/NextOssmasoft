@@ -26,7 +26,7 @@ import ServerSideToolbar from 'src/views/table/data-grid/ServerSideToolbar'
 
 // ** Utils Import
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { Autocomplete, Button, CardContent, CardHeader, CircularProgress, Grid, TextField } from '@mui/material'
 
 // ** Types
@@ -249,7 +249,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
 
   const fetchFechaPrimerMovimiento = useCallback(async () => {
     try {
-      const response = await ossmmasofApi.get<any>('/Bm1/GetFechaPrimerMovimiento')
+      const response = await ossmmasofApiVertical.get<any>('/Bm1/GetFechaPrimerMovimiento')
       const fechaPrimerMovimiento = response.data?.data
 
       if (fechaPrimerMovimiento) {
@@ -316,7 +316,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     setTotal(0)
     setRows(loadServerRows(page, []))
 
-    const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+    const responseIcps = await ossmmasofApiVertical.get<any>('/Bm1/GetListICP')
     dispatch(setListIcp(responseIcps.data.data))
     setIcps(responseIcps.data.data)
 
@@ -328,9 +328,9 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     }
     console.log('filter bm1', filter)
     if (filter.listIcpSeleccionado.length > 0) {
-      const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
+      const responseAll = await ossmmasofApiVertical.post<any>('/Bm1/GetByListIcp', filter)
 
-      //const responseAll= await ossmmasofApi.get<any>('/Bm1/GetAll');
+      //const responseAll= await ossmmasofApiVertical.get<any>('/Bm1/GetAll');
 
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)
@@ -353,7 +353,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
     async (listIcpSelelected: ICPGetDto[], fechaDesde: Date, fechaHasta: Date) => {
       //const filterHistorico:FilterHistorico={desde:new Date('2023-01-01T14:29:29.623Z'),hasta:new Date('2023-04-05T14:29:29.623Z')}
 
-      const responseIcps = await ossmmasofApi.get<any>('/Bm1/GetListICP')
+      const responseIcps = await ossmmasofApiVertical.get<any>('/Bm1/GetListICP')
       dispatch(setListIcp(responseIcps.data.data))
       setIcps(responseIcps.data.data)
 
@@ -380,7 +380,7 @@ const TableServerSideBm1 = ({ popperPlacement }: { popperPlacement: ReactDatePic
         searchValue: searchValue
       }
 
-      const responseAll = await ossmmasofApi.post<any>('/Bm1/GetByListIcp', filter)
+      const responseAll = await ossmmasofApiVertical.post<any>('/Bm1/GetByListIcp', filter)
 
       setAllRows(responseAll.data.data)
       setTotal(responseAll.data.data.length)

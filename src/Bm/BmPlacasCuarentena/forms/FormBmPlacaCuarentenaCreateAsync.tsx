@@ -35,7 +35,7 @@ import { RootState } from 'src/store'
 
 import { useDispatch } from 'react-redux'
 
-import { ossmmasofApi } from 'src/MyApis/ossmmasofApi'
+import { ossmmasofApiVertical } from 'src/MyApis/ossmmasofApiVertical'
 import { useEffect, useState } from 'react'
 import { Autocomplete, Box } from '@mui/material'
 
@@ -97,7 +97,7 @@ const FormBmPlacaCuarentenaCreateAsync = ({
 
     console.log('updateDto', updateDto)
 
-    const responseAll = await ossmmasofApi.post<any>('/BmPlacaCuarentena/Create', updateDto)
+    const responseAll = await ossmmasofApiVertical.post<any>('/BmPlacaCuarentena/Create', updateDto)
 
     if (responseAll.data.isValid) {
       dispatch(setBmPlacaCuarentenaSeleccionado({}))

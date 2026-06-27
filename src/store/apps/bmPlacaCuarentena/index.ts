@@ -4,7 +4,7 @@ import { IBmPlacaCuarentenaResponseDto } from 'src/interfaces/Bm/BmPlacasCuarent
 import { IBmPlacaDto } from 'src/interfaces/Bm/BmPlacasCuarentena/BmPlacas'
 
 export const bmPlacaCuarentenaSlice = createSlice({
-  name: 'bmBm1',
+  name: 'bmPlacaCuarentena',
   initialState: {
     bmPlacaCuarentenaSeleccionado: {} as IBmPlacaCuarentenaResponseDto,
     operacionCrudBmPlacaCuarentena: 0,
